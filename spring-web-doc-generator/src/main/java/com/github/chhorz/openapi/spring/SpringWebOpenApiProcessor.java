@@ -1,5 +1,8 @@
 package com.github.chhorz.openapi.spring;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -8,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -23,7 +25,13 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,12 +92,19 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
-		return Stream.of(RequestMapping.class.getCanonicalName()).collect(Collectors.toSet());
+		return Stream.of(RequestMapping.class,
+						GetMapping.class,
+						PostMapping.class,
+						PutMapping.class,
+						DeleteMapping.class,
+						PatchMapping.class)
+				.map(Class::getCanonicalName)
+				.collect(toSet());
 	}
 
 	@Override
 	public Set<String> getSupportedOptions() {
-		return Stream.of("propertiesPath").collect(Collectors.toSet());
+		return Stream.of("propertiesPath").collect(toSet());
 	}
 
 	@Override
@@ -125,11 +140,12 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	private void mapOperationMethod(final ExecutableElement executableElement) {
 
 		JavaDocParser parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.PLAIN).build();
-
 		JavaDoc javaDoc = parser.parse(elements.getDocComment(executableElement));
 
-		if (executableElement.getAnnotation(RequestMapping.class) != null) {
-			RequestMapping requestMapping = executableElement.getAnnotation(RequestMapping.class);
+		AliasUtils<?> aliasUtils = new AliasUtils<>();
+		RequestMapping requestMapping = aliasUtils.getMappingAnnotation(executableElement);
+
+		if (requestMapping != null) {
 
 			String[] urlPaths;
 			if (requestMapping.path() != null) {
@@ -159,19 +175,19 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 							.stream()
 							.filter(variableElement -> variableElement.getAnnotation(PathVariable.class) != null)
 							.map(v -> mapPathVariable(path, v, tags))
-							.collect(Collectors.toList()));
+							.collect(toList()));
 
 					operation.addParameterObjects(executableElement.getParameters()
 							.stream()
 							.filter(variableElement -> variableElement.getAnnotation(RequestParam.class) != null)
 							.map(v -> mapRequestParam(v, tags))
-							.collect(Collectors.toList()));
+							.collect(toList()));
 
 					operation.addParameterObjects(executableElement.getParameters()
 							.stream()
 							.filter(variableElement -> variableElement.getAnnotation(RequestHeader.class) != null)
 							.map(v -> mapRequestHeader(v, tags))
-							.collect(Collectors.toList()));
+							.collect(toList()));
 
 					VariableElement requestBody = executableElement.getParameters()
 							.stream()
@@ -194,7 +210,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						}
 
 						components.putAllSchemas(schemaUtils.mapTypeMirrorToSchema(elements, types, requestBody.asType()));
-
 						components.putRequestBody(requestBody.asType().toString(), r);
 
 						operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
@@ -205,9 +220,19 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					Responses responses = new Responses();
 					TypeMirror returnType = executableElement.getReturnType();
 
+					// remove ResponseEntity
+					if (types.isSameType(types.erasure(elements.getTypeElement(ResponseEntity.class.getCanonicalName()).asType()),
+							types.erasure(returnType)) && returnType.toString().indexOf('<') != 0) {
+						String subType = returnType.toString().substring(returnType.toString().indexOf('<') + 1,
+								returnType.toString().lastIndexOf('>'));
+						if (subType != null && !subType.isEmpty()) {
+							returnType = elements.getTypeElement(subType).asType();
+						}
+					}
+
 					Map<String, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, returnType);
 					Schema schema = schemaMap.get(returnType.toString().substring(returnType.toString().lastIndexOf('.') + 1));
-					System.out.println("Return-type: " + schema);
+
 					if ("object".equals(schema.getType()) || "enum".equals(schema.getType())) {
 						responses.setDefaultResponse(
 								responseUtils.mapTypeMirrorToResponse(types, returnType, requestMapping.produces()));

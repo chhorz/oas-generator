@@ -53,7 +53,10 @@ public class SpringWebOpenApiProcessorTest {
 	void aTest() {
 		// the files to be compiled.
 		String[] files = new String[] {
-				"src/test/java/com/github/chhorz/openapi/spring/test/controller/OrderController.java" };
+				"src/test/java/com/github/chhorz/openapi/spring/test/controller/OrderController.java",
+				"src/test/java/com/github/chhorz/openapi/spring/test/controller/resource/Order.java",
+				"src/test/java/com/github/chhorz/openapi/spring/test/controller/resource/Article.java",
+				"src/test/java/com/github/chhorz/openapi/spring/test/controller/resource/PrimitiveResource.java" };
 		try {
 			// streams.
 			ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();

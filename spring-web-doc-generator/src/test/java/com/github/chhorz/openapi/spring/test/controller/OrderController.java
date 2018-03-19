@@ -1,5 +1,6 @@
 package com.github.chhorz.openapi.spring.test.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +36,7 @@ public class OrderController {
 	 * @category test
 	 */
 	@RequestMapping(path = "/orders", method = RequestMethod.POST, consumes = { "text/plain", "application/xml" })
-	public PrimitiveResource createOrder(@RequestBody final Order order) {
+	public ResponseEntity<PrimitiveResource> createOrder(@RequestBody final Order order) {
 		return null;
 	}
 
