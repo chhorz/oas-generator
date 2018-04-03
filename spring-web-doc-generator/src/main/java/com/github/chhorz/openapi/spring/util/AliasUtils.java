@@ -29,21 +29,23 @@ public class AliasUtils<T> {
 	}
 
 	public RequestMapping getMappingAnnotation(final ExecutableElement executableElement) {
+		RequestMapping mapping = null;
+
 		if (executableElement.getAnnotation(RequestMapping.class) != null) {
-			return executableElement.getAnnotation(RequestMapping.class);
+			mapping = executableElement.getAnnotation(RequestMapping.class);
 		} else if (executableElement.getAnnotation(GetMapping.class) != null) {
-			return convertSpecificMapping(executableElement.getAnnotation(GetMapping.class));
+			mapping = convertSpecificMapping(executableElement.getAnnotation(GetMapping.class));
 		} else if (executableElement.getAnnotation(PostMapping.class) != null) {
-
+			mapping = convertSpecificMapping(executableElement.getAnnotation(PostMapping.class));
 		} else if (executableElement.getAnnotation(PutMapping.class) != null) {
-
+			mapping = convertSpecificMapping(executableElement.getAnnotation(PutMapping.class));
 		} else if (executableElement.getAnnotation(DeleteMapping.class) != null) {
-
+			mapping = convertSpecificMapping(executableElement.getAnnotation(DeleteMapping.class));
 		} else if (executableElement.getAnnotation(PatchMapping.class) != null) {
-
+			mapping = convertSpecificMapping(executableElement.getAnnotation(PatchMapping.class));
 		}
 
-		return null;
+		return mapping;
 	}
 
 	private RequestMapping convertSpecificMapping(final GetMapping getMapping) {
@@ -92,6 +94,206 @@ public class AliasUtils<T> {
 			@Override
 			public String[] consumes() {
 				return getMapping.consumes();
+			}
+		};
+	}
+
+	private RequestMapping convertSpecificMapping(final PostMapping postMapping) {
+		return new RequestMapping() {
+
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return postMapping.annotationType();
+			}
+
+			@Override
+			public String[] value() {
+				return postMapping.value();
+			}
+
+			@Override
+			public String[] produces() {
+				return postMapping.produces();
+			}
+
+			@Override
+			public String[] path() {
+				return postMapping.path();
+			}
+
+			@Override
+			public String[] params() {
+				return postMapping.params();
+			}
+
+			@Override
+			public String name() {
+				return postMapping.name();
+			}
+
+			@Override
+			public RequestMethod[] method() {
+				return new RequestMethod[] { RequestMethod.POST };
+			}
+
+			@Override
+			public String[] headers() {
+				return postMapping.headers();
+			}
+
+			@Override
+			public String[] consumes() {
+				return postMapping.consumes();
+			}
+		};
+	}
+
+	private RequestMapping convertSpecificMapping(final PutMapping putMapping) {
+		return new RequestMapping() {
+
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return putMapping.annotationType();
+			}
+
+			@Override
+			public String[] value() {
+				return putMapping.value();
+			}
+
+			@Override
+			public String[] produces() {
+				return putMapping.produces();
+			}
+
+			@Override
+			public String[] path() {
+				return putMapping.path();
+			}
+
+			@Override
+			public String[] params() {
+				return putMapping.params();
+			}
+
+			@Override
+			public String name() {
+				return putMapping.name();
+			}
+
+			@Override
+			public RequestMethod[] method() {
+				return new RequestMethod[] { RequestMethod.PUT };
+			}
+
+			@Override
+			public String[] headers() {
+				return putMapping.headers();
+			}
+
+			@Override
+			public String[] consumes() {
+				return putMapping.consumes();
+			}
+		};
+	}
+
+	private RequestMapping convertSpecificMapping(final DeleteMapping deleteMapping) {
+		return new RequestMapping() {
+
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return deleteMapping.annotationType();
+			}
+
+			@Override
+			public String[] value() {
+				return deleteMapping.value();
+			}
+
+			@Override
+			public String[] produces() {
+				return deleteMapping.produces();
+			}
+
+			@Override
+			public String[] path() {
+				return deleteMapping.path();
+			}
+
+			@Override
+			public String[] params() {
+				return deleteMapping.params();
+			}
+
+			@Override
+			public String name() {
+				return deleteMapping.name();
+			}
+
+			@Override
+			public RequestMethod[] method() {
+				return new RequestMethod[] { RequestMethod.DELETE };
+			}
+
+			@Override
+			public String[] headers() {
+				return deleteMapping.headers();
+			}
+
+			@Override
+			public String[] consumes() {
+				return deleteMapping.consumes();
+			}
+		};
+	}
+
+	private RequestMapping convertSpecificMapping(final PatchMapping patchMapping) {
+		return new RequestMapping() {
+
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return patchMapping.annotationType();
+			}
+
+			@Override
+			public String[] value() {
+				return patchMapping.value();
+			}
+
+			@Override
+			public String[] produces() {
+				return patchMapping.produces();
+			}
+
+			@Override
+			public String[] path() {
+				return patchMapping.path();
+			}
+
+			@Override
+			public String[] params() {
+				return patchMapping.params();
+			}
+
+			@Override
+			public String name() {
+				return patchMapping.name();
+			}
+
+			@Override
+			public RequestMethod[] method() {
+				return new RequestMethod[] { RequestMethod.PATCH };
+			}
+
+			@Override
+			public String[] headers() {
+				return patchMapping.headers();
+			}
+
+			@Override
+			public String[] consumes() {
+				return patchMapping.consumes();
 			}
 		};
 	}
