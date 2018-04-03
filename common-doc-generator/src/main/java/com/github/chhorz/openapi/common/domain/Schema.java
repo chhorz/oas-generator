@@ -2,7 +2,9 @@ package com.github.chhorz.openapi.common.domain;
 
 import static java.lang.Boolean.FALSE;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,6 +34,9 @@ public class Schema {
 	@JsonProperty("default")
 	private Object defaultValue;
 	private String pattern;
+
+	@JsonProperty("enum")
+	private List<String> enumValues;
 
 	public String getType() {
 		return type;
@@ -89,6 +94,17 @@ public class Schema {
 
 	public void setPattern(final String pattern) {
 		this.pattern = pattern;
+	}
+
+	public void addEnumValue(final String enumValue) {
+		if (enumValues == null) {
+			enumValues = new ArrayList<>();
+		}
+		enumValues.add(enumValue);
+	}
+
+	public List<String> getEnumValues() {
+		return enumValues;
 	}
 
 	@Override

@@ -65,15 +65,23 @@ public class SchemaUtils {
 			Element element = elements.getTypeElement(typeMirror.toString());
 
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
+			schema.setDescription(javaDoc.getDescription());
 
 			String type;
 			if (element.getKind().equals(ElementKind.ENUM)) {
-				type = "enum";
+				type = "string";
+
+				schema.setType(type);
+
+				element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
+					schema.addEnumValue(vElement.toString());
+				});
+
 			} else {
 				type = "object";
-			}
+
 			schema.setType(type);
-			schema.setDescription(javaDoc.getDescription());
+
 
 			element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
 				System.out.println(vElement.toString());
@@ -97,7 +105,7 @@ public class SchemaUtils {
 						.filter(entry -> "object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType()))
 						.forEach(entry -> schema.putProperty(vElement.toString(), ReferenceUtils.createSchemaReference(vElement.asType())));
 			});
-
+			}
 			schemaMap.put(typeMirror.toString().substring(typeMirror.toString().lastIndexOf('.') + 1), schema);
 		}
 

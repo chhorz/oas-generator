@@ -123,16 +123,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 		openApi.setComponents(components);
 
-		File file = new File("./target/openapi.json");
-		try {
-			file.createNewFile();
-
-			FileWriter fileWriter = new FileWriter(file);
-			fileWriter.writeToFile(openApi);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		FileWriter fileWriter = new FileWriter("./target/openapi.json");
+		fileWriter.writeToFile(openApi);
 
 		return false;
 	}
@@ -155,6 +147,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 			}
 
 			for (String path : urlPaths) {
+				String cleanedPath = path;
 
 				PathItemObject pathItemObject = new PathItemObject();
 
@@ -176,6 +169,17 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 							.filter(variableElement -> variableElement.getAnnotation(PathVariable.class) != null)
 							.map(v -> mapPathVariable(path, v, tags))
 							.collect(toList()));
+
+					List<String> removals = operation.getParameterObjects()
+							.stream()
+							.map(param -> param.getSchema())
+							.filter(schema -> schema.getPattern() != null)
+							.map(schema -> schema.getPattern())
+							.collect(toList());
+
+					for (String string : removals) {
+						cleanedPath = cleanedPath.replace(":" + string, "");
+					}
 
 					operation.addParameterObjects(executableElement.getParameters()
 							.stream()
@@ -282,7 +286,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 				}
 
-				openApi.putPathItemObject(path, pathItemObject);
+
+				openApi.putPathItemObject(cleanedPath, pathItemObject);
 			}
 		}
 	}

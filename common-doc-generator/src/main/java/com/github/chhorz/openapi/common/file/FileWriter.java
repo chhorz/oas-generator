@@ -21,8 +21,15 @@ public class FileWriter {
 	private ObjectMapper objectMapper;
 	// private Yaml yaml;
 
-	public FileWriter(final File file) {
-		this.file = file;
+	public FileWriter(final String fileName) {
+		File file = new File(fileName);
+		try {
+			file.createNewFile();
+			this.file = file;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		objectMapper = new ObjectMapper();
 		objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
