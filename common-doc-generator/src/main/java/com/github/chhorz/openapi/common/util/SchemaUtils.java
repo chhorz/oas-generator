@@ -86,6 +86,8 @@ public class SchemaUtils {
 			element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
 				System.out.println(vElement.toString());
 
+				JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
+
 				// lets do some recursion
 				Map<String, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, vElement.asType());
 				// the schema is an object or enum -> we add it to the map
@@ -98,6 +100,10 @@ public class SchemaUtils {
 				propertySchemaMap.entrySet()
 						.stream()
 						.filter(entry -> !"object".equals(entry.getValue().getType()) && !"enum".equals(entry.getValue().getType()))
+							.map(propertySchema -> {
+								propertySchema.getValue().setDescription(propertyDoc.getDescription());
+								return propertySchema;
+							})
 						.forEach(entry -> schema.putProperty(vElement.toString(), entry.getValue()));
 				// otherwise we add it as reference
 				propertySchemaMap.entrySet()

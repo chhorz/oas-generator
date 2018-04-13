@@ -92,4 +92,25 @@ public class SchemaUtilsTest {
 				.containsKeys("l", "b", "f");
 	}
 
+	@Test
+	public void enumTest() {
+		// given
+		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.TestEnum").asType();
+
+		// when
+		Map<String, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, test);
+
+		// then
+		assertThat(schemaMap)
+				.hasSize(1)
+				.containsKey("TestEnum")
+				.extracting(map -> map.get("TestEnum"))
+				.extracting("type", "format")
+				.contains(tuple("string", null));
+
+		assertThat(schemaMap.get("TestEnum").getEnumValues())
+				.hasSize(3)
+				.contains("A", "B", "XYZ");
+	}
+
 }
