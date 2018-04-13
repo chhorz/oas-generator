@@ -43,13 +43,13 @@ public class SchemaUtilsTest {
 		PrimitiveType longType = types.getPrimitiveType(TypeKind.LONG);
 
 		// when
-		Map<String, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, longType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, longType);
 
 		// then
 		assertThat(schemaMap)
 				.hasSize(1)
-				.containsKey("long")
-				.extracting(map -> map.get("long"))
+				.containsKey(longType)
+				.extracting(map -> map.get(longType))
 				.extracting("type", "format")
 				.contains(tuple("integer", "int64"));
 	}
@@ -60,13 +60,13 @@ public class SchemaUtilsTest {
 		TypeMirror doubleType = elements.getTypeElement("java.lang.Double").asType();
 
 		// when
-		Map<String, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, doubleType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, doubleType);
 
 		// then
 		assertThat(schemaMap)
 				.hasSize(1)
-				.containsKey("Double")
-				.extracting(map -> map.get("Double"))
+				.containsKey(doubleType)
+				.extracting(map -> map.get(doubleType))
 				.extracting("type", "format")
 				.contains(tuple("number", "double"));
 	}
@@ -77,17 +77,17 @@ public class SchemaUtilsTest {
 		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.Test").asType();
 
 		// when
-		Map<String, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, test);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, test);
 
 		// then
 		assertThat(schemaMap)
 				.hasSize(1)
-				.containsKey("Test")
-				.extracting(map -> map.get("Test"))
+				.containsKey(test)
+				.extracting(map -> map.get(test))
 				.extracting("type", "format")
 				.contains(tuple("object", null));
 
-		assertThat(schemaMap.get("Test").getProperties())
+		assertThat(schemaMap.get(test).getProperties())
 				.hasSize(3)
 				.containsKeys("l", "b", "f");
 	}
@@ -98,17 +98,17 @@ public class SchemaUtilsTest {
 		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.TestEnum").asType();
 
 		// when
-		Map<String, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, test);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, test);
 
 		// then
 		assertThat(schemaMap)
 				.hasSize(1)
-				.containsKey("TestEnum")
-				.extracting(map -> map.get("TestEnum"))
+				.containsKey(test)
+				.extracting(map -> map.get(test))
 				.extracting("type", "format")
 				.contains(tuple("string", null));
 
-		assertThat(schemaMap.get("TestEnum").getEnumValues())
+		assertThat(schemaMap.get(test).getEnumValues())
 				.hasSize(3)
 				.contains("A", "B", "XYZ");
 	}

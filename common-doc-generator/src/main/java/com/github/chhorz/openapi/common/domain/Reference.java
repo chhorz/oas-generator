@@ -21,4 +21,9 @@ public class Reference {
 		return $ref;
 	}
 
+	@Override
+	public String toString() {
+		return "Reference [$ref=" + $ref + "]";
+	}
+
 }

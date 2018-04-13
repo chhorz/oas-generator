@@ -1,6 +1,7 @@
 package com.github.chhorz.openapi.spring.test.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,18 +40,18 @@ public class OrderController {
 	 * @category test
 	 */
 	@RequestMapping(path = "/orders", method = RequestMethod.POST, consumes = { "text/plain", "application/xml" })
-	public ResponseEntity<PrimitiveResource> createOrder(@RequestBody final Order order) {
+	public Set<PrimitiveResource> createOrder(@RequestBody final Order order) {
 		return null;
 	}
 
-	// /**
-	// *
-	// * @category order
-	// * @category test
-	// */
-	// @GetMapping(path = "/orders", produces = { "application/xml" })
-	// public ResponseEntity<List<Order>> getOrders() {
-	// return null;
-	// }
+	/**
+	 *
+	 * @category order
+	 * @category test
+	 */
+	@GetMapping(path = "/orders", produces = { "application/xml" })
+	public ResponseEntity<List<Order>> getOrders() {
+		return null;
+	}
 
 }

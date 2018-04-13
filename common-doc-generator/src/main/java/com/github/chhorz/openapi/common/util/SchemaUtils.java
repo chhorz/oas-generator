@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -26,8 +28,8 @@ public class SchemaUtils {
 		parser = JavaDocParserBuilder.withBasicTags().build();
 	}
 
-	public Map<String, Schema> mapTypeMirrorToSchema(final Elements elements, final Types types, final TypeMirror typeMirror) {
-		Map<String, Schema> schemaMap = new HashMap<>();
+	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final Elements elements, final Types types, final TypeMirror typeMirror) {
+		Map<TypeMirror, Schema> schemaMap = new HashMap<>();
 
 		System.out.println("TypeMirror: " + typeMirror);
 
@@ -40,7 +42,7 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 				// schema.setDescription(propertyDoc.getDescription());
 			}
-			schemaMap.put(typeMirror.toString(), schema);
+			schemaMap.put(typeMirror, schema);
 		} else if (typeMirror.toString().startsWith("java.lang")) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 
@@ -50,7 +52,7 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 				schema.setDescription(javaDoc.getDescription());
 			}
-			schemaMap.put(typeMirror.toString().substring(typeMirror.toString().lastIndexOf('.') + 1), schema);
+			schemaMap.put(typeMirror, schema);
 		} else if (typeMirror.toString().startsWith("java.time")) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 
@@ -60,7 +62,31 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 				schema.setDescription(javaDoc.getDescription());
 			}
-			schemaMap.put(typeMirror.toString().substring(typeMirror.toString().lastIndexOf('.') + 1), schema);
+			schemaMap.put(typeMirror, schema);
+		} else if (isAssignableFrom(elements, types, typeMirror, List.class)){
+			schema.setType("array");
+			
+			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
+			TypeMirror type = utils.removeEnclosingType(typeMirror, List.class);
+			
+			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
+			schema.setItems(ReferenceUtils.createSchemaReference(type));
+			
+			schemaMap.putAll(propertySchemaMap);
+			
+			schemaMap.put(typeMirror, schema);
+		} else if (isAssignableFrom(elements, types, typeMirror, Set.class)){
+			schema.setType("array");
+			
+			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
+			TypeMirror type = utils.removeEnclosingType(typeMirror, Set.class);
+			
+			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
+			schema.setItems(ReferenceUtils.createSchemaReference(type));
+			
+			schemaMap.putAll(propertySchemaMap);
+			
+			schemaMap.put(typeMirror, schema);
 		} else {
 			Element element = elements.getTypeElement(typeMirror.toString());
 
@@ -80,42 +106,40 @@ public class SchemaUtils {
 			} else {
 				type = "object";
 
-			schema.setType(type);
+				schema.setType(type);
 
 
-			element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
-				System.out.println(vElement.toString());
+				element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
+					System.out.println(vElement.toString());
 
-				JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
+					JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
-				// lets do some recursion
-				Map<String, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, vElement.asType());
-				// the schema is an object or enum -> we add it to the map
-				propertySchemaMap.entrySet()
-						.stream()
-						.filter(entry -> "object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType()))
-						.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
+					// lets do some recursion
+					Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, vElement.asType());
+					// the schema is an object or enum -> we add it to the map
+					propertySchemaMap.entrySet()
+							.stream()
+							.filter(entry -> "object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType()))
+							.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
 
-				// the schema is an primitive type -> we add it as property
-				propertySchemaMap.entrySet()
-						.stream()
-						.filter(entry -> !"object".equals(entry.getValue().getType()) && !"enum".equals(entry.getValue().getType()))
-							.map(propertySchema -> {
-								propertySchema.getValue().setDescription(propertyDoc.getDescription());
-								return propertySchema;
-							})
-						.forEach(entry -> schema.putProperty(vElement.toString(), entry.getValue()));
-				// otherwise we add it as reference
-				propertySchemaMap.entrySet()
-						.stream()
-						.filter(entry -> "object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType()))
-						.forEach(entry -> schema.putProperty(vElement.toString(), ReferenceUtils.createSchemaReference(vElement.asType())));
-			});
+					// the schema is an primitive type -> we add it as property
+					propertySchemaMap.entrySet()
+							.stream()
+							.filter(entry -> !"object".equals(entry.getValue().getType()) && !"enum".equals(entry.getValue().getType()))
+								.map(propertySchema -> {
+									propertySchema.getValue().setDescription(propertyDoc.getDescription());
+									return propertySchema;
+								})
+							.forEach(entry -> schema.putProperty(vElement.toString(), entry.getValue()));
+					// otherwise we add it as reference
+					propertySchemaMap.entrySet()
+							.stream()
+							.filter(entry -> "object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType()))
+							.forEach(entry -> schema.putProperty(vElement.toString(), ReferenceUtils.createSchemaReference(vElement.asType())));
+				});
 			}
-			schemaMap.put(typeMirror.toString().substring(typeMirror.toString().lastIndexOf('.') + 1), schema);
+			schemaMap.put(typeMirror, schema);
 		}
-
-		// System.out.println("SchemaMap: " + schemaMap);
 
 		return schemaMap;
 	}
@@ -175,6 +199,10 @@ public class SchemaUtils {
 
 	private boolean isTypeOf(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
 		return types.isSameType(typeMirror, elements.getTypeElement(clazz.getCanonicalName()).asType());
+	}
+	
+	private boolean isAssignableFrom(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
+		return types.isAssignable(types.erasure(typeMirror), elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
 
 }

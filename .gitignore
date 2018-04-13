@@ -9,8 +9,8 @@
 /**/target/
 /bin/
 
-# AnnotationProcessor compile during test
-.class
+# Compiled test class files
+*.class
 
 # MacOS
 .DS_Store

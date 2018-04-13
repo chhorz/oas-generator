@@ -3,8 +3,6 @@ package com.github.chhorz.openapi.spring;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,6 +58,7 @@ import com.github.chhorz.openapi.common.properties.SpecGeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.util.ReferenceUtils;
 import com.github.chhorz.openapi.common.util.ResponseUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
+import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
@@ -135,6 +134,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		JavaDoc javaDoc = parser.parse(elements.getDocComment(executableElement));
 
 		AliasUtils<?> aliasUtils = new AliasUtils<>();
+		System.out.println(executableElement.toString());
 		RequestMapping requestMapping = aliasUtils.getMappingAnnotation(executableElement);
 
 		if (requestMapping != null) {
@@ -148,8 +148,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 			for (String path : urlPaths) {
 				String cleanedPath = path;
-
-				PathItemObject pathItemObject = new PathItemObject();
 
 				RequestMethod[] requestMethods = requestMapping.method();
 
@@ -222,28 +220,20 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					ResponseUtils responseUtils = new ResponseUtils();
 
 					Responses responses = new Responses();
-					TypeMirror returnType = executableElement.getReturnType();
-
-					// remove ResponseEntity
-					if (types.isSameType(types.erasure(elements.getTypeElement(ResponseEntity.class.getCanonicalName()).asType()),
-							types.erasure(returnType)) && returnType.toString().indexOf('<') != 0) {
-						String subType = returnType.toString().substring(returnType.toString().indexOf('<') + 1,
-								returnType.toString().lastIndexOf('>'));
-						if (subType != null && !subType.isEmpty()) {
-							returnType = elements.getTypeElement(subType).asType();
-						}
-					}
-
-					Map<String, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, returnType);
-					Schema schema = schemaMap.get(returnType.toString().substring(returnType.toString().lastIndexOf('.') + 1));
-
+					TypeMirrorUtils typeMirrorUtils = new TypeMirrorUtils(elements, types);
+					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(), ResponseEntity.class);
+					System.out.println("ReturnType: " + returnType.toString());
+					Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, returnType);
+					System.out.println("SchemaMap: "+ schemaMap);
+					Schema schema = schemaMap.get(returnType);
+					System.out.println("ReturnType Schema: "+schema);
 					if ("object".equals(schema.getType()) || "enum".equals(schema.getType())) {
 						responses.setDefaultResponse(
 								responseUtils.mapTypeMirrorToResponse(types, returnType, requestMapping.produces()));
 					} else {
 						responses.setDefaultResponse(
 								responseUtils.mapSchemaToResponse(types, schema, requestMapping.produces()));
-						schemaMap.remove(returnType.toString().substring(returnType.toString().lastIndexOf('.') + 1));
+						schemaMap.remove(returnType);
 					}
 
 					components.putAllSchemas(schemaMap);
@@ -254,6 +244,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 							.stream().map(CategoryTag::getCategoryName)
 							.forEach(tag -> operation.addTag(tag));
 
+					PathItemObject pathItemObject = openApi.getPaths().getOrDefault(cleanedPath, new PathItemObject());
 					switch (requestMethod) {
 						case GET:
 							pathItemObject.setGet(operation);
@@ -284,10 +275,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 							throw new RuntimeException("Unknown RequestMethod value.");
 					}
 
+					openApi.putPathItemObject(cleanedPath, pathItemObject);
 				}
-
-
-				openApi.putPathItemObject(cleanedPath, pathItemObject);
 			}
 		}
 	}
@@ -313,9 +302,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setRequired(Boolean.TRUE);
 
 		SchemaUtils schemaUtils = new SchemaUtils();
-		Map<String, Schema> map = schemaUtils.mapTypeMirrorToSchema(elements, types, variableElement.asType());
-		Schema schema = map
-				.get(variableElement.asType().toString().substring(variableElement.asType().toString().lastIndexOf('.') + 1));
+		Map<TypeMirror, Schema> map = schemaUtils.mapTypeMirrorToSchema(elements, types, variableElement.asType());
+		Schema schema = map.get(variableElement.asType());
 
 		Optional<String> regularExpression = getRegularExpression(path, name);
 		if (regularExpression.isPresent()) {
@@ -347,8 +335,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setRequired(requestParam.required());
 
 		SchemaUtils schemaUtils = new SchemaUtils();
-		Schema schema = schemaUtils.mapTypeMirrorToSchema(elements, types, variableElement.asType())
-				.get(variableElement.asType().toString().substring(variableElement.asType().toString().lastIndexOf('.') + 1));
+		Schema schema = schemaUtils.mapTypeMirrorToSchema(elements, types, variableElement.asType()).get(variableElement.asType());
 		if (!ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue())) {
 			schema.setDefaultValue(requestParam.defaultValue());
 		}
@@ -379,8 +366,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setRequired(requestHeader.required());
 
 		SchemaUtils schemaUtils = new SchemaUtils();
-		Schema schema = schemaUtils.mapTypeMirrorToSchema(elements, types, variableElement.asType())
-				.get(variableElement.asType().toString().substring(variableElement.asType().toString().lastIndexOf('.') + 1));
+		Schema schema = schemaUtils.mapTypeMirrorToSchema(elements, types, variableElement.asType()).get(variableElement.asType());
 		if (!ValueConstants.DEFAULT_NONE.equals(requestHeader.defaultValue())) {
 			schema.setDefaultValue(requestHeader.defaultValue());
 		}
@@ -391,7 +377,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 	private Optional<String> getRegularExpression(final String path, final String pathVariable) {
 		Pattern pathVariablePattern = Pattern.compile(".*\\{" + pathVariable + ":([^\\{\\}]+)\\}.*");
-		System.out.println(pathVariablePattern);
 		Matcher pathVariableMatcher = pathVariablePattern.matcher(path);
 		if (pathVariableMatcher.matches()) {
 			return Optional.ofNullable(pathVariableMatcher.group(1));
@@ -399,4 +384,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 			return Optional.empty();
 		}
 	}
+
 }
+

@@ -21,7 +21,7 @@ public class OpenAPI {
 	private Info info;
 	private List<Server> servers;
 	@Required
-	private Map<String, PathItemObject> paths;
+	private Map<String, PathItemObject> paths = new HashMap<>();
 	private Components components;
 	private List<SecurityRequirement> security;
 	private Tag tags;
@@ -61,9 +61,6 @@ public class OpenAPI {
 	}
 
 	public void putPathItemObject(final String path, final PathItemObject pathItemObject) {
-		if (this.paths == null) {
-			this.paths = new HashMap<>();
-		}
 		this.paths.put(path, pathItemObject);
 	}
 

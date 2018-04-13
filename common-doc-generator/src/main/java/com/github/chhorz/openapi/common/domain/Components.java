@@ -3,6 +3,8 @@ package com.github.chhorz.openapi.common.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.lang.model.type.TypeMirror;
+
 /**
  * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#components-object
  *
@@ -25,11 +27,12 @@ public class Components {
 		return key.matches("^[a-zA-Z0-9\\.\\-_]+$");
 	}
 
-	public void putAllSchemas(final Map<String, Schema> schemas) {
+	public void putAllSchemas(final Map<TypeMirror, Schema> schemas) {
 		if (this.schemas == null) {
 			this.schemas = new HashMap<>();
 		}
-		this.schemas.putAll(schemas);
+
+		schemas.forEach((typeMirror,schema)-> this.schemas.put(getKey(typeMirror), schema));
 	}
 
 	public Map<String, Schema> getSchemas() {
@@ -62,4 +65,11 @@ public class Components {
 		return key.substring(key.lastIndexOf('.') + 1);
 	}
 
+	private String getKey(final TypeMirror typeMirror) {
+		String typeString = typeMirror.toString();
+		while (typeString.contains("<")) {
+			typeString = typeString.substring(typeString.indexOf('<') + 1, typeString.indexOf('>'));
+		}
+		return typeString.substring(typeString.lastIndexOf('.') + 1);
+	}
 }
