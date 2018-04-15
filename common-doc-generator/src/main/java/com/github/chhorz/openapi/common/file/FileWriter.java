@@ -3,6 +3,8 @@ package com.github.chhorz.openapi.common.file;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 //import org.yaml.snakeyaml.DumperOptions;
 //import org.yaml.snakeyaml.Yaml;
@@ -21,14 +23,20 @@ public class FileWriter {
 	private ObjectMapper objectMapper;
 	// private Yaml yaml;
 
-	public FileWriter(final String fileName) {
-		File file = new File(fileName);
-		try {
-			file.createNewFile();
-			this.file = file;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public FileWriter(final String directory) {
+		Path path = Paths.get(directory, "openapi.json");
+
+		if (!Files.exists(path)) {
+			try {
+				Files.createDirectories(path.getParent());
+				Files.createFile(path);
+
+				this.file = path.toFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			this.file = path.toFile();
 		}
 
 		objectMapper = new ObjectMapper();
@@ -37,22 +45,11 @@ public class FileWriter {
 		// TODO include
 		objectMapper.setSerializationInclusion(Include.NON_NULL);
 		// objectMapper.setSerializationInclusion(Include.NON_EMPTY);
-
-		// DumperOptions options = new DumperOptions();
-		// options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-		// options.setPrettyFlow(true);
-		//
-		// yaml = new Yaml(options);
-
 	}
 
 	public void writeToFile(final OpenAPI openAPI) {
 		try {
 			objectMapper.writeValue(file, openAPI);
-			// String yamlString = yaml.dump(openAPI);
-			//
-			// Files.write(file.toPath(), yamlString.getBytes());
-
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

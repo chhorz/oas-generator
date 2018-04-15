@@ -85,4 +85,11 @@ public class SpecGeneratorPropertyLoader {
 		return externalDocs.getUrl() != null ? externalDocs : null;
 	}
 
+	public ParserProperties getParserProperties() {
+		ParserProperties parserProperties = new ParserProperties();
+		parserProperties.setOutputDir(properties.getProperty(PARSER_OUTPUT_DIR, PARSER_OUTPUT_DIR_DEFAULT));
+		parserProperties.setResourcePackage(properties.getProperty(PARSER_RESOURCE_PACKAGE, PARSER_RESOURCE_PACKAGE_DEFAULT));
+		return parserProperties;
+	}
+
 }
