@@ -138,7 +138,10 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 		AliasUtils<?> aliasUtils = new AliasUtils<>();
 		System.out.println(executableElement.toString());
-		RequestMapping requestMapping = aliasUtils.getMappingAnnotation(executableElement);
+		RequestMapping methodMapping = aliasUtils.getMappingAnnotation(executableElement);
+		RequestMapping classMapping = aliasUtils.getMappingAnnotation(executableElement.getEnclosingElement());
+
+		RequestMapping requestMapping = aliasUtils.mergeClassAndMethodMappings(classMapping, methodMapping);
 
 		if (requestMapping != null) {
 

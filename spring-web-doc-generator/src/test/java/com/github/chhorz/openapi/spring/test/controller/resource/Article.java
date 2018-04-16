@@ -1,5 +1,7 @@
 package com.github.chhorz.openapi.spring.test.controller.resource;
 
+import java.math.BigDecimal;
+
 /**
  * An article that can be ordered.
  *
@@ -11,6 +13,10 @@ public class Article {
 	private Long number;
 	private String name;
 	private Type type;
+	/*
+	 * The current price.
+	 */
+	private BigDecimal price;
 
 	public Long getNumber() {
 		return number;
@@ -34,6 +40,14 @@ public class Article {
 
 	public void setType(final Type type) {
 		this.type = type;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(final BigDecimal price) {
+		this.price = price;
 	}
 
 }

@@ -1,9 +1,12 @@
 package com.github.chhorz.openapi.spring.util;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
-import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Element;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,24 +31,109 @@ public class AliasUtils<T> {
 		}
 	}
 
-	public RequestMapping getMappingAnnotation(final ExecutableElement executableElement) {
+	public RequestMapping getMappingAnnotation(final Element element) {
 		RequestMapping mapping = null;
 
-		if (executableElement.getAnnotation(RequestMapping.class) != null) {
-			mapping = executableElement.getAnnotation(RequestMapping.class);
-		} else if (executableElement.getAnnotation(GetMapping.class) != null) {
-			mapping = convertSpecificMapping(executableElement.getAnnotation(GetMapping.class));
-		} else if (executableElement.getAnnotation(PostMapping.class) != null) {
-			mapping = convertSpecificMapping(executableElement.getAnnotation(PostMapping.class));
-		} else if (executableElement.getAnnotation(PutMapping.class) != null) {
-			mapping = convertSpecificMapping(executableElement.getAnnotation(PutMapping.class));
-		} else if (executableElement.getAnnotation(DeleteMapping.class) != null) {
-			mapping = convertSpecificMapping(executableElement.getAnnotation(DeleteMapping.class));
-		} else if (executableElement.getAnnotation(PatchMapping.class) != null) {
-			mapping = convertSpecificMapping(executableElement.getAnnotation(PatchMapping.class));
+		if (element.getAnnotation(RequestMapping.class) != null) {
+			mapping = element.getAnnotation(RequestMapping.class);
+		} else if (element.getAnnotation(GetMapping.class) != null) {
+			mapping = convertSpecificMapping(element.getAnnotation(GetMapping.class));
+		} else if (element.getAnnotation(PostMapping.class) != null) {
+			mapping = convertSpecificMapping(element.getAnnotation(PostMapping.class));
+		} else if (element.getAnnotation(PutMapping.class) != null) {
+			mapping = convertSpecificMapping(element.getAnnotation(PutMapping.class));
+		} else if (element.getAnnotation(DeleteMapping.class) != null) {
+			mapping = convertSpecificMapping(element.getAnnotation(DeleteMapping.class));
+		} else if (element.getAnnotation(PatchMapping.class) != null) {
+			mapping = convertSpecificMapping(element.getAnnotation(PatchMapping.class));
 		}
 
 		return mapping;
+	}
+
+	public RequestMapping mergeClassAndMethodMappings(final RequestMapping classMapping, final RequestMapping methodMapping) {
+		if (classMapping == null) {
+			return methodMapping;
+		} else if (methodMapping == null) {
+			return classMapping;
+		} else {
+			return new RequestMapping() {
+
+				@Override
+				public Class<? extends Annotation> annotationType() {
+					return methodMapping.annotationType();
+				}
+
+				@Override
+				public String name() {
+					if (classMapping.name().isEmpty()) {
+						return methodMapping.name();
+					} else if (methodMapping.name().isEmpty()) {
+						return classMapping.name();
+					} else {
+						return String.format("%s#%s", classMapping.name(), methodMapping.name());
+					}
+				}
+
+				@Override
+				public String[] value() {
+					String classValue = classMapping.value().length > 0 ? classMapping.value()[0] : "";
+					String methodValue = methodMapping.value().length > 0 ? methodMapping.value()[0] : "";
+					return new String[] { String.format("%s%s", classValue, methodValue) };
+				}
+
+				@Override
+				public String[] path() {
+					String classPath = classMapping.path().length > 0 ? classMapping.path()[0] : "";
+					String methodPath = methodMapping.path().length > 0 ? methodMapping.path()[0] : "";
+					return new String[] { String.format("%s%s", classPath, methodPath) };
+				}
+
+				@Override
+				public RequestMethod[] method() {
+					return methodMapping.method();
+				}
+
+				@Override
+				public String[] params() {
+					return methodMapping.params();
+				}
+
+				@Override
+				public String[] headers() {
+					List<String> headers = new ArrayList<>(Arrays.asList(classMapping.headers()));
+					for (String methodHeaders : methodMapping.headers()) {
+						if (!headers.contains(methodHeaders)) {
+							headers.add(methodHeaders);
+						}
+					}
+					return headers.toArray(new String[headers.size()]);
+				}
+
+				@Override
+				public String[] consumes() {
+					List<String> consumes = new ArrayList<>(Arrays.asList(classMapping.consumes()));
+					for (String methodConsumes : methodMapping.consumes()) {
+						if (!consumes.contains(methodConsumes)) {
+							consumes.add(methodConsumes);
+						}
+					}
+					return consumes.toArray(new String[consumes.size()]);
+				}
+
+				@Override
+				public String[] produces() {
+					List<String> produces = new ArrayList<>(Arrays.asList(classMapping.produces()));
+					for (String methodProduces : methodMapping.produces()) {
+						if (!produces.contains(methodProduces)) {
+							produces.add(methodProduces);
+						}
+					}
+					return produces.toArray(new String[produces.size()]);
+				}
+
+			};
+		}
 	}
 
 	private RequestMapping convertSpecificMapping(final GetMapping getMapping) {

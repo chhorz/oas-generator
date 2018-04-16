@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.github.chhorz.openapi.spring.test.controller.resource.Order;
 import com.github.chhorz.openapi.spring.test.controller.resource.PrimitiveResource;
 
+@RequestMapping(path = "/orders")
 public class OrderController {
 
 	/**
@@ -28,7 +29,7 @@ public class OrderController {
 	 * @param filter
 	 *            the filter that can be applied
 	 */
-	@RequestMapping(path = "/orders/{id:\\d+}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+	@RequestMapping(path = "/{id:\\d+}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
 	public Order getOrder(@PathVariable final Long id,
 			@RequestParam(defaultValue = "valid=true", required = false) final String filter) {
 		return new Order();
@@ -39,7 +40,7 @@ public class OrderController {
 	 * @category order
 	 * @category test
 	 */
-	@RequestMapping(path = "/orders", method = RequestMethod.POST, consumes = { "text/plain", "application/xml" })
+	@RequestMapping(method = RequestMethod.POST, consumes = { "text/plain", "application/xml" })
 	public Set<PrimitiveResource> createOrder(@RequestBody final Order order) {
 		return null;
 	}
@@ -49,7 +50,7 @@ public class OrderController {
 	 * @category order
 	 * @category test
 	 */
-	@GetMapping(path = "/orders", produces = { "application/xml" })
+	@GetMapping(produces = { "application/xml" })
 	public ResponseEntity<List<Order>> getOrders() {
 		return null;
 	}

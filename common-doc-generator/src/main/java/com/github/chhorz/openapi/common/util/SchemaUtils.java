@@ -53,6 +53,14 @@ public class SchemaUtils {
 				schema.setDescription(javaDoc.getDescription());
 			}
 			schemaMap.put(typeMirror, schema);
+		} else if (typeMirror.toString().startsWith("java.math")) {
+			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
+
+			schema.setType("number");
+			schema.setFormat("double");
+			schema.setDescription(javaDoc.getDescription());
+
+			schemaMap.put(typeMirror, schema);
 		} else if (typeMirror.toString().startsWith("java.time")) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 
@@ -65,27 +73,27 @@ public class SchemaUtils {
 			schemaMap.put(typeMirror, schema);
 		} else if (isAssignableFrom(elements, types, typeMirror, List.class)){
 			schema.setType("array");
-			
+
 			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
 			TypeMirror type = utils.removeEnclosingType(typeMirror, List.class);
-			
+
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
 			schema.setItems(ReferenceUtils.createSchemaReference(type));
-			
+
 			schemaMap.putAll(propertySchemaMap);
-			
+
 			schemaMap.put(typeMirror, schema);
 		} else if (isAssignableFrom(elements, types, typeMirror, Set.class)){
 			schema.setType("array");
-			
+
 			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
 			TypeMirror type = utils.removeEnclosingType(typeMirror, Set.class);
-			
+
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
 			schema.setItems(ReferenceUtils.createSchemaReference(type));
-			
+
 			schemaMap.putAll(propertySchemaMap);
-			
+
 			schemaMap.put(typeMirror, schema);
 		} else {
 			Element element = elements.getTypeElement(typeMirror.toString());
@@ -126,7 +134,8 @@ public class SchemaUtils {
 					propertySchemaMap.entrySet()
 							.stream()
 							.filter(entry -> !"object".equals(entry.getValue().getType()) && !"enum".equals(entry.getValue().getType()))
-								.map(propertySchema -> {
+							.map(propertySchema -> {
+								System.out.println("PropertySchema:" + propertySchema);
 									propertySchema.getValue().setDescription(propertyDoc.getDescription());
 									return propertySchema;
 								})
@@ -200,7 +209,7 @@ public class SchemaUtils {
 	private boolean isTypeOf(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
 		return types.isSameType(typeMirror, elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
-	
+
 	private boolean isAssignableFrom(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
 		return types.isAssignable(types.erasure(typeMirror), elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
