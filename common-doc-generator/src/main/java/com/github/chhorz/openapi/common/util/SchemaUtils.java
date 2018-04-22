@@ -19,6 +19,8 @@ import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.openapi.common.domain.Schema;
+import com.github.chhorz.openapi.common.domain.Schema.Format;
+import com.github.chhorz.openapi.common.domain.Schema.Type;
 
 public class SchemaUtils {
 
@@ -36,7 +38,7 @@ public class SchemaUtils {
 		Schema schema = new Schema();
 
 		if (typeMirror.getKind().isPrimitive()) {
-			SimpleEntry<String, String> typeAndFormat = getPrimitiveTypeAndFormat(types, typeMirror);
+			SimpleEntry<Type, Format> typeAndFormat = getPrimitiveTypeAndFormat(types, typeMirror);
 			if (typeAndFormat != null) {
 				schema.setType(typeAndFormat.getKey());
 				schema.setFormat(typeAndFormat.getValue());
@@ -47,7 +49,7 @@ public class SchemaUtils {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
 
-			SimpleEntry<String, String> typeAndFormat = getJavaLangTypeAndFormat(elements, types, typeMirror);
+			SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, typeMirror);
 			if (typeAndFormat != null) {
 				schema.setType(typeAndFormat.getKey());
 				schema.setFormat(typeAndFormat.getValue());
@@ -56,31 +58,31 @@ public class SchemaUtils {
 			schemaMap.put(typeMirror, schema);
 		} else if (typeMirror.toString().startsWith("java.math")) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
-
-			schema.setType("number");
-			schema.setFormat("double");
 			schema.setDescription(javaDoc.getDescription());
+
+			schema.setType(Type.NUMBER);
+			schema.setFormat(Format.DOUBLE);
 
 			schemaMap.put(typeMirror, schema);
 		} else if (typeMirror.toString().startsWith("java.time")) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
+			schema.setDescription(javaDoc.getDescription());
 
-			SimpleEntry<String, String> typeAndFormat = getJavaTimeTypeAndFormat(elements, types, typeMirror);
+			SimpleEntry<Type, Format> typeAndFormat = getJavaTimeTypeAndFormat(elements, types, typeMirror);
 			if (typeAndFormat != null) {
 				schema.setType(typeAndFormat.getKey());
 				schema.setFormat(typeAndFormat.getValue());
-				schema.setDescription(javaDoc.getDescription());
 			}
 			schemaMap.put(typeMirror, schema);
 		} else if (isAssignableFrom(elements, types, typeMirror, List.class)){
-			schema.setType("array");
+			schema.setType(Type.ARRAY);
 
 			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
 			TypeMirror type = utils.removeEnclosingType(typeMirror, List.class);
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
 
 			if (type.toString().startsWith("java.lang")) {
-				SimpleEntry<String, String> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
 					typeSchema.setType(typeAndFormat.getKey());
@@ -95,14 +97,14 @@ public class SchemaUtils {
 
 			schemaMap.put(typeMirror, schema);
 		} else if (isAssignableFrom(elements, types, typeMirror, Set.class)){
-			schema.setType("array");
+			schema.setType(Type.ARRAY);
 
 			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
 			TypeMirror type = utils.removeEnclosingType(typeMirror, Set.class);
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
 
 			if (type.toString().startsWith("java.lang")) {
-				SimpleEntry<String, String> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
 					typeSchema.setType(typeAndFormat.getKey());
@@ -124,18 +126,14 @@ public class SchemaUtils {
 
 			String type;
 			if (element.getKind().equals(ElementKind.ENUM)) {
-				type = "string";
-
-				schema.setType(type);
+				schema.setType(Type.STRING);
 
 				element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
 					schema.addEnumValue(vElement.toString());
 				});
 
 			} else {
-				type = "object";
-
-				schema.setType(type);
+				schema.setType(Type.OBJECT);
 
 
 				element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
@@ -148,7 +146,8 @@ public class SchemaUtils {
 					// the schema is an object or enum -> we add it to the map
 					propertySchemaMap.entrySet()
 							.stream()
-							.filter(entry -> "object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType()))
+							.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
+									|| Type.ENUM.equals(entry.getValue().getType()))
 							.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
 
 					propertySchemaMap.entrySet()
@@ -156,7 +155,8 @@ public class SchemaUtils {
 							.filter(entry -> entry.getKey().equals(vElement.asType()))
 							.peek(entry -> System.out.println("Key: " + entry.getKey().toString()))
 							.forEach(entry -> {
-								if ("object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType())) {
+								if (Type.OBJECT.equals(entry.getValue().getType())
+										|| Type.ENUM.equals(entry.getValue().getType())) {
 									schema.putProperty(vElement.toString(), ReferenceUtils.createSchemaReference(vElement.asType()));
 								} else {
 									Schema propertySchema = entry.getValue();
@@ -172,35 +172,35 @@ public class SchemaUtils {
 		return schemaMap;
 	}
 
-	private SimpleEntry<String, String> getPrimitiveTypeAndFormat(final Types types, final TypeMirror typeMirror) {
+	private SimpleEntry<Type, Format> getPrimitiveTypeAndFormat(final Types types, final TypeMirror typeMirror) {
 		switch (typeMirror.getKind()) {
 			case BOOLEAN:
-				return new SimpleEntry<>("boolean", null);
+				return new SimpleEntry<>(Type.BOOLEAN, null);
 			case BYTE:
-				return new SimpleEntry<>("string", "byte");
+				return new SimpleEntry<>(Type.STRING, Format.BYTE);
 			case CHAR:
-				return new SimpleEntry<>("string", null);
+				return new SimpleEntry<>(Type.STRING, null);
 			case INT:
-				return new SimpleEntry<>("integer", "int32");
+				return new SimpleEntry<>(Type.INTEGER, Format.INT32);
 			case LONG:
-				return new SimpleEntry<>("integer", "int64");
+				return new SimpleEntry<>(Type.INTEGER, Format.INT64);
 			case FLOAT:
-				return new SimpleEntry<>("number", "float");
+				return new SimpleEntry<>(Type.NUMBER, Format.FLOAT);
 			case DOUBLE:
-				return new SimpleEntry<>("number", "double");
+				return new SimpleEntry<>(Type.NUMBER, Format.DOUBLE);
 			case SHORT:
-				return new SimpleEntry<>("integer", "int32");
+				return new SimpleEntry<>(Type.INTEGER, Format.INT32);
 			default:
 				return null;
 		}
 	}
 
-	private SimpleEntry<String, String> getJavaLangTypeAndFormat(final Elements elements, final Types types,
+	private SimpleEntry<Type, Format> getJavaLangTypeAndFormat(final Elements elements, final Types types,
 			final TypeMirror typeMirror) {
-		SimpleEntry<String, String> typeAndFormat = null;
+		SimpleEntry<Type, Format> typeAndFormat = null;
 
 		if (isTypeOf(elements, types, typeMirror, String.class)) {
-			typeAndFormat = new SimpleEntry<>("string", null);
+			typeAndFormat = new SimpleEntry<>(Type.STRING, null);
 		}
 
 		try {
@@ -212,14 +212,14 @@ public class SchemaUtils {
 		return typeAndFormat;
 	}
 
-	private SimpleEntry<String, String> getJavaTimeTypeAndFormat(final Elements elements, final Types types,
+	private SimpleEntry<Type, Format> getJavaTimeTypeAndFormat(final Elements elements, final Types types,
 			final TypeMirror typeMirror) {
-		SimpleEntry<String, String> typeAndFormat = null;
+		SimpleEntry<Type, Format> typeAndFormat = null;
 
 		if (isTypeOf(elements, types, typeMirror, LocalDate.class)) {
-			typeAndFormat = new SimpleEntry<>("string", "date");
+			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE);
 		} else if (isTypeOf(elements, types, typeMirror, LocalDateTime.class)) {
-			typeAndFormat = new SimpleEntry<>("string", "date-time");
+			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE_TIME);
 		}
 
 		return typeAndFormat;

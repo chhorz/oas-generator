@@ -16,6 +16,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.chhorz.openapi.common.domain.Schema;
+import com.github.chhorz.openapi.common.domain.Schema.Format;
+import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 import com.google.testing.compile.CompilationRule;
 
@@ -51,7 +53,7 @@ public class SchemaUtilsTest {
 				.containsKey(longType)
 				.extracting(map -> map.get(longType))
 				.extracting("type", "format")
-				.contains(tuple("integer", "int64"));
+				.contains(tuple(Type.INTEGER, Format.INT64));
 	}
 
 	@Test
@@ -68,7 +70,7 @@ public class SchemaUtilsTest {
 				.containsKey(doubleType)
 				.extracting(map -> map.get(doubleType))
 				.extracting("type", "format")
-				.contains(tuple("number", "double"));
+				.contains(tuple(Type.NUMBER, Format.DOUBLE));
 	}
 
 	@Test
@@ -85,7 +87,7 @@ public class SchemaUtilsTest {
 				.containsKey(test)
 				.extracting(map -> map.get(test))
 				.extracting("type", "format")
-				.contains(tuple("object", null));
+				.contains(tuple(Type.OBJECT, null));
 
 		assertThat(schemaMap.get(test).getProperties())
 				.hasSize(3)
@@ -106,7 +108,7 @@ public class SchemaUtilsTest {
 				.containsKey(test)
 				.extracting(map -> map.get(test))
 				.extracting("type", "format")
-				.contains(tuple("string", null));
+				.contains(tuple(Type.STRING, null));
 
 		assertThat(schemaMap.get(test).getEnumValues())
 				.hasSize(3)

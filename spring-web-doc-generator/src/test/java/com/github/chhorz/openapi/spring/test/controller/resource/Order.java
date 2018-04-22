@@ -1,5 +1,6 @@
 package com.github.chhorz.openapi.spring.test.controller.resource;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -22,6 +23,10 @@ public class Order {
 	 * A list of reference numbers.
 	 */
 	private List<String> referenceNumber;
+	/*
+	 * The date of the order.
+	 */
+	private LocalDateTime orderTs;
 
 	public Long getNumber() {
 		return number;
@@ -45,6 +50,14 @@ public class Order {
 
 	public void setReferenceNumber(final List<String> referenceNumber) {
 		this.referenceNumber = referenceNumber;
+	}
+
+	public LocalDateTime getOrderTs() {
+		return orderTs;
+	}
+
+	public void setOrderTs(final LocalDateTime orderTs) {
+		this.orderTs = orderTs;
 	}
 
 }

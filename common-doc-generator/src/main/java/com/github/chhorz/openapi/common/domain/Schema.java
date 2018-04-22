@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#schema-object
@@ -26,8 +27,8 @@ public class Schema {
 	private Object example;
 	private Boolean deprecated = FALSE;
 
-	private String type;
-	private String format;
+	private Type type;
+	private Format format;
 	private String description;
 	private Map<String, Object> properties;
 
@@ -40,19 +41,62 @@ public class Schema {
 
 	private Object items;
 
-	public String getType() {
+	public enum Type {
+		ARRAY("array"),
+		BOOLEAN("boolean"),
+		ENUM("enum"),
+		INTEGER("integer"),
+		NUMBER("number"),
+		OBJECT("object"),
+		STRING("string");
+
+		private String openApiValue;
+
+		Type(final String openApiValue) {
+			this.openApiValue = openApiValue;
+		}
+
+		@JsonValue
+		public String getOpenApiValue() {
+			return openApiValue;
+		}
+
+	}
+
+	public enum Format {
+		BYTE("bype"),
+		DATE("date"),
+		DATE_TIME("date-time"),
+		DOUBLE("double"),
+		FLOAT("float"),
+		INT32("int32"),
+		INT64("int64");
+
+		private String openApiValue;
+
+		Format(final String openApiValue) {
+			this.openApiValue = openApiValue;
+		}
+
+		@JsonValue
+		public String getOpenApiValue() {
+			return openApiValue;
+		}
+	}
+
+	public Type getType() {
 		return type;
 	}
 
-	public void setType(final String type) {
+	public void setType(final Type type) {
 		this.type = type;
 	}
 
-	public String getFormat() {
+	public Format getFormat() {
 		return format;
 	}
 
-	public void setFormat(final String format) {
+	public void setFormat(final Format format) {
 		this.format = format;
 	}
 
