@@ -38,7 +38,7 @@ public class Schema {
 	@JsonProperty("enum")
 	private List<String> enumValues;
 
-	private Reference items;
+	private Object items;
 
 	public String getType() {
 		return type;
@@ -109,11 +109,15 @@ public class Schema {
 		return enumValues;
 	}
 
-	public Reference getItems() {
+	public Object getItems() {
 		return items;
 	}
 
-	public void setItems(Reference items) {
+	public void setItems(final Reference items) {
+		this.items = items;
+	}
+
+	public void setItems(final Schema items) {
 		this.items = items;
 	}
 

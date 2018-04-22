@@ -45,13 +45,14 @@ public class SchemaUtils {
 			schemaMap.put(typeMirror, schema);
 		} else if (typeMirror.toString().startsWith("java.lang")) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
+			schema.setDescription(javaDoc.getDescription());
 
 			SimpleEntry<String, String> typeAndFormat = getJavaLangTypeAndFormat(elements, types, typeMirror);
 			if (typeAndFormat != null) {
 				schema.setType(typeAndFormat.getKey());
 				schema.setFormat(typeAndFormat.getValue());
-				schema.setDescription(javaDoc.getDescription());
 			}
+
 			schemaMap.put(typeMirror, schema);
 		} else if (typeMirror.toString().startsWith("java.math")) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
@@ -76,9 +77,19 @@ public class SchemaUtils {
 
 			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
 			TypeMirror type = utils.removeEnclosingType(typeMirror, List.class);
-
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
-			schema.setItems(ReferenceUtils.createSchemaReference(type));
+
+			if (type.toString().startsWith("java.lang")) {
+				SimpleEntry<String, String> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				Schema typeSchema = new Schema();
+				if (typeAndFormat != null) {
+					typeSchema.setType(typeAndFormat.getKey());
+					typeSchema.setFormat(typeAndFormat.getValue());
+				}
+				schema.setItems(typeSchema);
+			} else {
+				schema.setItems(ReferenceUtils.createSchemaReference(type));
+			}
 
 			schemaMap.putAll(propertySchemaMap);
 
@@ -88,9 +99,19 @@ public class SchemaUtils {
 
 			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
 			TypeMirror type = utils.removeEnclosingType(typeMirror, Set.class);
-
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
-			schema.setItems(ReferenceUtils.createSchemaReference(type));
+
+			if (type.toString().startsWith("java.lang")) {
+				SimpleEntry<String, String> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				Schema typeSchema = new Schema();
+				if (typeAndFormat != null) {
+					typeSchema.setType(typeAndFormat.getKey());
+					typeSchema.setFormat(typeAndFormat.getValue());
+				}
+				schema.setItems(typeSchema);
+			} else {
+				schema.setItems(ReferenceUtils.createSchemaReference(type));
+			}
 
 			schemaMap.putAll(propertySchemaMap);
 
@@ -130,21 +151,19 @@ public class SchemaUtils {
 							.filter(entry -> "object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType()))
 							.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
 
-					// the schema is an primitive type -> we add it as property
 					propertySchemaMap.entrySet()
 							.stream()
-							.filter(entry -> !"object".equals(entry.getValue().getType()) && !"enum".equals(entry.getValue().getType()))
-							.map(propertySchema -> {
-								System.out.println("PropertySchema:" + propertySchema);
-									propertySchema.getValue().setDescription(propertyDoc.getDescription());
-									return propertySchema;
-								})
-							.forEach(entry -> schema.putProperty(vElement.toString(), entry.getValue()));
-					// otherwise we add it as reference
-					propertySchemaMap.entrySet()
-							.stream()
-							.filter(entry -> "object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType()))
-							.forEach(entry -> schema.putProperty(vElement.toString(), ReferenceUtils.createSchemaReference(vElement.asType())));
+							.filter(entry -> entry.getKey().equals(vElement.asType()))
+							.peek(entry -> System.out.println("Key: " + entry.getKey().toString()))
+							.forEach(entry -> {
+								if ("object".equals(entry.getValue().getType()) || "enum".equals(entry.getValue().getType())) {
+									schema.putProperty(vElement.toString(), ReferenceUtils.createSchemaReference(vElement.asType()));
+								} else {
+									Schema propertySchema = entry.getValue();
+									propertySchema.setDescription(propertyDoc.getDescription());
+									schema.putProperty(vElement.toString(), propertySchema);
+								}
+							});
 				});
 			}
 			schemaMap.put(typeMirror, schema);

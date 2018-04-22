@@ -1,5 +1,7 @@
 package com.github.chhorz.openapi.spring.test.controller.resource;
 
+import java.util.List;
+
 /**
  * The order.
  *
@@ -15,7 +17,11 @@ public class Order {
 	/**
 	 * The ordered article.
 	 */
-	private Article article;
+	private List<Article> article;
+	/*
+	 * A list of reference numbers.
+	 */
+	private List<String> referenceNumber;
 
 	public Long getNumber() {
 		return number;
@@ -25,12 +31,20 @@ public class Order {
 		this.number = number;
 	}
 
-	public Article getArticle() {
+	public List<Article> getArticle() {
 		return article;
 	}
 
-	public void setArticle(final Article article) {
+	public void setArticle(final List<Article> article) {
 		this.article = article;
+	}
+
+	public List<String> getReferenceNumber() {
+		return referenceNumber;
+	}
+
+	public void setReferenceNumber(final List<String> referenceNumber) {
+		this.referenceNumber = referenceNumber;
 	}
 
 }

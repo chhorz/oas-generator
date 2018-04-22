@@ -24,7 +24,16 @@ public class ReferenceUtils {
 	}
 
 	private static String shortName(final TypeMirror typeMirror) {
-		return typeMirror.toString().substring(typeMirror.toString().lastIndexOf('.') + 1);
+		final String type = getType(typeMirror);
+		return type.substring(type.lastIndexOf('.') + 1);
+	}
+
+	private static String getType(final TypeMirror typeMirror) {
+		String typeString = typeMirror.toString();
+		while (typeString.contains("<")) {
+			typeString = typeString.substring(typeString.indexOf('<') + 1, typeString.indexOf('>'));
+		}
+		return typeString.substring(typeString.lastIndexOf('.') + 1);
 	}
 
 }
