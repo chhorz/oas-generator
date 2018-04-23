@@ -77,16 +77,16 @@ public class AliasUtils<T> {
 
 				@Override
 				public String[] value() {
-					String classValue = classMapping.value().length > 0 ? classMapping.value()[0] : "";
-					String methodValue = methodMapping.value().length > 0 ? methodMapping.value()[0] : "";
-					return new String[] { String.format("%s%s", classValue, methodValue) };
+					String[] classPath = getValue(classMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
+					String[] methodPath = getValue(methodMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
+					return new String[] { String.format("%s%s", classPath[0], methodPath[0]) };
 				}
 
 				@Override
 				public String[] path() {
-					String classPath = classMapping.path().length > 0 ? classMapping.path()[0] : "";
-					String methodPath = methodMapping.path().length > 0 ? methodMapping.path()[0] : "";
-					return new String[] { String.format("%s%s", classPath, methodPath) };
+					String[] classPath = getValue(classMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
+					String[] methodPath = getValue(methodMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
+					return new String[] { String.format("%s%s", classPath[0], methodPath[0]) };
 				}
 
 				@Override
@@ -133,6 +133,19 @@ public class AliasUtils<T> {
 				}
 
 			};
+		}
+	}
+
+	public String[] getValue(final RequestMapping mapping, final Function<RequestMapping, String[]> primary,
+			final Function<RequestMapping, String[]> secondary, final String[] defaultValue) {
+		if (primary.apply(mapping).length == 0 && secondary.apply(mapping).length == 0) {
+			return defaultValue;
+		} else {
+			if (!(primary.apply(mapping).length == 0)) {
+				return primary.apply(mapping);
+			} else {
+				return secondary.apply(mapping);
+			}
 		}
 	}
 

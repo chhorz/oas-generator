@@ -53,6 +53,7 @@ import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
+import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.file.FileWriter;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.properties.SpecGeneratorPropertyLoader;
@@ -82,12 +83,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		SpecGeneratorPropertyLoader propertyLoader = new SpecGeneratorPropertyLoader(processingEnv.getOptions());
 		parserProperties = propertyLoader.getParserProperties();
 
-		// create OpenAPI object
-		openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.1");
-		openApi.setInfo(propertyLoader.createInfoFromProperties());
-		openApi.addServer(propertyLoader.createServerFromProperties());
-		openApi.setExternalDocs(propertyLoader.createExternalDocsFromProperties());
+		openApi = initializeFromProperties(propertyLoader);
 
 		components = new Components();
 	}
@@ -125,8 +121,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 		openApi.setComponents(components);
 
-		FileWriter fileWriter = new FileWriter(parserProperties.getOutputDir());
-		fileWriter.writeToFile(openApi);
+		writeFile(parserProperties, openApi);
 
 		return false;
 	}
@@ -235,7 +230,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					System.out.println("SchemaMap: " + schemaMap);
 					Schema schema = schemaMap.get(returnType);
 					System.out.println("ReturnType Schema: " + schema);
-					if ("object".equals(schema.getType()) || "enum".equals(schema.getType())) {
+					if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
 						responses.setDefaultResponse(
 								responseUtils.mapTypeMirrorToResponse(types, returnType, requestMapping.produces()));
 					} else {

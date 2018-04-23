@@ -1,5 +1,6 @@
 package com.github.chhorz.openapi.spring.test.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -29,10 +30,10 @@ public class OrderController {
 	 * @param filter
 	 *            the filter that can be applied
 	 */
-	@RequestMapping(path = "/{id:\\d+}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
-	public Order getOrder(@PathVariable final Long id,
+	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
+	public List<Order> getOrder(@PathVariable final Long id,
 			@RequestParam(defaultValue = "valid=true", required = false) final String filter) {
-		return new Order();
+		return new ArrayList<>();
 	}
 
 	/**
