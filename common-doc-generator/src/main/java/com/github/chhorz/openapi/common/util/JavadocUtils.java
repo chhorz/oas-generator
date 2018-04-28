@@ -19,7 +19,7 @@ import com.github.chhorz.javadoc.tags.VersionTag;
 public class JavadocUtils {
 
 	public static JavaDoc mergeJavaDoc(final JavaDoc classJavadoc, final JavaDoc methodJavadoc) {
-		JavaDoc mergeResult = new JavaDoc(methodJavadoc.getDescription(), new ArrayList<>());
+		JavaDoc mergeResult = new JavaDoc(methodJavadoc.getSummary(), methodJavadoc.getDescription(), new ArrayList<>());
 
 		// TODO add custom defined tags
 

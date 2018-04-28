@@ -11,36 +11,38 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
+import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
-import com.google.testing.compile.CompilationRule;
 
 public class SchemaUtilsTest {
 
-	@Rule
-	public CompilationRule compilationRule = new CompilationRule();
+	@RegisterExtension
+	ProcessingUtilsExtension extension = new ProcessingUtilsExtension();
 
 	private Elements elements;
 	private Types types;
 
 	private SchemaUtils schemaUtils;
 
-	@Before
-	public void setUp() {
-		elements = compilationRule.getElements();
-		types = compilationRule.getTypes();
+	@BeforeEach
+	void setUpEach() {
+		elements = extension.getElements();
+		types = extension.getTypes();
 
 		schemaUtils = new SchemaUtils();
 	}
 
 	@Test
-	public void primitiveTest() {
+	void primitiveTest() {
 		// given
 		PrimitiveType longType = types.getPrimitiveType(TypeKind.LONG);
 
@@ -48,8 +50,7 @@ public class SchemaUtilsTest {
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, longType);
 
 		// then
-		assertThat(schemaMap)
-				.hasSize(1)
+		assertThat(schemaMap).hasSize(1)
 				.containsKey(longType)
 				.extracting(map -> map.get(longType))
 				.extracting("type", "format")
@@ -57,7 +58,7 @@ public class SchemaUtilsTest {
 	}
 
 	@Test
-	public void objectTypeTest() {
+	void objectTypeTest() {
 		// given
 		TypeMirror doubleType = elements.getTypeElement("java.lang.Double").asType();
 
@@ -65,8 +66,7 @@ public class SchemaUtilsTest {
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, doubleType);
 
 		// then
-		assertThat(schemaMap)
-				.hasSize(1)
+		assertThat(schemaMap).hasSize(1)
 				.containsKey(doubleType)
 				.extracting(map -> map.get(doubleType))
 				.extracting("type", "format")
@@ -74,7 +74,7 @@ public class SchemaUtilsTest {
 	}
 
 	@Test
-	public void objectTest() {
+	void objectTest() {
 		// given
 		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.Test").asType();
 
@@ -95,7 +95,7 @@ public class SchemaUtilsTest {
 	}
 
 	@Test
-	public void enumTest() {
+	void enumTest() {
 		// given
 		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.TestEnum").asType();
 

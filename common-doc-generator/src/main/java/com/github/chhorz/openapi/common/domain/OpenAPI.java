@@ -24,7 +24,7 @@ public class OpenAPI {
 	private Map<String, PathItemObject> paths = new HashMap<>();
 	private Components components;
 	private List<SecurityRequirement> security;
-	private Tag tags;
+	private List<Tag> tags;
 	private ExternalDocumentation externalDocs;
 
 	public String getOpenapi() {
@@ -80,11 +80,11 @@ public class OpenAPI {
 		this.security = security;
 	}
 
-	public Tag getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
 
-	public void setTags(final Tag tags) {
+	public void setTags(final List<Tag> tags) {
 		this.tags = tags;
 	}
 

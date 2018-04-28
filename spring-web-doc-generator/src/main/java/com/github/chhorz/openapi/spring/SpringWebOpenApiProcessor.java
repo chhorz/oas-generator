@@ -54,7 +54,6 @@ import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
-import com.github.chhorz.openapi.common.file.FileWriter;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.properties.SpecGeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.util.ReferenceUtils;
@@ -120,6 +119,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		}
 
 		openApi.setComponents(components);
+		// openApi.setTags(tags); // TODO check
 
 		writeFile(parserProperties, openApi);
 
@@ -156,7 +156,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				for (RequestMethod requestMethod : requestMethods) {
 
 					Operation operation = new Operation();
-					operation.setSummary("");
+					operation.setSummary(javaDoc.getSummary());
 					operation.setDescription(javaDoc.getDescription());
 					operation.setOperationId(String.format("%s#%s", executableElement.getEnclosingElement().getSimpleName(),
 							executableElement.getSimpleName()));
