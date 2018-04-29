@@ -6,12 +6,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
@@ -31,6 +31,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 
 	private Elements elements;
 	private Types types;
+	private Messager messager;
 
 	@Override
 	public void beforeEach(final ExtensionContext context) throws Exception {
@@ -38,10 +39,10 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 	}
 
 	/**
-	 * Returns the {@link Elements} instance associated with the current execution of the rule.
+	 * Returns the {@link Elements} instance.
 	 *
 	 * @throws IllegalStateException
-	 *             if this method is invoked outside the execution of the rule.
+	 *             if the value is null.
 	 */
 	public Elements getElements() {
 		if (elements == null) {
@@ -51,16 +52,29 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 	}
 
 	/**
-	 * Returns the {@link Types} instance associated with the current execution of the rule.
+	 * Returns the {@link Types} instance.
 	 *
 	 * @throws IllegalStateException
-	 *             if this method is invoked outside the execution of the rule.
+	 *             if the value is null.
 	 */
 	public Types getTypes() {
 		if (types == null) {
 			throw new IllegalStateException("types is null!");
 		}
 		return types;
+	}
+
+	/**
+	 * Returns the {@link Messager} instance.
+	 *
+	 * @throws IllegalStateException
+	 *             if the value is null.
+	 */
+	public Messager getMessager() {
+		if (messager == null) {
+			throw new IllegalStateException("messager is null!");
+		}
+		return messager;
 	}
 
 	final class EvaluatingProcessor extends AbstractProcessor {
@@ -80,6 +94,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 			super.init(processingEnv);
 			elements = processingEnv.getElementUtils();
 			types = processingEnv.getTypeUtils();
+			messager = processingEnv.getMessager();
 		}
 
 		@Override
@@ -101,8 +116,10 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 		ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();
 		OutputStreamWriter stdout = new OutputStreamWriter(stdoutStream);
 
-		String[] files = new String[] { "src/test/java/com/github/chhorz/openapi/common/test/extension/Dummy.java",
-				"src/test/java/com/github/chhorz/openapi/common/test/util/resources/Test.java" };
+		String[] files = new String[] {
+				"src/test/java/com/github/chhorz/openapi/common/test/extension/Dummy.java",
+				"src/test/java/com/github/chhorz/openapi/common/test/util/resources/Test.java"
+				};
 
 		JavaCompiler.CompilationTask compilationTask = systemJavaCompiler.getTask(stdout, fileManager, collector, null, null,
 				fileManager.getJavaFileObjects(files));

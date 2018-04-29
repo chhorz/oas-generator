@@ -24,13 +24,19 @@ import com.github.chhorz.openapi.common.domain.Schema.Type;
 
 public class SchemaUtils {
 
+	private Elements elements;
+	private Types types;
+
 	private JavaDocParser parser;
 
-	public SchemaUtils() {
+	public SchemaUtils(final Elements elements, final Types types) {
+		this.elements = elements;
+		this.types = types;
+
 		parser = JavaDocParserBuilder.withBasicTags().build();
 	}
 
-	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final Elements elements, final Types types, final TypeMirror typeMirror) {
+	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
 		Map<TypeMirror, Schema> schemaMap = new HashMap<>();
 
 		System.out.println("TypeMirror: " + typeMirror);
@@ -79,7 +85,7 @@ public class SchemaUtils {
 
 			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
 			TypeMirror type = utils.removeEnclosingType(typeMirror, List.class);
-			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
+			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
 			if (type.toString().startsWith("java.lang")) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
@@ -101,7 +107,7 @@ public class SchemaUtils {
 
 			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
 			TypeMirror type = utils.removeEnclosingType(typeMirror, Set.class);
-			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, type);
+			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
 			if (type.toString().startsWith("java.lang")) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
@@ -142,7 +148,7 @@ public class SchemaUtils {
 					JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
 					// lets do some recursion
-					Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(elements, types, vElement.asType());
+					Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(vElement.asType());
 					// the schema is an object or enum -> we add it to the map
 					propertySchemaMap.entrySet()
 							.stream()

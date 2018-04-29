@@ -12,11 +12,10 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
@@ -28,17 +27,17 @@ public class SchemaUtilsTest {
 	@RegisterExtension
 	ProcessingUtilsExtension extension = new ProcessingUtilsExtension();
 
+	private SchemaUtils schemaUtils;
+
 	private Elements elements;
 	private Types types;
-
-	private SchemaUtils schemaUtils;
 
 	@BeforeEach
 	void setUpEach() {
 		elements = extension.getElements();
 		types = extension.getTypes();
 
-		schemaUtils = new SchemaUtils();
+		schemaUtils = new SchemaUtils(elements, types);
 	}
 
 	@Test
@@ -47,7 +46,7 @@ public class SchemaUtilsTest {
 		PrimitiveType longType = types.getPrimitiveType(TypeKind.LONG);
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, longType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(longType);
 
 		// then
 		assertThat(schemaMap).hasSize(1)
@@ -63,7 +62,7 @@ public class SchemaUtilsTest {
 		TypeMirror doubleType = elements.getTypeElement("java.lang.Double").asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, doubleType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(doubleType);
 
 		// then
 		assertThat(schemaMap).hasSize(1)
@@ -77,21 +76,55 @@ public class SchemaUtilsTest {
 	void objectTest() {
 		// given
 		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.Test").asType();
+		TypeMirror other = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.Other").asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, test);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(test);
+
+		System.out.println(schemaMap);
 
 		// then
 		assertThat(schemaMap)
-				.hasSize(1)
-				.containsKey(test)
-				.extracting(map -> map.get(test))
+				.hasSize(2)
+				.containsKeys(test, other);
+
+		assertThat(schemaMap.get(test))
 				.extracting("type", "format")
-				.contains(tuple(Type.OBJECT, null));
+				.containsExactly(Type.OBJECT, null);
+
+		assertThat(schemaMap.get(other))
+				.extracting("type", "format")
+				.containsExactly(Type.OBJECT, null);
 
 		assertThat(schemaMap.get(test).getProperties())
+				.hasSize(5)
+				.containsKeys("l", "b", "f", "list", "set");
+
+		assertThat(schemaMap.get(test).getProperties().values())
+				.extracting("type", "format")
+				.contains(tuple(Type.INTEGER, Format.INT64),
+						tuple(Type.BOOLEAN, null),
+						tuple(Type.NUMBER, Format.FLOAT),
+						tuple(Type.ARRAY, null),
+						tuple(Type.ARRAY, null));
+
+		assertThat(schemaMap.get(test).getProperties().get("list"))
+				.isInstanceOfSatisfying(Schema.class,
+						schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
+
+		assertThat(schemaMap.get(test).getProperties().get("set"))
+				.isInstanceOfSatisfying(Schema.class,
+						schema -> assertThat(schema.getItems()).isInstanceOf(Reference.class));
+
+		assertThat(schemaMap.get(other).getProperties())
 				.hasSize(3)
-				.containsKeys("l", "b", "f");
+				.containsKeys("i", "date", "time");
+
+		assertThat(schemaMap.get(other).getProperties().values())
+				.extracting("type", "format")
+				.contains(tuple(Type.INTEGER, Format.INT32),
+						tuple(Type.STRING, Format.DATE),
+						tuple(Type.STRING, Format.DATE_TIME));
 	}
 
 	@Test
@@ -100,7 +133,7 @@ public class SchemaUtilsTest {
 		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.TestEnum").asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(elements, types, test);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(test);
 
 		// then
 		assertThat(schemaMap)
