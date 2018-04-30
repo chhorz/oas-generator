@@ -46,7 +46,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 	 */
 	public Elements getElements() {
 		if (elements == null) {
-			throw new IllegalStateException("elements is null!");
+			throw new IllegalStateException("'elements' is null!");
 		}
 		return elements;
 	}
@@ -59,7 +59,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 	 */
 	public Types getTypes() {
 		if (types == null) {
-			throw new IllegalStateException("types is null!");
+			throw new IllegalStateException("'types' is null!");
 		}
 		return types;
 	}
@@ -72,7 +72,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 	 */
 	public Messager getMessager() {
 		if (messager == null) {
-			throw new IllegalStateException("messager is null!");
+			throw new IllegalStateException("'messager' is null!");
 		}
 		return messager;
 	}
@@ -118,7 +118,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 
 		String[] files = new String[] {
 				"src/test/java/com/github/chhorz/openapi/common/test/extension/Dummy.java",
-				"src/test/java/com/github/chhorz/openapi/common/test/util/resources/Test.java"
+				"src/test/java/com/github/chhorz/openapi/common/test/util/resources/TestClass.java"
 				};
 
 		JavaCompiler.CompilationTask compilationTask = systemJavaCompiler.getTask(stdout, fileManager, collector, null, null,

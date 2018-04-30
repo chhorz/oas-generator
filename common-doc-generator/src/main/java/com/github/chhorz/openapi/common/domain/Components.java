@@ -1,7 +1,7 @@
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.lang.model.type.TypeMirror;
 
@@ -29,7 +29,7 @@ public class Components {
 
 	public void putAllSchemas(final Map<TypeMirror, Schema> schemas) {
 		if (this.schemas == null) {
-			this.schemas = new HashMap<>();
+			this.schemas = new TreeMap<>();
 		}
 
 		schemas.forEach((typeMirror,schema)-> this.schemas.put(getKey(typeMirror), schema));
@@ -41,7 +41,7 @@ public class Components {
 
 	public void putRequestBody(final String key, final RequestBody requestBody) {
 		if (requestBodies == null) {
-			requestBodies = new HashMap<>();
+			requestBodies = new TreeMap<>();
 		}
 		requestBodies.put(normalizeKey(key), requestBody);
 	}
@@ -52,7 +52,7 @@ public class Components {
 
 	public void putResponse(final String key, final Response response) {
 		if (responses == null) {
-			responses = new HashMap<>();
+			responses = new TreeMap<>();
 		}
 		responses.put(normalizeKey(key), response);
 	}

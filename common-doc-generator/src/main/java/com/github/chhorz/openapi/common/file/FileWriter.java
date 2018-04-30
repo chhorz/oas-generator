@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
+import com.github.chhorz.openapi.common.properties.ParserProperties;
 
 public class FileWriter {
 
@@ -24,8 +25,8 @@ public class FileWriter {
 	private ObjectMapper objectMapper;
 	// private Yaml yaml;
 
-	public FileWriter(final String directory) {
-		Path path = Paths.get(directory, "openapi.json");
+	public FileWriter(final ParserProperties properties) {
+		Path path = Paths.get(properties.getOutputDir(), properties.getOutputFile());
 
 		if (!Files.exists(path)) {
 			try {

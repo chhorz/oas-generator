@@ -88,6 +88,7 @@ public class SpecGeneratorPropertyLoader {
 	public ParserProperties getParserProperties() {
 		ParserProperties parserProperties = new ParserProperties();
 		parserProperties.setOutputDir(properties.getProperty(PARSER_OUTPUT_DIR, PARSER_OUTPUT_DIR_DEFAULT));
+		parserProperties.setOutputFile(properties.getProperty(PARSER_OUTPUT_FILE, PARSER_OUTPUT_FILE_DEFAULT));
 		parserProperties.setResourcePackage(properties.getProperty(PARSER_RESOURCE_PACKAGE, PARSER_RESOURCE_PACKAGE_DEFAULT));
 		return parserProperties;
 	}

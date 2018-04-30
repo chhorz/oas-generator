@@ -3,7 +3,7 @@ package com.github.chhorz.openapi.common.test.util.resources;
 import java.util.List;
 import java.util.Set;
 
-public class Test {
+public class TestClass {
 
 	public Long l;
 	public Boolean b;

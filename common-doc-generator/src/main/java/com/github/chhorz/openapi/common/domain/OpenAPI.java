@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
@@ -21,7 +22,7 @@ public class OpenAPI {
 	private Info info;
 	private List<Server> servers;
 	@Required
-	private Map<String, PathItemObject> paths = new HashMap<>();
+	private Map<String, PathItemObject> paths = new TreeMap<>();
 	private Components components;
 	private List<SecurityRequirement> security;
 	private List<Tag> tags;

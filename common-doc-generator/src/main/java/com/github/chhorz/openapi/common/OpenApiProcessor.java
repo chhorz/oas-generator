@@ -17,7 +17,7 @@ public interface OpenApiProcessor {
 	}
 
 	default void writeFile(final ParserProperties parserProperties, final OpenAPI openApi) {
-		FileWriter writer = new FileWriter(parserProperties.getOutputDir());
+		FileWriter writer = new FileWriter(parserProperties);
 		writer.writeToFile(openApi);
 	}
 

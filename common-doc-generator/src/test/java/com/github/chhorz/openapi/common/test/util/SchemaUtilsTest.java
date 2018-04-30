@@ -20,6 +20,9 @@ import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
+import com.github.chhorz.openapi.common.test.util.resources.Other;
+import com.github.chhorz.openapi.common.test.util.resources.TestClass;
+import com.github.chhorz.openapi.common.test.util.resources.TestEnum;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 
 public class SchemaUtilsTest {
@@ -59,7 +62,7 @@ public class SchemaUtilsTest {
 	@Test
 	void objectTypeTest() {
 		// given
-		TypeMirror doubleType = elements.getTypeElement("java.lang.Double").asType();
+		TypeMirror doubleType = elements.getTypeElement(Double.class.getCanonicalName()).asType();
 
 		// when
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(doubleType);
@@ -75,8 +78,8 @@ public class SchemaUtilsTest {
 	@Test
 	void objectTest() {
 		// given
-		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.Test").asType();
-		TypeMirror other = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.Other").asType();
+		TypeMirror test = elements.getTypeElement(TestClass.class.getCanonicalName()).asType();
+		TypeMirror other = elements.getTypeElement(Other.class.getCanonicalName()).asType();
 
 		// when
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(test);
@@ -130,7 +133,7 @@ public class SchemaUtilsTest {
 	@Test
 	void enumTest() {
 		// given
-		TypeMirror test = elements.getTypeElement("com.github.chhorz.openapi.common.test.util.resources.TestEnum").asType();
+		TypeMirror test = elements.getTypeElement(TestEnum.class.getCanonicalName()).asType();
 
 		// when
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(test);

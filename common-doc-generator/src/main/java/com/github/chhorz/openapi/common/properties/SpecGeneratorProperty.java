@@ -20,6 +20,7 @@ public class SpecGeneratorProperty {
 	public static final String EXTERNAL_DOCS_DESCRIPTION = "external.docs.description";
 
 	public static final String PARSER_OUTPUT_DIR = "parser.output.dir";
+	public static final String PARSER_OUTPUT_FILE = "parser.output.file";
 	public static final String PARSER_RESOURCE_PACKAGE = "parser.resource.package";
 
 	// property default values
@@ -39,6 +40,7 @@ public class SpecGeneratorProperty {
 	public static final String EXTERNAL_DOCS_URL_DEFAULT = null;
 	public static final String EXTERNAL_DOCS_DESCRIPTION_DEFAULT = null;
 
-	public static final String PARSER_OUTPUT_DIR_DEFAULT = "./target";
+	public static final String PARSER_OUTPUT_DIR_DEFAULT = "./target/openapi";
+	public static final String PARSER_OUTPUT_FILE_DEFAULT = "openapi.json";
 	public static final String PARSER_RESOURCE_PACKAGE_DEFAULT = null;
 }
