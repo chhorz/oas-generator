@@ -15,6 +15,8 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
@@ -142,40 +144,60 @@ public class SchemaUtils {
 				schema.setType(Type.OBJECT);
 
 
-				element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
-					System.out.println(vElement.toString());
+				element.getEnclosedElements()
+						.stream()
+						.filter(VariableElement.class::isInstance)
+						.filter(this::isValidAttribute)
+						.forEach(vElement -> {
+							System.out.println(vElement.toString());
 
-					JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
+							JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
-					// lets do some recursion
-					Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(vElement.asType());
-					// the schema is an object or enum -> we add it to the map
-					propertySchemaMap.entrySet()
-							.stream()
-							.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
-									|| Type.ENUM.equals(entry.getValue().getType()))
-							.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
+							// lets do some recursion
+							Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(vElement.asType());
+							// the schema is an object or enum -> we add it to the map
+							propertySchemaMap.entrySet()
+									.stream()
+									.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
+											|| Type.ENUM.equals(entry.getValue().getType()))
+									.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
 
-					propertySchemaMap.entrySet()
-							.stream()
-							.filter(entry -> entry.getKey().equals(vElement.asType()))
-							.peek(entry -> System.out.println("Key: " + entry.getKey().toString()))
-							.forEach(entry -> {
-								if (Type.OBJECT.equals(entry.getValue().getType())
-										|| Type.ENUM.equals(entry.getValue().getType())) {
-									schema.putProperty(vElement.toString(), ReferenceUtils.createSchemaReference(vElement.asType()));
-								} else {
-									Schema propertySchema = entry.getValue();
-									propertySchema.setDescription(propertyDoc.getDescription());
-									schema.putProperty(vElement.toString(), propertySchema);
-								}
-							});
+							propertySchemaMap.entrySet()
+									.stream()
+									.filter(entry -> entry.getKey().equals(vElement.asType()))
+									.peek(entry -> System.out.println("Key: " + entry.getKey().toString()))
+									.forEach(entry -> {
+										final String propertyName = getPropertyName(vElement);
+
+										if (Type.OBJECT.equals(entry.getValue().getType())
+												|| Type.ENUM.equals(entry.getValue().getType())) {
+											schema.putProperty(propertyName,
+													ReferenceUtils.createSchemaReference(vElement.asType()));
+										} else {
+											Schema propertySchema = entry.getValue();
+											propertySchema.setDescription(propertyDoc.getDescription());
+											schema.putProperty(propertyName, propertySchema);
+										}
+									});
 				});
 			}
 			schemaMap.put(typeMirror, schema);
 		}
 
 		return schemaMap;
+	}
+
+	private boolean isValidAttribute(final Element element) {
+		return element.getAnnotation(JsonIgnore.class) == null;
+	}
+
+	private String getPropertyName(final Element element) {
+		JsonProperty jsonProperty = element.getAnnotation(JsonProperty.class);
+		if (jsonProperty != null) {
+			return jsonProperty.value();
+		} else {
+			return element.toString();
+		}
 	}
 
 	private SimpleEntry<Type, Format> getPrimitiveTypeAndFormat(final Types types, final TypeMirror typeMirror) {

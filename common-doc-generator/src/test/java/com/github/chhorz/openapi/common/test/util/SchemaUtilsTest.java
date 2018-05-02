@@ -121,7 +121,7 @@ public class SchemaUtilsTest {
 
 		assertThat(schemaMap.get(other).getProperties())
 				.hasSize(3)
-				.containsKeys("i", "date", "time");
+				.containsKeys("int", "date", "time");
 
 		assertThat(schemaMap.get(other).getProperties().values())
 				.extracting("type", "format")

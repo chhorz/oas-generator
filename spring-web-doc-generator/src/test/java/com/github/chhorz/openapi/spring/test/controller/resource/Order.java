@@ -3,6 +3,8 @@ package com.github.chhorz.openapi.spring.test.controller.resource;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The order.
  *
@@ -27,6 +29,11 @@ public class Order {
 	 * The date of the order.
 	 */
 	private LocalDateTime orderTs;
+	/**
+	 * An internal reference.
+	 */
+	@JsonIgnore
+	private Long internalReference;
 
 	public Long getNumber() {
 		return number;
@@ -58,6 +65,14 @@ public class Order {
 
 	public void setOrderTs(final LocalDateTime orderTs) {
 		this.orderTs = orderTs;
+	}
+
+	public Long getInternalReference() {
+		return internalReference;
+	}
+
+	public void setInternalReference(final Long internalReference) {
+		this.internalReference = internalReference;
 	}
 
 }
