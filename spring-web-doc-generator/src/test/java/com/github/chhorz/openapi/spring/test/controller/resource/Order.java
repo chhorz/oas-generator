@@ -11,12 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author chhorz
  *
  */
-public class Order {
+public class Order extends BaseResource {
 
-	/**
-	 * The order number.
-	 */
-	private Long number;
 	/**
 	 * The ordered article.
 	 */
@@ -34,14 +30,6 @@ public class Order {
 	 */
 	@JsonIgnore
 	private Long internalReference;
-
-	public Long getNumber() {
-		return number;
-	}
-
-	public void setNumber(final Long number) {
-		this.number = number;
-	}
 
 	public List<Article> getArticle() {
 		return article;

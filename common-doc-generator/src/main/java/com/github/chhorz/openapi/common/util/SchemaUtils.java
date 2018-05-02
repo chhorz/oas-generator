@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -31,11 +32,17 @@ public class SchemaUtils {
 
 	private JavaDocParser parser;
 
+	private TypeMirror object;
+	private TypeMirror enumeration;
+
 	public SchemaUtils(final Elements elements, final Types types) {
 		this.elements = elements;
 		this.types = types;
 
 		parser = JavaDocParserBuilder.withBasicTags().build();
+
+		object = elements.getTypeElement(Object.class.getCanonicalName()).asType();
+		enumeration = elements.getTypeElement(Enum.class.getCanonicalName()).asType();
 	}
 
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
@@ -143,43 +150,51 @@ public class SchemaUtils {
 			} else {
 				schema.setType(Type.OBJECT);
 
+				TypeMirror superType = element.asType();
 
-				element.getEnclosedElements()
-						.stream()
-						.filter(VariableElement.class::isInstance)
-						.filter(this::isValidAttribute)
-						.forEach(vElement -> {
-							System.out.println(vElement.toString());
+				while (!types.isSameType(superType, object) && !types.isSameType(types.erasure(superType), enumeration)) {
+					TypeElement typeElement = elements.getTypeElement(types.erasure(superType).toString());
 
-							JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
+					typeElement.getEnclosedElements()
+							.stream()
+							.filter(VariableElement.class::isInstance)
+							.filter(this::isValidAttribute)
+							.forEach(vElement -> {
+								System.out.println(vElement.toString());
 
-							// lets do some recursion
-							Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(vElement.asType());
-							// the schema is an object or enum -> we add it to the map
-							propertySchemaMap.entrySet()
-									.stream()
-									.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
-											|| Type.ENUM.equals(entry.getValue().getType()))
-									.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
+								JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
-							propertySchemaMap.entrySet()
-									.stream()
-									.filter(entry -> entry.getKey().equals(vElement.asType()))
-									.peek(entry -> System.out.println("Key: " + entry.getKey().toString()))
-									.forEach(entry -> {
-										final String propertyName = getPropertyName(vElement);
+								// lets do some recursion
+								Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(vElement.asType());
+								// the schema is an object or enum -> we add it to the map
+								propertySchemaMap.entrySet()
+										.stream()
+										.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
+												|| Type.ENUM.equals(entry.getValue().getType()))
+										.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
 
-										if (Type.OBJECT.equals(entry.getValue().getType())
-												|| Type.ENUM.equals(entry.getValue().getType())) {
-											schema.putProperty(propertyName,
-													ReferenceUtils.createSchemaReference(vElement.asType()));
-										} else {
-											Schema propertySchema = entry.getValue();
-											propertySchema.setDescription(propertyDoc.getDescription());
-											schema.putProperty(propertyName, propertySchema);
-										}
-									});
-				});
+								propertySchemaMap.entrySet()
+										.stream()
+										.filter(entry -> entry.getKey().equals(vElement.asType()))
+										.peek(entry -> System.out.println("Key: " + entry.getKey().toString()))
+										.forEach(entry -> {
+											final String propertyName = getPropertyName(vElement);
+
+											if (Type.OBJECT.equals(entry.getValue().getType())
+													|| Type.ENUM.equals(entry.getValue().getType())) {
+												schema.putProperty(propertyName,
+														ReferenceUtils.createSchemaReference(vElement.asType()));
+											} else {
+												Schema propertySchema = entry.getValue();
+												propertySchema.setDescription(propertyDoc.getDescription());
+												schema.putProperty(propertyName, propertySchema);
+											}
+										});
+							});
+
+					superType = typeElement.getSuperclass();
+				}
+
 			}
 			schemaMap.put(typeMirror, schema);
 		}

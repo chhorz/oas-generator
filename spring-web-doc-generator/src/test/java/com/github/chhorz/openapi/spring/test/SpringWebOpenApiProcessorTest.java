@@ -54,6 +54,7 @@ public class SpringWebOpenApiProcessorTest {
 		// the files to be compiled.
 		String[] files = new String[] {
 				"src/test/java/com/github/chhorz/openapi/spring/test/controller/OrderController.java",
+				"src/test/java/com/github/chhorz/openapi/spring/test/controller/resource/BaseResource.java",
 				"src/test/java/com/github/chhorz/openapi/spring/test/controller/resource/Order.java",
 				"src/test/java/com/github/chhorz/openapi/spring/test/controller/resource/Article.java",
 				"src/test/java/com/github/chhorz/openapi/spring/test/controller/resource/PrimitiveResource.java" };

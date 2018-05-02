@@ -8,23 +8,14 @@ import java.math.BigDecimal;
  * @author chhorz
  *
  */
-public class Article {
+public class Article extends BaseResource {
 
-	private Long number;
 	private String name;
 	private Type type;
 	/*
 	 * The current price.
 	 */
 	private BigDecimal price;
-
-	public Long getNumber() {
-		return number;
-	}
-
-	public void setNumber(final Long number) {
-		this.number = number;
-	}
 
 	public String getName() {
 		return name;

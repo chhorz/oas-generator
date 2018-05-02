@@ -100,8 +100,8 @@ public class SchemaUtilsTest {
 				.containsExactly(Type.OBJECT, null);
 
 		assertThat(schemaMap.get(test).getProperties())
-				.hasSize(5)
-				.containsKeys("l", "b", "f", "list", "set");
+				.hasSize(6)
+				.containsKeys("l", "b", "f", "list", "set", "baseProperty");
 
 		assertThat(schemaMap.get(test).getProperties().values())
 				.extracting("type", "format")
