@@ -108,16 +108,19 @@ public class SchemaUtilsTest {
 				.containsExactly(Type.OBJECT, null);
 
 		assertThat(schemaMap.get(test).getProperties())
-				.hasSize(6)
-				.containsKeys("l", "b", "f", "list", "set", "baseProperty");
+				.hasSize(7)
+				.containsKeys("l", "b", "f", "doubleArray", "list", "set", "baseProperty");
 
 		assertThat(schemaMap.get(test).getProperties().values())
 				.extracting("type", "format")
 				.contains(tuple(Type.INTEGER, Format.INT64),
 						tuple(Type.BOOLEAN, null),
 						tuple(Type.NUMBER, Format.FLOAT),
-						tuple(Type.ARRAY, null),
 						tuple(Type.ARRAY, null));
+
+		assertThat(schemaMap.get(test).getProperties().get("doubleArray"))
+				.isInstanceOfSatisfying(Schema.class,
+						schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
 
 		assertThat(schemaMap.get(test).getProperties().get("list"))
 				.isInstanceOfSatisfying(Schema.class,

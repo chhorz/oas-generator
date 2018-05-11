@@ -229,7 +229,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					Responses responses = new Responses();
 					TypeMirrorUtils typeMirrorUtils = new TypeMirrorUtils(elements, types);
 					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(),
-							ResponseEntity.class);
+							ResponseEntity.class)[0];
 					Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
 					Schema schema = schemaMap.get(returnType);
 					if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {

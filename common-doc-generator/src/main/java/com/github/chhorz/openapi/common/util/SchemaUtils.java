@@ -10,8 +10,11 @@ import java.util.Set;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -31,21 +34,31 @@ public class SchemaUtils {
 	private Types types;
 
 	private LoggingUtils log;
+	private TypeMirrorUtils typeMirrorUtils;
 
 	private JavaDocParser parser;
 
 	private TypeMirror object;
 	private TypeMirror enumeration;
 
+	private PackageElement javaLangPackage;
+	private PackageElement javaMathPackage;
+	private PackageElement javaTimePackage;
+
 	public SchemaUtils(final Elements elements, final Types types, final LoggingUtils log) {
 		this.elements = elements;
 		this.types = types;
 		this.log = log;
 
+		typeMirrorUtils = new TypeMirrorUtils(elements, types);
 		parser = JavaDocParserBuilder.withBasicTags().build();
 
 		object = elements.getTypeElement(Object.class.getCanonicalName()).asType();
 		enumeration = elements.getTypeElement(Enum.class.getCanonicalName()).asType();
+
+		javaLangPackage = elements.getPackageElement("java.lang");
+		javaMathPackage = elements.getPackageElement("java.math");
+		javaTimePackage = elements.getPackageElement("java.time");
 	}
 
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
@@ -63,7 +76,28 @@ public class SchemaUtils {
 				// schema.setDescription(propertyDoc.getDescription());
 			}
 			schemaMap.put(typeMirror, schema);
-		} else if (typeMirror.toString().startsWith("java.lang")) {
+		} else if (typeMirror.getKind().equals(TypeKind.ARRAY)) {
+			schema.setType(Type.ARRAY);
+
+			TypeMirror type = elements.getTypeElement(typeMirror.toString().replaceAll("\\[\\]", "")).asType();
+			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
+
+			if (isTypeInPackage(type, javaLangPackage)) {
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				Schema typeSchema = new Schema();
+				if (typeAndFormat != null) {
+					typeSchema.setType(typeAndFormat.getKey());
+					typeSchema.setFormat(typeAndFormat.getValue());
+				}
+				schema.setItems(typeSchema);
+			} else {
+				schema.setItems(ReferenceUtils.createSchemaReference(type));
+			}
+
+			schemaMap.putAll(propertySchemaMap);
+
+			schemaMap.put(typeMirror, schema);
+		} else if (isTypeInPackage(typeMirror, javaLangPackage)) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
 
@@ -74,7 +108,7 @@ public class SchemaUtils {
 			}
 
 			schemaMap.put(typeMirror, schema);
-		} else if (typeMirror.toString().startsWith("java.math")) {
+		} else if (isTypeInPackage(typeMirror, javaMathPackage)) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
 
@@ -82,7 +116,7 @@ public class SchemaUtils {
 			schema.setFormat(Format.DOUBLE);
 
 			schemaMap.put(typeMirror, schema);
-		} else if (typeMirror.toString().startsWith("java.time")) {
+		} else if (isTypeInPackage(typeMirror, javaTimePackage)) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
 
@@ -95,11 +129,10 @@ public class SchemaUtils {
 		} else if (isAssignableFrom(elements, types, typeMirror, List.class)){
 			schema.setType(Type.ARRAY);
 
-			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
-			TypeMirror type = utils.removeEnclosingType(typeMirror, List.class);
+			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, List.class)[0];
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
-			if (type.toString().startsWith("java.lang")) {
+			if (isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
@@ -117,11 +150,10 @@ public class SchemaUtils {
 		} else if (isAssignableFrom(elements, types, typeMirror, Set.class)){
 			schema.setType(Type.ARRAY);
 
-			TypeMirrorUtils utils = new TypeMirrorUtils(elements, types);
-			TypeMirror type = utils.removeEnclosingType(typeMirror, Set.class);
+			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, Set.class)[0];
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
-			if (type.toString().startsWith("java.lang")) {
+			if (isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
@@ -136,6 +168,8 @@ public class SchemaUtils {
 			schemaMap.putAll(propertySchemaMap);
 
 			schemaMap.put(typeMirror, schema);
+		} else if (isAssignableFrom(elements, types, typeMirror, Map.class)) {
+			// TODO implement
 		} else {
 			Element element = elements.getTypeElement(typeMirror.toString());
 
@@ -205,7 +239,21 @@ public class SchemaUtils {
 	}
 
 	private boolean isValidAttribute(final Element element) {
-		return element.getAnnotation(JsonIgnore.class) == null;
+		boolean valid = true;
+
+		if (element.getAnnotation(JsonIgnore.class) != null) {
+			valid = false;
+		} else if (element.getModifiers().contains(Modifier.STATIC) && element.getModifiers().contains(Modifier.PRIVATE)) {
+			valid = false;
+		}
+
+		// TODO check for getter visibility
+
+		return valid;
+	}
+
+	private boolean isTypeInPackage(final TypeMirror typeMirror, final PackageElement packageElement) {
+		return types.asElement(typeMirror).getEnclosingElement().equals(packageElement);
 	}
 
 	private String getPropertyName(final Element element) {

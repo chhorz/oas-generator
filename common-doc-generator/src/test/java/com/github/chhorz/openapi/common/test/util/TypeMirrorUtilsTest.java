@@ -42,10 +42,12 @@ public class TypeMirrorUtilsTest {
 		TypeMirror typedList = types.getDeclaredType(elements.getTypeElement(List.class.getCanonicalName()), doubleType);
 
 		// when
-		TypeMirror type = typeMirrorUtils.removeEnclosingType(typedList, List.class);
+		TypeMirror[] typeArray = typeMirrorUtils.removeEnclosingType(typedList, List.class);
 
 		// then
-		assertThat(type).isEqualTo(doubleType);
+		assertThat(typeArray)
+			.hasSize(1)
+			.contains(doubleType);
 	}
 
 	@Test
@@ -55,9 +57,11 @@ public class TypeMirrorUtilsTest {
 		TypeMirror typedList = types.getDeclaredType(elements.getTypeElement(Set.class.getCanonicalName()), testType);
 
 		// when
-		TypeMirror type = typeMirrorUtils.removeEnclosingType(typedList, Set.class);
+		TypeMirror[] typeArray = typeMirrorUtils.removeEnclosingType(typedList, Set.class);
 
 		// then
-		assertThat(type).isEqualTo(testType);
+		assertThat(typeArray)
+			.hasSize(1)
+			.contains(testType);
 	}
 }

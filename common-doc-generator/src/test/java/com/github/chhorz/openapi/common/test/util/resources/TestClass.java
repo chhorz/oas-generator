@@ -9,6 +9,7 @@ public class TestClass extends BaseClass {
 	public Boolean b;
 	public Float f;
 
+	public Double[] doubleArray;
 	public List<String> list;
 	public Set<Other> set;
 
