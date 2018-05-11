@@ -44,7 +44,6 @@ public class SpecGeneratorPropertyLoader {
 			// e.printStackTrace();
 			System.out.println("Using default properties");
 		}
-		System.out.println("Properties: " + properties);
 	}
 
 	public Info createInfoFromProperties() {
@@ -87,6 +86,7 @@ public class SpecGeneratorPropertyLoader {
 
 	public ParserProperties getParserProperties() {
 		ParserProperties parserProperties = new ParserProperties();
+		parserProperties.setLogLevel(properties.getProperty(PARSER_LOG_LEVEL, PARSER_LOG_LEVEL_DEFAULT));
 		parserProperties.setOutputDir(properties.getProperty(PARSER_OUTPUT_DIR, PARSER_OUTPUT_DIR_DEFAULT));
 		parserProperties.setOutputFile(properties.getProperty(PARSER_OUTPUT_FILE, PARSER_OUTPUT_FILE_DEFAULT));
 		parserProperties.setResourcePackage(properties.getProperty(PARSER_RESOURCE_PACKAGE, PARSER_RESOURCE_PACKAGE_DEFAULT));

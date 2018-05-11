@@ -19,10 +19,12 @@ import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
+import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
 import com.github.chhorz.openapi.common.test.util.resources.Other;
 import com.github.chhorz.openapi.common.test.util.resources.TestClass;
 import com.github.chhorz.openapi.common.test.util.resources.TestEnum;
+import com.github.chhorz.openapi.common.util.LoggingUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 
 public class SchemaUtilsTest {
@@ -34,13 +36,19 @@ public class SchemaUtilsTest {
 
 	private Elements elements;
 	private Types types;
+	private LoggingUtils log;
 
 	@BeforeEach
 	void setUpEach() {
+		ParserProperties parserProperties = new ParserProperties();
+		parserProperties.setLogLevel(LoggingUtils.DEBUG);
+
+		log = new LoggingUtils(parserProperties);
+
 		elements = extension.getElements();
 		types = extension.getTypes();
 
-		schemaUtils = new SchemaUtils(elements, types);
+		schemaUtils = new SchemaUtils(elements, types, log);
 	}
 
 	@Test

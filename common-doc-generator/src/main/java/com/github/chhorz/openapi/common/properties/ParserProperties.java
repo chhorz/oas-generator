@@ -2,9 +2,19 @@ package com.github.chhorz.openapi.common.properties;
 
 public class ParserProperties {
 
+	private String logLevel;
+
 	private String outputDir;
 	private String outputFile;
 	private String resourcePackage;
+
+	public String getLogLevel() {
+		return logLevel;
+	}
+
+	public void setLogLevel(final String logLevel) {
+		this.logLevel = logLevel;
+	}
 
 	public String getOutputDir() {
 		return outputDir;

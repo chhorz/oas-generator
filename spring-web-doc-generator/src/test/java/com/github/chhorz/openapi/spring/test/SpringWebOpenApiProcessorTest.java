@@ -79,7 +79,7 @@ public class SpringWebOpenApiProcessorTest {
 
 			assertThat(result).isTrue().as("Files should have no compilation errors");
 		} finally {
-			System.out.println("Finally");
+			// no-op
 		}
 	}
 

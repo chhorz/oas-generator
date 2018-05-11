@@ -30,14 +30,17 @@ public class SchemaUtils {
 	private Elements elements;
 	private Types types;
 
+	private LoggingUtils log;
+
 	private JavaDocParser parser;
 
 	private TypeMirror object;
 	private TypeMirror enumeration;
 
-	public SchemaUtils(final Elements elements, final Types types) {
+	public SchemaUtils(final Elements elements, final Types types, final LoggingUtils log) {
 		this.elements = elements;
 		this.types = types;
+		this.log = log;
 
 		parser = JavaDocParserBuilder.withBasicTags().build();
 
@@ -48,7 +51,7 @@ public class SchemaUtils {
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
 		Map<TypeMirror, Schema> schemaMap = new HashMap<>();
 
-		System.out.println("TypeMirror: " + typeMirror);
+		log.info(String.format("Parsing %s", typeMirror.toString()));
 
 		Schema schema = new Schema();
 
@@ -139,7 +142,6 @@ public class SchemaUtils {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
 			schema.setDescription(javaDoc.getDescription());
 
-			String type;
 			if (element.getKind().equals(ElementKind.ENUM)) {
 				schema.setType(Type.STRING);
 
@@ -160,7 +162,8 @@ public class SchemaUtils {
 							.filter(VariableElement.class::isInstance)
 							.filter(this::isValidAttribute)
 							.forEach(vElement -> {
-								System.out.println(vElement.toString());
+
+								log.debug(String.format("Parsing attribute %s", vElement.toString()));
 
 								JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
@@ -176,7 +179,6 @@ public class SchemaUtils {
 								propertySchemaMap.entrySet()
 										.stream()
 										.filter(entry -> entry.getKey().equals(vElement.asType()))
-										.peek(entry -> System.out.println("Key: " + entry.getKey().toString()))
 										.forEach(entry -> {
 											final String propertyName = getPropertyName(vElement);
 
