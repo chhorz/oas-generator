@@ -1,6 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>com.github.chhorz</groupId>
 	<artifactId>openapi-doc-generator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -11,33 +13,63 @@
 		<module>spring-web-doc-generator</module>
 	</modules>
 
+	<properties>
+		<!-- Dependency versions -->
+		<jackson-databind.version>2.9.5</jackson-databind.version>
+		<javadoc-parser.version>0.0.1-SNAPSHOT</javadoc-parser.version>
+		<snakeyaml.version>1.21</snakeyaml.version>
+
+		<spring-web.version>4.3.12.RELEASE</spring-web.version>
+
+		<!-- Test dependency versions -->
+		<assertj-core.version>3.9.1</assertj-core.version>
+		<junit-jupiter.verison>5.2.0</junit-jupiter.verison>
+		<junit-platform-surefire-provider.version>1.2.0</junit-platform-surefire-provider.version>
+
+		<!-- Plugin versions -->
+		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
+	</properties>
+
 	<dependencyManagement>
+		<!-- common-doc-generator -->
 		<dependencies>
-			<dependency>
-				<groupId>com.github.chhorz</groupId>
-				<artifactId>javadoc-parser</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>2.9.5</version>
+				<version>${jackson-databind.version}</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.yaml</groupId> -->
-<!-- 				<artifactId>snakeyaml</artifactId> -->
-<!-- 				<version>1.21</version> -->
-<!-- 			</dependency> -->
+			<dependency>
+				<groupId>com.github.chhorz</groupId>
+				<artifactId>javadoc-parser</artifactId>
+				<version>${javadoc-parser.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>${snakeyaml.version}</version>
+				<optional>true</optional>
+			</dependency>
+			
+			<!-- spring-web-doc-generator -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring-web.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<!-- Test dependencies -->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-api</artifactId>
-				<version>5.2.0</version>
+				<version>${junit-jupiter.verison}</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.assertj</groupId>
 				<artifactId>assertj-core</artifactId>
-				<version>3.9.1</version>
+				<version>${assertj-core.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -49,7 +81,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.7.0</version>
+					<version>${maven-compiler-plugin.version}</version>
 					<configuration>
 						<source>1.8</source>
 						<target>1.8</target>
@@ -59,17 +91,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.21.0</version>
+					<version>${maven-surefire-plugin.version}</version>
 					<dependencies>
 						<dependency>
 							<groupId>org.junit.platform</groupId>
 							<artifactId>junit-platform-surefire-provider</artifactId>
-							<version>1.2.0</version>
+							<version>${junit-platform-surefire-provider.version}</version>
 						</dependency>
 						<dependency>
 							<groupId>org.junit.jupiter</groupId>
 							<artifactId>junit-jupiter-engine</artifactId>
-							<version>5.2.0</version>
+							<version>${junit-jupiter.verison}</version>
 						</dependency>
 					</dependencies>
 				</plugin>

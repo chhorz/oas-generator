@@ -54,8 +54,8 @@ import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
+import com.github.chhorz.openapi.common.properties.DocGeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
-import com.github.chhorz.openapi.common.properties.SpecGeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import com.github.chhorz.openapi.common.util.ReferenceUtils;
 import com.github.chhorz.openapi.common.util.ResponseUtils;
@@ -82,7 +82,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		types = processingEnv.getTypeUtils();
 
 		// initialize property loader
-		SpecGeneratorPropertyLoader propertyLoader = new SpecGeneratorPropertyLoader(processingEnv.getOptions());
+		DocGeneratorPropertyLoader propertyLoader = new DocGeneratorPropertyLoader(processingEnv.getOptions());
 		parserProperties = propertyLoader.getParserProperties();
 
 		log = new LoggingUtils(parserProperties);
@@ -106,7 +106,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 	@Override
 	public Set<String> getSupportedOptions() {
-		return Stream.of("propertiesPath").collect(toSet());
+		return getDocGeneratorOptions();
 	}
 
 	@Override

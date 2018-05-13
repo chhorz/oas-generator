@@ -1,12 +1,21 @@
 package com.github.chhorz.openapi.common.properties;
 
+import java.util.List;
+
 public class ParserProperties {
 
 	private String logLevel;
 
 	private String outputDir;
 	private String outputFile;
-	private String resourcePackage;
+	private List<String> resourcePackages;
+
+	public ParserProperties() {
+		logLevel = GeneratorPropertiesDefaults.PARSER_LOG_LEVEL;
+		outputDir = GeneratorPropertiesDefaults.PARSER_OUTPUT_DIR;
+		outputFile = GeneratorPropertiesDefaults.PARSER_OUTPUT_FILE;
+		resourcePackages = GeneratorPropertiesDefaults.PARSER_RESOURCE_PACKAGE;
+	}
 
 	public String getLogLevel() {
 		return logLevel;
@@ -32,12 +41,12 @@ public class ParserProperties {
 		this.outputFile = outputFile;
 	}
 
-	public String getResourcePackage() {
-		return resourcePackage;
+	public List<String> getResourcePackages() {
+		return resourcePackages;
 	}
 
-	public void setResourcePackage(final String resourcePackage) {
-		this.resourcePackage = resourcePackage;
+	public void setResourcePackages(final List<String> resourcePackages) {
+		this.resourcePackages = resourcePackages;
 	}
 
 }

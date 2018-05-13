@@ -1,7 +1,5 @@
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,13 +46,8 @@ public class OpenAPI {
 		return servers;
 	}
 
-	public void addServer(final Server server) {
-		if (servers == null) {
-			servers = new ArrayList<>();
-		}
-		if (server != null) {
-			servers.add(server);
-		}
+	public void setServers(final List<Server> servers) {
+		this.servers = servers;
 	}
 
 	public Map<String, PathItemObject> getPaths() {

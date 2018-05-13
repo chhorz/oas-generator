@@ -1,0 +1,27 @@
+# Documentation information that will be included in openapi.json
+info:
+  title: MyService
+  version: 1.2.3-SNAPSHOT
+
+contact:
+  name: John Doe
+  url: http://www.google.com
+  email: john@doe.com
+
+license:
+  name: Apache License, Version 2.0
+  url: http://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: dev.server.lan
+    description: Internal DEV-Stage
+
+externalDocs:
+  url: http://www.wikipedia.org
+  description: Lorem ipsum ...
+
+# Parser specific configuration
+parser:
+  logLevel: DEBUG
+  outputDir: ./target/openapi
+  outputFile: openapi.json
