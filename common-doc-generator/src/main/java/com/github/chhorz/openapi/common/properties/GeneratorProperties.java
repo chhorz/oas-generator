@@ -1,6 +1,9 @@
 package com.github.chhorz.openapi.common.properties;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GeneratorProperties {
 
@@ -9,14 +12,16 @@ public class GeneratorProperties {
 	private LicenseProperties license;
 	private List<ServerProperties> servers;
 	private ExternalDocsProperties externalDocs;
+	private Map<String, SecuritySchemeProperties> securitySchemes;
 	private ParserProperties parser;
 
 	public GeneratorProperties() {
 		info = new InfoProperties();
 		contact = new ContactProperties();
 		license = new LicenseProperties();
-		// servers =
+		servers = new ArrayList<>();
 		externalDocs = new ExternalDocsProperties();
+		securitySchemes = new HashMap<>();
 		parser = new ParserProperties();
 	}
 
@@ -58,6 +63,14 @@ public class GeneratorProperties {
 
 	public void setExternalDocs(final ExternalDocsProperties externalDocs) {
 		this.externalDocs = externalDocs;
+	}
+
+	public Map<String, SecuritySchemeProperties> getSecuritySchemes() {
+		return securitySchemes;
+	}
+
+	public void setSecuritySchemes(final Map<String, SecuritySchemeProperties> securitySchemes) {
+		this.securitySchemes = securitySchemes;
 	}
 
 	public ParserProperties getParser() {

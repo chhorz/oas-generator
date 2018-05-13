@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,6 +52,7 @@ public class OrderController {
 	 * @category order
 	 * @category test
 	 */
+	@PreAuthorize("read_role")
 	@GetMapping(produces = { "application/xml" })
 	public ResponseEntity<List<Order>> getOrders() {
 		return null;

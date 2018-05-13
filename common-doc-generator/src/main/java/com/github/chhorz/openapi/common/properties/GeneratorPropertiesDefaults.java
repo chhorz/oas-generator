@@ -24,6 +24,10 @@ public class GeneratorPropertiesDefaults {
 	public static final URL EXTERNAL_DOCS_URL = null;
 	public static final String EXTERNAL_DOCS_DESCRIPTION = null;
 
+	public static final String SECURITY_SCHEME_TYPE = null;
+	public static final String SECURITY_SCHEME_DESCRIPTION = null;
+	public static final String SECURITY_SCHEME_SCHEME = null;
+
 	public static final String PARSER_LOG_LEVEL = LoggingUtils.INFO;
 	public static final String PARSER_OUTPUT_DIR = "./target/openapi";
 	public static final String PARSER_OUTPUT_FILE = "openapi.json";

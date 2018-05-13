@@ -14,4 +14,20 @@ public class SecuritySchemeHttp extends SecurityScheme {
 	private String scheme;
 	private String bearerFormat;
 
+	public String getScheme() {
+		return scheme;
+	}
+
+	public void setScheme(final String scheme) {
+		this.scheme = scheme;
+	}
+
+	public String getBearerFormat() {
+		return bearerFormat;
+	}
+
+	public void setBearerFormat(final String bearerFormat) {
+		this.bearerFormat = bearerFormat;
+	}
+
 }

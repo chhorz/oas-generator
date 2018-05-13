@@ -1,7 +1,6 @@
 package com.github.chhorz.openapi.common.domain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +33,10 @@ public class Operation {
 	// @JsonProperty("callbacks")
 	// private Map<String, Reference> callbackReferences;
 	private Boolean deprecated = Boolean.FALSE;
-	private List<SecurityRequirement> security;
+	/**
+	 * @see {@link SecurityRequirement}
+	 */
+	private Map<String, List<String>> security;
 	private List<Server> servers;
 
 	public List<String> getTags() {
@@ -112,6 +114,14 @@ public class Operation {
 
 	public void setDeprecated(final Boolean deprecated) {
 		this.deprecated = deprecated;
+	}
+
+	public Map<String, List<String>> getSecurity() {
+		return security;
+	}
+
+	public void setSecurity(final Map<String, List<String>> security) {
+		this.security = security;
 	}
 
 }

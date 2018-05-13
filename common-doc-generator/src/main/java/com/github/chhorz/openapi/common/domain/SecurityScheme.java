@@ -14,11 +14,27 @@ public class SecurityScheme {
 	private Type type;
 	private String description;
 
-	enum Type {
+	public enum Type {
 		apiKey,
 		http,
 		oauth2,
 		openIdConnect
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(final Type type) {
+		this.type = type;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
 	}
 
 }

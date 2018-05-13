@@ -13,12 +13,18 @@ license:
   url: http://www.apache.org/licenses/LICENSE-2.0
 
 servers:
-  - url: dev.server.lan
-    description: Internal DEV-Stage
+- url: dev.server.lan
+  description: Internal DEV-Stage
 
 externalDocs:
   url: http://www.wikipedia.org
   description: Lorem ipsum ...
+
+securitySchemes:
+  read_role:
+    description: Basic LDAP read role.
+    type: http
+    scheme: basic
 
 # Parser specific configuration
 parser:

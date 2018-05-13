@@ -32,7 +32,7 @@ public class Components {
 			this.schemas = new TreeMap<>();
 		}
 
-		schemas.forEach((typeMirror,schema)-> this.schemas.put(getKey(typeMirror), schema));
+		schemas.forEach((typeMirror, schema) -> this.schemas.put(getKey(typeMirror), schema));
 	}
 
 	public Map<String, Schema> getSchemas() {
@@ -59,6 +59,14 @@ public class Components {
 
 	public Map<String, Response> getResponses() {
 		return responses;
+	}
+
+	public Map<String, SecurityScheme> getSecuritySchemes() {
+		return securitySchemes;
+	}
+
+	public void setSecuritySchemes(final Map<String, SecurityScheme> securitySchemes) {
+		this.securitySchemes = securitySchemes;
 	}
 
 	private String normalizeKey(final String key) {

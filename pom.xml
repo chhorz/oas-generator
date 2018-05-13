@@ -20,6 +20,7 @@
 		<snakeyaml.version>1.21</snakeyaml.version>
 
 		<spring-web.version>4.3.12.RELEASE</spring-web.version>
+		<spring-security-core.version>4.2.6.RELEASE</spring-security-core.version>
 
 		<!-- Test dependency versions -->
 		<assertj-core.version>3.9.1</assertj-core.version>
@@ -56,6 +57,12 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-web</artifactId>
 				<version>${spring-web.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-core</artifactId>
+				<version>${spring-security-core.version}</version>
 				<scope>provided</scope>
 			</dependency>
 

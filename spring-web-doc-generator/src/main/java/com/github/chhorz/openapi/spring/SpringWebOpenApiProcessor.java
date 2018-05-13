@@ -3,6 +3,8 @@ package com.github.chhorz.openapi.spring;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -24,6 +27,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -44,7 +48,6 @@ import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.openapi.common.OpenApiProcessor;
-import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.domain.Operation;
@@ -54,7 +57,8 @@ import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
-import com.github.chhorz.openapi.common.properties.DocGeneratorPropertyLoader;
+import com.github.chhorz.openapi.common.domain.SecurityScheme;
+import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import com.github.chhorz.openapi.common.util.ReferenceUtils;
@@ -74,7 +78,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	private LoggingUtils log;
 
 	private OpenAPI openApi;
-	private Components components;
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment processingEnv) {
@@ -82,14 +85,12 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		types = processingEnv.getTypeUtils();
 
 		// initialize property loader
-		DocGeneratorPropertyLoader propertyLoader = new DocGeneratorPropertyLoader(processingEnv.getOptions());
+		GeneratorPropertyLoader propertyLoader = new GeneratorPropertyLoader(processingEnv.getOptions());
 		parserProperties = propertyLoader.getParserProperties();
 
 		log = new LoggingUtils(parserProperties);
 
 		openApi = initializeFromProperties(propertyLoader);
-
-		components = new Components();
 	}
 
 	@Override
@@ -123,7 +124,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 			});
 		}
 
-		openApi.setComponents(components);
 		// openApi.setTags(tags); // TODO check
 
 		writeFile(parserProperties, openApi);
@@ -218,8 +218,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 							r.putContent(produces, mediaType);
 						}
 
-						components.putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
-						components.putRequestBody(requestBody.asType().toString(), r);
+						openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
+						openApi.getComponents().putRequestBody(requestBody.asType().toString(), r);
 
 						operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
 					}
@@ -240,12 +240,16 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						schemaMap.remove(returnType);
 					}
 
-					components.putAllSchemas(schemaMap);
+					openApi.getComponents().putAllSchemas(schemaMap);
 
 					operation.setResponses(responses);
 
 					javaDoc.getTags(CategoryTag.class).stream().map(CategoryTag::getCategoryName).forEach(
 							tag -> operation.addTag(tag));
+
+					Map<String, List<String>> securityInformation = getSecurityInformation(executableElement,
+							openApi.getComponents().getSecuritySchemes());
+					operation.setSecurity(securityInformation);
 
 					PathItemObject pathItemObject = openApi.getPaths().getOrDefault(cleanedPath, new PathItemObject());
 					switch (requestMethod) {
@@ -282,6 +286,32 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				}
 			}
 		}
+	}
+
+	private Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
+		Map<String, List<String>> securityInformation = new HashMap<>();
+
+		log.info("ExecElem: %s", executableElement);
+		log.info("Map: %s", map);
+
+		for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
+			log.info("Annotation: %s", annotation);
+			if (annotation.getAnnotationType().toString().equalsIgnoreCase(
+					"org.springframework.security.access.prepost.PreAuthorize")) {
+				log.info("PreAuthorize");
+				PreAuthorize preAuthorized = executableElement.getAnnotation(PreAuthorize.class);
+				map.entrySet().stream()
+						.filter(entry -> preAuthorized.value().toLowerCase().contains(entry.getKey().toLowerCase()))
+						.forEach(entry -> {
+							log.info("Entry: %s", entry);
+							securityInformation.put(entry.getKey(), new ArrayList<>());
+						});
+			}
+		}
+
+		log.info("SecInfo: %s", securityInformation);
+
+		return securityInformation;
 	}
 
 	private Parameter mapPathVariable(final String path, final VariableElement variableElement,
