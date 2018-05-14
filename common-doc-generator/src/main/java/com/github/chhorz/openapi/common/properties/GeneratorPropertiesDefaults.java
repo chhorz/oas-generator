@@ -9,10 +9,12 @@ import com.github.chhorz.openapi.common.util.LoggingUtils;
 public class GeneratorPropertiesDefaults {
 
 	public static final String INFO_TITLE = "Title";
+	public static final String INFO_DESCRIPTION = null;
+	public static final URL INFO_TERMS_OF_SERVICE = null;
 	public static final String INFO_VERSION = "Version";
 
-	public static final String CONTACT_NAME = "Author";
-	public static final String CONTACT_EMAIL = "E-Mail";
+	public static final String CONTACT_NAME = null;
+	public static final String CONTACT_EMAIL = null;
 	public static final URL CONTACT_URL = null;
 
 	public static final String LICENSE_NAME = null;

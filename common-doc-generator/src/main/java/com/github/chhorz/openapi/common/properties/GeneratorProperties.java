@@ -8,8 +8,6 @@ import java.util.Map;
 public class GeneratorProperties {
 
 	private InfoProperties info;
-	private ContactProperties contact;
-	private LicenseProperties license;
 	private List<ServerProperties> servers;
 	private ExternalDocsProperties externalDocs;
 	private Map<String, SecuritySchemeProperties> securitySchemes;
@@ -17,8 +15,6 @@ public class GeneratorProperties {
 
 	public GeneratorProperties() {
 		info = new InfoProperties();
-		contact = new ContactProperties();
-		license = new LicenseProperties();
 		servers = new ArrayList<>();
 		externalDocs = new ExternalDocsProperties();
 		securitySchemes = new HashMap<>();
@@ -31,22 +27,6 @@ public class GeneratorProperties {
 
 	public void setInfo(final InfoProperties info) {
 		this.info = info;
-	}
-
-	public ContactProperties getContact() {
-		return contact;
-	}
-
-	public void setContact(final ContactProperties contact) {
-		this.contact = contact;
-	}
-
-	public LicenseProperties getLicense() {
-		return license;
-	}
-
-	public void setLicense(final LicenseProperties license) {
-		this.license = license;
 	}
 
 	public List<ServerProperties> getServers() {

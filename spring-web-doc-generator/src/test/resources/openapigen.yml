@@ -2,15 +2,13 @@
 info:
   title: MyService
   version: 1.2.3-SNAPSHOT
-
-contact:
-  name: John Doe
-  url: http://www.google.com
-  email: john@doe.com
-
-license:
-  name: Apache License, Version 2.0
-  url: http://www.apache.org/licenses/LICENSE-2.0
+  contact:
+    name: John Doe
+    url: http://www.google.com
+    email: john@doe.com
+  license:
+    name: Apache License, Version 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
 
 servers:
 - url: dev.server.lan

@@ -3,6 +3,7 @@ package com.github.chhorz.openapi.common.properties;
 import static java.util.stream.Collectors.toList;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,42 +57,53 @@ public class GeneratorPropertyLoader {
 	}
 
 	public Info createInfoFromProperties() {
+		InfoProperties infoProperties = properties.getInfo();
+
 		Info info = new Info();
-		info.setTitle(properties.getInfo().getTitle());
-		info.setVersion(properties.getInfo().getVersion());
-		info.setContact(createContactFromProperties());
-		info.setLicense(createLicenseFromProperties());
+		info.setTitle(infoProperties.getTitle());
+		info.setDescription(infoProperties.getDescription());
+		info.setTermsOfService(resolveUrl(infoProperties.getTermsOfService()));
+		info.setContact(createContactFromProperties(infoProperties));
+		info.setLicense(createLicenseFromProperties(infoProperties));
+		info.setVersion(infoProperties.getVersion());
 		return info;
 	}
 
-	private Contact createContactFromProperties() {
+	private Contact createContactFromProperties(final InfoProperties infoProperties) {
+		ContactProperties contactProperties = infoProperties.getContact();
+
 		Contact contact = new Contact();
-		contact.setName(properties.getContact().getName());
-		contact.setEmail(properties.getContact().getEmail());
-		contact.setUrl(properties.getContact().getUrl().toString());
-		return contact;
+		contact.setName(contactProperties.getName());
+		contact.setEmail(contactProperties.getEmail());
+		contact.setUrl(resolveUrl(contactProperties.getUrl()));
+		return contact.getName() != null || contact.getEmail() != null || contact.getUrl() != null ? contact : null;
 	}
 
-	private License createLicenseFromProperties() {
+	private License createLicenseFromProperties(final InfoProperties infoProperties) {
+		LicenseProperties licenseProperties = infoProperties.getLicense();
+
 		License license = new License();
-		license.setName(properties.getLicense().getName());
-		license.setUrl(properties.getLicense().getUrl().toString());
+		license.setName(licenseProperties.getName());
+		license.setUrl(resolveUrl(licenseProperties.getUrl()));
 		return license.getName() != null ? license : null;
 	}
 
 	public List<Server> createServerFromProperties() {
-		return properties.getServers().stream().map(s -> {
-			Server server = new Server();
-			server.setDescription(s.getDescription());
-			server.setUrl(s.getUrl());
-			return server;
-		}).collect(toList());
+		return properties.getServers().stream()
+				.map(s -> {
+					Server server = new Server();
+					server.setDescription(s.getDescription());
+					server.setUrl(s.getUrl());
+					return server;
+				})
+				.filter(server -> server.getUrl() != null)
+				.collect(toList());
 	}
 
 	public ExternalDocumentation createExternalDocsFromProperties() {
 		ExternalDocumentation externalDocs = new ExternalDocumentation();
 		externalDocs.setDescription(properties.getExternalDocs().getDescription());
-		externalDocs.setUrl(properties.getExternalDocs().getUrl().toString());
+		externalDocs.setUrl(resolveUrl(properties.getExternalDocs().getUrl()));
 		return externalDocs.getUrl() != null ? externalDocs : null;
 	}
 
@@ -115,6 +127,10 @@ public class GeneratorPropertyLoader {
 
 	public ParserProperties getParserProperties() {
 		return properties.getParser();
+	}
+
+	private String resolveUrl(final URL url) {
+		return url != null ? url.toString() : null;
 	}
 
 }
