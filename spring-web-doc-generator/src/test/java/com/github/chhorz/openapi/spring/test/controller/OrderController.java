@@ -30,6 +30,7 @@ public class OrderController {
 	 *            the identifier
 	 * @param filter
 	 *            the filter that can be applied
+	 * @return a list of orders that match the optional filters
 	 */
 	@RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET, produces = { "application/json", "application/xml" })
 	public List<Order> getOrder(@PathVariable final Long id,

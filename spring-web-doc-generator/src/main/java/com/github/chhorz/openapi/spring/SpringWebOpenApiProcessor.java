@@ -47,6 +47,7 @@ import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
+import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenApiProcessor;
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
@@ -54,6 +55,7 @@ import com.github.chhorz.openapi.common.domain.Operation;
 import com.github.chhorz.openapi.common.domain.Parameter;
 import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
+import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
@@ -224,6 +226,12 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
 					}
 
+					String returnTag = "";
+					List<ReturnTag> returnTags = javaDoc.getTags(ReturnTag.class);
+					if (returnTags.size() == 1) {
+						returnTag = returnTags.get(0).getDesrcription();
+					}
+
 					ResponseUtils responseUtils = new ResponseUtils();
 
 					Responses responses = new Responses();
@@ -233,10 +241,13 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
 					Schema schema = schemaMap.get(returnType);
 					if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
-						responses.setDefaultResponse(
-								responseUtils.mapTypeMirrorToResponse(types, returnType, requestMapping.produces()));
+						Response response = responseUtils.mapTypeMirrorToResponse(types, returnType, requestMapping.produces());
+						response.setDescription(returnTag);
+						responses.setDefaultResponse(response);
 					} else {
-						responses.setDefaultResponse(responseUtils.mapSchemaToResponse(types, schema, requestMapping.produces()));
+						Response response = responseUtils.mapSchemaToResponse(types, schema, requestMapping.produces());
+						response.setDescription(returnTag);
+						responses.setDefaultResponse(response);
 						schemaMap.remove(returnType);
 					}
 
