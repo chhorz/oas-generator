@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -260,7 +262,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 					Map<String, List<String>> securityInformation = getSecurityInformation(executableElement,
 							openApi.getComponents().getSecuritySchemes());
-					operation.setSecurity(securityInformation);
+					operation.setSecurity(Arrays.asList(securityInformation));
 
 					PathItemObject pathItemObject = openApi.getPaths().getOrDefault(cleanedPath, new PathItemObject());
 					switch (requestMethod) {

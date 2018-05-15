@@ -36,7 +36,7 @@ public class Operation {
 	/**
 	 * @see {@link SecurityRequirement}
 	 */
-	private Map<String, List<String>> security;
+	private List<Map<String, List<String>>> security;
 	private List<Server> servers;
 
 	public List<String> getTags() {
@@ -116,11 +116,11 @@ public class Operation {
 		this.deprecated = deprecated;
 	}
 
-	public Map<String, List<String>> getSecurity() {
+	public List<Map<String, List<String>>> getSecurity() {
 		return security;
 	}
 
-	public void setSecurity(final Map<String, List<String>> security) {
+	public void setSecurity(final List<Map<String, List<String>>> security) {
 		this.security = security;
 	}
 
