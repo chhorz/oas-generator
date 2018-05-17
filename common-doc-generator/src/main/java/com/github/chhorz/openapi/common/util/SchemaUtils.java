@@ -6,6 +6,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.lang.model.element.Element;
@@ -59,6 +60,42 @@ public class SchemaUtils {
 		javaLangPackage = elements.getPackageElement("java.lang");
 		javaMathPackage = elements.getPackageElement("java.math");
 		javaTimePackage = elements.getPackageElement("java.time");
+	}
+
+	public Map<TypeMirror, Schema> parsePackages(final List<String> packages) {
+		Map<TypeMirror, Schema> typeMirrorMap = new HashMap<>();
+
+		if (packages == null) {
+			return typeMirrorMap;
+		}
+
+		packages.stream()
+				.filter(p -> p != null && !p.isEmpty())
+				.map(elements::getPackageElement)
+				.filter(Objects::nonNull)
+				.map(this::parsePackage)
+				.flatMap(map -> map.entrySet().stream())
+				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
+				.forEach(entry -> {
+					typeMirrorMap.put(entry.getKey(), entry.getValue());
+				});
+
+		return typeMirrorMap;
+	}
+
+	private Map<TypeMirror, Schema> parsePackage(final PackageElement packageElement) {
+		Map<TypeMirror, Schema> typeMirrorMap = new HashMap<>();
+
+		packageElement.getEnclosedElements().stream()
+				.map(Element::asType)
+				.map(type -> mapTypeMirrorToSchema(type))
+				.flatMap(map -> map.entrySet().stream())
+				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
+				.forEach(entry -> {
+					typeMirrorMap.put(entry.getKey(), entry.getValue());
+				});
+
+		return typeMirrorMap;
 	}
 
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {

@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,6 +126,10 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 			});
 		}
+
+		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getResourcePackages());
+		openApi.getComponents().putAllSchemas(schemaMap);
 
 		// openApi.setTags(tags); // TODO check
 
@@ -304,9 +307,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	private Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
 		Map<String, List<String>> securityInformation = new HashMap<>();
 
-		log.info("ExecElem: %s", executableElement);
-		log.info("Map: %s", map);
-
 		for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
 			log.info("Annotation: %s", annotation);
 			if (annotation.getAnnotationType().toString().equalsIgnoreCase(
@@ -321,8 +321,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						});
 			}
 		}
-
-		log.info("SecInfo: %s", securityInformation);
 
 		return securityInformation;
 	}

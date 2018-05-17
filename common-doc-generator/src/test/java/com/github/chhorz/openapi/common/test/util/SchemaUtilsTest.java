@@ -3,6 +3,9 @@ package com.github.chhorz.openapi.common.test.util;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.lang.model.type.PrimitiveType;
@@ -49,6 +52,42 @@ public class SchemaUtilsTest {
 		types = extension.getTypes();
 
 		schemaUtils = new SchemaUtils(elements, types, log);
+	}
+
+	@Test
+	void parseNullPackages() {
+		// given
+		List<String> packages = null;
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
+
+		// then
+		assertThat(schemaMap).isEmpty();
+	}
+
+	@Test
+	void parseEmptyPackages() {
+		// given
+		List<String> packages = Collections.emptyList();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
+
+		// then
+		assertThat(schemaMap).isEmpty();
+	}
+
+	@Test
+	void parsePackages() {
+		// given
+		List<String> packages = Arrays.asList("com.github.chhorz.openapi.common.test.util.resources");
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
+
+		// then
+		assertThat(schemaMap).hasSize(4);
 	}
 
 	@Test
