@@ -8,13 +8,13 @@ public class ParserProperties {
 
 	private String outputDir;
 	private String outputFile;
-	private List<String> resourcePackages;
+	private List<String> schemaPackages;
 
 	public ParserProperties() {
 		logLevel = GeneratorPropertiesDefaults.PARSER_LOG_LEVEL;
 		outputDir = GeneratorPropertiesDefaults.PARSER_OUTPUT_DIR;
 		outputFile = GeneratorPropertiesDefaults.PARSER_OUTPUT_FILE;
-		resourcePackages = GeneratorPropertiesDefaults.PARSER_RESOURCE_PACKAGE;
+		schemaPackages = GeneratorPropertiesDefaults.PARSER_SCHEMA_PACKAGES;
 	}
 
 	public String getLogLevel() {
@@ -41,12 +41,12 @@ public class ParserProperties {
 		this.outputFile = outputFile;
 	}
 
-	public List<String> getResourcePackages() {
-		return resourcePackages;
+	public List<String> getSchemaPackages() {
+		return schemaPackages;
 	}
 
-	public void setResourcePackages(final List<String> resourcePackages) {
-		this.resourcePackages = resourcePackages;
+	public void setSchemaPackages(final List<String> schemaPackages) {
+		this.schemaPackages = schemaPackages;
 	}
 
 }

@@ -15,6 +15,10 @@ public class Tag {
 	private String description;
 	private ExternalDocumentation externalDocs;
 
+	public Tag(final String name) {
+		this.name = name;
+	}
+
 	public String getName() {
 		return name;
 	}

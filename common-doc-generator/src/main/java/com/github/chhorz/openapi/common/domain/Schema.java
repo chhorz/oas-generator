@@ -18,14 +18,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public class Schema {
 
-	private Boolean nullable = FALSE;
-	private Descriminator discriminator;
-	private Boolean readOnly = FALSE;
-	private Boolean writeOnly = FALSE;
-	private Xml xml;
-	private ExternalDocumentation externalDocs;
-	private Object example;
-	private Boolean deprecated = FALSE;
+	// private Boolean nullable = FALSE;
+	// private Descriminator discriminator;
+	// private Boolean readOnly = FALSE;
+	// private Boolean writeOnly = FALSE;
+	// private Xml xml;
+	// private ExternalDocumentation externalDocs;
+	// private Object example;
+	// private Boolean deprecated = FALSE;
 
 	private Type type;
 	private Format format;

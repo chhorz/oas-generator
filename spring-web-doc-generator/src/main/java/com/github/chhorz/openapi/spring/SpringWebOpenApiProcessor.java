@@ -61,12 +61,14 @@ import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
+import com.github.chhorz.openapi.common.domain.Tag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import com.github.chhorz.openapi.common.util.ReferenceUtils;
 import com.github.chhorz.openapi.common.util.ResponseUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
+import com.github.chhorz.openapi.common.util.TagUtils;
 import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
 
@@ -128,10 +130,23 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		}
 
 		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getResourcePackages());
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
+		// TODO merge schemas
 		openApi.getComponents().putAllSchemas(schemaMap);
 
-		// openApi.setTags(tags); // TODO check
+		TagUtils tagUtils = new TagUtils();
+		List<String> tags = new ArrayList<>();
+		openApi.getPaths()
+				.values()
+				.stream()
+				.map(tagUtils::getAllTags)
+				.flatMap(tagList -> tagList.stream())
+				.forEach(tag -> tags.add(tag));
+
+		tags.stream()
+				.distinct()
+				.map(Tag::new)
+				.forEach(openApi::addTag); // TODO add description and external documentation
 
 		writeFile(parserProperties, openApi);
 

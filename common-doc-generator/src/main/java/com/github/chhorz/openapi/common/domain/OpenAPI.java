@@ -1,5 +1,6 @@
 package com.github.chhorz.openapi.common.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -78,8 +79,14 @@ public class OpenAPI {
 		return tags;
 	}
 
-	public void setTags(final List<Tag> tags) {
-		this.tags = tags;
+	public void addTag(final Tag tag) {
+		if (tags == null) {
+			tags = new ArrayList<>();
+		}
+
+		if (tags.stream().noneMatch(t -> t.getName().equalsIgnoreCase(tag.getName()))) {
+			tags.add(tag);
+		}
 	}
 
 	public ExternalDocumentation getExternalDocs() {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
+import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
@@ -361,6 +363,42 @@ public class SchemaUtils {
 
 	private boolean isAssignableFrom(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
 		return types.isAssignable(types.erasure(typeMirror), elements.getTypeElement(clazz.getCanonicalName()).asType());
+	}
+
+	public Schema mergeSchemas(final Schema one, final Schema two) {
+		Schema result = new Schema();
+
+		result.setFormat(merge(one, two, Schema::getFormat));
+		result.setType(merge(one, two, Schema::getType));
+		result.setDescription(merge(one, two, Schema::getDescription));
+		result.setDefaultValue(merge(one, two, Schema::getDefaultValue));
+		result.setPattern(merge(one, two, Schema::getPattern));
+
+		merge(one, two, Schema::getEnumValues).forEach(enumValue -> result.addEnumValue(enumValue));
+
+		one.getProperties().entrySet().forEach(entry -> {
+			Function<Schema, Object> function = schema -> schema.getProperties().get(entry.getKey());
+
+			Object property = merge(one, two, function);
+			if (property != null && property instanceof Reference) {
+				result.putProperty(entry.getKey(), (Reference) property);
+			} else if (property != null && property instanceof Schema) {
+				result.putProperty(entry.getKey(), (Schema) property);
+			}
+		});
+
+		Object items = merge(one, two, Schema::getItems);
+		if (items != null && items instanceof Reference) {
+			result.setItems((Reference) items);
+		} else if (items != null && items instanceof Schema) {
+			result.setItems((Schema) items);
+		}
+
+		return result;
+	}
+
+	private <T> T merge(final Schema one, final Schema two, final Function<Schema, T> function) {
+		return function.apply(one) != null ? function.apply(one) : function.apply(two);
 	}
 
 }
