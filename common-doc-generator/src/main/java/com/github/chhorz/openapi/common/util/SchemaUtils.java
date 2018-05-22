@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
+import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
@@ -54,7 +55,7 @@ public class SchemaUtils {
 		this.log = log;
 
 		typeMirrorUtils = new TypeMirrorUtils(elements, types);
-		parser = JavaDocParserBuilder.withBasicTags().build();
+		parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.HTML).build();
 
 		object = elements.getTypeElement(Object.class.getCanonicalName()).asType();
 		enumeration = elements.getTypeElement(Enum.class.getCanonicalName()).asType();

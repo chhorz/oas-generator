@@ -156,7 +156,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	private void mapOperationMethod(final ExecutableElement executableElement) {
 		log.debug("Parsing method: %s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement);
 
-		JavaDocParser parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.PLAIN).build();
+		JavaDocParser parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.HTML).build();
 		JavaDoc javaDoc = parser.parse(elements.getDocComment(executableElement));
 
 		AliasUtils<?> aliasUtils = new AliasUtils<>();
@@ -275,8 +275,9 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 					operation.setResponses(responses);
 
-					javaDoc.getTags(CategoryTag.class).stream().map(CategoryTag::getCategoryName).forEach(
-							tag -> operation.addTag(tag));
+					javaDoc.getTags(CategoryTag.class).stream()
+							.map(CategoryTag::getCategoryName)
+							.forEach(tag -> operation.addTag(tag));
 
 					Map<String, List<String>> securityInformation = getSecurityInformation(executableElement,
 							openApi.getComponents().getSecuritySchemes());

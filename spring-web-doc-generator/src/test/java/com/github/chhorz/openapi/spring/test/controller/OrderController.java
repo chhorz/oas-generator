@@ -20,7 +20,7 @@ import com.github.chhorz.openapi.spring.test.controller.resource.PrimitiveResour
 public class OrderController {
 
 	/**
-	 * Get an order with an id.
+	 * Get an order with an {@code id}.
 	 *
 	 * Lorem ipsum.
 	 *
