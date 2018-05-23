@@ -1,0 +1,35 @@
+= OAS Generator
+:author: Christian Horz
+:icons: font
+:revnumber: {project-version}
+:source-highlighter: highlightjs
+:docinfo: shared
+:toc: left
+
+== About
+_tbd_
+
+== Snapshots
+_tbd_
+
+== Configuration
+The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
+Compiler options described below should be used to customize the name or path of the configuration file.
+
+=== Compiler options
+A basic set of configuration options can be done by compiler options.
+Compiler options with the prefix `-A` will recognized by an annotation processor.
+The following options can be used:
+
+`propertiesPath`::
+As default the configuration file is placed at `src/main/resources` and has the name `oas-generator.yml`.
+The name or path can be changed by using this compiler option.
+`version`::
+This option passes for example the current project version to the generated specification.
+
+[[configuration-file]]
+=== Configuration file
+_tbd_
+
+== License
+OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].

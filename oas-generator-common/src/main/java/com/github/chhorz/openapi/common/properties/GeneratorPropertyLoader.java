@@ -39,7 +39,7 @@ public class GeneratorPropertyLoader {
 		InputStream resourceStream;
 		if (processorOptions.get("propertiesPath") == null) {
 			System.out.println("Using default properties location.");
-			resourceStream = GeneratorPropertyLoader.class.getClassLoader().getResourceAsStream("openapigen.yml");
+			resourceStream = GeneratorPropertyLoader.class.getClassLoader().getResourceAsStream("oas-generator.yml");
 		} else {
 			System.out.println("Using custom properties location.");
 			resourceStream = GeneratorPropertyLoader.class.getClassLoader()
