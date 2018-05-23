@@ -5,11 +5,11 @@
 
 	<parent>
 		<groupId>com.github.chhorz</groupId>
-		<artifactId>openapi-doc-generator</artifactId>
+		<artifactId>oas-generator</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>common-doc-generator</artifactId>
+	<artifactId>oas-generator-common</artifactId>
 
 	<dependencies>
 		<dependency>

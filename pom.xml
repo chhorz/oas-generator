@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.github.chhorz</groupId>
-	<artifactId>openapi-doc-generator</artifactId>
+	<artifactId>oas-generator</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>common-doc-generator</module>
-		<module>spring-web-doc-generator</module>
+		<module>oas-generator-common</module>
+		<module>oas-generator-spring-web</module>
 	</modules>
 
 	<properties>

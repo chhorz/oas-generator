@@ -4,16 +4,16 @@
 
 	<parent>
 		<groupId>com.github.chhorz</groupId>
-		<artifactId>openapi-doc-generator</artifactId>
+		<artifactId>oas-generator</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>spring-web-doc-generator</artifactId>
+	<artifactId>oas-generator-spring-web</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.github.chhorz</groupId>
-			<artifactId>common-doc-generator</artifactId>
+			<artifactId>oas-generator-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
