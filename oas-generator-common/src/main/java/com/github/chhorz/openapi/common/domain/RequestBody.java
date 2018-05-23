@@ -1,7 +1,7 @@
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
@@ -32,7 +32,7 @@ public class RequestBody {
 
 	public void putContent(final String key, final MediaType mediaType) {
 		if (content == null) {
-			content = new HashMap<>();
+			content = new TreeMap<>();
 		}
 		content.put(key, mediaType);
 	}

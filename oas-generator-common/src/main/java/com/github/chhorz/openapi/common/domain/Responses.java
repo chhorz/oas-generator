@@ -1,7 +1,7 @@
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -36,7 +36,7 @@ public class Responses {
 
 	public void putResponseResponse(final String statusCode, final Response responseObject) {
 		if (this.responseObject == null) {
-			this.responseObject = new HashMap<>();
+			this.responseObject = new TreeMap<>();
 		}
 		this.responseObject.put(statusCode, responseObject);
 	}

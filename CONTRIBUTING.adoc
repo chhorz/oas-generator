@@ -1,4 +1,4 @@
-= Contributing to javadoc-parser
+= Contributing to OAS Generator
 
 == Note
 First of all - any help on this project is welcome.

@@ -1,11 +1,9 @@
 package com.github.chhorz.openapi.common.domain;
 
-import static java.lang.Boolean.FALSE;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -114,14 +112,14 @@ public class Schema {
 
 	public void putProperty(final String name, final Schema property) {
 		if (properties == null) {
-			properties = new HashMap<>();
+			properties = new TreeMap<>();
 		}
 		properties.put(name, property);
 	}
 
 	public void putProperty(final String name, final Reference reference) {
 		if (properties == null) {
-			properties = new HashMap<>();
+			properties = new TreeMap<>();
 		}
 		properties.put(name, reference);
 	}

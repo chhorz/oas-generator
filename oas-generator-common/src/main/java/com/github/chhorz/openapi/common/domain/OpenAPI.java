@@ -1,6 +1,8 @@
 package com.github.chhorz.openapi.common.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -76,6 +78,7 @@ public class OpenAPI {
 	}
 
 	public List<Tag> getTags() {
+		Collections.sort(tags, Comparator.comparing(Tag::getName));
 		return tags;
 	}
 

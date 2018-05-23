@@ -5,11 +5,11 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -49,7 +49,7 @@ import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
-import com.github.chhorz.openapi.common.OpenApiProcessor;
+import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.domain.Operation;
@@ -73,7 +73,7 @@ import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-public class SpringWebOpenApiProcessor extends AbstractProcessor implements OpenApiProcessor {
+public class SpringWebOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
 
 	private Elements elements;
 	private Types types;
@@ -321,7 +321,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	}
 
 	private Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
-		Map<String, List<String>> securityInformation = new HashMap<>();
+		Map<String, List<String>> securityInformation = new TreeMap<>();
 
 		for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
 			log.info("Annotation: %s", annotation);

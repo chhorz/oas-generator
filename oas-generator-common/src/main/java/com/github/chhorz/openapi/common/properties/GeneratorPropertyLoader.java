@@ -4,14 +4,15 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import com.github.chhorz.openapi.common.OpenAPIConstants;
 import com.github.chhorz.openapi.common.domain.Contact;
 import com.github.chhorz.openapi.common.domain.ExternalDocumentation;
 import com.github.chhorz.openapi.common.domain.Info;
@@ -59,13 +60,15 @@ public class GeneratorPropertyLoader {
 	public Info createInfoFromProperties() {
 		InfoProperties infoProperties = properties.getInfo();
 
+		String version = processorOptions.getOrDefault(OpenAPIConstants.OPTION_VERSION, null);
+
 		Info info = new Info();
 		info.setTitle(infoProperties.getTitle());
 		info.setDescription(infoProperties.getDescription());
 		info.setTermsOfService(resolveUrl(infoProperties.getTermsOfService()));
 		info.setContact(createContactFromProperties(infoProperties));
 		info.setLicense(createLicenseFromProperties(infoProperties));
-		info.setVersion(infoProperties.getVersion());
+		info.setVersion(version == null ? infoProperties.getVersion() : version);
 		return info;
 	}
 
@@ -108,7 +111,7 @@ public class GeneratorPropertyLoader {
 	}
 
 	public Map<String, SecurityScheme> createSecuritySchemesFromProperties() {
-		Map<String, SecurityScheme> map = new HashMap<>();
+		Map<String, SecurityScheme> map = new TreeMap<>();
 		for (Entry<String, SecuritySchemeProperties> entry : properties.getSecuritySchemes().entrySet()) {
 			SecuritySchemeProperties property = entry.getValue();
 

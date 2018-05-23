@@ -11,12 +11,12 @@ import com.github.chhorz.openapi.common.file.FileWriter;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 
-public interface OpenApiProcessor {
+public interface OpenAPIProcessor {
 
 	default Set<String> getDocGeneratorOptions() {
 		return Stream.of(
-					"propertiesPath",	// configurable path to properties
-					"version")			// get version from build tool
+					OpenAPIConstants.OPTION_PROPERTIES_PATH,
+					OpenAPIConstants.OPTION_VERSION)
 				.collect(toSet());
 	}
 

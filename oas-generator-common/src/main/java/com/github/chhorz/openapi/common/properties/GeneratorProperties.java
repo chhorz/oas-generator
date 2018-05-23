@@ -1,9 +1,9 @@
 package com.github.chhorz.openapi.common.properties;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class GeneratorProperties {
 
@@ -17,7 +17,7 @@ public class GeneratorProperties {
 		info = new InfoProperties();
 		servers = new ArrayList<>();
 		externalDocs = new ExternalDocsProperties();
-		securitySchemes = new HashMap<>();
+		securitySchemes = new TreeMap<>();
 		parser = new ParserProperties();
 	}
 

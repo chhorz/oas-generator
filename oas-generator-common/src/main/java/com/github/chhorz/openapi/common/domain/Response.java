@@ -1,7 +1,7 @@
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.openapi.common.domain.meta.Required;
@@ -40,7 +40,7 @@ public class Response {
 
 	public void putContent(final String key, final MediaType content) {
 		if (this.content == null) {
-			this.content = new HashMap<>();
+			this.content = new TreeMap<>();
 		}
 		this.content.put(key, content);
 	}

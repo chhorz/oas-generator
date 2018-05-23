@@ -1,4 +1,4 @@
-= OpenAPI Doc Generator
+= OAS Generator
 :author: Christian Horz
 :icons: font
 
@@ -9,4 +9,4 @@ _tbd_
 _tbd_
 
 == License
-OpenApi-Doc-Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].
+OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].
