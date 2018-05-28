@@ -78,7 +78,9 @@ public class OpenAPI {
 	}
 
 	public List<Tag> getTags() {
-		Collections.sort(tags, Comparator.comparing(Tag::getName));
+		if (tags != null) {
+			Collections.sort(tags, Comparator.comparing(Tag::getName));
+		}
 		return tags;
 	}
 

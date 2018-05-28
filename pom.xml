@@ -12,6 +12,7 @@
 		<module>oas-generator-common</module>
 		<module>oas-generator-docs</module>
 		<module>oas-generator-spring-web</module>
+		<module>oas-generator-schema</module>
 	</modules>
 
 	<properties>
@@ -96,6 +97,18 @@
 						<target>1.8</target>
 						<compilerArgument>-proc:none</compilerArgument>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.0.2</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>test-jar</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

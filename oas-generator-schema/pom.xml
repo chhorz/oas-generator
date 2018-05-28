@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>oas-generator-spring-web</artifactId>
+	<artifactId>oas-generator-schema</artifactId>
 
 	<dependencies>
 		<dependency>
@@ -19,16 +19,6 @@
 		<dependency>
 			<groupId>com.github.chhorz</groupId>
 			<artifactId>javadoc-parser</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- Test -->

@@ -230,7 +230,16 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					if (requestBody != null) {
 						com.github.chhorz.openapi.common.domain.RequestBody r = new com.github.chhorz.openapi.common.domain.RequestBody();
 
-						r.setDescription("");
+						Optional<ParamTag> optionalParameter = javaDoc.getTags(ParamTag.class)
+								.stream()
+								.filter(tag -> requestBody.toString().equals(tag.getParamName()))
+								.findFirst();
+						if (optionalParameter.isPresent()) {
+							r.setDescription(optionalParameter.get().getParamDescription());
+						} else {
+							r.setDescription("");
+						}
+
 						r.setRequired(Boolean.TRUE);
 
 						for (String produces : requestMapping.consumes()) {

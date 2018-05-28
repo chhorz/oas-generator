@@ -1,0 +1,7 @@
+# Parser specific configuration
+parser:
+  logLevel: DEBUG
+  outputDir: ./target/openapi
+  outputFile: openapi.json
+  schemaPackages:
+  - com.github.chhorz.openapi.spring.test.controller.external
