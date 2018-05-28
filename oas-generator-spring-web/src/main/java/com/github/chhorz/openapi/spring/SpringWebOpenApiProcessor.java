@@ -61,7 +61,6 @@ import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
-import com.github.chhorz.openapi.common.domain.Tag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
@@ -78,6 +77,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	private Elements elements;
 	private Types types;
 
+	private GeneratorPropertyLoader propertyLoader;
 	private ParserProperties parserProperties;
 
 	private LoggingUtils log;
@@ -90,7 +90,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		types = processingEnv.getTypeUtils();
 
 		// initialize property loader
-		GeneratorPropertyLoader propertyLoader = new GeneratorPropertyLoader(processingEnv.getOptions());
+		propertyLoader = new GeneratorPropertyLoader(processingEnv.getOptions());
 		parserProperties = propertyLoader.getParserProperties();
 
 		log = new LoggingUtils(parserProperties);
@@ -134,7 +134,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		// TODO merge schemas
 		openApi.getComponents().putAllSchemas(schemaMap);
 
-		TagUtils tagUtils = new TagUtils();
+		TagUtils tagUtils = new TagUtils(propertyLoader);
 		List<String> tags = new ArrayList<>();
 		openApi.getPaths()
 				.values()
@@ -145,8 +145,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 		tags.stream()
 				.distinct()
-				.map(Tag::new)
-				.forEach(openApi::addTag); // TODO add description and external documentation
+				.map(tagUtils::createTag)
+				.forEach(openApi::addTag);
 
 		writeFile(parserProperties, openApi);
 

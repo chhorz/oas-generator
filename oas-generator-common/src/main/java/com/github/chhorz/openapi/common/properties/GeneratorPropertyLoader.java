@@ -104,9 +104,13 @@ public class GeneratorPropertyLoader {
 	}
 
 	public ExternalDocumentation createExternalDocsFromProperties() {
+		return createExternalDocsFromProperties(properties.getExternalDocs());
+	}
+
+	public ExternalDocumentation createExternalDocsFromProperties(final ExternalDocsProperties props) {
 		ExternalDocumentation externalDocs = new ExternalDocumentation();
-		externalDocs.setDescription(properties.getExternalDocs().getDescription());
-		externalDocs.setUrl(resolveUrl(properties.getExternalDocs().getUrl()));
+		externalDocs.setDescription(props.getDescription());
+		externalDocs.setUrl(resolveUrl(props.getUrl()));
 		return externalDocs.getUrl() != null ? externalDocs : null;
 	}
 
@@ -126,6 +130,19 @@ public class GeneratorPropertyLoader {
 
 		}
 		return map;
+	}
+
+	public String getDescriptionForTag(final String tag) {
+		TagProperties tagProperties = properties.getTags().getOrDefault(tag, null);
+		return tagProperties != null ? tagProperties.getDescription() : "";
+	}
+
+	public ExternalDocumentation getExternalDocumentationForTag(final String tag) {
+		TagProperties tagProperties = properties.getTags().getOrDefault(tag, null);
+		if (tagProperties != null) {
+			return createExternalDocsFromProperties(tagProperties.getExternalDocs());
+		}
+		return null;
 	}
 
 	public ParserProperties getParserProperties() {

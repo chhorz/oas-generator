@@ -24,6 +24,12 @@ securitySchemes:
     type: http
     scheme: basic
 
+tags:
+  order:
+    description: The category collects all methods for orders.
+    externalDocs:
+      url: http://www.google.com
+
 # Parser specific configuration
 parser:
   logLevel: DEBUG

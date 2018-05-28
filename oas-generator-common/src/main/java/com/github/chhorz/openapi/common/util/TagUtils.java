@@ -9,8 +9,16 @@ import java.util.function.Function;
 
 import com.github.chhorz.openapi.common.domain.Operation;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
+import com.github.chhorz.openapi.common.domain.Tag;
+import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 
 public class TagUtils {
+
+	private GeneratorPropertyLoader propertyLoader;
+
+	public TagUtils(final GeneratorPropertyLoader propertyLoader) {
+		this.propertyLoader = propertyLoader;
+	}
 
 	public List<String> getAllTags(final PathItemObject pathItemObject) {
 		List<String> result = new ArrayList<>();
@@ -35,6 +43,14 @@ public class TagUtils {
 			return operation.getTags().stream().filter(tag -> tag != null && !tag.isEmpty()).collect(toList());
 		}
 		return Collections.emptyList();
+	}
+
+	public Tag createTag(final String tagName) {
+		Tag tag = new Tag();
+		tag.setName(tagName);
+		tag.setDescription(propertyLoader.getDescriptionForTag(tagName));
+		tag.setExternalDocs(propertyLoader.getExternalDocumentationForTag(tagName));
+		return tag;
 	}
 
 }

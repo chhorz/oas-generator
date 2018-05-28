@@ -11,6 +11,7 @@ public class GeneratorProperties {
 	private List<ServerProperties> servers;
 	private ExternalDocsProperties externalDocs;
 	private Map<String, SecuritySchemeProperties> securitySchemes;
+	private Map<String, TagProperties> tags;
 	private ParserProperties parser;
 
 	public GeneratorProperties() {
@@ -18,6 +19,7 @@ public class GeneratorProperties {
 		servers = new ArrayList<>();
 		externalDocs = new ExternalDocsProperties();
 		securitySchemes = new TreeMap<>();
+		tags = new TreeMap<>();
 		parser = new ParserProperties();
 	}
 
@@ -51,6 +53,14 @@ public class GeneratorProperties {
 
 	public void setSecuritySchemes(final Map<String, SecuritySchemeProperties> securitySchemes) {
 		this.securitySchemes = securitySchemes;
+	}
+
+	public Map<String, TagProperties> getTags() {
+		return tags;
+	}
+
+	public void setTags(final Map<String, TagProperties> tags) {
+		this.tags = tags;
 	}
 
 	public ParserProperties getParser() {

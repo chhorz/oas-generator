@@ -17,7 +17,7 @@ public class TagUtilsTest {
 
 	@BeforeEach
 	void setUp() {
-		utils = new TagUtils();
+		utils = new TagUtils(null);
 	}
 
 	@Test
@@ -69,4 +69,6 @@ public class TagUtilsTest {
 		// then
 		assertThat(tags).isNotNull().containsExactly("tag1", "tag2", "tag3");
 	}
+
+	// TODO test new method
 }
