@@ -30,6 +30,7 @@ import javax.lang.model.util.Types;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -105,7 +106,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						PostMapping.class,
 						PutMapping.class,
 						DeleteMapping.class,
-						PatchMapping.class)
+				PatchMapping.class, ExceptionHandler.class)
 				.map(Class::getCanonicalName)
 				.collect(toSet());
 	}
@@ -117,19 +118,22 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-
-		for (TypeElement annotation : annotations) {
-			roundEnv.getElementsAnnotatedWith(annotation).forEach(element -> {
-
-				if (element instanceof ExecutableElement) {
-					ExecutableElement executableElement = (ExecutableElement) element;
-					mapOperationMethod(executableElement);
-				}
-
-			});
-		}
-
 		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
+
+		annotations.stream()
+				.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
+				.filter(element -> element instanceof ExecutableElement)
+				.map(ExecutableElement.class::cast)
+				// .peek(e -> System.out.println(e))
+				.forEach(this::mapOperationMethod);
+
+		roundEnv.getElementsAnnotatedWith(ExceptionHandler.class).stream()
+				.filter(element -> element instanceof ExecutableElement)
+				.map(ExecutableElement.class::cast)
+				.map(ExecutableElement::getReturnType)
+				.map(schemaUtils::mapTypeMirrorToSchema)
+				.forEach(openApi.getComponents()::putAllSchemas);
+
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
 		// TODO merge schemas
 		openApi.getComponents().putAllSchemas(schemaMap);

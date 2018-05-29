@@ -283,7 +283,7 @@ public class SchemaUtils {
 
 		if (element.getAnnotation(JsonIgnore.class) != null) {
 			valid = false;
-		} else if (element.getModifiers().contains(Modifier.STATIC) && element.getModifiers().contains(Modifier.PRIVATE)) {
+		} else if (element.getModifiers().contains(Modifier.STATIC)) {
 			valid = false;
 		}
 

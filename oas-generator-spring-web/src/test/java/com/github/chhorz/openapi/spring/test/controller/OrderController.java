@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.github.chhorz.openapi.spring.test.controller.resource.ErrorResource;
 import com.github.chhorz.openapi.spring.test.controller.resource.Order;
 import com.github.chhorz.openapi.spring.test.controller.resource.PrimitiveResource;
 
@@ -56,6 +58,11 @@ public class OrderController {
 	@PreAuthorize("read_role")
 	@GetMapping(produces = { "application/xml" })
 	public ResponseEntity<List<Order>> getOrders() {
+		return null;
+	}
+
+	@ExceptionHandler
+	public ErrorResource handleException(final Exception e) {
 		return null;
 	}
 
