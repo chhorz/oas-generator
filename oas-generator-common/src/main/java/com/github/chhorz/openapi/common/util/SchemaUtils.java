@@ -104,7 +104,7 @@ public class SchemaUtils {
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
 		Map<TypeMirror, Schema> schemaMap = new HashMap<>();
 
-		log.info(String.format("Parsing %s", typeMirror.toString()));
+		log.info(String.format("Parsing type: %s", typeMirror.toString()));
 
 		Schema schema = new Schema();
 
@@ -228,7 +228,7 @@ public class SchemaUtils {
 
 				TypeMirror superType = element.asType();
 
-				while (!types.isSameType(superType, object) && !types.isSameType(types.erasure(superType), enumeration)) {
+				while (!isSameType(superType, object) && !isSameType(types.erasure(superType), enumeration)) {
 					TypeElement typeElement = elements.getTypeElement(types.erasure(superType).toString());
 
 					typeElement.getEnclosedElements()
@@ -237,7 +237,7 @@ public class SchemaUtils {
 							.filter(this::isValidAttribute)
 							.forEach(vElement -> {
 
-								log.debug(String.format("Parsing attribute %s", vElement.toString()));
+								log.debug(String.format("Parsing attribute: %s", vElement.toString()));
 
 								JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
@@ -293,7 +293,11 @@ public class SchemaUtils {
 	}
 
 	private boolean isTypeInPackage(final TypeMirror typeMirror, final PackageElement packageElement) {
-		return types.asElement(typeMirror).getEnclosingElement().equals(packageElement);
+		return types.asElement(typeMirror).getEnclosingElement().toString().equals(packageElement.toString());
+	}
+
+	private boolean isSameType(final TypeMirror type1, final TypeMirror type2) {
+		return types.isSameType(type1, type2) || type1.toString().equalsIgnoreCase(type2.toString());
 	}
 
 	private String getPropertyName(final Element element) {

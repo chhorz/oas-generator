@@ -62,7 +62,7 @@ public class OrderController {
 	}
 
 	@ExceptionHandler
-	public ErrorResource handleException(final Exception e) {
+	public ResponseEntity<ErrorResource> handleException(final Exception e) {
 		return null;
 	}
 

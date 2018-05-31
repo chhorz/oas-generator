@@ -1,7 +1,6 @@
 package com.github.chhorz.openapi.common.util;
 
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Types;
 
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.Response;
@@ -9,7 +8,7 @@ import com.github.chhorz.openapi.common.domain.Schema;
 
 public class ResponseUtils {
 
-	public Response mapTypeMirrorToResponse(final Types types, final TypeMirror typeMirror, final String[] produces) {
+	public Response mapTypeMirrorToResponse(final TypeMirror typeMirror, final String[] produces) {
 		Response response = new Response();
 		response.setDescription("");
 
@@ -27,7 +26,7 @@ public class ResponseUtils {
 		return response;
 	}
 
-	public Response mapSchemaToResponse(final Types types, final Schema schema, final String[] produces) {
+	public Response mapSchemaToResponse(final Schema schema, final String[] produces) {
 		Response response = new Response();
 		response.setDescription("");
 

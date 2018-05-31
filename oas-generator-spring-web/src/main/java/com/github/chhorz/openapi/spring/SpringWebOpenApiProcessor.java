@@ -82,6 +82,9 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	private ParserProperties parserProperties;
 
 	private LoggingUtils log;
+	private SchemaUtils schemaUtils;
+	private TypeMirrorUtils typeMirrorUtils;
+	private ResponseUtils responseUtils;
 
 	private OpenAPI openApi;
 
@@ -95,6 +98,9 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parserProperties = propertyLoader.getParserProperties();
 
 		log = new LoggingUtils(parserProperties);
+		schemaUtils = new SchemaUtils(elements, types, log);
+		typeMirrorUtils = new TypeMirrorUtils(elements, types);
+		responseUtils = new ResponseUtils();
 
 		openApi = initializeFromProperties(propertyLoader);
 	}
@@ -118,8 +124,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
-
 		annotations.stream()
 				.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
 				.filter(element -> element instanceof ExecutableElement)
@@ -130,7 +134,9 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		roundEnv.getElementsAnnotatedWith(ExceptionHandler.class).stream()
 				.filter(element -> element instanceof ExecutableElement)
 				.map(ExecutableElement.class::cast)
+				.peek(exElement -> log.info("Parsing exception handler: %s", exElement.toString()))
 				.map(ExecutableElement::getReturnType)
+				.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
 				.map(schemaUtils::mapTypeMirrorToSchema)
 				.forEach(openApi.getComponents()::putAllSchemas);
 
@@ -230,7 +236,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 							.findFirst()
 							.orElse(null);
 
-					SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
 					if (requestBody != null) {
 						com.github.chhorz.openapi.common.domain.RequestBody r = new com.github.chhorz.openapi.common.domain.RequestBody();
 
@@ -265,20 +270,17 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						returnTag = returnTags.get(0).getDesrcription();
 					}
 
-					ResponseUtils responseUtils = new ResponseUtils();
-
 					Responses responses = new Responses();
-					TypeMirrorUtils typeMirrorUtils = new TypeMirrorUtils(elements, types);
 					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(),
 							ResponseEntity.class)[0];
 					Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
 					Schema schema = schemaMap.get(returnType);
 					if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
-						Response response = responseUtils.mapTypeMirrorToResponse(types, returnType, requestMapping.produces());
+						Response response = responseUtils.mapTypeMirrorToResponse(returnType, requestMapping.produces());
 						response.setDescription(returnTag);
 						responses.setDefaultResponse(response);
 					} else {
-						Response response = responseUtils.mapSchemaToResponse(types, schema, requestMapping.produces());
+						Response response = responseUtils.mapSchemaToResponse(schema, requestMapping.produces());
 						response.setDescription(returnTag);
 						responses.setDefaultResponse(response);
 						schemaMap.remove(returnType);
@@ -374,7 +376,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setName(name);
 		parameter.setRequired(Boolean.TRUE);
 
-		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
 		Map<TypeMirror, Schema> map = schemaUtils.mapTypeMirrorToSchema(variableElement.asType());
 		Schema schema = map.get(variableElement.asType());
 
@@ -407,7 +408,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setName(name);
 		parameter.setRequired(requestParam.required());
 
-		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
 		Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
 				.get(variableElement.asType());
 		if (!ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue())) {
@@ -439,7 +439,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setName(name);
 		parameter.setRequired(requestHeader.required());
 
-		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
 		Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
 				.get(variableElement.asType());
 		if (!ValueConstants.DEFAULT_NONE.equals(requestHeader.defaultValue())) {
