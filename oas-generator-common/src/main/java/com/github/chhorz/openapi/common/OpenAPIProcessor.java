@@ -2,14 +2,15 @@ package com.github.chhorz.openapi.common;
 
 import static java.util.stream.Collectors.toSet;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
 import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.file.FileWriter;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.util.FileUtils;
 
 public interface OpenAPIProcessor {
 
@@ -35,9 +36,14 @@ public interface OpenAPIProcessor {
 		return openApi;
 	}
 
-	default void writeFile(final ParserProperties parserProperties, final OpenAPI openApi) {
-		FileWriter writer = new FileWriter(parserProperties);
-		writer.writeToFile(openApi);
+	default void writeOpenApiFile(final ParserProperties parserProperties, final OpenAPI openApi) {
+		FileUtils fileUtils = new FileUtils(parserProperties);
+		fileUtils.writeToFile(openApi);
+	}
+
+	default Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {
+		FileUtils fileUtils = new FileUtils(parserProperties);
+		return fileUtils.readFromFile();
 	}
 
 }

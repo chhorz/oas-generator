@@ -370,7 +370,7 @@ public class SchemaUtils {
 		return types.isAssignable(types.erasure(typeMirror), elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
 
-	public Schema mergeSchemas(final Schema one, final Schema two) {
+	public static Schema mergeSchemas(final Schema one, final Schema two) {
 		Schema result = new Schema();
 
 		result.setFormat(merge(one, two, Schema::getFormat));
@@ -379,7 +379,9 @@ public class SchemaUtils {
 		result.setDefaultValue(merge(one, two, Schema::getDefaultValue));
 		result.setPattern(merge(one, two, Schema::getPattern));
 
-		merge(one, two, Schema::getEnumValues).forEach(enumValue -> result.addEnumValue(enumValue));
+		if (one.getEnumValues() != null || two.getEnumValues() != null) {
+			merge(one, two, Schema::getEnumValues).forEach(enumValue -> result.addEnumValue(enumValue));
+		}
 
 		one.getProperties().entrySet().forEach(entry -> {
 			Function<Schema, Object> function = schema -> schema.getProperties().get(entry.getKey());
@@ -402,8 +404,7 @@ public class SchemaUtils {
 		return result;
 	}
 
-	private <T> T merge(final Schema one, final Schema two, final Function<Schema, T> function) {
+	private static <T> T merge(final Schema one, final Schema two, final Function<Schema, T> function) {
 		return function.apply(one) != null ? function.apply(one) : function.apply(two);
 	}
-
 }

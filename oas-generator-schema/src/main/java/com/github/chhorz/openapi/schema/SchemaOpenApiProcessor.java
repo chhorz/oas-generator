@@ -52,8 +52,6 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 
 		openApi = new OpenAPI();
 		openApi.setComponents(new Components());
-
-		log.info("INIT done!");
 	}
 
 	@Override
@@ -73,19 +71,16 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
-		log.info("PROCESS");
 		for (TypeElement annotation : annotations) {
 			roundEnv.getElementsAnnotatedWith(annotation).forEach(element -> {
-				log.info("PROCESS %s", element.toString());
 				openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(element.asType()));
 			});
 		}
 
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
-		// TODO merge schemas
 		openApi.getComponents().putAllSchemas(schemaMap);
 
-		writeFile(parserProperties, openApi);
+		writeOpenApiFile(parserProperties, openApi);
 
 		return false;
 	}

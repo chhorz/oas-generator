@@ -2,8 +2,11 @@ package com.github.chhorz.openapi.common.domain;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 import javax.lang.model.type.TypeMirror;
+
+import com.github.chhorz.openapi.common.util.SchemaUtils;
 
 /**
  * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#components-object
@@ -32,7 +35,23 @@ public class Components {
 			this.schemas = new TreeMap<>();
 		}
 
-		schemas.forEach((typeMirror, schema) -> this.schemas.put(getKey(typeMirror), schema));
+		schemas.forEach((typeMirror, schema) -> putSchema(getKey(typeMirror), schema));
+	}
+
+	public void putAllParsedSchemas(final Map<String, Schema> schemas) {
+		if (this.schemas == null) {
+			this.schemas = new TreeMap<>();
+		}
+
+		schemas.forEach((type, schema) -> putSchema(type, schema));
+	}
+
+	private void putSchema(final String type, final Schema schema) {
+		if (schemas.containsKey(type)) {
+			schemas.put(type, SchemaUtils.mergeSchemas(schemas.get(type), schema));
+		} else {
+			schemas.put(type, schema);
+		}
 	}
 
 	public Map<String, Schema> getSchemas() {
@@ -80,4 +99,5 @@ public class Components {
 		}
 		return typeString.substring(typeString.lastIndexOf('.') + 1);
 	}
+
 }

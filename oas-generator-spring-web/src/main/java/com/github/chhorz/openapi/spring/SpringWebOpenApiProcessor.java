@@ -141,8 +141,14 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				.forEach(openApi.getComponents()::putAllSchemas);
 
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
-		// TODO merge schemas
 		openApi.getComponents().putAllSchemas(schemaMap);
+
+		if (parserProperties.getSchemaFile() != null) {
+			Optional<OpenAPI> schemaFile = readOpenApiFile(parserProperties);
+			if (schemaFile.isPresent()) {
+				openApi.getComponents().putAllParsedSchemas(schemaFile.get().getComponents().getSchemas());
+			}
+		}
 
 		TagUtils tagUtils = new TagUtils(propertyLoader);
 		List<String> tags = new ArrayList<>();
@@ -158,7 +164,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				.map(tagUtils::createTag)
 				.forEach(openApi::addTag);
 
-		writeFile(parserProperties, openApi);
+		writeOpenApiFile(parserProperties, openApi);
 
 		return false;
 	}

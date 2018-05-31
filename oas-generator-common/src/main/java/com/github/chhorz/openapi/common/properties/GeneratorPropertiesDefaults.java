@@ -35,6 +35,7 @@ public class GeneratorPropertiesDefaults {
 	public static final String PARSER_LOG_LEVEL = LoggingUtils.INFO;
 	public static final String PARSER_OUTPUT_DIR = "./target/openapi";
 	public static final String PARSER_OUTPUT_FILE = "openapi.json";
+	public static final String PARSER_SCHEMA_FILE = null;
 	public static final List<String> PARSER_SCHEMA_PACKAGES = new ArrayList<>();
 
 }
