@@ -13,7 +13,7 @@ public class ResponseUtils {
 		response.setDescription("");
 
 		MediaType mediaType = new MediaType();
-		mediaType.setSchemaReference(ReferenceUtils.createSchemaReference(typeMirror));
+		mediaType.setSchema(ReferenceUtils.createSchemaReference(typeMirror));
 
 		if (produces.length == 0) {
 			response.putContent("*/*", mediaType);
@@ -31,7 +31,7 @@ public class ResponseUtils {
 		response.setDescription("");
 
 		MediaType mediaType = new MediaType();
-		mediaType.setSchemaObject(schema);
+		mediaType.setSchema(schema);
 
 		if (produces.length == 0) {
 			response.putContent("*/*", mediaType);

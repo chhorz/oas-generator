@@ -259,7 +259,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 						for (String produces : requestMapping.consumes()) {
 							MediaType mediaType = new MediaType();
-							mediaType.setSchemaReference(ReferenceUtils.createSchemaReference(requestBody.asType()));
+							mediaType.setSchema(ReferenceUtils.createSchemaReference(requestBody.asType()));
 
 							r.putContent(produces, mediaType);
 						}

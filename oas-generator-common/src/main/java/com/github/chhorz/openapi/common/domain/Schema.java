@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.github.chhorz.openapi.common.util.jackson.SchemaPropertyDeserializer;
 
 /**
  * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#schema-object
@@ -28,6 +30,7 @@ public class Schema {
 	private Type type;
 	private Format format;
 	private String description;
+	@JsonDeserialize(using = SchemaPropertyDeserializer.class)
 	private Map<String, Object> properties;
 
 	@JsonProperty("default")
@@ -155,11 +158,7 @@ public class Schema {
 		return items;
 	}
 
-	public void setItems(final Reference items) {
-		this.items = items;
-	}
-
-	public void setItems(final Schema items) {
+	public void setItems(final Object items) {
 		this.items = items;
 	}
 

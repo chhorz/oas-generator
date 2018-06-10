@@ -1,0 +1,61 @@
+{
+  "components" : {
+    "schemas" : {
+      "Article" : {
+        "type" : "object",
+        "description" : "An article that can be ordered.",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "number" : {
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "The basic number of the resource."
+          },
+          "price" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : ""
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "",
+            "enum" : [ "SIMPLE", "PREMIUM" ]
+          }
+        }
+      },
+      "Order" : {
+        "type" : "object",
+        "description" : "The order.",
+        "properties" : {
+          "article" : {
+            "type" : "array",
+            "description" : "The ordered article.",
+            "items" : {
+              "$ref" : "#/components/schemas/Article"
+            }
+          },
+          "number" : {
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "The basic number of the resource."
+          },
+          "orderTs" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : ""
+          },
+          "referenceNumber" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

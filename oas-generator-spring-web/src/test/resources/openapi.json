@@ -1,0 +1,50 @@
+{
+  "components" : {
+    "schemas" : {
+      "Order" : {
+        "type" : "object",
+        "description" : "The order.",
+        "properties" : {
+          "article" : {
+            "type" : "array",
+            "description" : "The ordered article.",
+            "items" : {
+              "$ref" : "#/components/schemas/Article"
+            }
+          },
+          "number" : {
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "The basic number of the resource."
+          },
+          "orderTs" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : ""
+          },
+          "referenceNumber" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ErrorResource" : {
+        "type" : "object",
+        "description" : "",
+        "properties" : {
+          "cause" : {
+            "type" : "string",
+            "description" : "The error cause."
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "Human readable title of the error."
+          }
+        }
+      }
+    }
+  }
+}

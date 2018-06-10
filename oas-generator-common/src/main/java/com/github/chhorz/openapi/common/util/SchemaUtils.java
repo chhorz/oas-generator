@@ -89,7 +89,8 @@ public class SchemaUtils {
 	private Map<TypeMirror, Schema> parsePackage(final PackageElement packageElement) {
 		Map<TypeMirror, Schema> typeMirrorMap = new HashMap<>();
 
-		packageElement.getEnclosedElements().stream()
+		packageElement.getEnclosedElements()
+				.stream()
 				.map(Element::asType)
 				.map(type -> mapTypeMirrorToSchema(type))
 				.flatMap(map -> map.entrySet().stream())
@@ -166,7 +167,7 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 			}
 			schemaMap.put(typeMirror, schema);
-		} else if (isAssignableFrom(elements, types, typeMirror, List.class)){
+		} else if (isAssignableFrom(elements, types, typeMirror, List.class)) {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, List.class)[0];
@@ -187,7 +188,7 @@ public class SchemaUtils {
 			schemaMap.putAll(propertySchemaMap);
 
 			schemaMap.put(typeMirror, schema);
-		} else if (isAssignableFrom(elements, types, typeMirror, Set.class)){
+		} else if (isAssignableFrom(elements, types, typeMirror, Set.class)) {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, Set.class)[0];
@@ -366,7 +367,8 @@ public class SchemaUtils {
 		return types.isSameType(typeMirror, elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
 
-	private boolean isAssignableFrom(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
+	private boolean isAssignableFrom(final Elements elements, final Types types, final TypeMirror typeMirror,
+			final Class<?> clazz) {
 		return types.isAssignable(types.erasure(typeMirror), elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
 
@@ -375,24 +377,32 @@ public class SchemaUtils {
 
 		result.setFormat(merge(one, two, Schema::getFormat));
 		result.setType(merge(one, two, Schema::getType));
-		result.setDescription(merge(one, two, Schema::getDescription));
+		result.setDescription(mergeString(one, two, Schema::getDescription));
 		result.setDefaultValue(merge(one, two, Schema::getDefaultValue));
-		result.setPattern(merge(one, two, Schema::getPattern));
+		result.setPattern(mergeString(one, two, Schema::getPattern));
 
 		if (one.getEnumValues() != null || two.getEnumValues() != null) {
 			merge(one, two, Schema::getEnumValues).forEach(enumValue -> result.addEnumValue(enumValue));
 		}
 
-		one.getProperties().entrySet().forEach(entry -> {
-			Function<Schema, Object> function = schema -> schema.getProperties().get(entry.getKey());
+		if (one.getProperties() != null) {
+			one.getProperties().entrySet().forEach(entry -> {
+				Function<Schema, Object> function = schema -> schema.getProperties().get(entry.getKey());
+				String key = entry.getKey();
+				Object propertyOne = function.apply(one);
+				Object propertyTwo = function.apply(two);
 
-			Object property = merge(one, two, function);
-			if (property != null && property instanceof Reference) {
-				result.putProperty(entry.getKey(), (Reference) property);
-			} else if (property != null && property instanceof Schema) {
-				result.putProperty(entry.getKey(), (Schema) property);
-			}
-		});
+				if (notNullReference(propertyOne) && notNullReference(propertyTwo)) {
+					result.putProperty(entry.getKey(), (Reference) propertyOne);
+				} else if (notNullSchema(propertyOne) && notNullSchema(propertyTwo)) {
+					result.putProperty(entry.getKey(), mergeSchemas((Schema) propertyOne, (Schema) propertyTwo));
+				} else if (notNullReference(propertyOne)) {
+					result.putProperty(entry.getKey(), (Reference) propertyOne);
+				} else if (notNullSchema(propertyOne)) {
+					result.putProperty(entry.getKey(), (Schema) propertyOne);
+				}
+			});
+		}
 
 		Object items = merge(one, two, Schema::getItems);
 		if (items != null && items instanceof Reference) {
@@ -404,7 +414,23 @@ public class SchemaUtils {
 		return result;
 	}
 
+	private static boolean notNullSchema(final Object object) {
+		return object != null && object instanceof Schema;
+	}
+
+	private static boolean notNullReference(final Object object) {
+		return object != null && object instanceof Reference;
+	}
+
 	private static <T> T merge(final Schema one, final Schema two, final Function<Schema, T> function) {
 		return function.apply(one) != null ? function.apply(one) : function.apply(two);
+	}
+
+	private static String mergeString(final Schema one, final Schema two, final Function<Schema, String> function) {
+		if (function.apply(one) != null && !function.apply(one).isEmpty()) {
+			return function.apply(one);
+		} else {
+			return function.apply(two);
+		}
 	}
 }

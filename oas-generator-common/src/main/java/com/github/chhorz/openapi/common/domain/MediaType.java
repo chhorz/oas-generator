@@ -12,10 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class MediaType {
 
-	@JsonProperty("schema")
-	private Schema schemaObject;
-	@JsonProperty("schema")
-	private Reference schemaReference;
+	private Object schema;
 	private Object example;
 	@JsonProperty("examples")
 	private Map<String, Example> exampleObjects;
@@ -24,15 +21,11 @@ public class MediaType {
 	private Map<String, Encoding> encoding;
 
 	public Object getSchema() {
-		return schemaReference != null ? schemaReference : schemaObject;
+		return schema;
 	}
 
-	public void setSchemaReference(final Reference schemaReference) {
-		this.schemaReference = schemaReference;
-	}
-
-	public void setSchemaObject(final Schema schemaObject) {
-		this.schemaObject = schemaObject;
+	public void setSchema(final Object schema) {
+		this.schema = schema;
 	}
 
 }
