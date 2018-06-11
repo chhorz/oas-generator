@@ -37,7 +37,7 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 		node.fieldNames().forEachRemaining(fieldName -> {
 			JsonNode childNode = node.get(fieldName);
 			if (childNode.has("$ref")) {
-				propertyMap.put(fieldName, new Reference(childNode.get(fieldName).asText()));
+				propertyMap.put(fieldName, new Reference(childNode.get("$ref").asText()));
 			} else {
 				Schema schema = new Schema();
 				schema.setType(deserializeType(Type.values(), childNode));
