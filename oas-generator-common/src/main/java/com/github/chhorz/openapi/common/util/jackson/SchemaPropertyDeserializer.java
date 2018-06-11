@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
@@ -40,8 +41,8 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 				propertyMap.put(fieldName, new Reference(childNode.get("$ref").asText()));
 			} else {
 				Schema schema = new Schema();
-				schema.setType(deserializeType(Type.values(), childNode));
-				schema.setFormat(deserializeFormat(Format.values(), childNode));
+				schema.setType(deserializeType(Type.values(), childNode.get("type")));
+				schema.setFormat(deserializeFormat(Format.values(), childNode.get("format")));
 				schema.setDescription(childNode.get("description").asText());
 				schema.setPattern(childNode.has("pattern") ? childNode.get("pattern").asText() : null);
 				if (childNode.has("items")) {
@@ -50,14 +51,20 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 						schema.setItems(new Reference(itemsNode.get("$ref").asText()));
 					} else {
 						Schema itemsSchema = new Schema();
-						itemsSchema.setType(deserializeType(Type.values(), itemsNode));
-						itemsSchema.setFormat(deserializeFormat(Format.values(), itemsNode));
+						itemsSchema.setType(deserializeType(Type.values(), itemsNode.get("type")));
+						itemsSchema.setFormat(deserializeFormat(Format.values(), itemsNode.get("format")));
 						// TODO check attributes for items
 						schema.setItems(itemsSchema);
 					}
 				}
-				// TODO enum
+
+				if (childNode.has("enum")) {
+					ArrayNode arrayNode = (ArrayNode) childNode.withArray("enum");
+					arrayNode.forEach(arrayValue -> schema.addEnumValue(arrayValue.asText()));
+				}
+
 				// TODO defaultValue
+
 				propertyMap.put(fieldName, schema);
 			}
 		});
@@ -67,15 +74,20 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 
 	private Type deserializeType(final Type[] types, final JsonNode jsonNode) {
 		if (jsonNode != null) {
-			return Stream.of(types).filter(type -> type.getOpenApiValue().equals(jsonNode.asText())).findFirst().orElse(null);
+			return Stream.of(types)
+					.filter(type -> type.getOpenApiValue().equals(jsonNode.asText()))
+					.findFirst()
+					.orElse(null);
 		}
 		return null;
 	}
 
 	private Format deserializeFormat(final Format[] formats, final JsonNode jsonNode) {
 		if (jsonNode != null) {
-			return Stream.of(formats).filter(format -> format.getOpenApiValue().equals(jsonNode.asText())).findFirst().orElse(
-					null);
+			return Stream.of(formats)
+					.filter(format -> format.getOpenApiValue().equals(jsonNode.asText()))
+					.findFirst()
+					.orElse(null);
 		}
 		return null;
 	}
