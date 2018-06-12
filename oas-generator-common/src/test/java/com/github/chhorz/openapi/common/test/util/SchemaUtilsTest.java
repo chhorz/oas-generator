@@ -139,12 +139,12 @@ public class SchemaUtilsTest {
 				.containsKeys(test, other);
 
 		assertThat(schemaMap.get(test))
-				.extracting("type", "format")
-				.containsExactly(Type.OBJECT, null);
+				.extracting("type", "format", "deprecated")
+				.containsExactly(Type.OBJECT, null, false);
 
 		assertThat(schemaMap.get(other))
-				.extracting("type", "format")
-				.containsExactly(Type.OBJECT, null);
+				.extracting("type", "format", "deprecated")
+				.containsExactly(Type.OBJECT, null, true);
 
 		assertThat(schemaMap.get(test).getProperties())
 				.hasSize(7)
@@ -174,10 +174,10 @@ public class SchemaUtilsTest {
 				.containsKeys("int", "date", "time");
 
 		assertThat(schemaMap.get(other).getProperties().values())
-				.extracting("type", "format")
-				.contains(tuple(Type.INTEGER, Format.INT32),
-						tuple(Type.STRING, Format.DATE),
-						tuple(Type.STRING, Format.DATE_TIME));
+				.extracting("type", "format", "deprecated")
+				.contains(tuple(Type.INTEGER, Format.INT32, false),
+						tuple(Type.STRING, Format.DATE, false),
+						tuple(Type.STRING, Format.DATE_TIME, true));
 	}
 
 	@Test

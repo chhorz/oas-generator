@@ -41,6 +41,7 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 				propertyMap.put(fieldName, new Reference(childNode.get("$ref").asText()));
 			} else {
 				Schema schema = new Schema();
+				schema.setDeprecated(childNode.has("deprecated") ? childNode.get("deprecated").asBoolean() : false);
 				schema.setType(deserializeType(Type.values(), childNode.get("type")));
 				schema.setFormat(deserializeFormat(Format.values(), childNode.get("format")));
 				schema.setDescription(childNode.get("description").asText());

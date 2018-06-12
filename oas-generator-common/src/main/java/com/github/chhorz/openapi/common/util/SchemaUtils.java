@@ -109,8 +109,13 @@ public class SchemaUtils {
 
 		Schema schema = new Schema();
 
+		Element e = types.asElement(typeMirror);
+		if (e != null && e.getAnnotation(Deprecated.class) != null) {
+			schema.setDeprecated(true);
+		}
+
 		if (typeMirror.getKind().isPrimitive()) {
-			SimpleEntry<Type, Format> typeAndFormat = getPrimitiveTypeAndFormat(types, typeMirror);
+			SimpleEntry<Type, Format> typeAndFormat = getPrimitiveTypeAndFormat(typeMirror);
 			if (typeAndFormat != null) {
 				schema.setType(typeAndFormat.getKey());
 				schema.setFormat(typeAndFormat.getValue());
@@ -264,6 +269,9 @@ public class SchemaUtils {
 											} else {
 												Schema propertySchema = entry.getValue();
 												propertySchema.setDescription(propertyDoc.getDescription());
+												if (vElement.getAnnotation(Deprecated.class) != null) {
+													propertySchema.setDeprecated(true);
+												}
 												schema.putProperty(propertyName, propertySchema);
 											}
 										});
@@ -310,7 +318,7 @@ public class SchemaUtils {
 		}
 	}
 
-	private SimpleEntry<Type, Format> getPrimitiveTypeAndFormat(final Types types, final TypeMirror typeMirror) {
+	private SimpleEntry<Type, Format> getPrimitiveTypeAndFormat(final TypeMirror typeMirror) {
 		switch (typeMirror.getKind()) {
 			case BOOLEAN:
 				return new SimpleEntry<>(Type.BOOLEAN, null);
@@ -342,7 +350,7 @@ public class SchemaUtils {
 		}
 
 		try {
-			typeAndFormat = getPrimitiveTypeAndFormat(types, types.unboxedType(typeMirror));
+			typeAndFormat = getPrimitiveTypeAndFormat(types.unboxedType(typeMirror));
 		} catch (IllegalArgumentException e) {
 			// TODO: handle finally clause
 		}
@@ -375,6 +383,7 @@ public class SchemaUtils {
 	public static Schema mergeSchemas(final Schema one, final Schema two) {
 		Schema result = new Schema();
 
+		result.setDeprecated(one.getDeprecated() || two.getDeprecated());
 		result.setFormat(merge(one, two, Schema::getFormat));
 		result.setType(merge(one, two, Schema::getType));
 		result.setDescription(mergeString(one, two, Schema::getDescription));
@@ -382,7 +391,7 @@ public class SchemaUtils {
 		result.setPattern(mergeString(one, two, Schema::getPattern));
 
 		if (one.getEnumValues() != null || two.getEnumValues() != null) {
-			merge(one, two, Schema::getEnumValues).forEach(enumValue -> result.addEnumValue(enumValue));
+			merge(one, two, Schema::getEnumValues).forEach(result::addEnumValue);
 		}
 
 		if (one.getProperties() != null) {

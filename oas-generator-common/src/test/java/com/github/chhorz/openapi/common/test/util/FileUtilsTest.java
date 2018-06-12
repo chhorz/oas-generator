@@ -3,7 +3,9 @@ package com.github.chhorz.openapi.common.test.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import com.github.chhorz.openapi.common.util.FileUtils;
 
 public class FileUtilsTest {
 
+	private static Map<String, Schema> schemaMap;
 	private static Schema article;
 	private static Schema order;
 
@@ -41,6 +44,10 @@ public class FileUtilsTest {
 		order.putProperty("number", prop(Type.INTEGER, Format.INT64, "The basic number of the resource."));
 		order.putProperty("orderTs", prop(Type.STRING, Format.DATE_TIME, ""));
 		order.putProperty("referenceNumber", arrayProp(Type.ARRAY, null, "", prop(Type.STRING, null, null)));
+
+		schemaMap = new TreeMap<>();
+		schemaMap.put("Article", article);
+		schemaMap.put("Order", order);
 	}
 
 	private static Schema arrayProp(final Type type, final Format format, final String description, final Schema item) {
@@ -97,8 +104,9 @@ public class FileUtilsTest {
 			.isNotNull()
 			.isNotEmpty()
 			.hasSize(2)
-				.containsKeys("Article", "Order")
-				.containsValues(article, order);
+				.containsKeys("Article", "Order");
+
+		assertThat(openAPI.getComponents().getSchemas().toString()).isEqualTo(schemaMap.toString());
 	}
 
 	@Test

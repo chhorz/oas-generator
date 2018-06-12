@@ -102,6 +102,7 @@ parser:
   logLevel: DEBUG
   outputDir: ./target/openapi
   outputFile: openapi.json
+  schemaFile: api-module/target/openapi/openapi-schema.json
   schemaPackages:
   - com.github.chhorz.openapi.spring.test.controller.external
 ----
