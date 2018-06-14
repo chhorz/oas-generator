@@ -50,7 +50,7 @@ public class GeneratorPropertyLoader {
 			Yaml yaml = new Yaml(new Constructor(GeneratorProperties.class));
 			properties = yaml.load(resourceStream);
 			System.out.println("Loaded properties");
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			// e.printStackTrace();
 			properties = new GeneratorProperties();
 			System.out.println("Using default properties");
