@@ -1,6 +1,6 @@
 package com.github.chhorz.openapi.common.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
@@ -24,10 +24,21 @@ public class Parameter {
 	private Schema schema;
 
 	public enum In {
-		query,
-		header,
-		path,
-		cookie
+		QUERY("query"),
+		HEADER("header"),
+		PATH("path"),
+		COOKIE("cookie");
+
+		private String openApiValue;
+
+		In(final String openApiValue) {
+			this.openApiValue = openApiValue;
+		}
+
+		@JsonValue
+		public String getOpenApiValue() {
+			return openApiValue;
+		}
 	}
 
 	public String getName() {

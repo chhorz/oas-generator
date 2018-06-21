@@ -112,7 +112,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						PostMapping.class,
 						PutMapping.class,
 						DeleteMapping.class,
-				PatchMapping.class, ExceptionHandler.class)
+						PatchMapping.class,
+						ExceptionHandler.class)
 				.map(Class::getCanonicalName)
 				.collect(toSet());
 	}
@@ -378,7 +379,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setAllowEmptyValue(Boolean.FALSE);
 		parameter.setDeprecated(variableElement.getAnnotation(Deprecated.class) != null);
 		parameter.setDescription(parameterDescription.isPresent() ? parameterDescription.get().getParamDescription() : "");
-		parameter.setIn(In.path);
+		parameter.setIn(In.PATH);
 		parameter.setName(name);
 		parameter.setRequired(Boolean.TRUE);
 
@@ -410,7 +411,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setAllowEmptyValue(!ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue()));
 		parameter.setDeprecated(variableElement.getAnnotation(Deprecated.class) != null);
 		parameter.setDescription(parameterDescription.isPresent() ? parameterDescription.get().getParamDescription() : "");
-		parameter.setIn(In.query);
+		parameter.setIn(In.QUERY);
 		parameter.setName(name);
 		parameter.setRequired(requestParam.required());
 
@@ -441,7 +442,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		parameter.setAllowEmptyValue(!ValueConstants.DEFAULT_NONE.equals(requestHeader.defaultValue()));
 		parameter.setDeprecated(variableElement.getAnnotation(Deprecated.class) != null);
 		parameter.setDescription(parameterDescription.isPresent() ? parameterDescription.get().getParamDescription() : "");
-		parameter.setIn(In.header);
+		parameter.setIn(In.HEADER);
 		parameter.setName(name);
 		parameter.setRequired(requestHeader.required());
 

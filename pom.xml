@@ -12,6 +12,7 @@
 		<module>oas-generator-common</module>
 		<module>oas-generator-docs</module>
 		<module>oas-generator-spring-web</module>
+		<module>oas-generator-jaxrs</module>
 		<module>oas-generator-schema</module>
 	</modules>
 
@@ -23,6 +24,8 @@
 
 		<spring-web.version>4.3.12.RELEASE</spring-web.version>
 		<spring-security-core.version>4.2.6.RELEASE</spring-security-core.version>
+
+		<javax.ws.rs-api.version>2.1</javax.ws.rs-api.version>
 
 		<!-- Test dependency versions -->
 		<assertj-core.version>3.9.1</assertj-core.version>
@@ -66,6 +69,13 @@
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
 				<version>${spring-security-core.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.ws.rs</groupId>
+				<artifactId>javax.ws.rs-api</artifactId>
+				<version>${javax.ws.rs-api.version}</version>
 				<scope>provided</scope>
 			</dependency>
 
