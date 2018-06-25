@@ -24,6 +24,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -35,6 +36,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,17 +47,25 @@ import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
+import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
+import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.domain.Operation;
 import com.github.chhorz.openapi.common.domain.Parameter;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
+import com.github.chhorz.openapi.common.domain.RequestBody;
+import com.github.chhorz.openapi.common.domain.Response;
+import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
 import com.github.chhorz.openapi.common.domain.Parameter.In;
+import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
+import com.github.chhorz.openapi.common.util.ReferenceUtils;
+import com.github.chhorz.openapi.common.util.ResponseUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 import com.github.chhorz.openapi.common.util.TagUtils;
 
@@ -70,6 +80,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 	private LoggingUtils log;
 	private SchemaUtils schemaUtils;
+	private ResponseUtils responseUtils;
 
 	private OpenAPI openApi;
 
@@ -83,6 +94,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 		log = new LoggingUtils(parserProperties);
 		schemaUtils = new SchemaUtils(elements, types, log);
+		responseUtils = new ResponseUtils();
 
 		openApi = initializeFromProperties(propertyLoader);
 	}
@@ -177,7 +189,73 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 				.map(v -> mapRequestHeader(v, tags))
 				.collect(toList()));
 
-		// ...
+		VariableElement requestBody = executableElement.getParameters()
+				.stream()
+				.filter(variableElement -> variableElement.getAnnotation(PathParam.class) == null)
+				.filter(variableElement -> variableElement.getAnnotation(QueryParam.class) == null)
+				.filter(variableElement -> variableElement.getAnnotation(HeaderParam.class) == null)
+				.findFirst()
+				.orElse(null);
+
+		if (requestBody != null) {
+			RequestBody r = new RequestBody();
+
+			Optional<ParamTag> optionalParameter = javaDoc.getTags(ParamTag.class)
+					.stream()
+					.filter(tag -> requestBody.toString().equals(tag.getParamName()))
+					.findFirst();
+			if (optionalParameter.isPresent()) {
+				r.setDescription(optionalParameter.get().getParamDescription());
+			} else {
+				r.setDescription("");
+			}
+
+			r.setRequired(Boolean.TRUE);
+
+			Consumes consumes = executableElement.getAnnotation(Consumes.class);
+			if (consumes != null) {
+				for (String c : consumes.value()) {
+					MediaType mediaType = new MediaType();
+					mediaType.setSchema(ReferenceUtils.createSchemaReference(requestBody.asType()));
+
+					r.putContent(c, mediaType);
+				}
+			}
+
+			openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
+			openApi.getComponents().putRequestBody(requestBody.asType().toString(), r);
+
+			operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
+		}
+
+		String returnTag = "";
+		List<ReturnTag> returnTags = javaDoc.getTags(ReturnTag.class);
+		if (returnTags.size() == 1) {
+			returnTag = returnTags.get(0).getDesrcription();
+		}
+
+		Responses responses = new Responses();
+		TypeMirror returnType = executableElement.getReturnType();
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
+		Schema schema = schemaMap.get(returnType);
+
+		Produces produces = executableElement.getAnnotation(Produces.class);
+		if (produces != null) {
+			if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
+				Response response = responseUtils.mapTypeMirrorToResponse(returnType, produces.value());
+				response.setDescription(returnTag);
+				responses.setDefaultResponse(response);
+			} else {
+				Response response = responseUtils.mapSchemaToResponse(schema, produces.value());
+				response.setDescription(returnTag);
+				responses.setDefaultResponse(response);
+				schemaMap.remove(returnType);
+			}
+		}
+
+		openApi.getComponents().putAllSchemas(schemaMap);
+
+		operation.setResponses(responses);
 
 		javaDoc.getTags(CategoryTag.class).stream()
 				.map(CategoryTag::getCategoryName)
@@ -270,7 +348,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 		Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
 				.get(variableElement.asType());
-		
+
 		if (variableElement.getAnnotation(DefaultValue.class) != null) {
 			DefaultValue defaultValue = variableElement.getAnnotation(DefaultValue.class);
 			schema.setDefaultValue(defaultValue.value());

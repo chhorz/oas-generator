@@ -258,11 +258,11 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 						r.setRequired(Boolean.TRUE);
 
-						for (String produces : requestMapping.consumes()) {
+						for (String consumes : requestMapping.consumes()) {
 							MediaType mediaType = new MediaType();
 							mediaType.setSchema(ReferenceUtils.createSchemaReference(requestBody.asType()));
 
-							r.putContent(produces, mediaType);
+							r.putContent(consumes, mediaType);
 						}
 
 						openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
