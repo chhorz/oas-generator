@@ -3,6 +3,8 @@ package com.github.chhorz.openapi.common.properties;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 
@@ -37,5 +39,6 @@ public class GeneratorPropertiesDefaults {
 	public static final String PARSER_OUTPUT_FILE = "openapi.json";
 	public static final String PARSER_SCHEMA_FILE = null;
 	public static final List<String> PARSER_SCHEMA_PACKAGES = new ArrayList<>();
+	public static final Map<String, String> PARSER_POST_PROCESSOR = new TreeMap<>();
 
 }

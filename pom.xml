@@ -14,6 +14,7 @@
 		<module>oas-generator-spring-web</module>
 		<module>oas-generator-jaxrs</module>
 		<module>oas-generator-schema</module>
+		<module>oas-generator-spi</module>
 	</modules>
 
 	<properties>

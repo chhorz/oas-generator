@@ -94,6 +94,9 @@ tags:
       url: http://www.google.com
 ----
 
+The content of the part above will be included in the resulting OpenAPI document as it was defined.
+Parser properties shown below customize the behavior of the _oas-generator_:
+
 .Configuration to adjust the generator behavior
 [source,yaml]
 ----
@@ -105,7 +108,13 @@ parser:
   schemaFile: api-module/target/openapi/openapi-schema.json
   schemaPackages:
   - com.github.chhorz.openapi.spring.test.controller.external
+  postProcessor:
+    key1: value1
+    key2: value2
 ----
+
+The `postProcessor` properties define a generic list of properties.
+In this map contributors can define their own properties for their post processors using the provided spi.
 
 == License
 OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].

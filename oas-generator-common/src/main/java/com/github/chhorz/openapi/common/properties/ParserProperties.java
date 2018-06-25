@@ -1,6 +1,7 @@
 package com.github.chhorz.openapi.common.properties;
 
 import java.util.List;
+import java.util.Map;
 
 public class ParserProperties {
 
@@ -12,12 +13,15 @@ public class ParserProperties {
 
 	private List<String> schemaPackages;
 
+	private Map<String, String> postProcessor;
+
 	public ParserProperties() {
 		logLevel = GeneratorPropertiesDefaults.PARSER_LOG_LEVEL;
 		outputDir = GeneratorPropertiesDefaults.PARSER_OUTPUT_DIR;
 		outputFile = GeneratorPropertiesDefaults.PARSER_OUTPUT_FILE;
 		schemaFile = GeneratorPropertiesDefaults.PARSER_SCHEMA_FILE;
 		schemaPackages = GeneratorPropertiesDefaults.PARSER_SCHEMA_PACKAGES;
+		postProcessor = GeneratorPropertiesDefaults.PARSER_POST_PROCESSOR;
 	}
 
 	public String getLogLevel() {
@@ -58,6 +62,14 @@ public class ParserProperties {
 
 	public void setSchemaPackages(final List<String> schemaPackages) {
 		this.schemaPackages = schemaPackages;
+	}
+
+	public Map<String, String> getPostProcessor() {
+		return postProcessor;
+	}
+
+	public void setPostProcessor(final Map<String, String> postProcessor) {
+		this.postProcessor = postProcessor;
 	}
 
 }

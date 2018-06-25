@@ -3,6 +3,7 @@ package com.github.chhorz.openapi.common;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -10,6 +11,8 @@ import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
+import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
 import com.github.chhorz.openapi.common.util.FileUtils;
 
 public interface OpenAPIProcessor {
@@ -37,8 +40,11 @@ public interface OpenAPIProcessor {
 	}
 
 	default void writeOpenApiFile(final ParserProperties parserProperties, final OpenAPI openApi) {
-		FileUtils fileUtils = new FileUtils(parserProperties);
-		fileUtils.writeToFile(openApi);
+		ServiceLoader<PostProcessorProvider> loader = ServiceLoader.load(PostProcessorProvider.class);
+		loader.forEach(provider -> {
+			OpenAPIPostProcessor postProcessor = provider.create();
+			postProcessor.postProcess(parserProperties, openApi);
+		});
 	}
 
 	default Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {
