@@ -40,10 +40,11 @@ public interface OpenAPIProcessor {
 	}
 
 	default void writeOpenApiFile(final ParserProperties parserProperties, final OpenAPI openApi) {
-		ServiceLoader<PostProcessorProvider> loader = ServiceLoader.load(PostProcessorProvider.class);
+		ServiceLoader<PostProcessorProvider> loader = ServiceLoader.load(PostProcessorProvider.class,
+				getClass().getClassLoader());
 		loader.forEach(provider -> {
-			OpenAPIPostProcessor postProcessor = provider.create();
-			postProcessor.postProcess(parserProperties, openApi);
+			OpenAPIPostProcessor postProcessor = provider.create(parserProperties);
+			postProcessor.execute(openApi);
 		});
 	}
 

@@ -7,11 +7,17 @@ import com.github.chhorz.openapi.common.util.LoggingUtils;
 
 public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 
+	private FileUtils fileUtils;
+	private LoggingUtils log;
+
+	public FileWriterPostProcessor(final ParserProperties parserProperties) {
+		log = new LoggingUtils(parserProperties);
+		fileUtils = new FileUtils(parserProperties);
+	}
+
 	@Override
-	public void postProcess(final ParserProperties parserProperties, final OpenAPI openApi) {
-		LoggingUtils log = new LoggingUtils(parserProperties);
+	public void execute(final OpenAPI openApi) {
 		log.info("FileWriterPostProcessor | START");
-		FileUtils fileUtils = new FileUtils(parserProperties);
 		fileUtils.writeToFile(openApi);
 	}
 

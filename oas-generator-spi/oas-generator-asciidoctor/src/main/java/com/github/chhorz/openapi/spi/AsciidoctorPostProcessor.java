@@ -7,9 +7,14 @@ import com.github.chhorz.openapi.common.util.LoggingUtils;
 
 public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
+	private LoggingUtils log;
+
+	public AsciidoctorPostProcessor(final ParserProperties parserProperties) {
+		log = new LoggingUtils(parserProperties);
+	}
+
 	@Override
-	public void postProcess(final ParserProperties parserProperties, final OpenAPI openApi) {
-		LoggingUtils log = new LoggingUtils(parserProperties);
+	public void execute(final OpenAPI openApi) {
 		log.info("AsciidoctorPostProcessor | START");
 	}
 
