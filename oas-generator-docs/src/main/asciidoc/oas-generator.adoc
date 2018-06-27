@@ -47,6 +47,11 @@ The following table explains the availability:
 | icon:check[role="green"]
 | icon:check[role="green"]
 
+| _oas-generator-jaxrs_
+| icon:check[role="green"]
+| icon:check[role="green"]
+| icon:check[role="green"]
+
 | _oas-generator-schema_
 | icon:check[role="green"]
 | icon:minus[role="red"]
@@ -115,6 +120,21 @@ parser:
 
 The `postProcessor` properties define a generic list of properties.
 In this map contributors can define their own properties for their post processors using the provided spi.
+
+== Extensibility
+The OAS Generator provides a service provider interface (SPI) to include custom post processors.
+Per default the `FileWriterPostProcessor` is included to write the _openapi.json_ file.
+Currently the following post processors are also provided:
+
+- `AsciidoctorPostProcessor`
+
+=== Implementation
+Providing your own post processor is very simple.
+You just have to follow these steps:
+
+. Implement the `PostProcessorProvider` interface to create a custom post processor
+. Implement the `OpenAPIPostProcessor` interface with the actual execution method
+. Create a file named `com.github.chhorz.openapi.common.spi.PostProcessorProvider` at `src/main/resources/META-INF/services` containing the fully qualified name of the class from step 1
 
 == License
 OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].

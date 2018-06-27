@@ -72,4 +72,8 @@ public class ParserProperties {
 		this.postProcessor = postProcessor;
 	}
 
+	public String getPostProcessorValue(final String key, final String defaultValue) {
+		return postProcessor.getOrDefault(key, defaultValue);
+	}
+
 }
