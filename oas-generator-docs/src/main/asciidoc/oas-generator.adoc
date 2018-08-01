@@ -60,7 +60,7 @@ The following table explains the availability:
 
 [[configuration-file]]
 === Configuration file
-The configuration file is splitted into two parts.
+The configuration file is split into two parts.
 Both parts are in the same file (Default: _oas-generator.yml_).
 
 .Content included in `openapi.json`

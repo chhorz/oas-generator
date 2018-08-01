@@ -7,8 +7,12 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.github.chhorz.javadoc.JavaDocParser;
+import com.github.chhorz.javadoc.JavaDocParserBuilder;
+import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
+import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
@@ -37,6 +41,13 @@ public interface OpenAPIProcessor {
 		openApi.setComponents(components);
 
 		return openApi;
+	}
+
+	default JavaDocParser createJavadocParser() {
+		return JavaDocParserBuilder.withBasicTags()
+				.withCustomTag(new ResponseTag())
+				.withOutputType(OutputType.HTML)
+				.build();
 	}
 
 	default void writeOpenApiFile(final ParserProperties parserProperties, final OpenAPI openApi) {

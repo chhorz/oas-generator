@@ -28,6 +28,8 @@ public class OrderController {
 	 *
 	 * @category order
 	 *
+	 * @response 200 com.github.chhorz.openapi.spring.test.controller.resource.Order
+	 *
 	 * @param id
 	 *            the identifier
 	 * @param filter

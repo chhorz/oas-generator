@@ -20,6 +20,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -45,8 +46,6 @@ import org.springframework.web.bind.annotation.ValueConstants;
 
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
-import com.github.chhorz.javadoc.JavaDocParserBuilder;
-import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
@@ -62,6 +61,7 @@ import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
+import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
@@ -86,7 +86,11 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	private TypeMirrorUtils typeMirrorUtils;
 	private ResponseUtils responseUtils;
 
+	private JavaDocParser javaDocParser;
+
 	private OpenAPI openApi;
+
+	private TypeMirror exceptionHanderReturntype = null;
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment processingEnv) {
@@ -101,6 +105,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		schemaUtils = new SchemaUtils(elements, types, log);
 		typeMirrorUtils = new TypeMirrorUtils(elements, types);
 		responseUtils = new ResponseUtils();
+
+		javaDocParser = createJavadocParser();
 
 		openApi = initializeFromProperties(propertyLoader);
 	}
@@ -125,21 +131,32 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+		Set<? extends Element> exceptionHandler = roundEnv.getElementsAnnotatedWith(ExceptionHandler.class);
+		if (exceptionHandler != null && !exceptionHandler.isEmpty()) {
+			exceptionHandler.stream()
+					.filter(element -> element instanceof ExecutableElement)
+					.map(ExecutableElement.class::cast)
+					.peek(exElement -> log.info("Parsing exception handler: %s", exElement))
+					.map(ExecutableElement::getReturnType)
+					.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
+					.map(schemaUtils::mapTypeMirrorToSchema)
+					.forEach(openApi.getComponents()::putAllSchemas);
+
+			exceptionHanderReturntype = exceptionHandler.stream()
+					.filter(element -> element instanceof ExecutableElement)
+					.map(ExecutableElement.class::cast)
+					.map(ExecutableElement::getReturnType)
+					.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
+					.findFirst()
+					.orElse(null);
+		}
+
 		annotations.stream()
 				.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
 				.filter(element -> element instanceof ExecutableElement)
 				.map(ExecutableElement.class::cast)
 				// .peek(e -> System.out.println(e))
 				.forEach(this::mapOperationMethod);
-
-		roundEnv.getElementsAnnotatedWith(ExceptionHandler.class).stream()
-				.filter(element -> element instanceof ExecutableElement)
-				.map(ExecutableElement.class::cast)
-				.peek(exElement -> log.info("Parsing exception handler: %s", exElement.toString()))
-				.map(ExecutableElement::getReturnType)
-				.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
-				.map(schemaUtils::mapTypeMirrorToSchema)
-				.forEach(openApi.getComponents()::putAllSchemas);
 
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
 		openApi.getComponents().putAllSchemas(schemaMap);
@@ -173,8 +190,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	private void mapOperationMethod(final ExecutableElement executableElement) {
 		log.debug("Parsing method: %s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement);
 
-		JavaDocParser parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.HTML).build();
-		JavaDoc javaDoc = parser.parse(elements.getDocComment(executableElement));
+		JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
 
 		AliasUtils<?> aliasUtils = new AliasUtils<>();
 		RequestMapping methodMapping = aliasUtils.getMappingAnnotation(executableElement);
@@ -277,20 +293,52 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						returnTag = returnTags.get(0).getDesrcription();
 					}
 
+
 					Responses responses = new Responses();
+
+					// add all response tags from Javadoc
+					List<ResponseTag> responseTags = javaDoc.getTags(ResponseTag.class);
+					responseTags.forEach(responseTag -> {
+						TypeMirror responseType = elements.getTypeElement(responseTag.getResponseType()).asType();
+						Response response = responseUtils.mapTypeMirrorToResponse(responseType, requestMapping.produces());
+						// response.setDescription(responseTag.getDescription());
+						responses.putResponseResponse(responseTag.getStatusCode(), response);
+					});
+
+					// use return type of method as default response
 					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(),
 							ResponseEntity.class)[0];
 					Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
-					Schema schema = schemaMap.get(returnType);
-					if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
-						Response response = responseUtils.mapTypeMirrorToResponse(returnType, requestMapping.produces());
-						response.setDescription(returnTag);
-						responses.setDefaultResponse(response);
+
+					if (exceptionHanderReturntype != null) {
+						// use return type of ExcheptionHandler as default response
+						Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.mapTypeMirrorToSchema(exceptionHanderReturntype);
+						Schema exceptionSchema = exceptionSchemaMap.get(exceptionHanderReturntype);
+						if (Type.OBJECT.equals(exceptionSchema.getType()) || Type.ENUM.equals(exceptionSchema.getType())) {
+							Response response = responseUtils.mapTypeMirrorToResponse(exceptionHanderReturntype,
+									requestMapping.produces());
+							response.setDescription(returnTag);
+							responses.setDefaultResponse(response);
+						} else {
+							Response response = responseUtils.mapSchemaToResponse(exceptionSchema, requestMapping.produces());
+							response.setDescription(returnTag);
+							responses.setDefaultResponse(response);
+							schemaMap.remove(exceptionHanderReturntype);
+						}
 					} else {
-						Response response = responseUtils.mapSchemaToResponse(schema, requestMapping.produces());
-						response.setDescription(returnTag);
-						responses.setDefaultResponse(response);
-						schemaMap.remove(returnType);
+
+						Schema schema = schemaMap.get(returnType);
+						if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
+							Response response = responseUtils.mapTypeMirrorToResponse(returnType, requestMapping.produces());
+							response.setDescription(returnTag);
+							responses.setDefaultResponse(response);
+						} else {
+							Response response = responseUtils.mapSchemaToResponse(schema, requestMapping.produces());
+							response.setDescription(returnTag);
+							responses.setDefaultResponse(response);
+							schemaMap.remove(returnType);
+						}
+
 					}
 
 					openApi.getComponents().putAllSchemas(schemaMap);

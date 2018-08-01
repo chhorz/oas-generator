@@ -18,7 +18,7 @@ public class ResponseTagTest {
 			"Test\n" +
 			"@since 0.1\n" +
 			"@author name\n" +
-			"@response 201 java.lang.String The resulting number.\n" +
+			"@response 201 String \n" + // The resulting number.
 			"@deprecated use xyz instead\n" +
 			"@version 1.2.3\n" +
 			"@see documentation in section abc\n" +
@@ -43,8 +43,8 @@ public class ResponseTagTest {
 			.isNotNull()
 			.isNotEmpty()
 			.hasSize(1)
-			.extracting(ResponseTag::getStatusCode, ResponseTag::getResponseType, ResponseTag::getDescription)
-			.contains(tuple("201", "java.lang.String", "The resulting number."));
+				.extracting(ResponseTag::getStatusCode, ResponseTag::getResponseType/* , ResponseTag::getDescription */)
+				.contains(tuple("201", "String"/* , "The resulting number." */));
 
 	}
 }

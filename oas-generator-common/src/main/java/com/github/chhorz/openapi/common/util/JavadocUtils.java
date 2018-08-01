@@ -12,7 +12,7 @@ import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.javadoc.tags.SeeTag;
 import com.github.chhorz.javadoc.tags.SinceTag;
-import com.github.chhorz.javadoc.tags.Tag;
+import com.github.chhorz.javadoc.tags.StructuredTag;
 import com.github.chhorz.javadoc.tags.ThrowsTag;
 import com.github.chhorz.javadoc.tags.VersionTag;
 
@@ -40,7 +40,7 @@ public class JavadocUtils {
 		return mergeResult;
 	}
 
-	private static <T extends Tag> List<T> doMerge(final Class<T> clazz, final JavaDoc classJavadoc, final JavaDoc methodJavadoc) {
+	private static <T extends StructuredTag> List<T> doMerge(final Class<T> clazz, final JavaDoc classJavadoc, final JavaDoc methodJavadoc) {
 		List<T> methodTags = methodJavadoc.getTags(clazz);
 
 		if (methodTags.isEmpty()) {

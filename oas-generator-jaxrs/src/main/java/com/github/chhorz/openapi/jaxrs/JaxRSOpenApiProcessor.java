@@ -43,8 +43,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
-import com.github.chhorz.javadoc.JavaDocParserBuilder;
-import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
@@ -53,14 +51,14 @@ import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.domain.Operation;
 import com.github.chhorz.openapi.common.domain.Parameter;
+import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.RequestBody;
 import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
-import com.github.chhorz.openapi.common.domain.SecurityScheme;
-import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
+import com.github.chhorz.openapi.common.domain.SecurityScheme;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
@@ -82,6 +80,8 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 	private SchemaUtils schemaUtils;
 	private ResponseUtils responseUtils;
 
+	private JavaDocParser javaDocParser;
+
 	private OpenAPI openApi;
 
 	@Override
@@ -95,6 +95,8 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		log = new LoggingUtils(parserProperties);
 		schemaUtils = new SchemaUtils(elements, types, log);
 		responseUtils = new ResponseUtils();
+
+		javaDocParser = createJavadocParser();
 
 		openApi = initializeFromProperties(propertyLoader);
 	}
@@ -147,8 +149,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 	private void mapOperationMethod(final ExecutableElement executableElement) {
 		log.debug("Parsing method: %s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement);
 
-		JavaDocParser parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.HTML).build();
-		JavaDoc javaDoc = parser.parse(elements.getDocComment(executableElement));
+		JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
 
 		Path classPath = executableElement.getEnclosingElement().getAnnotation(Path.class);
 		Path methodPath = executableElement.getAnnotation(Path.class);
