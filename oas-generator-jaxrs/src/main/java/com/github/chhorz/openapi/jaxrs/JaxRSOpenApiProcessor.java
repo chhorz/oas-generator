@@ -3,13 +3,7 @@ package com.github.chhorz.openapi.jaxrs;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -94,7 +88,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 		log = new LoggingUtils(parserProperties);
 		schemaUtils = new SchemaUtils(elements, types, log);
-		responseUtils = new ResponseUtils();
+		responseUtils = new ResponseUtils(elements);
 
 		javaDocParser = createJavadocParser();
 
@@ -121,10 +115,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		openApi.getComponents().putAllSchemas(schemaMap);
 
 		if (parserProperties.getSchemaFile() != null) {
-			Optional<OpenAPI> schemaFile = readOpenApiFile(parserProperties);
-			if (schemaFile.isPresent()) {
-				openApi.getComponents().putAllParsedSchemas(schemaFile.get().getComponents().getSchemas());
-			}
+			readOpenApiFile(parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
 		}
 
 		TagUtils tagUtils = new TagUtils(propertyLoader);
@@ -133,8 +124,8 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 				.values()
 				.stream()
 				.map(tagUtils::getAllTags)
-				.flatMap(tagList -> tagList.stream())
-				.forEach(tag -> tags.add(tag));
+				.flatMap(Collection::stream)
+				.forEach(tags::add);
 
 		tags.stream()
 				.distinct()
@@ -155,10 +146,10 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		Path methodPath = executableElement.getAnnotation(Path.class);
 
 		StringBuilder sb = new StringBuilder();
-		if (classPath != null && classPath.value() != null) {
+		if (classPath != null) {
 			sb.append(classPath.value());
 		}
-		if (methodPath != null && methodPath.value() != null) {
+		if (methodPath != null) {
 			sb.append(methodPath.value());
 		}
 		String path = sb.toString();
@@ -260,7 +251,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 		javaDoc.getTags(CategoryTag.class).stream()
 				.map(CategoryTag::getCategoryName)
-				.forEach(tag -> operation.addTag(tag));
+				.forEach(operation::addTag);
 
 		Map<String, List<String>> securityInformation = getSecurityInformation(executableElement,
 				openApi.getComponents().getSecuritySchemes());

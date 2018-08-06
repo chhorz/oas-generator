@@ -11,11 +11,24 @@
 
 	<artifactId>oas-generator-asciidoctor</artifactId>
 
+	<properties>
+		<!-- dependency versions -->
+		<freemarker.version>2.3.28</freemarker.version>
+	</properties>
+
 	<dependencies>
+		<!-- internal -->
 		<dependency>
 			<groupId>com.github.chhorz</groupId>
 			<artifactId>oas-generator-common</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+
+		<!-- external -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
 		</dependency>
 	</dependencies>
 </project>

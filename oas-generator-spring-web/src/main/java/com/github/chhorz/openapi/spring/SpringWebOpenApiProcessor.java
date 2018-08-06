@@ -3,13 +3,7 @@ package com.github.chhorz.openapi.spring;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -104,7 +98,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		log = new LoggingUtils(parserProperties);
 		schemaUtils = new SchemaUtils(elements, types, log);
 		typeMirrorUtils = new TypeMirrorUtils(elements, types);
-		responseUtils = new ResponseUtils();
+		responseUtils = new ResponseUtils(elements);
 
 		javaDocParser = createJavadocParser();
 
@@ -162,10 +156,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		openApi.getComponents().putAllSchemas(schemaMap);
 
 		if (parserProperties.getSchemaFile() != null) {
-			Optional<OpenAPI> schemaFile = readOpenApiFile(parserProperties);
-			if (schemaFile.isPresent()) {
-				openApi.getComponents().putAllParsedSchemas(schemaFile.get().getComponents().getSchemas());
-			}
+			readOpenApiFile(parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
 		}
 
 		TagUtils tagUtils = new TagUtils(propertyLoader);
@@ -174,8 +165,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				.values()
 				.stream()
 				.map(tagUtils::getAllTags)
-				.flatMap(tagList -> tagList.stream())
-				.forEach(tag -> tags.add(tag));
+				.flatMap(Collection::stream)
+				.forEach(tags::add);
 
 		tags.stream()
 				.distinct()
@@ -201,7 +192,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		if (requestMapping != null) {
 
 			String[] urlPaths;
-			if (requestMapping.path() != null) {
+			if (0 != requestMapping.path().length) {
 				urlPaths = requestMapping.path();
 			} else {
 				urlPaths = requestMapping.value();
@@ -232,9 +223,9 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 					List<String> removals = operation.getParameterObjects()
 							.stream()
-							.map(param -> param.getSchema())
+							.map(Parameter::getSchema)
 							.filter(schema -> schema.getPattern() != null)
-							.map(schema -> schema.getPattern())
+							.map(Schema::getPattern)
 							.collect(toList());
 
 					for (String string : removals) {
@@ -293,17 +284,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						returnTag = returnTags.get(0).getDesrcription();
 					}
 
-
-					Responses responses = new Responses();
-
-					// add all response tags from Javadoc
-					List<ResponseTag> responseTags = javaDoc.getTags(ResponseTag.class);
-					responseTags.forEach(responseTag -> {
-						TypeMirror responseType = elements.getTypeElement(responseTag.getResponseType()).asType();
-						Response response = responseUtils.mapTypeMirrorToResponse(responseType, requestMapping.produces());
-						// response.setDescription(responseTag.getDescription());
-						responses.putResponseResponse(responseTag.getStatusCode(), response);
-					});
+					Responses responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces());
 
 					// use return type of method as default response
 					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(),
@@ -347,7 +328,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 					javaDoc.getTags(CategoryTag.class).stream()
 							.map(CategoryTag::getCategoryName)
-							.forEach(tag -> operation.addTag(tag));
+							.forEach(operation::addTag);
 
 					Map<String, List<String>> securityInformation = getSecurityInformation(executableElement,
 							openApi.getComponents().getSecuritySchemes());
@@ -434,10 +415,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		Map<TypeMirror, Schema> map = schemaUtils.mapTypeMirrorToSchema(variableElement.asType());
 		Schema schema = map.get(variableElement.asType());
 
-		Optional<String> regularExpression = getRegularExpression(path, name);
-		if (regularExpression.isPresent()) {
-			schema.setPattern(regularExpression.get());
-		}
+		getRegularExpression(path, name).ifPresent(schema::setPattern);
 
 		parameter.setSchema(schema);
 
@@ -505,7 +483,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	}
 
 	private Optional<String> getRegularExpression(final String path, final String pathVariable) {
-		Pattern pathVariablePattern = Pattern.compile(".*\\{" + pathVariable + ":([^\\{\\}]+)\\}.*");
+		Pattern pathVariablePattern = Pattern.compile(".*\\{" + pathVariable + ":([^{}]+)}.*");
 		Matcher pathVariableMatcher = pathVariablePattern.matcher(path);
 		if (pathVariableMatcher.matches()) {
 			return Optional.ofNullable(pathVariableMatcher.group(1));

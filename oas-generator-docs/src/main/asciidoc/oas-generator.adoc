@@ -5,12 +5,15 @@
 :source-highlighter: highlightjs
 :docinfo: shared
 :toc: left
+:common-java: ../../../../oas-generator-common/src/main/java
 
 == About
 _tbd_
 
-== Snapshots
-_tbd_
+== Javadoc
+In this section we describe the default structure of the Javadoc comments.
+A common structure is needed to get all data parsed correct.
+This is necessary because Javadoc comments in general are unstructured comments and can be formatted in different ways.
 
 == Configuration
 The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
@@ -124,7 +127,7 @@ In this map contributors can define their own properties for their post processo
 == Extensibility
 The OAS Generator provides a service provider interface (SPI) to include custom post processors.
 Per default the `FileWriterPostProcessor` is included to write the _openapi.json_ file.
-Currently the following post processors are also provided:
+Currently the following post processors (see module _oas-generator-spi_) are also provided:
 
 - `AsciidoctorPostProcessor`
 
@@ -133,8 +136,21 @@ Providing your own post processor is very simple.
 You just have to follow these steps:
 
 . Implement the `PostProcessorProvider` interface to create a custom post processor
++
+[source,java]
+----
+include::{common-java}/com/github/chhorz/openapi/common/spi/PostProcessorProvider.java[]
+----
 . Implement the `OpenAPIPostProcessor` interface with the actual execution method
++
+[source,java]
+----
+include::{common-java}/com/github/chhorz/openapi/common/spi/OpenAPIPostProcessor.java[]
+----
 . Create a file named `com.github.chhorz.openapi.common.spi.PostProcessorProvider` at `src/main/resources/META-INF/services` containing the fully qualified name of the class from step 1
+
+== Snapshots
+_tbd_
 
 == License
 OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].
