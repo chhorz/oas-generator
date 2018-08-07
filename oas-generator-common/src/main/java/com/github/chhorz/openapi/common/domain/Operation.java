@@ -3,6 +3,7 @@ package com.github.chhorz.openapi.common.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,7 +28,10 @@ public class Operation {
 	// private RequestBody requestBodyObject;
 	@JsonProperty("requestBody")
 	private Reference requestBodyReference;
-	private Responses responses;
+	/*
+	 * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#responses-object
+	 */
+	private Map<String, Response> responses;
 	@JsonProperty("callbacks")
 	private Map<String, Callback> callbackObjects;
 	// @JsonProperty("callbacks")
@@ -100,12 +104,26 @@ public class Operation {
 		this.requestBodyReference = requestBodyReference;
 	}
 
-	public Responses getResponses() {
+	public Map<String, Response> getResponses(){
 		return responses;
 	}
 
-	public void setResponses(final Responses responses) {
+	public void setResponses(final Map<String, Response> responses) {
 		this.responses = responses;
+	}
+
+	public void putResponse(final String status, final Response response) {
+		if (this.responses == null) {
+			this.responses = new TreeMap<>();
+		}
+		this.responses.put(status, response);
+	}
+
+	public void putDefaultResponse(final Response response) {
+		if (this.responses == null) {
+			this.responses = new TreeMap<>();
+		}
+		this.responses.put("default", response);
 	}
 
 	public Boolean getDeprecated() {

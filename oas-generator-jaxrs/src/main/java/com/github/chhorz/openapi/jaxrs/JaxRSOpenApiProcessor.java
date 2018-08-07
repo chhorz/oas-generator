@@ -49,7 +49,6 @@ import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.RequestBody;
 import com.github.chhorz.openapi.common.domain.Response;
-import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
@@ -226,7 +225,6 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 			returnTag = returnTags.get(0).getDesrcription();
 		}
 
-		Responses responses = new Responses();
 		TypeMirror returnType = executableElement.getReturnType();
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
 		Schema schema = schemaMap.get(returnType);
@@ -236,18 +234,16 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 			if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
 				Response response = responseUtils.mapTypeMirrorToResponse(returnType, produces.value());
 				response.setDescription(returnTag);
-				responses.setDefaultResponse(response);
+				operation.putDefaultResponse(response);
 			} else {
 				Response response = responseUtils.mapSchemaToResponse(schema, produces.value());
 				response.setDescription(returnTag);
-				responses.setDefaultResponse(response);
+				operation.putDefaultResponse(response);
 				schemaMap.remove(returnType);
 			}
 		}
 
 		openApi.getComponents().putAllSchemas(schemaMap);
-
-		operation.setResponses(responses);
 
 		javaDoc.getTags(CategoryTag.class).stream()
 				.map(CategoryTag::getCategoryName)

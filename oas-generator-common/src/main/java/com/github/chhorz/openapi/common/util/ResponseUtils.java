@@ -6,12 +6,12 @@ import javax.lang.model.util.Elements;
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.Response;
-import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 
 public class ResponseUtils {
@@ -58,8 +58,8 @@ public class ResponseUtils {
 		return response;
 	}
 
-	public Responses initializeFromJavadoc(final JavaDoc javaDoc, final String[] produces) {
-		Responses responses = new Responses();
+	public Map<String, Response> initializeFromJavadoc(final JavaDoc javaDoc, final String[] produces) {
+		Map<String, Response> responses = new TreeMap<>();
 
 		if (javaDoc != null) {
 			Predicate<String> nonNullOrEmpty = s -> s != null && !s.isEmpty();
@@ -70,7 +70,7 @@ public class ResponseUtils {
 					.forEach(responseTag -> {
 						TypeMirror responseType = elements.getTypeElement(responseTag.getResponseType()).asType();
 						Response response = mapTypeMirrorToResponse(responseType, produces);
-						responses.putResponseResponse(responseTag.getStatusCode(), response);
+						responses.put(responseTag.getStatusCode(), response);
 					});
 		}
 

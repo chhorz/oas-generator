@@ -51,11 +51,9 @@ import com.github.chhorz.openapi.common.domain.Parameter;
 import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.Response;
-import com.github.chhorz.openapi.common.domain.Responses;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
-import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
@@ -284,7 +282,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						returnTag = returnTags.get(0).getDesrcription();
 					}
 
-					Responses responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces());
+					Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces());
 
 					// use return type of method as default response
 					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(),
@@ -299,11 +297,11 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 							Response response = responseUtils.mapTypeMirrorToResponse(exceptionHanderReturntype,
 									requestMapping.produces());
 							response.setDescription(returnTag);
-							responses.setDefaultResponse(response);
+							operation.putDefaultResponse(response);
 						} else {
 							Response response = responseUtils.mapSchemaToResponse(exceptionSchema, requestMapping.produces());
 							response.setDescription(returnTag);
-							responses.setDefaultResponse(response);
+							operation.putDefaultResponse(response);
 							schemaMap.remove(exceptionHanderReturntype);
 						}
 					} else {
@@ -312,11 +310,11 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
 							Response response = responseUtils.mapTypeMirrorToResponse(returnType, requestMapping.produces());
 							response.setDescription(returnTag);
-							responses.setDefaultResponse(response);
+							operation.putDefaultResponse(response);
 						} else {
 							Response response = responseUtils.mapSchemaToResponse(schema, requestMapping.produces());
 							response.setDescription(returnTag);
-							responses.setDefaultResponse(response);
+							operation.putDefaultResponse(response);
 							schemaMap.remove(returnType);
 						}
 
@@ -324,7 +322,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 					openApi.getComponents().putAllSchemas(schemaMap);
 
-					operation.setResponses(responses);
+					responses.forEach(operation::putResponse);
 
 					javaDoc.getTags(CategoryTag.class).stream()
 							.map(CategoryTag::getCategoryName)

@@ -1,7 +1,7 @@
 package com.github.chhorz.openapi.common.test.util;
 
 import com.github.chhorz.javadoc.JavaDoc;
-import com.github.chhorz.openapi.common.domain.Responses;
+import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.Arrays;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,17 +57,16 @@ public class ResponseUtilsTest {
 		String[] produces = new String[]{"application/json"};
 
 		// when
-		Responses responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
 
 		// then
 		assertThat(responses)
-				.isNotNull();
-		assertThat(responses.getResponseResponse())
+				.isNotNull()
 				.hasSize(2)
 				.containsOnlyKeys("200", "404");
-		assertThat(responses.getResponseResponse().get("200").getContent())
+		assertThat(responses.get("200").getContent())
 				.containsOnlyKeys("application/json");
-		assertThat(responses.getResponseResponse().get("404").getContent())
+		assertThat(responses.get("404").getContent())
 				.containsOnlyKeys("application/json");
 	}
 
@@ -84,13 +84,12 @@ public class ResponseUtilsTest {
 		String[] produces = new String[]{"application/json"};
 
 		// when
-		Responses responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
 
 		// then
 		assertThat(responses)
-				.isNotNull();
-		assertThat(responses.getResponseResponse())
-				.isNull();
+				.isNotNull()
+				.isEmpty();
 	}
 
 	@Test
@@ -100,13 +99,12 @@ public class ResponseUtilsTest {
 		String[] produces = new String[]{"application/json"};
 
 		// when
-		Responses responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
 
 		// then
 		assertThat(responses)
-				.isNotNull();
-		assertThat(responses.getResponseResponse())
-				.isNull();
+				.isNotNull()
+				.isEmpty();
 	}
 
 	@Test
@@ -116,13 +114,12 @@ public class ResponseUtilsTest {
 		String[] produces = null;
 
 		// when
-		Responses responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
 
 		// then
 		assertThat(responses)
-				.isNotNull();
-		assertThat(responses.getResponseResponse())
-				.isNull();
+				.isNotNull()
+				.isEmpty();
 	}
 
 	@Test
@@ -139,17 +136,16 @@ public class ResponseUtilsTest {
 		String[] produces = null;
 
 		// when
-		Responses responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
 
 		// then
 		assertThat(responses)
-				.isNotNull();
-		assertThat(responses.getResponseResponse())
+				.isNotNull()
 				.hasSize(2)
 				.containsOnlyKeys("200", "404");
-		assertThat(responses.getResponseResponse().get("200").getContent())
+		assertThat(responses.get("200").getContent())
 				.containsOnlyKeys("*/*");
-		assertThat(responses.getResponseResponse().get("404").getContent())
+		assertThat(responses.get("404").getContent())
 				.containsOnlyKeys("*/*");
 	}
 }
