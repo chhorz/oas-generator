@@ -19,6 +19,7 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 	public void execute(final OpenAPI openApi) {
 		log.info("FileWriterPostProcessor | START");
 		fileUtils.writeToFile(openApi);
+		log.info("FileWriterPostProcessor | FINISH");
 	}
 
 }

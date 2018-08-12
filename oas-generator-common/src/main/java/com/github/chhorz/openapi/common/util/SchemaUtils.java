@@ -399,7 +399,6 @@ public class SchemaUtils {
 				System.out.println(one);
 				System.out.println(two);
 				Function<Schema, Object> function = schema -> schema.getProperties().get(entry.getKey());
-				// String key = entry.getKey();
 				Object propertyOne = function.apply(one);
 				Object propertyTwo = function.apply(two);
 

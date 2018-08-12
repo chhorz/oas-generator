@@ -48,7 +48,6 @@ public class Components {
 
 	private void putSchema(final String type, final Schema schema) {
 		if (schemas.containsKey(type)) {
-			System.out.println(type);
 			Schema existingType = schemas.get(type);
 			if (existingType.getType().equals(schema.getType())) {
 				schemas.put(type, SchemaUtils.mergeSchemas(existingType, schema));

@@ -2,6 +2,7 @@ package com.github.chhorz.openapi.common.properties;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ParserProperties {
 
@@ -72,7 +73,13 @@ public class ParserProperties {
 		this.postProcessor = postProcessor;
 	}
 
+	public boolean getPostProcessorValue(final String key, final Boolean defaultValue) {
+		Objects.requireNonNull(key, "Property key must not be null");
+		return Boolean.parseBoolean(getPostProcessorValue(key, defaultValue.toString()));
+	}
+
 	public String getPostProcessorValue(final String key, final String defaultValue) {
+		Objects.requireNonNull(key, "Property key must not be null");
 		return postProcessor.getOrDefault(key, defaultValue);
 	}
 
