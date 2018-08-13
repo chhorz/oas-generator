@@ -1,3 +1,8 @@
+<#include "_macros/externalDocs.ftlh"/>
+<#include "_macros/tag.ftlh"/>
+<#--
+
+-->
 = ${openapi.info.title}
 <#if openapi.info.contact??>
 ${openapi.info.contact.name} <${openapi.info.contact.email}>
@@ -7,6 +12,18 @@ ${openapi.info.contact.name} <${openapi.info.contact.email}>
 
 <#if openapi.info.description??>
 ${openapi.info.description}
+</#if>
+
+<#if openapi.tags??>
+== Tags
+<#list openapi.tags as t>
+<@tag t/>
+</#list>
+</#if>
+
+<#if openapi.externalDocs??>
+== External documentation
+<@externalDocs openapi.externalDocs/>
 </#if>
 
 <#if openapi.info.termsOfService??>

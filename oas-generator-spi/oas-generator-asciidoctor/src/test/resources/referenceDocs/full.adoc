@@ -1,0 +1,25 @@
+= Test Service
+John doe <john.doe@test.org>
+:revnumber: 1.2.3-SNAPSHOT
+:toc:
+
+Lorem ipsum
+
+== Tags
+TAG_1::
+This is a description
+Lorem ipsum dolor sit amet. https://en.wikipedia.org[Link]
++
+
+TAG_2::
++
+
+
+== External documentation
+Lorem ipsum dolor sit amet. https://en.wikipedia.org[Link]
+
+== Terms of Service
+Terms of Service ...
+
+== License
+The service is licensed under http://www.apache.org/licenses/LICENSE-2.0[Apache License, Version 2.0].

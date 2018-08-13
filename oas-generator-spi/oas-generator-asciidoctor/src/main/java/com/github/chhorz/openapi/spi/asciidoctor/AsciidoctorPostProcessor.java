@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
-	private static final String DEFAULT_TEMPLATE_FOLDER = "/freemarker";
+	private static final String DEFAULT_TEMPLATE_FOLDER = "/templates/freemarker";
 	private static final String DEFAULT_TEMPLATE_NAME = "openapi.ftlh";
 	private static final boolean DEFAULT_EXCEPTION_LOGGING = true;
 	private static final String DEFAULT_OUTPUT_DIR = "/openapi";
