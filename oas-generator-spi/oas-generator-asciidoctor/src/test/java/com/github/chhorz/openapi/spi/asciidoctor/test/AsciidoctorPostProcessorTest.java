@@ -92,7 +92,7 @@ class AsciidoctorPostProcessorTest {
 		openApi.addTag(tag1);
 		openApi.addTag(tag2);
 
-		processor = createAsciidoctorPostProcessor("/referenceDocs");
+		processor = createAsciidoctorPostProcessor("/full");
 
 		// when
 		processor.execute(openApi);
