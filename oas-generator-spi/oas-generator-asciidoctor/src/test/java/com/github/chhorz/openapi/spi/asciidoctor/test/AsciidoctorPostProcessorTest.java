@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,12 +86,33 @@ class AsciidoctorPostProcessorTest {
 		Tag tag2 = new Tag();
 		tag2.setName("TAG_2");
 
+		Server s1 = new Server();
+		s1.setUrl("www.github.com");
+		s1.setDescription("We love code.");
+
+		Server s2 = new Server();
+		s2.setUrl("www.gitlab.com");
+
+		SecurityScheme scheme = new SecurityScheme();
+		scheme.setType(SecurityScheme.Type.http);
+		scheme.setDescription("This is the scheme for authorized users.");
+
+		Map<String, SecurityScheme> securitySchemes = new HashMap<>();
+		securitySchemes.put("key", scheme);
+
+		Components components = new Components();
+		components.setSecuritySchemes(securitySchemes);
+
 		OpenAPI openApi = new OpenAPI();
 		openApi.setOpenapi("3.0.1");
 		openApi.setInfo(info);
 		openApi.setExternalDocs(externalDocs);
 		openApi.addTag(tag1);
 		openApi.addTag(tag2);
+		openApi.setServers(Arrays.asList(s1, s2));
+		openApi.putPathItemObject("/orders", new PathItemObject());
+		openApi.putPathItemObject("/articles", new PathItemObject());
+		openApi.setComponents(components);
 
 		processor = createAsciidoctorPostProcessor("/full");
 

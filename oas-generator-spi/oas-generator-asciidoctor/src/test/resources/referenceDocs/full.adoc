@@ -3,14 +3,41 @@ John doe <john.doe@test.org>
 :revnumber: 1.2.3-SNAPSHOT
 :toc:
 
+
 Lorem ipsum
 
+== Servers
+* www.github.com
++
+We love code.
+* www.gitlab.com
++
+
+
+== Paths
+=== /articles
+=== /orders
+
+== Components
+
+=== Security Schemes
+[cols="1,1,2", options="header"]
+|===
+| Scheme | Type | Description
+| key
+| http
+| This is the scheme for authorized users.
+
+|===
+
 == Tags
+[[TAG_1]]
 TAG_1::
 This is a description
 Lorem ipsum dolor sit amet. https://en.wikipedia.org[Link]
 +
 
+[[TAG_2]]
 TAG_2::
 +
 

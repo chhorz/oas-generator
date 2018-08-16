@@ -25,6 +25,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	private static final boolean DEFAULT_EXCEPTION_LOGGING = true;
 	private static final String DEFAULT_OUTPUT_DIR = "/openapi";
 	private static final String DEFAULT_OUTPUT_FILE = "/openapi.adoc";
+	private static final boolean DEFAULT_LOCALIZED_LOOKUP = false;
 
 	private ParserProperties parserProperties;
 	private LoggingUtils log;
@@ -35,26 +36,28 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 		this.parserProperties = parserProperties;
 		log = new LoggingUtils(parserProperties, "[Asciidoctor]");
 
-		final String templateFolder = parserProperties.getPostProcessorValue("asciidoctor.template.folder", DEFAULT_TEMPLATE_FOLDER);
 		final boolean logTemplateExceptions = parserProperties.getPostProcessorValue("asciidoctor.logging", DEFAULT_EXCEPTION_LOGGING);
+		final boolean localizedLookup = parserProperties.getPostProcessorValue("asciidoctor.template.localizedLookup", DEFAULT_LOCALIZED_LOOKUP);
 
 		freemarkerConfiguration = new Configuration(Configuration.VERSION_2_3_28);
+		freemarkerConfiguration.setLocalizedLookup(localizedLookup);
 		freemarkerConfiguration.setDefaultEncoding("UTF-8");
 		freemarkerConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
 		freemarkerConfiguration.setLogTemplateExceptions(logTemplateExceptions);
-		freemarkerConfiguration.setClassLoaderForTemplateLoading(AsciidoctorPostProcessor.class.getClassLoader(), DEFAULT_TEMPLATE_FOLDER);
+		freemarkerConfiguration.setClassForTemplateLoading(AsciidoctorPostProcessor.class, "/");
 	}
 
 	@Override
 	public void execute(final OpenAPI openApi) {
 		log.info("AsciidoctorPostProcessor | START");
 
+		final String templateFolder = parserProperties.getPostProcessorValue("asciidoctor.template.folder", DEFAULT_TEMPLATE_FOLDER);
 		final String templateName = parserProperties.getPostProcessorValue("asciidoctor.template.name", DEFAULT_TEMPLATE_NAME);
 		final String outputDir = parserProperties.getPostProcessorValue("asciidoctor.output.dir", DEFAULT_OUTPUT_DIR);
 		final String outputFile = parserProperties.getPostProcessorValue("asciidoctor.output.file", DEFAULT_OUTPUT_FILE);
 
 		try {
-			Template template = freemarkerConfiguration.getTemplate(templateName);
+			Template template = freemarkerConfiguration.getTemplate(String.format("%s/%s", templateFolder, templateName));
 
 
 			Path outputPath = Paths.get(outputDir, outputFile);

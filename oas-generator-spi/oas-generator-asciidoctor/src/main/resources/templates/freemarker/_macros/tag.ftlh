@@ -3,6 +3,7 @@
 
 -->
 <#macro tag tag>
+[[${tag.name}]]
 ${tag.name}::
 <#if tag.description??>
 ${tag.description}
