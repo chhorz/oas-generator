@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Set;
 
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -63,5 +64,21 @@ public class TypeMirrorUtilsTest {
 		assertThat(typeArray)
 			.hasSize(1)
 			.contains(testType);
+	}
+
+	@Test
+	void testCreateArrayFromString(){
+		// given
+		String input = "java.lang.String[]";
+
+		// when
+		TypeMirror typeMirror = typeMirrorUtils.createTypeMirrorFromString(input);
+
+		// then
+		assertThat(typeMirror)
+				.isNotNull();
+
+		assertThat(typeMirror.getKind())
+				.isEqualTo(TypeKind.ARRAY);
 	}
 }

@@ -96,7 +96,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		log = new LoggingUtils(parserProperties);
 		schemaUtils = new SchemaUtils(elements, types, log);
 		typeMirrorUtils = new TypeMirrorUtils(elements, types);
-		responseUtils = new ResponseUtils(elements);
+		responseUtils = new ResponseUtils(elements, types);
 
 		javaDocParser = createJavadocParser();
 

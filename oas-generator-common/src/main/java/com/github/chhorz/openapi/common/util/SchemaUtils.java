@@ -92,7 +92,7 @@ public class SchemaUtils {
 		packageElement.getEnclosedElements()
 				.stream()
 				.map(Element::asType)
-				.map(type -> mapTypeMirrorToSchema(type))
+				.map(this::mapTypeMirrorToSchema)
 				.flatMap(map -> map.entrySet().stream())
 				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
 				.forEach(entry -> {
@@ -125,7 +125,7 @@ public class SchemaUtils {
 		} else if (typeMirror.getKind().equals(TypeKind.ARRAY)) {
 			schema.setType(Type.ARRAY);
 
-			TypeMirror type = elements.getTypeElement(typeMirror.toString().replaceAll("\\[\\]", "")).asType();
+			TypeMirror type = elements.getTypeElement(typeMirror.toString().replaceAll("\\[]", "")).asType();
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
 			if (isTypeInPackage(type, javaLangPackage)) {
@@ -415,9 +415,9 @@ public class SchemaUtils {
 		}
 
 		Object items = merge(one, two, Schema::getItems);
-		if (items != null && items instanceof Reference) {
+		if (items instanceof Reference) {
 			result.setItems((Reference) items);
-		} else if (items != null && items instanceof Schema) {
+		} else if (items instanceof Schema) {
 			result.setItems((Schema) items);
 		}
 
@@ -425,11 +425,11 @@ public class SchemaUtils {
 	}
 
 	private static boolean notNullSchema(final Object object) {
-		return object != null && object instanceof Schema;
+		return object instanceof Schema;
 	}
 
 	private static boolean notNullReference(final Object object) {
-		return object != null && object instanceof Reference;
+		return object instanceof Reference;
 	}
 
 	private static <T> T merge(final Schema one, final Schema two, final Function<Schema, T> function) {

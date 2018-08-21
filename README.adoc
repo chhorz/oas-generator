@@ -3,7 +3,7 @@
 :icons: font
 
 == About
-_tbd_
+The documentation can be found on the separate https://chhorz.github.io/oas-generator/[Github Page] but is still "Work in progress".
 
 == Snapshots
 _tbd_

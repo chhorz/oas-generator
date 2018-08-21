@@ -87,7 +87,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 		log = new LoggingUtils(parserProperties);
 		schemaUtils = new SchemaUtils(elements, types, log);
-		responseUtils = new ResponseUtils(elements);
+		responseUtils = new ResponseUtils(elements, types);
 
 		javaDocParser = createJavadocParser();
 

@@ -1,8 +1,10 @@
 package com.github.chhorz.openapi.common.util;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -26,15 +28,30 @@ public class TypeMirrorUtils {
 					return typeArguments.stream()
 							.filter(TypeMirror.class::isInstance)
 							.map(TypeMirror.class::cast)
-							.toArray(size -> new TypeMirror[size]);
+							.toArray(TypeMirror[]::new);
 				}
 			}
 		}
 		return new TypeMirror[] { originalReturnType };
 	}
 
-	public TypeMirror createTypeMirror(final Class<?> clazz) {
+	private TypeMirror createTypeMirror(final Class<?> clazz) {
 		return elements.getTypeElement(clazz.getCanonicalName()).asType();
+	}
+
+	public TypeMirror createTypeMirrorFromString(final String typeString){
+		TypeMirror typeMirror = null;
+
+		if(typeString.contains("<")){
+
+		} else if (typeString.endsWith("[]")) {
+			TypeMirror baseType = elements.getTypeElement(typeString.substring(0, typeString.length()-2)).asType();
+			typeMirror = types.getArrayType(baseType);
+		} else {
+			typeMirror = elements.getTypeElement(typeString).asType();
+		}
+
+		return typeMirror;
 	}
 
 }

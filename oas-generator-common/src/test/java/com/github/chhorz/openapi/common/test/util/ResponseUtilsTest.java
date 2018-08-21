@@ -9,6 +9,7 @@ import com.github.chhorz.openapi.common.test.util.resources.BaseClass;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import com.github.chhorz.openapi.common.util.ResponseUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -19,28 +20,24 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ResponseUtilsTest {
+class ResponseUtilsTest {
 
 	@RegisterExtension
 	ProcessingUtilsExtension extension = new ProcessingUtilsExtension();
 
 	private ResponseUtils responseUtils;
 
-	private Elements elements;
-	private Types types;
-	private LoggingUtils log;
-
 	@BeforeEach
 	void setUpEach() {
 		ParserProperties parserProperties = new ParserProperties();
 		parserProperties.setLogLevel(LoggingUtils.DEBUG);
 
-		log = new LoggingUtils(parserProperties);
+		LoggingUtils log = new LoggingUtils(parserProperties);
 
-		elements = extension.getElements();
-		types = extension.getTypes();
+		Elements elements = extension.getElements();
+		Types types = extension.getTypes();
 
-		responseUtils = new ResponseUtils(elements);
+		responseUtils = new ResponseUtils(elements, types);
 	}
 
 	@Test
@@ -147,5 +144,28 @@ public class ResponseUtilsTest {
 				.containsOnlyKeys("*/*");
 		assertThat(responses.get("404").getContent())
 				.containsOnlyKeys("*/*");
+	}
+
+	@Test
+	@Disabled
+	void testListResponseType(){
+		// given
+		ResponseTag r1 = new ResponseTag();
+		r1.putValue("statusCode", "200");
+		r1.putValue("responseType", String.format("java.util.List<%s>", BaseClass.class.getCanonicalName()));
+
+		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1));
+		String[] produces = new String[]{"application/json"};
+
+		// when
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+
+		// then
+		assertThat(responses)
+				.isNotNull()
+				.hasSize(1)
+				.containsOnlyKeys("200");
+		assertThat(responses.get("200").getContent())
+				.containsOnlyKeys("application/json");
 	}
 }
