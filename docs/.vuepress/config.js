@@ -5,20 +5,27 @@ module.exports = {
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Documentation', link: '/documentation/' },
+      {
+        text: 'Documentation',
+        items: [
+          { text: 'Installation', link: '/documentation/installation' },
+          { text: 'Reference', link: '/documentation/reference' },
+          { text: 'Extensibility', link: '/documentation/extensibility' }
+        ]
+      },
       { text: 'Github', link: 'https://github.com/chhorz/oas-generator' }
     ],
     sidebar: {
       '/documentation/': [
         ['', 'Documentation'],
         ['installation', 'Installation'],
-        ['reference', 'Reference']
+        ['reference', 'Reference'],
+        ['extensibility', 'Extensibility']
       ],
       // fallback
       '/': [
         ['', 'Home']
       ]
-    },
-    lastUpdated: 'Last Updated'
+    }
   }
 }

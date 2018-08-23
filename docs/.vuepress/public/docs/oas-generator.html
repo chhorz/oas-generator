@@ -702,21 +702,6 @@ b.conum * { color: inherit !important; }
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-<style>
-  #tocbot a.toc-link.node-name--H1{ font-style: italic }
-  @media screen{
-    #tocbot > ul.toc-list{ margin-bottom: 0.5em; margin-left: 0.125em }
-    #tocbot ul.sectlevel0, #tocbot a.toc-link.node-name--H1 + ul{
-      padding-left: 0 }
-    #tocbot a.toc-link{ height:100% }
-    .is-collapsible{ max-height:3000px; overflow:hidden; }
-    .is-collapsed{ max-height:0 }
-    .is-active-link{ font-weight:700 }
-  }
-  @media print{
-    #tocbot a.toc-link.node-name--H4{ display:none }
-  }
-</style>
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
@@ -729,6 +714,7 @@ b.conum * { color: inherit !important; }
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_about">About</a></li>
+<li><a href="#_installation">Installation</a></li>
 <li><a href="#_javadoc">Javadoc</a></li>
 <li><a href="#_configuration">Configuration</a>
 <ul class="sectlevel2">
@@ -738,7 +724,8 @@ b.conum * { color: inherit !important; }
 </li>
 <li><a href="#_extensibility">Extensibility</a>
 <ul class="sectlevel2">
-<li><a href="#_implementation">Implementation</a></li>
+<li><a href="#_post_processor_documentation">Post-Processor Documentation</a></li>
+<li><a href="#_custom_post_processors">Custom Post-Processors</a></li>
 </ul>
 </li>
 <li><a href="#_snapshots">Snapshots</a></li>
@@ -749,6 +736,14 @@ b.conum * { color: inherit !important; }
 <div id="content">
 <div class="sect1">
 <h2 id="_about">About</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>tbd</em></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation">Installation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>tbd</em></p>
@@ -922,8 +917,54 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>If other post processors should be listed and added in the <strong>OAS Generator</strong> repo please open a Github issue.</p>
+</div>
 <div class="sect2">
-<h3 id="_implementation">Implementation</h3>
+<h3 id="_post_processor_documentation">Post-Processor Documentation</h3>
+<div class="paragraph">
+<p>In the following section all post processors from the <code>oas-generator-spi</code> module are documented.</p>
+</div>
+<div class="sect3">
+<h4 id="_asciidoctorpostprocessor">AsciidoctorPostProcessor</h4>
+<div class="paragraph">
+<p>This post processor converts the generated OpenAPI domain model into the asciidoctor format.</p>
+</div>
+<div class="sect4">
+<h5 id="_configuration_properties">Configuration properties</h5>
+<div class="paragraph">
+<p>All of the following properties are passed as key-value list in the <a href="#configuration-file">configuration file</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Configuration with default values</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">parser:
+  postProcessor:
+    asciidoctor.logging: true
+    asciidoctor.template.localizedLookup: false
+    asciidoctor.template.folder: /templates/freemarker <i class="conum" data-value="1"></i><b>(1)</b>
+    asciidoctor.template.name: openapi.ftlh
+    asciidoctor.output.dir: /openapi <i class="conum" data-value="2"></i><b>(2)</b>
+    asciidoctor.output.file: /openapi.adoc</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The path of the templates is based on <code>/src/main/resources</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Output base directory is the <code>/target</code> folder</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_custom_post_processors">Custom Post-Processors</h3>
 <div class="paragraph">
 <p>Providing your own post processor is very simple.
 You just have to follow these steps:</p>
@@ -990,60 +1031,9 @@ public interface OpenAPIPostProcessor {
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2018-08-06 22:11:30 MESZ
+Last updated 2018-08-23 21:21:49 MESZ
 </div>
 </div>
-<script type="text/javascript" src="tocbot-3.0.2/tocbot.js"></script>
-<script type="text/javascript" >
-
-    // Tocbot dynamic TOC, works with tocbot 3.0.2
-    // Source: https://github.com/asciidoctor/asciidoctor/issues/699#issuecomment-321066006
-
-    var oldtoc = document.getElementById('toctitle').nextElementSibling;
-    var newtoc = document.createElement('div');
-    newtoc.setAttribute('id', 'tocbot');
-    newtoc.setAttribute('class', 'js-toc');
-    oldtoc.parentNode.replaceChild(newtoc, oldtoc);
-    tocbot.init({ contentSelector: '#content',
-        headingSelector: 'h1, h2, h3, h4, h5',
-        smoothScroll: false });
-    var handleTocRefresh = function() {
-        tocbot.refresh();
-    }
-    var handleTocOnResize = function() {
-        var width = window.innerWidth
-                    || document.documentElement.clientWidth
-                    || document.body.clientWidth;
-        if (width < 768) {
-            tocbot.refresh({ contentSelector: '#content',
-                headingSelector: 'h1, h2, h3, h4, h5',
-                collapseDepth: 6,
-                activeLinkClass: 'ignoreactive',
-                throttleTimeout: 1000,
-                smoothScroll: false });
-        }
-        else {
-            tocbot.refresh({ contentSelector: '#content',
-                headingSelector: 'h1, h2, h3, h4, h5',
-                smoothScroll: false });
-        }
-    };
-    window.addEventListener('resize', handleTocOnResize);
-    window.addEventListener('tocRefresh', handleTocRefresh);
-    handleTocOnResize();
-
-    if (!document.body.classList.contains('book') && !window.location.pathname.endsWith("index.html")) {
-        var link = document.createElement("a");
-        link.setAttribute("href", "index.html");
-        link.innerHTML = "<i class=\"fa fa-chevron-left\"></i>&nbsp;&nbsp;Back to index";
-        var p = document.createElement("p");
-        p.setAttribute("id", "backToIndex");
-        p.appendChild(link);
-        var toc = document.getElementById('toc')
-        toc.insertBefore(p, toctitle);
-  }
-
-</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlighting()</script>

@@ -3,11 +3,14 @@
 :icons: font
 :revnumber: {project-version}
 :source-highlighter: highlightjs
-:docinfo: shared
+// :docinfo: shared
 :toc: left
 :common-java: ../../../../oas-generator-common/src/main/java
 
 == About
+_tbd_
+
+== Installation
 _tbd_
 
 == Javadoc
@@ -131,7 +134,33 @@ Currently the following post processors (see module _oas-generator-spi_) are als
 
 - `AsciidoctorPostProcessor`
 
-=== Implementation
+If other post processors should be listed and added in the *OAS Generator* repo please open a Github issue.
+
+=== Post-Processor Documentation
+In the following section all post processors from the `oas-generator-spi` module are documented.
+
+==== AsciidoctorPostProcessor
+This post processor converts the generated OpenAPI domain model into the asciidoctor format.
+
+===== Configuration properties
+All of the following properties are passed as key-value list in the <<configuration-file, configuration file>>.
+
+.Configuration with default values
+[source,yaml]
+----
+parser:
+  postProcessor:
+    asciidoctor.logging: true
+    asciidoctor.template.localizedLookup: false
+    asciidoctor.template.folder: /templates/freemarker # <1>
+    asciidoctor.template.name: openapi.ftlh
+    asciidoctor.output.dir: /openapi # <2>
+    asciidoctor.output.file: /openapi.adoc
+----
+<1> The path of the templates is based on `/src/main/resources`
+<2> Output base directory is the `/target` folder
+
+=== Custom Post-Processors
 Providing your own post processor is very simple.
 You just have to follow these steps:
 
