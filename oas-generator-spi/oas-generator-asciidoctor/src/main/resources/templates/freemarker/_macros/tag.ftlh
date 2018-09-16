@@ -3,14 +3,14 @@
 
 -->
 <#macro tag tag>
-[[${tag.name}]]
-${tag.name}::
+_${tag.name}_::
 <#if tag.description??>
-${tag.description}
+[[${tag.name}]] ${tag.description}
+<#else>
+[[${tag.name}]]
 </#if>
 <#if tag.externalDocs??>
 <@externalDocs tag.externalDocs/>
 </#if>
-+
 
 </#macro>

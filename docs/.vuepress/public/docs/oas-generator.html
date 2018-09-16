@@ -380,8 +380,8 @@ p a > code:hover { color: rgba(0, 0, 0, 0.9); }
 #content h1 > a.anchor, h2 > a.anchor, h3 > a.anchor, #toctitle > a.anchor, .sidebarblock > .content > .title > a.anchor, h4 > a.anchor, h5 > a.anchor, h6 > a.anchor { position: absolute; z-index: 1001; width: 1.5ex; margin-left: -1.5ex; display: block; text-decoration: none !important; visibility: hidden; text-align: center; font-weight: normal; }
 #content h1 > a.anchor:before, h2 > a.anchor:before, h3 > a.anchor:before, #toctitle > a.anchor:before, .sidebarblock > .content > .title > a.anchor:before, h4 > a.anchor:before, h5 > a.anchor:before, h6 > a.anchor:before { content: "\00A7"; font-size: 0.85em; display: block; padding-top: 0.1em; }
 #content h1:hover > a.anchor, #content h1 > a.anchor:hover, h2:hover > a.anchor, h2 > a.anchor:hover, h3:hover > a.anchor, #toctitle:hover > a.anchor, .sidebarblock > .content > .title:hover > a.anchor, h3 > a.anchor:hover, #toctitle > a.anchor:hover, .sidebarblock > .content > .title > a.anchor:hover, h4:hover > a.anchor, h4 > a.anchor:hover, h5:hover > a.anchor, h5 > a.anchor:hover, h6:hover > a.anchor, h6 > a.anchor:hover { visibility: visible; }
-#content h1 > a.link, h2 > a.link, h3 > a.link, #toctitle > a.link, .sidebarblock > .content > .title > a.link, h4 > a.link, h5 > a.link, h6 > a.link { color: #34302d; text-decoration: none; }
-#content h1 > a.link:hover, h2 > a.link:hover, h3 > a.link:hover, #toctitle > a.link:hover, .sidebarblock > .content > .title > a.link:hover, h4 > a.link:hover, h5 > a.link:hover, h6 > a.link:hover { color: #262321; }
+#content h1 > a.link, h2 > a.link, h3 > a.link, #toctitle > a.link, .sidebarblock > .content > .title > a.link, h4 > a.link, h5 > a.link, h6 > a.link { color: #487a28; text-decoration: none; }
+#content h1 > a.link:hover, h2 > a.link:hover, h3 > a.link:hover, #toctitle > a.link:hover, .sidebarblock > .content > .title > a.link:hover, h4 > a.link:hover, h5 > a.link:hover, h6 > a.link:hover { color: #487a28; }
 
 .audioblock, .imageblock, .literalblock, .listingblock, .stemblock, .videoblock { margin-bottom: 1.25em; }
 
@@ -713,45 +713,161 @@ b.conum * { color: inherit !important; }
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_about">About</a></li>
-<li><a href="#_installation">Installation</a></li>
-<li><a href="#_javadoc">Javadoc</a></li>
-<li><a href="#_configuration">Configuration</a>
+<li><a href="#_about">1. About</a></li>
+<li><a href="#_installation">2. Installation</a>
 <ul class="sectlevel2">
-<li><a href="#_compiler_options">Compiler options</a></li>
-<li><a href="#configuration-file">Configuration file</a></li>
+<li><a href="#_apache_maven">2.1. Apache Maven</a>
+<ul class="sectlevel3">
+<li><a href="#_include_via_dependency">2.1.1. Include via dependency</a></li>
+<li><a href="#_maven_compile_plugin">2.1.2. Maven compile plugin</a></li>
 </ul>
 </li>
-<li><a href="#_extensibility">Extensibility</a>
-<ul class="sectlevel2">
-<li><a href="#_post_processor_documentation">Post-Processor Documentation</a></li>
-<li><a href="#_custom_post_processors">Custom Post-Processors</a></li>
 </ul>
 </li>
-<li><a href="#_snapshots">Snapshots</a></li>
-<li><a href="#_license">License</a></li>
+<li><a href="#_javadoc">3. Javadoc</a></li>
+<li><a href="#_configuration">4. Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#_compiler_options">4.1. Compiler options</a></li>
+<li><a href="#configuration-file">4.2. Configuration file</a></li>
+</ul>
+</li>
+<li><a href="#_extensibility">5. Extensibility</a>
+<ul class="sectlevel2">
+<li><a href="#_post_processor_documentation">5.1. Post-Processor Documentation</a>
+<ul class="sectlevel3">
+<li><a href="#_asciidoctorpostprocessor">5.1.1. AsciidoctorPostProcessor</a></li>
+</ul>
+</li>
+<li><a href="#_custom_post_processors">5.2. Custom Post-Processors</a></li>
+</ul>
+</li>
+<li><a href="#_snapshots">6. Snapshots</a></li>
+<li><a href="#_license">7. License</a></li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_about">About</h2>
+<h2 id="_about"><a class="anchor" href="#_about"></a><a class="link" href="#_about">1. About</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>tbd</em></p>
+<p>The <strong>OAS Generator</strong> is a java annotation processor that creates an openapi specification during the build process.
+It is based on static code analysis, especially annotations that are used to create a REST API.
+Additional the JavaDoc comments from the given methods or resource objects will be included.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-java hljs" data-lang="java">@RequestMapping(path = "/orders")
+public class OrderController {
+
+	/**
+	 * Get an order with an {@code id}.
+	 *
+	 * @category order
+	 *
+	 * @param id
+	 *            the identifier
+	 * @param filter
+	 *            the filter that can be applied
+	 * @return a list of orders that match the optional filters
+	 */
+	@GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
+	public List&lt;Order&gt; getOrder(
+                @PathVariable Long id,
+                @RequestParam(defaultValue = "valid=true", required = false) String filter) {
+	    // implementation
+	}</code></pre>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_installation">Installation</h2>
+<h2 id="_installation"><a class="anchor" href="#_installation"></a><a class="link" href="#_installation">2. Installation</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>tbd</em></p>
+<p>In the following section possible options are shown in which way the <strong>OAS Generator</strong> can be included in your project.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The following examples use the <code>oas-generator-spring-web</code>.
+Each kind of installation also works with the <code>oas-generator-jaxrs</code> or <code>oas-generator-schema</code> module.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_apache_maven"><a class="anchor" href="#_apache_maven"></a><a class="link" href="#_apache_maven">2.1. Apache Maven</a></h3>
+<div class="sect3">
+<h4 id="_include_via_dependency"><a class="anchor" href="#_include_via_dependency"></a><a class="link" href="#_include_via_dependency">2.1.1. Include via dependency</a></h4>
+<div class="paragraph">
+<p>The simplest way to add the <strong>OAS Generator</strong> to your project is adding the following dependency:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
+    &lt;artifactId&gt;oas-generator-spring-web&lt;/artifactId&gt;
+    &lt;version&gt;$0.0.1-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All dependencies contain some <code>META-INF</code> information which define the provided annotation processors.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_maven_compile_plugin"><a class="anchor" href="#_maven_compile_plugin"></a><a class="link" href="#_maven_compile_plugin">2.1.2. Maven compile plugin</a></h4>
+<div class="paragraph">
+<p>Another way to include an annotation processor is the <a href="https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html">maven-compiler-plugin</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+        &lt;annotationProcessorPaths&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+            &lt;path&gt;
+                &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
+                &lt;artifactId&gt;oas-generator-spring-web&lt;/artifactId&gt;
+                &lt;version&gt;$0.0.1-SNAPSHOT&lt;/version&gt;
+            &lt;/path&gt;
+            &lt;!-- ... more ... --&gt;
+        &lt;/annotationProcessorPaths&gt;
+        &lt;annotationProcessors&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+            &lt;annotationProcessor&gt;com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor&lt;/annotationProcessor&gt;
+            &lt;!-- ... more ... --&gt;
+        &lt;/annotationProcessors&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Plugin documentation: <a href="https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessorPaths">annotationProcessorPaths</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Plugin documentation: <a href="https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessors">annotationProcessors</a></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It is not possible to mix this way of annotation processor integration with the dependency based one.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_javadoc">Javadoc</h2>
+<h2 id="_javadoc"><a class="anchor" href="#_javadoc"></a><a class="link" href="#_javadoc">3. Javadoc</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this section we describe the default structure of the Javadoc comments.
@@ -761,14 +877,14 @@ This is necessary because Javadoc comments in general are unstructured comments 
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration">Configuration</h2>
+<h2 id="_configuration"><a class="anchor" href="#_configuration"></a><a class="link" href="#_configuration">4. Configuration</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The configuration of the <em>OAS Generator</em> is primarily done with the <a href="#configuration-file">configuration file</a>.
 Compiler options described below should be used to customize the name or path of the configuration file.</p>
 </div>
 <div class="sect2">
-<h3 id="_compiler_options">Compiler options</h3>
+<h3 id="_compiler_options"><a class="anchor" href="#_compiler_options"></a><a class="link" href="#_compiler_options">4.1. Compiler options</a></h3>
 <div class="paragraph">
 <p>A basic set of configuration options can be done by compiler options.
 Compiler options with the prefix <code>-A</code> will recognized by an annotation processor.
@@ -834,7 +950,7 @@ The following table explains the availability:</p>
 </table>
 </div>
 <div class="sect2">
-<h3 id="configuration-file">Configuration file</h3>
+<h3 id="configuration-file"><a class="anchor" href="#configuration-file"></a><a class="link" href="#configuration-file">4.2. Configuration file</a></h3>
 <div class="paragraph">
 <p>The configuration file is split into two parts.
 Both parts are in the same file (Default: <em>oas-generator.yml</em>).</p>
@@ -903,7 +1019,7 @@ In this map contributors can define their own properties for their post processo
 </div>
 </div>
 <div class="sect1">
-<h2 id="_extensibility">Extensibility</h2>
+<h2 id="_extensibility"><a class="anchor" href="#_extensibility"></a><a class="link" href="#_extensibility">5. Extensibility</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The OAS Generator provides a service provider interface (SPI) to include custom post processors.
@@ -921,17 +1037,29 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 <p>If other post processors should be listed and added in the <strong>OAS Generator</strong> repo please open a Github issue.</p>
 </div>
 <div class="sect2">
-<h3 id="_post_processor_documentation">Post-Processor Documentation</h3>
+<h3 id="_post_processor_documentation"><a class="anchor" href="#_post_processor_documentation"></a><a class="link" href="#_post_processor_documentation">5.1. Post-Processor Documentation</a></h3>
 <div class="paragraph">
 <p>In the following section all post processors from the <code>oas-generator-spi</code> module are documented.</p>
 </div>
 <div class="sect3">
-<h4 id="_asciidoctorpostprocessor">AsciidoctorPostProcessor</h4>
+<h4 id="_asciidoctorpostprocessor"><a class="anchor" href="#_asciidoctorpostprocessor"></a><a class="link" href="#_asciidoctorpostprocessor">5.1.1. AsciidoctorPostProcessor</a></h4>
 <div class="paragraph">
 <p>This post processor converts the generated OpenAPI domain model into the asciidoctor format.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+	&lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
+	&lt;artifactId&gt;oas-generator-asciidoctor&lt;/artifactId&gt;
+	&lt;version&gt;$0.0.1-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After the creation during the compile phase, the <code>asciidoctor-maven-plugin</code> (<a href="https://asciidoctor.org/docs/asciidoctor-maven-plugin/">Link</a>) can be used to render the <code>.adoc</code> file to HTML, PDF or other formats</p>
+</div>
 <div class="sect4">
-<h5 id="_configuration_properties">Configuration properties</h5>
+<h5 id="_configuration_properties"><a class="anchor" href="#_configuration_properties"></a><a class="link" href="#_configuration_properties">Configuration properties</a></h5>
 <div class="paragraph">
 <p>All of the following properties are passed as key-value list in the <a href="#configuration-file">configuration file</a>.</p>
 </div>
@@ -964,7 +1092,7 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_custom_post_processors">Custom Post-Processors</h3>
+<h3 id="_custom_post_processors"><a class="anchor" href="#_custom_post_processors"></a><a class="link" href="#_custom_post_processors">5.2. Custom Post-Processors</a></h3>
 <div class="paragraph">
 <p>Providing your own post processor is very simple.
 You just have to follow these steps:</p>
@@ -1012,7 +1140,7 @@ public interface OpenAPIPostProcessor {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_snapshots">Snapshots</h2>
+<h2 id="_snapshots"><a class="anchor" href="#_snapshots"></a><a class="link" href="#_snapshots">6. Snapshots</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>tbd</em></p>
@@ -1020,7 +1148,7 @@ public interface OpenAPIPostProcessor {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_license">License</h2>
+<h2 id="_license"><a class="anchor" href="#_license"></a><a class="link" href="#_license">7. License</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>OAS Generator is Open Source software released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 license</a>.</p>
@@ -1031,7 +1159,7 @@ public interface OpenAPIPostProcessor {
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2018-08-23 21:21:49 MESZ
+Last updated 2018-09-16 17:46:16 MESZ
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">

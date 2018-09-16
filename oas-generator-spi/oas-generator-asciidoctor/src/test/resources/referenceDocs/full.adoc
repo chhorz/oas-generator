@@ -1,6 +1,7 @@
 = Test Service
 John doe <john.doe@test.org>
 :revnumber: 1.2.3-SNAPSHOT
+:icons: font
 :toc:
 
 
@@ -15,31 +16,111 @@ We love code.
 
 
 == Paths
+
 === /articles
+[[ArticleController_getArticles]]
+icon:tag[] <<TAG_1,_TAG_1_>> +
+Here we get some articles. +
+Here we get some articles. Or something else.
+
+[cols="1,1,1,1,1", options="header"]
+|===
+| Type | Name | Required | Schema | Description
+
+| query
+| filter
+| false
+| integer (int64)
+| The filter that should be applied
+
+|===
+
+icon:lock[] <<key,_key_>>
+
+
 === /orders
+[[OrderController_getOrders]]
+[WARNING]
+This operation is deprecated.
+
+icon:tag[] <<TAG_1,_TAG_1_>>, <<TAG_2,_TAG_2_>> +
+Here we get some orders. +
+Here we get some orders. Or something else.
+
+
+
 
 == Components
+=== Schemas
+[[components_schemas_ArticleResource]]
+==== ArticleResource
+[WARNING]
+This schema is deprecated.
+
+This is an article resource.
+[cols="1,1,2", options="header"]
+|===
+| Name | Type | Description
+
+| categories
+| string[]
+| All categories assigned to the given article.
+
+| ean
+| integer (int64)
+|
+
+| name
+| string
+| The name of the selected article.
+
+| number
+| integer (int64)
+|
+
+| order
+| <<components_schemas_OrderResource>>
+|
+
+|===
+
+[[components_schemas_OrderResource]]
+==== OrderResource
+This is an order resource.
+[cols="1,1,2", options="header"]
+|===
+| Name | Type | Description
+
+| articles
+| <<components_schemas_ArticleResource,ArticleResource[]>>
+| All ordered articles.
+
+| number
+| integer (int64)
+|
+
+|===
+
+
 
 === Security Schemes
 [cols="1,1,2", options="header"]
 |===
 | Scheme | Type | Description
-| key
+
+| [[key]] key
 | http
 | This is the scheme for authorized users.
 
 |===
 
 == Tags
-[[TAG_1]]
-TAG_1::
-This is a description
+_TAG_1_::
+[[TAG_1]] This is a description
 Lorem ipsum dolor sit amet. https://en.wikipedia.org[Link]
-+
 
+_TAG_2_::
 [[TAG_2]]
-TAG_2::
-+
 
 
 == External documentation

@@ -5,13 +5,91 @@
 :source-highlighter: highlightjs
 // :docinfo: shared
 :toc: left
+:sectnums:
+:sectlinks:
+:sectanchors:
+:toclevels: 3
 :common-java: ../../../../oas-generator-common/src/main/java
 
 == About
-_tbd_
+The *OAS Generator* is a java annotation processor that creates an openapi specification during the build process.
+It is based on static code analysis, especially annotations that are used to create a REST API.
+Additional the JavaDoc comments from the given methods or resource objects will be included.
+
+[source%nowrap,java]
+----
+@RequestMapping(path = "/orders")
+public class OrderController {
+
+	/**
+	 * Get an order with an {@code id}.
+	 *
+	 * @category order
+	 *
+	 * @param id
+	 *            the identifier
+	 * @param filter
+	 *            the filter that can be applied
+	 * @return a list of orders that match the optional filters
+	 */
+	@GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
+	public List<Order> getOrder(
+                @PathVariable Long id,
+                @RequestParam(defaultValue = "valid=true", required = false) String filter) {
+	    // implementation
+	}
+----
+
+
 
 == Installation
-_tbd_
+In the following section possible options are shown in which way the *OAS Generator* can be included in your project.
+
+[TIP]
+The following examples use the `oas-generator-spring-web`.
+Each kind of installation also works with the `oas-generator-jaxrs` or `oas-generator-schema` module.
+
+=== Apache Maven
+
+==== Include via dependency
+The simplest way to add the *OAS Generator* to your project is adding the following dependency:
+[source,xml,subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>com.github.chhorz</groupId>
+    <artifactId>oas-generator-spring-web</artifactId>
+    <version>${revnumber}</version>
+</dependency>
+----
+All dependencies contain some `META-INF` information which define the provided annotation processors.
+
+==== Maven compile plugin
+Another way to include an annotation processor is the link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html[maven-compiler-plugin]:
+[source%nowrap,xml,subs="verbatim,attributes"]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <annotationProcessorPaths> <!--1-->
+            <path>
+                <groupId>com.github.chhorz</groupId>
+                <artifactId>oas-generator-spring-web</artifactId>
+                <version>${revnumber}</version>
+            </path>
+            <!-- ... more ... -->
+        </annotationProcessorPaths>
+        <annotationProcessors> <!--2-->
+            <annotationProcessor>com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor</annotationProcessor>
+            <!-- ... more ... -->
+        </annotationProcessors>
+    </configuration>
+</plugin>
+----
+<1> Plugin documentation: link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessorPaths[annotationProcessorPaths]
+<2> Plugin documentation: link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessors[annotationProcessors]
+
+It is not possible to mix this way of annotation processor integration with the dependency based one.
 
 == Javadoc
 In this section we describe the default structure of the Javadoc comments.
@@ -141,6 +219,17 @@ In the following section all post processors from the `oas-generator-spi` module
 
 ==== AsciidoctorPostProcessor
 This post processor converts the generated OpenAPI domain model into the asciidoctor format.
+
+[source,xml,subs="verbatim,attributes"]
+----
+<dependency>
+	<groupId>com.github.chhorz</groupId>
+	<artifactId>oas-generator-asciidoctor</artifactId>
+	<version>${revnumber}</version>
+</dependency>
+----
+
+After the creation during the compile phase, the `asciidoctor-maven-plugin` (link:https://asciidoctor.org/docs/asciidoctor-maven-plugin/[Link]) can be used to render the `.adoc` file to HTML, PDF or other formats
 
 ===== Configuration properties
 All of the following properties are passed as key-value list in the <<configuration-file, configuration file>>.

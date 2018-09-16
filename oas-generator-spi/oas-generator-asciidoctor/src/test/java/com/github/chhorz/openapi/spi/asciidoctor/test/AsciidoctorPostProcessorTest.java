@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -93,6 +90,44 @@ class AsciidoctorPostProcessorTest {
 		Server s2 = new Server();
 		s2.setUrl("www.gitlab.com");
 
+		Schema stringSchema = new Schema();
+		stringSchema.setType(Schema.Type.STRING);
+		stringSchema.setFormat(null);
+		stringSchema.setDescription("The name of the selected article.");
+
+		Schema longSchema = new Schema();
+		longSchema.setType(Schema.Type.INTEGER);
+		longSchema.setFormat(Schema.Format.INT64);
+
+		Schema stringsSchema = new Schema();
+		stringsSchema.setDescription("All categories assigned to the given article.");
+		stringsSchema.setType(Schema.Type.ARRAY);
+		stringsSchema.setItems(stringSchema);
+
+		Schema articleSchema = new Schema();
+		articleSchema.setDescription("This is an article resource.");
+		articleSchema.setDeprecated(true);
+		articleSchema.putProperty("number", longSchema);
+		articleSchema.putProperty("name", stringSchema);
+		articleSchema.putProperty("ean", longSchema);
+		articleSchema.putProperty("categories", stringsSchema);
+		articleSchema.putProperty("order", new Reference("#/components/schemas/OrderResource"));
+
+		Schema articlesSchema = new Schema();
+		articlesSchema.setType(Schema.Type.ARRAY);
+		articlesSchema.setDescription("All ordered articles.");
+		articlesSchema.setItems(new Reference("#/components/schemas/ArticleResource"));
+
+		Schema orderSchema = new Schema();
+		orderSchema.setDescription("This is an order resource.");
+		orderSchema.putProperty("number", longSchema);
+		orderSchema.putProperty("articles", articlesSchema);
+
+
+		Map<String, Schema> schemas = new HashMap<>();
+		schemas.put("ArticleResource", articleSchema);
+		schemas.put("OrderResource", orderSchema);
+
 		SecurityScheme scheme = new SecurityScheme();
 		scheme.setType(SecurityScheme.Type.http);
 		scheme.setDescription("This is the scheme for authorized users.");
@@ -101,7 +136,39 @@ class AsciidoctorPostProcessorTest {
 		securitySchemes.put("key", scheme);
 
 		Components components = new Components();
+		components.putAllParsedSchemas(schemas);
 		components.setSecuritySchemes(securitySchemes);
+
+		Parameter filter = new Parameter();
+		filter.setDeprecated(false);
+		filter.setDescription("The filter that should be applied");
+		filter.setIn(Parameter.In.QUERY);
+		filter.setName("filter");
+		filter.setRequired(false);
+		filter.setAllowEmptyValue(false);
+		filter.setSchema(longSchema);
+
+		Operation getArticles = new Operation();
+		getArticles.setOperationId("ArticleController#getArticles");
+		getArticles.setSummary("Here we get some articles.");
+		getArticles.setDescription("Here we get some articles. Or something else.");
+		getArticles.addTag("TAG_1");
+		getArticles.setSecurity(Collections.singletonList(Collections.singletonMap("key", new ArrayList<>())));
+		getArticles.addParameterObject(filter);
+
+		Operation getOrders = new Operation();
+		getOrders.setDeprecated(true);
+		getOrders.setOperationId("OrderController#getOrders");
+		getOrders.setSummary("Here we get some orders.");
+		getOrders.setDescription("Here we get some orders. Or something else.");
+		getOrders.addTag("TAG_1");
+		getOrders.addTag("TAG_2");
+
+		PathItemObject orders = new PathItemObject();
+		orders.setGet(getOrders);
+
+		PathItemObject articles = new PathItemObject();
+		articles.setGet(getArticles);
 
 		OpenAPI openApi = new OpenAPI();
 		openApi.setOpenapi("3.0.1");
@@ -110,8 +177,8 @@ class AsciidoctorPostProcessorTest {
 		openApi.addTag(tag1);
 		openApi.addTag(tag2);
 		openApi.setServers(Arrays.asList(s1, s2));
-		openApi.putPathItemObject("/orders", new PathItemObject());
-		openApi.putPathItemObject("/articles", new PathItemObject());
+		openApi.putPathItemObject("/orders", orders);
+		openApi.putPathItemObject("/articles", articles);
 		openApi.setComponents(components);
 
 		processor = createAsciidoctorPostProcessor("/full");
@@ -133,6 +200,10 @@ class AsciidoctorPostProcessorTest {
 		try {
 			List<String> referenceLines = Files.readAllLines(reference);
 			List<String> outputLines = Files.readAllLines(output);
+
+			if (referenceLines.size() != outputLines.size()) {
+				fail("The reference and ouput file must have the same line count.");
+			}
 
 			referenceLines.forEach(line -> {
 				assertThat(line.trim()).isEqualTo(outputLines.get(referenceLines.indexOf(line)).trim());
