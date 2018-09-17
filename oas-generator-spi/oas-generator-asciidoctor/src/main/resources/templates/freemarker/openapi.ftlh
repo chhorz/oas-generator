@@ -62,7 +62,7 @@ This operation is deprecated.
 | ${parameter.name}
 | ${parameter.required?c}
 | <@asciidoc_schema parameter.schema/>
-| ${parameter.description}
+| <@clean parameter.description/>
 </#list>
 
 |===
@@ -103,7 +103,7 @@ This schema is deprecated.
 <#list schema.properties as propertyName, property>
 | ${propertyName}
 | <@asciidoc_schema property/>
-| <#if property.description??>${property.description}</#if>
+| <#if property.description??><@clean property.description/></#if>
 
 </#list>
 |===
@@ -122,7 +122,7 @@ This schema is deprecated.
 <#list openapi.components.securitySchemes as schemeName, scheme>
 | [[${schemeName}]] ${schemeName}
 | ${scheme.type}
-| ${scheme.description}
+| <@clean scheme.description/>
 
 </#list>
 |===

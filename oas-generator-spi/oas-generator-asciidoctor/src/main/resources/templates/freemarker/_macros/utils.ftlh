@@ -43,3 +43,13 @@ ${schema.type.openApiValue} <#if schema.format??>(${schema.format.openApiValue})
 </#if>
 </#compress>
 </#macro>
+<#--
+
+Replace special characters within asciidoc
+
+-->
+<#macro clean content>
+<#compress>
+${content?replace('|', '\\|')}
+</#compress>
+</#macro>
