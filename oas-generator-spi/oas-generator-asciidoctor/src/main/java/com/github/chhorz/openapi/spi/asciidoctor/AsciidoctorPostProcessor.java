@@ -4,6 +4,8 @@ import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
+import freemarker.core.OutputFormat;
+import freemarker.core.PlainTextOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -40,6 +42,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 		final boolean localizedLookup = parserProperties.getPostProcessorValue("asciidoctor.template.localizedLookup", DEFAULT_LOCALIZED_LOOKUP);
 
 		freemarkerConfiguration = new Configuration(Configuration.VERSION_2_3_28);
+		freemarkerConfiguration.setOutputFormat(PlainTextOutputFormat.INSTANCE);
 		freemarkerConfiguration.setLocalizedLookup(localizedLookup);
 		freemarkerConfiguration.setDefaultEncoding("UTF-8");
 		freemarkerConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);

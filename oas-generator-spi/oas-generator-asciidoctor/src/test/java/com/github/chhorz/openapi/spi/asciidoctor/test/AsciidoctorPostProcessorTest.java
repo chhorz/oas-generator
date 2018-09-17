@@ -130,7 +130,7 @@ class AsciidoctorPostProcessorTest {
 
 		SecurityScheme scheme = new SecurityScheme();
 		scheme.setType(SecurityScheme.Type.http);
-		scheme.setDescription("This is the scheme for authorized users.");
+		scheme.setDescription("This is the scheme for <b>authorized</b> users.");
 
 		Map<String, SecurityScheme> securitySchemes = new HashMap<>();
 		securitySchemes.put("key", scheme);

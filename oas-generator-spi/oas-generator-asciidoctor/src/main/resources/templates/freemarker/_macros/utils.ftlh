@@ -1,3 +1,4 @@
+<#ftl auto_esc=false>
 <#--
 
 #/components/schemas/ArticleResource -> components_schemas_ArticleResource

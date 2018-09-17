@@ -1,3 +1,4 @@
+<#ftl auto_esc=false>
 <#include "_macros/externalDocs.ftlh"/>
 <#include "_macros/server.ftlh"/>
 <#include "_macros/tag.ftlh"/>
@@ -62,7 +63,7 @@ This operation is deprecated.
 | ${parameter.name}
 | ${parameter.required?c}
 | <@asciidoc_schema parameter.schema/>
-| <@clean parameter.description/>
+| <#if parameter.description??>pass:[<@clean parameter.description/>]</#if>
 </#list>
 
 |===
@@ -103,7 +104,7 @@ This schema is deprecated.
 <#list schema.properties as propertyName, property>
 | ${propertyName}
 | <@asciidoc_schema property/>
-| <#if property.description??><@clean property.description/></#if>
+| <#if property.description??>pass:[<@clean property.description/>]</#if>
 
 </#list>
 |===
@@ -122,7 +123,7 @@ This schema is deprecated.
 <#list openapi.components.securitySchemes as schemeName, scheme>
 | [[${schemeName}]] ${schemeName}
 | ${scheme.type}
-| <@clean scheme.description/>
+| pass:[<@clean scheme.description/>]
 
 </#list>
 |===

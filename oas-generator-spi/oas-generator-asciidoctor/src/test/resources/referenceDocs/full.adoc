@@ -31,7 +31,7 @@ Here we get some articles. Or something else.
 | filter
 | false
 | integer (int64)
-| The filter that should be applied
+| pass:[The filter that should be applied]
 
 |===
 
@@ -64,7 +64,7 @@ This is an article resource.
 
 | categories
 | string[]
-| All categories assigned to the given article.
+| pass:[All categories assigned to the given article.]
 
 | ean
 | integer (int64)
@@ -72,7 +72,7 @@ This is an article resource.
 
 | name
 | string
-| The name of the selected article.
+| pass:[The name of the selected article.]
 
 | number
 | integer (int64)
@@ -93,7 +93,7 @@ This is an order resource.
 
 | articles
 | <<components_schemas_ArticleResource,ArticleResource[]>>
-| All ordered articles.
+| pass:[All ordered articles.]
 
 | number
 | integer (int64)
@@ -110,7 +110,7 @@ This is an order resource.
 
 | [[key]] key
 | http
-| This is the scheme for authorized users.
+| pass:[This is the scheme for <b>authorized</b> users.]
 
 |===
 
