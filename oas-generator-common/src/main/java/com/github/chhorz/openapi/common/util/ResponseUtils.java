@@ -17,9 +17,11 @@ import java.util.function.Predicate;
 
 public class ResponseUtils {
 
+	private SchemaUtils schemaUtils;
 	private TypeMirrorUtils typeMirrorUtils;
 
-	public ResponseUtils(final Elements elements, Types types) {
+	public ResponseUtils(final Elements elements, Types types, LoggingUtils log) {
+		this.schemaUtils = new SchemaUtils(elements, types, log);
 		this.typeMirrorUtils = new TypeMirrorUtils(elements, types);
 	}
 
@@ -27,8 +29,14 @@ public class ResponseUtils {
 		Response response = new Response();
 		response.setDescription("");
 
+		Schema schema = schemaUtils.mapTypeMirrorToSchema(typeMirror).get(typeMirror);
+
 		MediaType mediaType = new MediaType();
-		mediaType.setSchema(ReferenceUtils.createSchemaReference(typeMirror));
+		if (schema.getType().equals(Schema.Type.ARRAY)) {
+			mediaType.setSchema(schema);
+		} else {
+			mediaType.setSchema(ReferenceUtils.createSchemaReference(typeMirror));
+		}
 
 		if (produces == null || produces.length == 0) {
 			response.putContent("*/*", mediaType);
