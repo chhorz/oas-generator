@@ -52,7 +52,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
 	@Override
 	public void execute(final OpenAPI openApi) {
-		log.info("AsciidoctorPostProcessor | START");
+		log.info("AsciidoctorPostProcessor | Start");
 
 		final String templateFolder = parserProperties.getPostProcessorValue("asciidoctor.template.folder", DEFAULT_TEMPLATE_FOLDER);
 		final String templateName = parserProperties.getPostProcessorValue("asciidoctor.template.name", DEFAULT_TEMPLATE_NAME);
@@ -65,7 +65,8 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
 			Path outputPath = Paths.get(outputDir, outputFile);
 			File asciidoctorfile = outputPath.toFile();
-			System.out.println(asciidoctorfile.getAbsolutePath());
+			log.debug("AsciidoctorPostProcessor | Filepath: " + asciidoctorfile.getAbsolutePath());
+
 			if (!Files.exists(outputPath)){
 				try {
 					Files.createDirectories(outputPath.getParent());
@@ -85,7 +86,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 			log.error(String.format("Error while templating %s", templateName), e);
 		}
 
-		log.info("AsciidoctorPostProcessor | FINISH");
+		log.info("AsciidoctorPostProcessor | Finish");
 	}
 
 	private Map<String, Object> prepareTemplateVariables(final OpenAPI openAPI){

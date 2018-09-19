@@ -51,9 +51,10 @@ class ResponseUtilsTest {
 		// given
 		TypeMirror typeMirror = types.getArrayType(elements.getTypeElement(BaseClass.class.getCanonicalName()).asType());
 		String[] produces = new String[]{"application/json"};
+		String description = "";
 
 		// when
-		Response response = responseUtils.mapTypeMirrorToResponse(typeMirror, produces);
+		Response response = responseUtils.fromTypeMirror(typeMirror, produces, description);
 
 		// then
 		assertThat(response)
@@ -78,9 +79,10 @@ class ResponseUtilsTest {
 		// given
 		TypeMirror typeMirror = elements.getTypeElement(BaseClass.class.getCanonicalName()).asType();
 		String[] produces = null;
+		String description = "";
 
 		// when
-		Response response = responseUtils.mapTypeMirrorToResponse(typeMirror, produces);
+		Response response = responseUtils.fromTypeMirror(typeMirror, produces, description);
 
 		// then
 		assertThat(response)
@@ -112,9 +114,10 @@ class ResponseUtilsTest {
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1, r2));
 		String[] produces = new String[]{"application/json"};
+		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
 
 		// then
 		assertThat(responses)
@@ -139,9 +142,10 @@ class ResponseUtilsTest {
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1, r2));
 		String[] produces = new String[]{"application/json"};
+		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
 
 		// then
 		assertThat(responses)
@@ -154,9 +158,10 @@ class ResponseUtilsTest {
 		// given
 		JavaDoc javaDoc = new JavaDoc("", "", null);
 		String[] produces = new String[]{"application/json"};
+		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
 
 		// then
 		assertThat(responses)
@@ -169,9 +174,10 @@ class ResponseUtilsTest {
 		// given
 		JavaDoc javaDoc = null;
 		String[] produces = null;
+		String description = null;
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
 
 		// then
 		assertThat(responses)
@@ -191,9 +197,10 @@ class ResponseUtilsTest {
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1, r2));
 		String[] produces = null;
+		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
 
 		// then
 		assertThat(responses)
@@ -216,9 +223,10 @@ class ResponseUtilsTest {
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1));
 		String[] produces = new String[]{"application/json"};
+		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
 
 		// then
 		assertThat(responses)
@@ -238,9 +246,10 @@ class ResponseUtilsTest {
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1));
 		String[] produces = new String[]{"application/json"};
+		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
 
 		// then
 		assertThat(responses)

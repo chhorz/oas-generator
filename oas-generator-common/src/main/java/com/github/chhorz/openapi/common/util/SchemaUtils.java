@@ -396,8 +396,6 @@ public class SchemaUtils {
 
 		if (one.getProperties() != null) {
 			one.getProperties().entrySet().forEach(entry -> {
-				System.out.println(one);
-				System.out.println(two);
 				Function<Schema, Object> function = schema -> schema.getProperties().get(entry.getKey());
 				Object propertyOne = function.apply(one);
 				Object propertyTwo = function.apply(two);

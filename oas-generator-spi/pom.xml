@@ -15,4 +15,5 @@
 	<modules>
 		<module>oas-generator-asciidoctor</module>
 	</modules>
+
 </project>

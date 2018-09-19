@@ -11,7 +11,6 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -33,8 +32,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.tags.CategoryTag;
@@ -51,7 +48,6 @@ import com.github.chhorz.openapi.common.domain.RequestBody;
 import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
-import com.github.chhorz.openapi.common.domain.SecurityScheme;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
@@ -232,11 +228,11 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		Produces produces = executableElement.getAnnotation(Produces.class);
 		if (produces != null) {
 			if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
-				Response response = responseUtils.mapTypeMirrorToResponse(returnType, produces.value());
+				Response response = responseUtils.fromTypeMirror(returnType, produces.value(), returnTag);
 				response.setDescription(returnTag);
 				operation.putDefaultResponse(response);
 			} else {
-				Response response = responseUtils.mapSchemaToResponse(schema, produces.value());
+				Response response = responseUtils.fromSchema(schema, produces.value(), returnTag);
 				response.setDescription(returnTag);
 				operation.putDefaultResponse(response);
 				schemaMap.remove(returnType);
@@ -272,27 +268,6 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 			throw new RuntimeException("Unknown RequestMethod value.");
 		}
 		openApi.putPathItemObject(path, pathItemObject);
-	}
-
-	private Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
-		Map<String, List<String>> securityInformation = new TreeMap<>();
-
-		for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
-			log.info("Annotation: %s", annotation);
-			if (annotation.getAnnotationType().toString().equalsIgnoreCase(
-					"org.springframework.security.access.prepost.PreAuthorize")) {
-				log.info("PreAuthorize");
-				PreAuthorize preAuthorized = executableElement.getAnnotation(PreAuthorize.class);
-				map.entrySet().stream()
-						.filter(entry -> preAuthorized.value().toLowerCase().contains(entry.getKey().toLowerCase()))
-						.forEach(entry -> {
-							log.info("Entry: %s", entry);
-							securityInformation.put(entry.getKey(), new ArrayList<>());
-						});
-			}
-		}
-
-		return securityInformation;
 	}
 
 	private Parameter mapPathVariable(final String path, final VariableElement variableElement,

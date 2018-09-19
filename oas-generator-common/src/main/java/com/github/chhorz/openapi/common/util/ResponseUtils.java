@@ -17,6 +17,8 @@ import java.util.function.Predicate;
 
 public class ResponseUtils {
 
+	private static final Predicate<String> NOT_NULL_OR_EMPTY = s -> s != null && !s.isEmpty();
+
 	private SchemaUtils schemaUtils;
 	private TypeMirrorUtils typeMirrorUtils;
 
@@ -25,9 +27,9 @@ public class ResponseUtils {
 		this.typeMirrorUtils = new TypeMirrorUtils(elements, types);
 	}
 
-	public Response mapTypeMirrorToResponse(final TypeMirror typeMirror, final String[] produces) {
+	public Response fromTypeMirror(final TypeMirror typeMirror, final String[] produces, String description) {
 		Response response = new Response();
-		response.setDescription("");
+		response.setDescription(description != null ? description : "");
 
 		Schema schema = schemaUtils.mapTypeMirrorToSchema(typeMirror).get(typeMirror);
 
@@ -49,9 +51,9 @@ public class ResponseUtils {
 		return response;
 	}
 
-	public Response mapSchemaToResponse(final Schema schema, final String[] produces) {
+	public Response fromSchema(final Schema schema, final String[] produces, String description) {
 		Response response = new Response();
-		response.setDescription("");
+		response.setDescription(description != null ? description : "");
 
 		MediaType mediaType = new MediaType();
 		mediaType.setSchema(schema);
@@ -67,18 +69,17 @@ public class ResponseUtils {
 		return response;
 	}
 
-	public Map<String, Response> initializeFromJavadoc(final JavaDoc javaDoc, final String[] produces) {
+	public Map<String, Response> initializeFromJavadoc(final JavaDoc javaDoc, final String[] produces, final String description) {
 		Map<String, Response> responses = new TreeMap<>();
 
 		if (javaDoc != null) {
-			Predicate<String> nonNullOrEmpty = s -> s != null && !s.isEmpty();
 			List<ResponseTag> responseTags = javaDoc.getTags(ResponseTag.class);
 			responseTags.stream()
-					.filter(tag -> nonNullOrEmpty.test(tag.getStatusCode()))
-					.filter(tag -> nonNullOrEmpty.test(tag.getResponseType()))
+					.filter(tag -> NOT_NULL_OR_EMPTY.test(tag.getStatusCode()))
+					.filter(tag -> NOT_NULL_OR_EMPTY.test(tag.getResponseType()))
 					.forEach(responseTag -> {
 						TypeMirror responseType = typeMirrorUtils.createTypeMirrorFromString(responseTag.getResponseType());
-						Response response = mapTypeMirrorToResponse(responseType, produces);
+						Response response = fromTypeMirror(responseType, produces, description);
 						responses.put(responseTag.getStatusCode(), response);
 					});
 		}

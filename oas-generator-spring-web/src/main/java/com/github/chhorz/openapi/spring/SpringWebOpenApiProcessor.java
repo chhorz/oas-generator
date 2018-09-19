@@ -13,7 +13,6 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -23,7 +22,6 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +51,6 @@ import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
-import com.github.chhorz.openapi.common.domain.SecurityScheme;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
@@ -282,39 +279,28 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						returnTag = returnTags.get(0).getDesrcription();
 					}
 
-					Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces());
+					Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces(), returnTag);
 
 					// use return type of method as default response
-					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(),
-							ResponseEntity.class)[0];
+					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(), ResponseEntity.class)[0];
 					Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
 
-					if (exceptionHanderReturntype != null) {
-						// use return type of ExcheptionHandler as default response
+					if (exceptionHanderReturntype != null && !responses.isEmpty()) {
+						// use return type of ExceptionHandler as default response
 						Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.mapTypeMirrorToSchema(exceptionHanderReturntype);
 						Schema exceptionSchema = exceptionSchemaMap.get(exceptionHanderReturntype);
 						if (Type.OBJECT.equals(exceptionSchema.getType()) || Type.ENUM.equals(exceptionSchema.getType())) {
-							Response response = responseUtils.mapTypeMirrorToResponse(exceptionHanderReturntype,
-									requestMapping.produces());
-							response.setDescription(returnTag);
-							operation.putDefaultResponse(response);
+							operation.putDefaultResponse(responseUtils.fromTypeMirror(exceptionHanderReturntype, requestMapping.produces(), returnTag));
 						} else {
-							Response response = responseUtils.mapSchemaToResponse(exceptionSchema, requestMapping.produces());
-							response.setDescription(returnTag);
-							operation.putDefaultResponse(response);
+							operation.putDefaultResponse(responseUtils.fromSchema(exceptionSchema, requestMapping.produces(), returnTag));
 							schemaMap.remove(exceptionHanderReturntype);
 						}
 					} else {
-
 						Schema schema = schemaMap.get(returnType);
 						if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
-							Response response = responseUtils.mapTypeMirrorToResponse(returnType, requestMapping.produces());
-							response.setDescription(returnTag);
-							operation.putDefaultResponse(response);
+							operation.putDefaultResponse(responseUtils.fromTypeMirror(returnType, requestMapping.produces(), returnTag));
 						} else {
-							Response response = responseUtils.mapSchemaToResponse(schema, requestMapping.produces());
-							response.setDescription(returnTag);
-							operation.putDefaultResponse(response);
+							operation.putDefaultResponse(responseUtils.fromSchema(schema, requestMapping.produces(), returnTag));
 							schemaMap.remove(returnType);
 						}
 
@@ -367,27 +353,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				}
 			}
 		}
-	}
-
-	private Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
-		Map<String, List<String>> securityInformation = new TreeMap<>();
-
-		for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
-			log.info("Annotation: %s", annotation);
-			if (annotation.getAnnotationType().toString().equalsIgnoreCase(
-					"org.springframework.security.access.prepost.PreAuthorize")) {
-				log.info("PreAuthorize");
-				PreAuthorize preAuthorized = executableElement.getAnnotation(PreAuthorize.class);
-				map.entrySet().stream()
-						.filter(entry -> preAuthorized.value().toLowerCase().contains(entry.getKey().toLowerCase()))
-						.forEach(entry -> {
-							log.info("Entry: %s", entry);
-							securityInformation.put(entry.getKey(), new ArrayList<>());
-						});
-			}
-		}
-
-		return securityInformation;
 	}
 
 	private Parameter mapPathVariable(final String path, final VariableElement variableElement,
