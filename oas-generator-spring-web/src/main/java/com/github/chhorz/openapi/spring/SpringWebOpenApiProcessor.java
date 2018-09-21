@@ -168,7 +168,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				.map(tagUtils::createTag)
 				.forEach(openApi::addTag);
 
-		writeOpenApiFile(parserProperties, openApi);
+		runPostProcessors(parserProperties, openApi);
 
 		return false;
 	}

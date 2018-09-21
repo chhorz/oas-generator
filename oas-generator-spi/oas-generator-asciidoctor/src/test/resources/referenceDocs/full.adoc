@@ -2,7 +2,7 @@
 John doe <john.doe@test.org>
 :revnumber: 1.2.3-SNAPSHOT
 :icons: font
-:toc:
+:toc: left
 
 
 Lorem ipsum
@@ -19,23 +19,46 @@ We love code.
 
 === /articles
 [[ArticleController_getArticles]]
-icon:tag[] <<TAG_1,_TAG_1_>> +
-Here we get some articles. +
-Here we get some articles. Or something else.
 
-[cols="1,1,1,1,1", options="header"]
+[cols="1,1,1,1,1"]
 |===
-| Type | Name | Required | Schema | Description
+h| Tags
+4+| icon:tag[] <<TAG_1,TAG_1>>
+
+h| Summary
+4+| Here we get some articles.
+
+h| Description
+4+| Here we get some articles. Or something else.
+
+5+h| Parameters
+
+e| Type
+e| Name
+e| Required
+e| Schema
+e| Description
 
 | query
 | filter
 | false
-| integer (int64)
+m| integer (int64)
 | pass:[The filter that should be applied]
 
-|===
+5+h| Responses
 
-icon:lock[] <<key,_key_>>
+e| Status
+4+e| Response
+
+^| default
+4+| The response description
+
+
+.1+h| Security
+4+| icon:lock[] <<key,_key_>>
+
+
+|===
 
 
 === /orders
@@ -43,10 +66,19 @@ icon:lock[] <<key,_key_>>
 [WARNING]
 This operation is deprecated.
 
-icon:tag[] <<TAG_1,_TAG_1_>>, <<TAG_2,_TAG_2_>> +
-Here we get some orders. +
-Here we get some orders. Or something else.
 
+[cols="1,1,1,1,1"]
+|===
+h| Tags
+4+| icon:tag[] <<TAG_1,TAG_1>>, icon:tag[] <<TAG_2,TAG_2>>
+
+h| Summary
+4+| Here we get some orders.
+
+h| Description
+4+| Here we get some orders. Or something else.
+
+|===
 
 
 
@@ -63,23 +95,23 @@ This is an article resource.
 | Name | Type | Description
 
 | categories
-| string[]
+m| string[]
 | pass:[All categories assigned to the given article.]
 
 | ean
-| integer (int64)
+m| integer (int64)
 |
 
 | name
-| string
+m| string
 | pass:[The name of the selected article.]
 
 | number
-| integer (int64)
+m| integer (int64)
 |
 
 | order
-| <<components_schemas_OrderResource>>
+m| <<components_schemas_OrderResource>>
 |
 
 |===
@@ -92,11 +124,11 @@ This is an order resource.
 | Name | Type | Description
 
 | articles
-| <<components_schemas_ArticleResource,ArticleResource[]>>
+m| <<components_schemas_ArticleResource,ArticleResource[]>>
 | pass:[All ordered articles.]
 
 | number
-| integer (int64)
+m| integer (int64)
 |
 
 |===

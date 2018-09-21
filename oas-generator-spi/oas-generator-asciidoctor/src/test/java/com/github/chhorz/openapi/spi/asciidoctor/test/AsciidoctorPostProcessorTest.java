@@ -148,6 +148,9 @@ class AsciidoctorPostProcessorTest {
 		filter.setAllowEmptyValue(false);
 		filter.setSchema(longSchema);
 
+		Response response = new Response();
+		response.setDescription("The response description");
+
 		Operation getArticles = new Operation();
 		getArticles.setOperationId("ArticleController#getArticles");
 		getArticles.setSummary("Here we get some articles.");
@@ -155,6 +158,7 @@ class AsciidoctorPostProcessorTest {
 		getArticles.addTag("TAG_1");
 		getArticles.setSecurity(Collections.singletonList(Collections.singletonMap("key", new ArrayList<>())));
 		getArticles.addParameterObject(filter);
+		getArticles.putDefaultResponse(response);
 
 		Operation getOrders = new Operation();
 		getOrders.setDeprecated(true);

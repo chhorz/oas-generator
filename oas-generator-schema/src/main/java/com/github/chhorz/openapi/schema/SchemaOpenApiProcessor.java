@@ -80,7 +80,7 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
 		openApi.getComponents().putAllSchemas(schemaMap);
 
-		writeOpenApiFile(parserProperties, openApi);
+		runPostProcessors(parserProperties, openApi);
 
 		return false;
 	}

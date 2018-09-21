@@ -1,5 +1,6 @@
 <#ftl auto_esc=false>
 <#include "_macros/externalDocs.ftlh"/>
+<#include "_macros/path.ftlh"/>
 <#include "_macros/server.ftlh"/>
 <#include "_macros/tag.ftlh"/>
 <#include "_macros/utils.ftlh"/>
@@ -12,7 +13,7 @@ ${openapi.info.contact.name} <${openapi.info.contact.email}>
 </#if>
 :revnumber: ${openapi.info.version}
 :icons: font
-:toc:
+:toc: left
 
 <#if openapi.info.description??>
 
@@ -41,40 +42,29 @@ ${openapi.info.description}
 === ${path}
 <#if pathItem.description??>${pathItem.description}</#if><#t>
 <#if pathItem.get??>
-<#assign get = pathItem.get/>
-<#if get.operationId??>[[<@clean_operationid get.operationId/>]]</#if>
-<#if get.deprecated>
-[WARNING]
-This operation is deprecated.
-
+<@pathTable pathItem.get/>
 </#if>
-<#if get.tags??>icon:tag[] <#list get.tags as tag><<${tag},_${tag}_>><#sep>, </#list> +</#if>
-<#if get.summary??>${get.summary} +</#if>
-<#if get.description??>${get.description}</#if>
+<#if pathItem.put??>
+<@pathTable pathItem.put/>
 </#if>
-
-<#if get.parameterObjects??>
-[cols="1,1,1,1,1", options="header"]
-|===
-| Type | Name | Required | Schema | Description
-
-<#list get.parameterObjects as parameter>
-| ${parameter.in.openApiValue}
-| ${parameter.name}
-| ${parameter.required?c}
-| <@asciidoc_schema parameter.schema/>
-| <#if parameter.description??>pass:[<@clean parameter.description/>]</#if>
-</#list>
-
-|===
-
+<#if pathItem.post??>
+<@pathTable pathItem.post/>
 </#if>
-<#if get.security??>
-<#list get.security as security>
-icon:lock[] <#list security?keys as secKey><<${secKey},_${secKey}_>><#sep>, </#list>
-</#list>
+<#if pathItem.delete??>
+<@pathTable pathItem.delete/>
 </#if>
-
+<#if pathItem.options??>
+<@pathTable pathItem.options/>
+</#if>
+<#if pathItem.head??>
+<@pathTable pathItem.head/>
+</#if>
+<#if pathItem.patch??>
+<@pathTable pathItem.patch/>
+</#if>
+<#if pathItem.trace??>
+<@pathTable pathItem.trace/>
+</#if>
 </#list>
 
 </#if>
@@ -103,7 +93,7 @@ This schema is deprecated.
 
 <#list schema.properties as propertyName, property>
 | ${propertyName}
-| <@asciidoc_schema property/>
+m| <@asciidoc_schema property/>
 | <#if property.description??>pass:[<@clean property.description/>]</#if>
 
 </#list>

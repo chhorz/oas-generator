@@ -98,6 +98,11 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 	}
 
 	@Override
+	public Set<String> getSupportedOptions() {
+		return getDocGeneratorOptions();
+	}
+
+	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		annotations.stream()
 				.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
@@ -127,7 +132,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 				.map(tagUtils::createTag)
 				.forEach(openApi::addTag);
 
-		writeOpenApiFile(parserProperties, openApi);
+		runPostProcessors(parserProperties, openApi);
 
 		return false;
 	}

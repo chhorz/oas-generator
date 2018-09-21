@@ -53,20 +53,6 @@ public interface OpenAPIProcessor {
 				.build();
 	}
 
-	default void writeOpenApiFile(final ParserProperties parserProperties, final OpenAPI openApi) {
-		ServiceLoader<PostProcessorProvider> loader = ServiceLoader.load(PostProcessorProvider.class,
-				getClass().getClassLoader());
-		loader.forEach(provider -> {
-			OpenAPIPostProcessor postProcessor = provider.create(parserProperties);
-			postProcessor.execute(openApi);
-		});
-	}
-
-	default Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {
-		FileUtils fileUtils = new FileUtils(parserProperties);
-		return fileUtils.readFromFile();
-	}
-
 	default Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
 		Map<String, List<String>> securityInformation = new TreeMap<>();
 
@@ -81,6 +67,19 @@ public interface OpenAPIProcessor {
 		}
 
 		return securityInformation;
+	}
+
+	default void runPostProcessors(final ParserProperties parserProperties, final OpenAPI openApi) {
+		ServiceLoader<PostProcessorProvider> loader = ServiceLoader.load(PostProcessorProvider.class, getClass().getClassLoader());
+		loader.forEach(provider -> {
+			OpenAPIPostProcessor postProcessor = provider.create(parserProperties);
+			postProcessor.execute(openApi);
+		});
+	}
+
+	default Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {
+		FileUtils fileUtils = new FileUtils(parserProperties);
+		return fileUtils.readFromFile();
 	}
 
 }
