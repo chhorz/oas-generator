@@ -118,11 +118,16 @@ class AsciidoctorPostProcessorTest {
 		articlesSchema.setDescription("All ordered articles.");
 		articlesSchema.setItems(new Reference("#/components/schemas/ArticleResource"));
 
+		Schema orderTypeSchema = new Schema();
+		orderTypeSchema.setType(Schema.Type.ENUM);
+		orderTypeSchema.addEnumValue("STANDARD");
+		orderTypeSchema.addEnumValue("RETURN");
+
 		Schema orderSchema = new Schema();
 		orderSchema.setDescription("This is an order resource.");
 		orderSchema.putProperty("number", longSchema);
 		orderSchema.putProperty("articles", articlesSchema);
-
+		orderSchema.putProperty("type", orderTypeSchema);
 
 		Map<String, Schema> schemas = new HashMap<>();
 		schemas.put("ArticleResource", articleSchema);
@@ -148,8 +153,12 @@ class AsciidoctorPostProcessorTest {
 		filter.setAllowEmptyValue(false);
 		filter.setSchema(longSchema);
 
+		MediaType mediaType = new MediaType();
+		mediaType.setSchema(articlesSchema);
+
 		Response response = new Response();
 		response.setDescription("The response description");
+		response.putContent("*/*", mediaType);
 
 		Operation getArticles = new Operation();
 		getArticles.setOperationId("ArticleController#getArticles");

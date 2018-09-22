@@ -19,9 +19,13 @@ We love code.
 
 === /articles
 [[ArticleController_getArticles]]
+==== GET
 
-[cols="1,1,1,1,1"]
+[cols="1,1,1,1,2"]
 |===
+4+h| /articles
+^h| GET
+
 h| Tags
 4+| icon:tag[] <<TAG_1,TAG_1>>
 
@@ -51,8 +55,17 @@ e| Status
 4+e| Response
 
 ^| default
-4+| The response description
+4+a| The response description
 
+[cols="1,2"]
+!===
+e! MediaType
+e! Schema
+
+m! pass:[*/*]
+! <<components_schemas_ArticleResource,ArticleResource[]>>
+
+!===
 
 .1+h| Security
 4+| icon:lock[] <<key,_key_>>
@@ -63,12 +76,16 @@ e| Status
 
 === /orders
 [[OrderController_getOrders]]
+==== GET
 [WARNING]
 This operation is deprecated.
 
 
-[cols="1,1,1,1,1"]
+[cols="1,1,1,1,2"]
 |===
+4+h| /orders
+^h| GET
+
 h| Tags
 4+| icon:tag[] <<TAG_1,TAG_1>>, icon:tag[] <<TAG_2,TAG_2>>
 
@@ -90,7 +107,7 @@ h| Description
 This schema is deprecated.
 
 This is an article resource.
-[cols="1,1,2", options="header"]
+[cols="1,2,2", options="header"]
 |===
 | Name | Type | Description
 
@@ -119,7 +136,7 @@ m| <<components_schemas_OrderResource>>
 [[components_schemas_OrderResource]]
 ==== OrderResource
 This is an order resource.
-[cols="1,1,2", options="header"]
+[cols="1,2,2", options="header"]
 |===
 | Name | Type | Description
 
@@ -129,6 +146,10 @@ m| <<components_schemas_ArticleResource,ArticleResource[]>>
 
 | number
 m| integer (int64)
+|
+
+| type
+m| enum (STANDARD, RETURN)
 |
 
 |===

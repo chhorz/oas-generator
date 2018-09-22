@@ -38,6 +38,8 @@ Map a Schema to an asciidoc string or reference
 <#else>
 ${schema.items.type.openApiValue}[]
 </#if>
+<#elseif schema.type.openApiValue = "enum">
+${schema.type.openApiValue} (<#list schema.enumValues as enumValue>${enumValue}<#sep>, </#list>)
 <#else>
 ${schema.type.openApiValue} <#if schema.format??>(${schema.format.openApiValue})</#if>
 </#if>

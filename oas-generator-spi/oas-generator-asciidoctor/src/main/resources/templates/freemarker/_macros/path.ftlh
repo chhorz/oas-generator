@@ -1,17 +1,22 @@
 <#ftl auto_esc=false>
+<#include "utils.ftlh"/>
 <#--
 
 -->
-<#macro pathTable operation>
+<#macro pathTable path method operation>
 <#if operation.operationId??>[[<@clean_operationid operation.operationId/>]]</#if>
+==== ${method}
 <#if operation.deprecated>
 [WARNING]
 This operation is deprecated.
 
 </#if>
 
-[cols="1,1,1,1,1"]
+[cols="1,1,1,1,2"]
 |===
+4+h| ${path}
+^h| ${method}
+
 <#if operation.tags??>
 h| Tags
 4+| <#list operation.tags as tag>icon:tag[] <<${tag},${tag}>><#sep>, </#list>
@@ -53,8 +58,25 @@ e| Status
 
 <#list operation.responses as status, response>
 ^| ${status}
-4+| ${response.description}
+4+a| ${response.description}
+<#if response.content??>
 
+[cols="1,2"]
+!===
+e! MediaType
+e! Schema
+
+<#list response.content as mediaType, mediaTypeSchema>
+m! pass:[${mediaType}]
+<#if mediaTypeSchema.schema??>
+! <@asciidoc_schema mediaTypeSchema.schema/>
+<#else>
+! No schema set.
+</#if>
+
+</#list>
+!===
+</#if>
 <#else>
 5+e| No responses.
 </#list>

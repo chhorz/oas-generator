@@ -42,28 +42,28 @@ ${openapi.info.description}
 === ${path}
 <#if pathItem.description??>${pathItem.description}</#if><#t>
 <#if pathItem.get??>
-<@pathTable pathItem.get/>
+<@pathTable path "GET" pathItem.get/>
 </#if>
 <#if pathItem.put??>
-<@pathTable pathItem.put/>
+<@pathTable path "PUT" pathItem.put/>
 </#if>
 <#if pathItem.post??>
-<@pathTable pathItem.post/>
+<@pathTable path "POST" pathItem.post/>
 </#if>
 <#if pathItem.delete??>
-<@pathTable pathItem.delete/>
+<@pathTable path "DELETE" pathItem.delete/>
 </#if>
 <#if pathItem.options??>
-<@pathTable pathItem.options/>
+<@pathTable path "OPTIONS" pathItem.options/>
 </#if>
 <#if pathItem.head??>
-<@pathTable pathItem.head/>
+<@pathTable path "HEAD" pathItem.head/>
 </#if>
 <#if pathItem.patch??>
-<@pathTable pathItem.patch/>
+<@pathTable path "PATCH" pathItem.patch/>
 </#if>
 <#if pathItem.trace??>
-<@pathTable pathItem.trace/>
+<@pathTable path "TRACE" pathItem.trace/>
 </#if>
 </#list>
 
@@ -87,7 +87,7 @@ This schema is deprecated.
 </#if>
 <#if schema.description??>${schema.description}</#if>
 <#if schema.properties??>
-[cols="1,1,2", options="header"]
+[cols="1,2,2", options="header"]
 |===
 | Name | Type | Description
 
