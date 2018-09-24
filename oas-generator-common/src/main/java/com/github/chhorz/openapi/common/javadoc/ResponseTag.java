@@ -8,10 +8,10 @@ public class ResponseTag extends StructuredTag {
 
 	private static final String STATUS_CODE = "statusCode";
 	private static final String RESPONSE_TYPE = "responseType";
-	// private static final String DESCRIPTION = "description";
+	private static final String DESCRIPTION = "description";
 
 	public ResponseTag() {
-		super(TAG_NAME, STATUS_CODE, RESPONSE_TYPE/* , DESCRIPTION */);
+		super(TAG_NAME, STATUS_CODE, RESPONSE_TYPE , DESCRIPTION);
 	}
 
 	public String getStatusCode() {
@@ -22,8 +22,8 @@ public class ResponseTag extends StructuredTag {
 		return getValues().get(RESPONSE_TYPE);
 	}
 
-	// public String getDescription() {
-	// return getValues().get(DESCRIPTION);
-	// }
+	public String getDescription() {
+		return getValues().get(DESCRIPTION);
+	}
 
 }

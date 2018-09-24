@@ -19,6 +19,8 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -117,7 +119,7 @@ class ResponseUtilsTest {
 		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -145,7 +147,7 @@ class ResponseUtilsTest {
 		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -161,7 +163,7 @@ class ResponseUtilsTest {
 		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -177,7 +179,7 @@ class ResponseUtilsTest {
 		String description = null;
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -191,26 +193,41 @@ class ResponseUtilsTest {
 		ResponseTag r1 = new ResponseTag();
 		r1.putValue("statusCode", "200");
 		r1.putValue("responseType", BaseClass.class.getCanonicalName());
+		r1.putValue("description", "The happy case.");
 		ResponseTag r2 = new ResponseTag();
 		r2.putValue("statusCode", "404");
-		r2.putValue("responseType", BaseClass.class.getCanonicalName());
+		r2.putValue("responseType", "BaseClass");
+		r2.putValue("description", "The un-happy case.");
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1, r2));
 		String[] produces = null;
 		String description = "";
 
+		Map<TypeMirror, Schema> typeMap = new HashMap<>();
+		typeMap.put(elements.getTypeElement(BaseClass.class.getCanonicalName()).asType(), null);
+
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, typeMap);
 
 		// then
 		assertThat(responses)
 				.isNotNull()
 				.hasSize(2)
 				.containsOnlyKeys("200", "404");
+		assertThat(responses.get("200"))
+				.hasFieldOrPropertyWithValue("description", "The happy case.");
 		assertThat(responses.get("200").getContent())
 				.containsOnlyKeys("*/*");
+		assertThat(responses.get("200").getContent().get("*/*").getSchema())
+				.isNotNull()
+				.hasToString("Reference [$ref=#/components/schemas/BaseClass]");
+		assertThat(responses.get("404"))
+				.hasFieldOrPropertyWithValue("description", "The un-happy case.");
 		assertThat(responses.get("404").getContent())
 				.containsOnlyKeys("*/*");
+		assertThat(responses.get("404").getContent().get("*/*").getSchema())
+				.isNotNull()
+				.hasToString("Reference [$ref=#/components/schemas/BaseClass]");
 	}
 
 	@Test
@@ -226,7 +243,7 @@ class ResponseUtilsTest {
 		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -249,7 +266,7 @@ class ResponseUtilsTest {
 		String description = "";
 
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)

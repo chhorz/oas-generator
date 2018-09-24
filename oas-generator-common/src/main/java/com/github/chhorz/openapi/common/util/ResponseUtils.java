@@ -69,7 +69,7 @@ public class ResponseUtils {
 		return response;
 	}
 
-	public Map<String, Response> initializeFromJavadoc(final JavaDoc javaDoc, final String[] produces, final String description) {
+	public Map<String, Response> initializeFromJavadoc(final JavaDoc javaDoc, final String[] produces, final String description, Map<TypeMirror, Schema> schemaMap) {
 		Map<String, Response> responses = new TreeMap<>();
 
 		if (javaDoc != null) {
@@ -78,8 +78,21 @@ public class ResponseUtils {
 					.filter(tag -> NOT_NULL_OR_EMPTY.test(tag.getStatusCode()))
 					.filter(tag -> NOT_NULL_OR_EMPTY.test(tag.getResponseType()))
 					.forEach(responseTag -> {
-						TypeMirror responseType = typeMirrorUtils.createTypeMirrorFromString(responseTag.getResponseType());
-						Response response = fromTypeMirror(responseType, produces, description);
+						final String responseDescription = NOT_NULL_OR_EMPTY.test(responseTag.getDescription()) ? responseTag.getDescription() : description;
+
+						final TypeMirror responseType;
+						if (responseTag.getResponseType().contains(".")) {
+							// assume we have a FQN of a java type
+							responseType = typeMirrorUtils.createTypeMirrorFromString(responseTag.getResponseType());
+						} else {
+							// assume we have only the java class name
+							responseType = schemaMap.keySet().stream()
+									.filter(key -> key.toString().substring(key.toString().lastIndexOf(".") + 1).equalsIgnoreCase(responseTag.getResponseType()))
+									.findAny()
+									.orElse(null);
+						}
+
+						Response response = fromTypeMirror(responseType, produces, responseDescription);
 						responses.put(responseTag.getStatusCode(), response);
 					});
 		}

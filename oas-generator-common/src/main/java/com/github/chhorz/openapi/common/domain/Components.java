@@ -43,7 +43,7 @@ public class Components {
 			this.schemas = new TreeMap<>();
 		}
 
-		schemas.forEach((type, schema) -> putSchema(type, schema));
+		schemas.forEach(this::putSchema);
 	}
 
 	private void putSchema(final String type, final Schema schema) {
