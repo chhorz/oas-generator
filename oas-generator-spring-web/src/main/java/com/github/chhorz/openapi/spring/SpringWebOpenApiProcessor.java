@@ -282,12 +282,14 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					// use return type of method as default response
 					TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(), ResponseEntity.class)[0];
 					Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
+					Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.mapTypeMirrorToSchema(exceptionHanderReturntype);
 
-					Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces(), returnTag, schemaMap);
+					Map<TypeMirror, Schema> combinedMap = new HashMap<>(schemaMap);
+					combinedMap.putAll(exceptionSchemaMap);
+					Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces(), returnTag, combinedMap);
 
 					if (exceptionHanderReturntype != null && !responses.isEmpty()) {
 						// use return type of ExceptionHandler as default response
-						Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.mapTypeMirrorToSchema(exceptionHanderReturntype);
 						Schema exceptionSchema = exceptionSchemaMap.get(exceptionHanderReturntype);
 						if (Type.OBJECT.equals(exceptionSchema.getType()) || Type.ENUM.equals(exceptionSchema.getType())) {
 							operation.putDefaultResponse(responseUtils.fromTypeMirror(exceptionHanderReturntype, requestMapping.produces(), returnTag));

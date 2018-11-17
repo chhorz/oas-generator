@@ -53,6 +53,6 @@ Replace special characters within asciidoc
 -->
 <#macro clean content>
 <#compress>
-${content?replace('|', '\\|')}
+${content?replace('|', '&#124;')}
 </#compress>
 </#macro>

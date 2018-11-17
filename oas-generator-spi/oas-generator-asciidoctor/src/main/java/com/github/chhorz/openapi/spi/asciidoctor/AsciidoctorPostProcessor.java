@@ -29,6 +29,8 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	private static final String DEFAULT_OUTPUT_FILE = "/openapi.adoc";
 	private static final boolean DEFAULT_LOCALIZED_LOOKUP = false;
 
+	private static final boolean DEFAULT_STANDALONE_FILE = true;
+
 	private ParserProperties parserProperties;
 	private LoggingUtils log;
 
@@ -92,6 +94,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	private Map<String, Object> prepareTemplateVariables(final OpenAPI openAPI){
 		Map<String, Object> templateVariables = new HashMap<>();
 		templateVariables.put("openapi", openAPI);
+		templateVariables.put("standalone", parserProperties.getPostProcessorValue("asciidoctor.standalone.file", DEFAULT_STANDALONE_FILE));
 		return templateVariables;
 	}
 

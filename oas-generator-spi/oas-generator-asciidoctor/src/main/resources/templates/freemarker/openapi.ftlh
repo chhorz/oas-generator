@@ -7,6 +7,7 @@
 <#--
 
 -->
+<#if standalone>
 = ${openapi.info.title}
 <#if openapi.info.contact??>
 ${openapi.info.contact.name} <${openapi.info.contact.email}>
@@ -18,6 +19,17 @@ ${openapi.info.contact.name} <${openapi.info.contact.email}>
 <#if openapi.info.description??>
 
 ${openapi.info.description}
+</#if>
+<#else>
+== ${openapi.info.title} (${openapi.info.version})
+<#if openapi.info.contact??>
+${openapi.info.contact.name} <${openapi.info.contact.email}>
+</#if>
+
+<#if openapi.info.description??>
+
+${openapi.info.description}
+</#if>
 </#if>
 <#--
     Servers

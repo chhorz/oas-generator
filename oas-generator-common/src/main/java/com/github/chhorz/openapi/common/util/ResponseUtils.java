@@ -21,10 +21,12 @@ public class ResponseUtils {
 
 	private SchemaUtils schemaUtils;
 	private TypeMirrorUtils typeMirrorUtils;
+	private LoggingUtils log;
 
 	public ResponseUtils(final Elements elements, Types types, LoggingUtils log) {
 		this.schemaUtils = new SchemaUtils(elements, types, log);
 		this.typeMirrorUtils = new TypeMirrorUtils(elements, types);
+		this.log = log;
 	}
 
 	public Response fromTypeMirror(final TypeMirror typeMirror, final String[] produces, String description) {
@@ -85,9 +87,12 @@ public class ResponseUtils {
 							// assume we have a FQN of a java type
 							responseType = typeMirrorUtils.createTypeMirrorFromString(responseTag.getResponseType());
 						} else {
+							String simpleResponseType = responseTag.getResponseType().replace("[]", "");
+
 							// assume we have only the java class name
-							responseType = schemaMap.keySet().stream()
-									.filter(key -> key.toString().substring(key.toString().lastIndexOf(".") + 1).equalsIgnoreCase(responseTag.getResponseType()))
+							responseType = schemaMap.keySet()
+									.stream()
+									.filter(key -> key.toString().substring(key.toString().lastIndexOf(".") + 1).equalsIgnoreCase(simpleResponseType))
 									.findAny()
 									.orElse(null);
 						}

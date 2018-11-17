@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -44,7 +45,7 @@ public abstract class AbstractProcessorTest {
 	public void testCompilation(final Processor processor, final Class<?>... classes) {
 		testCompilation(processor,
 				Stream.of(classes)
-						.map(clazz -> clazz.getCanonicalName())
+						.map(Class::getCanonicalName)
 						.map(clazz -> clazz.replaceAll("\\.", "/"))
 						.map(clazz -> String.format("src/test/java/%s.java", clazz))
 						.toArray(String[]::new));
@@ -59,7 +60,7 @@ public abstract class AbstractProcessorTest {
 
 			JavaCompiler.CompilationTask task = javaCompiler.getTask(stdout, fileManager, collector, null, null,
 					fileManager.getJavaFileObjects(files));
-			task.setProcessors(Arrays.asList(processor));
+			task.setProcessors(Collections.singletonList(processor));
 			Boolean result = task.call();
 
 			String stdoutS = new String(stdoutStream.toByteArray());

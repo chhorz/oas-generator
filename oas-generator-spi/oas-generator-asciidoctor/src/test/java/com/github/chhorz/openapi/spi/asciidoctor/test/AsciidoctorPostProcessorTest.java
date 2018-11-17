@@ -26,6 +26,32 @@ class AsciidoctorPostProcessorTest {
 	}
 
 	@Test
+	void testMinimalEmbeddedAsciidoctorPostProcessor() {
+		// given
+		Info info = new Info();
+		info.setTitle("Test Service");
+		info.setVersion("1.2.3-SNAPSHOT");
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.1");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/embedded", false);
+
+		// when
+		processor.execute(openApi);
+
+		// then
+		Path outputPath = Paths.get("target", "generated-test-docs", "embedded", "openapi.adoc");
+		Path referencePath = new File("src/test/resources/referenceDocs/embedded.adoc").toPath();
+
+		assertThat(outputPath).exists();
+		assertThat(referencePath).exists();
+
+		compareFiles(referencePath, outputPath);
+	}
+
+	@Test
 	void testMinimalAsciidoctorPostProcessor() {
 		// given
 		Info info = new Info();
@@ -227,8 +253,13 @@ class AsciidoctorPostProcessorTest {
 	}
 
 	private AsciidoctorPostProcessor createAsciidoctorPostProcessor(String folder) {
+		return createAsciidoctorPostProcessor(folder, true);
+	}
+
+	private AsciidoctorPostProcessor createAsciidoctorPostProcessor(String folder, boolean standalone) {
 		Map<String, String> propertyMap = new HashMap<>();
 		propertyMap.put("asciidoctor.output.dir", "target/generated-test-docs" + folder);
+		propertyMap.put("asciidoctor.standalone.file", String.valueOf(standalone));
 
 		ParserProperties parserProperties = new ParserProperties();
 		parserProperties.setPostProcessor(propertyMap);

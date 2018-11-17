@@ -28,7 +28,8 @@ public class OrderController {
 	 *
 	 * @category order
 	 *
-	 * @response 200 com.github.chhorz.openapi.spring.test.controller.resource.Order
+	 * @response 200 Order[] Returns a list of matching orders
+	 * @response 500 ErrorResource The resource containing error information
 	 *
 	 * @param id
 	 *            the identifier

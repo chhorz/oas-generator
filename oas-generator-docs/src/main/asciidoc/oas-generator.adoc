@@ -58,7 +58,7 @@ The simplest way to add the *OAS Generator* to your project is adding the follow
 <dependency>
     <groupId>com.github.chhorz</groupId>
     <artifactId>oas-generator-spring-web</artifactId>
-    <version>${revnumber}</version>
+    <version>{revnumber}</version>
 </dependency>
 ----
 All dependencies contain some `META-INF` information which define the provided annotation processors.
@@ -225,7 +225,7 @@ This post processor converts the generated OpenAPI domain model into the asciido
 <dependency>
 	<groupId>com.github.chhorz</groupId>
 	<artifactId>oas-generator-asciidoctor</artifactId>
-	<version>${revnumber}</version>
+	<version>{revnumber}</version>
 </dependency>
 ----
 
@@ -245,9 +245,12 @@ parser:
     asciidoctor.template.name: openapi.ftlh
     asciidoctor.output.dir: /openapi # <2>
     asciidoctor.output.file: /openapi.adoc
+    asciidoctor.standlone.file: true # <3>
 ----
 <1> The path of the templates is based on `/src/main/resources`
 <2> Output base directory is the `/target` folder
+<3> A standalone file is generated with an asciidoctor document header and a section title on level 0.
+Files generated with `false` can easier integrated in other asciidoctor files.
 
 === Custom Post-Processors
 Providing your own post processor is very simple.

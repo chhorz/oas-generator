@@ -2,12 +2,8 @@ package com.github.chhorz.openapi.common.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 
 import javax.lang.model.element.Element;
@@ -103,6 +99,10 @@ public class SchemaUtils {
 	}
 
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
+		if (typeMirror == null) {
+			return Collections.emptyMap();
+		}
+
 		Map<TypeMirror, Schema> schemaMap = new HashMap<>();
 
 		log.info(String.format("Parsing type: %s", typeMirror.toString()));
