@@ -1,5 +1,6 @@
 package com.github.chhorz.openapi.common;
 
+import static com.github.chhorz.openapi.common.OpenAPIConstants.OPEN_API_VERSION;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.*;
@@ -34,7 +35,7 @@ public interface OpenAPIProcessor {
 
 	default OpenAPI initializeFromProperties(final GeneratorPropertyLoader propertyLoader) {
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.1");
+		openApi.setOpenapi(OPEN_API_VERSION);
 		openApi.setInfo(propertyLoader.createInfoFromProperties());
 		openApi.setServers(propertyLoader.createServerFromProperties());
 		openApi.setExternalDocs(propertyLoader.createExternalDocsFromProperties());

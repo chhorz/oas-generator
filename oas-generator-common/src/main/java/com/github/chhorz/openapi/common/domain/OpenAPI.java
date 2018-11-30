@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#openapi-object
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#openapi-object
  *
  * @author chhorz
  *

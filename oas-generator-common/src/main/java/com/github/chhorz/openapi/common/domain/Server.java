@@ -5,7 +5,7 @@ import java.util.Map;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#server-object
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#server-object
  *
  * @author chhorz
  *

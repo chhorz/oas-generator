@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#operation-object
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#operation-object
  *
  * @author chhorz
  *
@@ -29,7 +29,7 @@ public class Operation {
 	@JsonProperty("requestBody")
 	private Reference requestBodyReference;
 	/*
-	 * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#responses-object
+	 * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#responses-object
 	 */
 	private Map<String, Response> responses;
 	@JsonProperty("callbacks")

@@ -5,7 +5,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#link-object
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#link-object
  *
  * @author chhorz
  *

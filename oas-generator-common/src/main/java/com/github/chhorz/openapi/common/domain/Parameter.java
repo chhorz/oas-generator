@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/v3.0.1/versions/3.0.1.md#parameter-object
+ * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#parameter-object
  *
  * @author chhorz
  *
@@ -19,6 +19,7 @@ public class Parameter {
 	private String description;
 	private Boolean required = Boolean.FALSE;
 	private Boolean deprecated;
+	@Deprecated
 	private Boolean allowEmptyValue;
 	// style
 	private Schema schema;

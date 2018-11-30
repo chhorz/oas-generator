@@ -33,7 +33,7 @@ class AsciidoctorPostProcessorTest {
 		info.setVersion("1.2.3-SNAPSHOT");
 
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.1");
+		openApi.setOpenapi("3.0.2");
 		openApi.setInfo(info);
 
 		processor = createAsciidoctorPostProcessor("/embedded", false);
@@ -59,7 +59,7 @@ class AsciidoctorPostProcessorTest {
 		info.setVersion("1.2.3-SNAPSHOT");
 
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.1");
+		openApi.setOpenapi("3.0.2");
 		openApi.setInfo(info);
 
 		processor = createAsciidoctorPostProcessor("/minimal");
@@ -210,7 +210,7 @@ class AsciidoctorPostProcessorTest {
 		articles.setGet(getArticles);
 
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.1");
+		openApi.setOpenapi("3.0.2");
 		openApi.setInfo(info);
 		openApi.setExternalDocs(externalDocs);
 		openApi.addTag(tag1);
