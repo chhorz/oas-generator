@@ -6,7 +6,7 @@ public class FileWriterProvider implements PostProcessorProvider {
 
 	@Override
 	public OpenAPIPostProcessor create(final ParserProperties parserProperties) {
-		return new FileWriterPostProcessor(parserProperties);
+		return new FileWriterPostProcessor(parserProperties, Integer.MIN_VALUE);
 	}
 
 }

@@ -10,9 +10,13 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 	private FileUtils fileUtils;
 	private LoggingUtils log;
 
-	public FileWriterPostProcessor(final ParserProperties parserProperties) {
+	private int postProcessorOrder;
+
+	public FileWriterPostProcessor(final ParserProperties parserProperties, final int postProcessorOrder) {
 		log = new LoggingUtils(parserProperties);
 		fileUtils = new FileUtils(parserProperties);
+
+		this.postProcessorOrder = postProcessorOrder;
 	}
 
 	@Override
@@ -22,4 +26,8 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 		log.info("FileWriterPostProcessor | Finish");
 	}
 
+	@Override
+	public int getPostProcessorOrder() {
+		return postProcessorOrder;
+	}
 }

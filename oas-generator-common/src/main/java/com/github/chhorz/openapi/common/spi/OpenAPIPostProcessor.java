@@ -16,4 +16,13 @@ public interface OpenAPIPostProcessor {
 	 */
 	void execute(OpenAPI openApi);
 
+	/**
+	 * Returns the value for the order in which the post processor should be executed. Possible values are between
+	 * {@code Integer.MIN_VALUE} and {@code Integer.MAX_VALUE}. The processors will be executed starting with the
+	 * lowest value.
+	 *
+	 * @return the order in which the post processor should be executed
+	 */
+	int getPostProcessorOrder();
+
 }

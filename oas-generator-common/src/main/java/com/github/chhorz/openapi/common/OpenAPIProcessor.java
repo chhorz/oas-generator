@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
@@ -71,11 +72,12 @@ public interface OpenAPIProcessor {
 	}
 
 	default void runPostProcessors(final ParserProperties parserProperties, final OpenAPI openApi) {
-		ServiceLoader<PostProcessorProvider> loader = ServiceLoader.load(PostProcessorProvider.class, getClass().getClassLoader());
-		loader.forEach(provider -> {
-			OpenAPIPostProcessor postProcessor = provider.create(parserProperties);
-			postProcessor.execute(openApi);
-		});
+		ServiceLoader<PostProcessorProvider> serviceLoader = ServiceLoader.load(PostProcessorProvider.class, getClass().getClassLoader());
+
+		StreamSupport.stream(serviceLoader.spliterator(), false)
+				.map(provider -> provider.create(parserProperties))
+				.sorted(Comparator.comparing(OpenAPIPostProcessor::getPostProcessorOrder))
+				.forEach(openAPIPostProcessor -> openAPIPostProcessor.execute(openApi));
 	}
 
 	default Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {

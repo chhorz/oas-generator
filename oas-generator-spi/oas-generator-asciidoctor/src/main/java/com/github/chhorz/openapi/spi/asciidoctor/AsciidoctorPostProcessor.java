@@ -22,6 +22,8 @@ import java.util.Map;
 
 public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
+	private static final int POST_PROCESSOR_ORDER = 0;
+
 	private static final String DEFAULT_TEMPLATE_FOLDER = "/templates/freemarker";
 	private static final String DEFAULT_TEMPLATE_NAME = "openapi.ftlh";
 	private static final boolean DEFAULT_EXCEPTION_LOGGING = true;
@@ -96,6 +98,11 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 		templateVariables.put("openapi", openAPI);
 		templateVariables.put("standalone", parserProperties.getPostProcessorValue("asciidoctor.standalone.file", DEFAULT_STANDALONE_FILE));
 		return templateVariables;
+	}
+
+	@Override
+	public int getPostProcessorOrder() {
+		return POST_PROCESSOR_ORDER;
 	}
 
 }
