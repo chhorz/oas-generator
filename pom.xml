@@ -19,8 +19,8 @@
 
 	<properties>
 		<!-- Dependency versions -->
-		<jackson-databind.version>2.9.5</jackson-databind.version>
-		<javadoc-parser.version>0.0.1-SNAPSHOT</javadoc-parser.version>
+		<jackson-databind.version>2.9.8</jackson-databind.version>
+		<javadoc-parser.version>0.1.0.M1</javadoc-parser.version>
 		<snakeyaml.version>1.21</snakeyaml.version>
 
 		<spring-web.version>4.3.12.RELEASE</spring-web.version>
@@ -30,13 +30,12 @@
 
 		<!-- Test dependency versions -->
 		<assertj-core.version>3.9.1</assertj-core.version>
-		<junit-jupiter.verison>5.2.0</junit-jupiter.verison>
-		<junit-platform-surefire-provider.version>1.2.0</junit-platform-surefire-provider.version>
+		<junit-jupiter.verison>5.4.1</junit-jupiter.verison>
 
 		<!-- Plugin versions -->
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
 		<maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
-		<maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -83,7 +82,7 @@
 			<!-- Test dependencies -->
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
+				<artifactId>junit-jupiter</artifactId>
 				<version>${junit-jupiter.verison}</version>
 				<scope>test</scope>
 			</dependency>
@@ -96,12 +95,12 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<repositories>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
-	</repositories>
+	<!--<repositories>-->
+		<!--<repository>-->
+			<!--<id>ossrh</id>-->
+			<!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+		<!--</repository>-->
+	<!--</repositories>-->
 
 	<build>
 		<pluginManagement>
@@ -132,18 +131,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${maven-surefire-plugin.version}</version>
-					<dependencies>
-						<dependency>
-							<groupId>org.junit.platform</groupId>
-							<artifactId>junit-platform-surefire-provider</artifactId>
-							<version>${junit-platform-surefire-provider.version}</version>
-						</dependency>
-						<dependency>
-							<groupId>org.junit.jupiter</groupId>
-							<artifactId>junit-jupiter-engine</artifactId>
-							<version>${junit-jupiter.verison}</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 			</plugins>
 		</pluginManagement>
