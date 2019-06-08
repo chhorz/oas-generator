@@ -99,7 +99,7 @@ public class SchemaUtils {
 	}
 
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
-		if (typeMirror == null) {
+		if (typeMirror == null || typeMirror.getKind().equals(TypeKind.VOID)) {
 			return Collections.emptyMap();
 		}
 

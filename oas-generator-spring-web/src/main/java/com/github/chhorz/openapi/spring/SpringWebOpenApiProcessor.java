@@ -1,11 +1,13 @@
 package com.github.chhorz.openapi.spring;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -299,16 +301,20 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 						}
 					} else {
 						Schema schema = schemaMap.get(returnType);
-						if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
-							operation.putDefaultResponse(responseUtils.fromTypeMirror(returnType, requestMapping.produces(), returnTag));
-						} else {
-							operation.putDefaultResponse(responseUtils.fromSchema(schema, requestMapping.produces(), returnTag));
-							schemaMap.remove(returnType);
+						if (schema != null) {
+							if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
+								operation.putDefaultResponse(responseUtils.fromTypeMirror(returnType, requestMapping.produces(), returnTag));
+							} else {
+								operation.putDefaultResponse(responseUtils.fromSchema(schema, requestMapping.produces(), returnTag));
+								schemaMap.remove(returnType);
+							}
 						}
-
 					}
 
-					openApi.getComponents().putAllSchemas(schemaMap);
+					openApi.getComponents().putAllSchemas(schemaMap.entrySet()
+							.stream()
+							.filter(entry -> !Type.ARRAY.equals(entry.getValue().getType()))
+							.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
 					responses.forEach(operation::putResponse);
 
@@ -318,7 +324,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 					Map<String, List<String>> securityInformation = getSecurityInformation(executableElement,
 							openApi.getComponents().getSecuritySchemes());
-					operation.setSecurity(Arrays.asList(securityInformation));
+					operation.setSecurity(singletonList(securityInformation));
 
 					PathItemObject pathItemObject = openApi.getPaths().getOrDefault(cleanedPath, new PathItemObject());
 					switch (requestMethod) {

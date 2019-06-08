@@ -87,14 +87,26 @@ public class ResponseUtils {
 							// assume we have a FQN of a java type
 							responseType = typeMirrorUtils.createTypeMirrorFromString(responseTag.getResponseType());
 						} else {
-							String simpleResponseType = responseTag.getResponseType().replace("[]", "");
+							if (responseTag.getResponseType().contains("[]")) {
+								String simpleResponseType = responseTag.getResponseType().replace("[]", "");
 
-							// assume we have only the java class name
-							responseType = schemaMap.keySet()
-									.stream()
-									.filter(key -> key.toString().substring(key.toString().lastIndexOf(".") + 1).equalsIgnoreCase(simpleResponseType))
-									.findAny()
-									.orElse(null);
+								// assume we have only the java class name
+								responseType = schemaMap.keySet()
+										.stream()
+										.filter(key -> schemaMap.get(key).getType().equals(Schema.Type.ARRAY))
+										.filter(key -> key.toString().substring(key.toString().lastIndexOf(".") + 1, key.toString().length() - 1).equalsIgnoreCase(simpleResponseType))
+										.findAny()
+										.orElse(null);
+							} else {
+								String simpleResponseType = responseTag.getResponseType();
+
+								// assume we have only the java class name
+								responseType = schemaMap.keySet()
+										.stream()
+										.filter(key -> key.toString().substring(key.toString().lastIndexOf(".") + 1).equalsIgnoreCase(simpleResponseType))
+										.findAny()
+										.orElse(null);
+							}
 						}
 
 						Response response = fromTypeMirror(responseType, produces, responseDescription);

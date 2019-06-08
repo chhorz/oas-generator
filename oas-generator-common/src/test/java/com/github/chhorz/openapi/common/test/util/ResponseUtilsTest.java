@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ResponseUtilsTest {
@@ -197,7 +198,7 @@ class ResponseUtilsTest {
 		ResponseTag r2 = new ResponseTag();
 		r2.putValue("statusCode", "404");
 		r2.putValue("responseType", "BaseClass");
-		r2.putValue("description", "The un-happy case.");
+		r2.putValue("description", "The sad case.");
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1, r2));
 		String[] produces = null;
@@ -222,7 +223,7 @@ class ResponseUtilsTest {
 				.isNotNull()
 				.hasToString("Reference [$ref=#/components/schemas/BaseClass]");
 		assertThat(responses.get("404"))
-				.hasFieldOrPropertyWithValue("description", "The un-happy case.");
+				.hasFieldOrPropertyWithValue("description", "The sad case.");
 		assertThat(responses.get("404").getContent())
 				.containsOnlyKeys("*/*");
 		assertThat(responses.get("404").getContent().get("*/*").getSchema())
@@ -261,7 +262,7 @@ class ResponseUtilsTest {
 		r1.putValue("statusCode", "200");
 		r1.putValue("responseType", String.format("%s[]", BaseClass.class.getCanonicalName()));
 
-		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1));
+		JavaDoc javaDoc = new JavaDoc("", "", singletonList(r1));
 		String[] produces = new String[]{"application/json"};
 		String description = "";
 

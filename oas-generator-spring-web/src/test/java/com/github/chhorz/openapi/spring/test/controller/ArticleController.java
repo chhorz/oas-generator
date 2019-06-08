@@ -1,12 +1,11 @@
 package com.github.chhorz.openapi.spring.test.controller;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.github.chhorz.openapi.spring.test.controller.resource.Article;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArticleController {
 
@@ -18,6 +17,11 @@ public class ArticleController {
 	@RequestMapping(path = "/articles", method = RequestMethod.POST)
 	public void createArticle(@RequestBody final Article article) {
 
+	}
+
+	@GetMapping(path = "/articles")
+	public List<Article> getArticles(){
+		return new ArrayList<>();
 	}
 
 }

@@ -96,9 +96,8 @@ public class FileUtilsTest {
 
 		assertThat(openAPI)
 			.isNotNull()
-			.extracting(o -> o.getComponents())
-				.isNotNull()
-				.isNotEmpty();
+			.extracting(OpenAPI::getComponents)
+				.isNotNull();
 
 		assertThat(openAPI.getComponents().getSchemas())
 			.isNotNull()

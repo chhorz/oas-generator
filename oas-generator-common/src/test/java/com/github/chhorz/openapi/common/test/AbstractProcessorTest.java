@@ -6,9 +6,8 @@ import static org.assertj.core.api.Assertions.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.processing.Processor;
@@ -20,6 +19,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import com.github.chhorz.openapi.common.OpenAPIConstants;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -42,8 +42,8 @@ public abstract class AbstractProcessorTest {
 		fileManager = javaCompiler.getStandardFileManager(collector, Locale.US, Charset.forName("UTF-8"));
 	}
 
-	public void testCompilation(final Processor processor, final Class<?>... classes) {
-		testCompilation(processor,
+	public void testCompilation(final Processor processor, final Map<String, String> options, final Class<?>... classes) {
+		testCompilation(processor, options,
 				Stream.of(classes)
 						.map(Class::getCanonicalName)
 						.map(clazz -> clazz.replaceAll("\\.", "/"))
@@ -51,14 +51,17 @@ public abstract class AbstractProcessorTest {
 						.toArray(String[]::new));
 	}
 
-	private void testCompilation(final Processor processor, final String... files) {
-		System.out.println(Arrays.toString(files));
+	private void testCompilation(final Processor processor, final Map<String, String> options, final String... files) {
 		try {
+			List<String> optionsList = options.entrySet().stream()
+					.map(entry -> String.format("-A%s=%s", entry.getKey(), entry.getValue()))
+					.collect(Collectors.toList());
+
 			// streams.
 			ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();
 			OutputStreamWriter stdout = new OutputStreamWriter(stdoutStream);
 
-			JavaCompiler.CompilationTask task = javaCompiler.getTask(stdout, fileManager, collector, null, null,
+			JavaCompiler.CompilationTask task = javaCompiler.getTask(stdout, fileManager, collector, optionsList, null,
 					fileManager.getJavaFileObjects(files));
 			task.setProcessors(Collections.singletonList(processor));
 			Boolean result = task.call();

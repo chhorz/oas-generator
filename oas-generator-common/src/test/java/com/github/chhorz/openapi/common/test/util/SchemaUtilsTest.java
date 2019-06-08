@@ -2,6 +2,7 @@ package com.github.chhorz.openapi.common.test.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.util.Lists.list;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -103,7 +104,7 @@ public class SchemaUtilsTest {
 				.containsKey(longType)
 				.extracting(map -> map.get(longType))
 				.extracting("type", "format")
-				.contains(tuple(Type.INTEGER, Format.INT64));
+				.contains(Type.INTEGER, Format.INT64);
 	}
 
 	@Test
@@ -119,7 +120,7 @@ public class SchemaUtilsTest {
 				.containsKey(doubleType)
 				.extracting(map -> map.get(doubleType))
 				.extracting("type", "format")
-				.contains(tuple(Type.NUMBER, Format.DOUBLE));
+				.contains(Type.NUMBER, Format.DOUBLE);
 	}
 
 	@Test
@@ -194,7 +195,7 @@ public class SchemaUtilsTest {
 				.containsKey(test)
 				.extracting(map -> map.get(test))
 				.extracting("type", "format")
-				.contains(tuple(Type.STRING, null));
+				.contains(Type.STRING);
 
 		assertThat(schemaMap.get(test).getEnumValues())
 				.hasSize(3)

@@ -1,11 +1,13 @@
 package com.github.chhorz.openapi.common.test.extension;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -34,7 +36,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 	private Messager messager;
 
 	@Override
-	public void beforeEach(final ExtensionContext context) throws Exception {
+	public void beforeEach(final ExtensionContext context) {
 		javac();
 	}
 
@@ -92,6 +94,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 		@Override
 		public synchronized void init(final ProcessingEnvironment processingEnv) {
 			super.init(processingEnv);
+
 			elements = processingEnv.getElementUtils();
 			types = processingEnv.getTypeUtils();
 			messager = processingEnv.getMessager();
@@ -107,7 +110,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 		}
 	}
 
-	public void javac() {
+	private void javac() {
 		JavaCompiler systemJavaCompiler = ToolProvider.getSystemJavaCompiler();
 		DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
 		StandardJavaFileManager fileManager = systemJavaCompiler.getStandardFileManager(collector, Locale.US,
@@ -123,7 +126,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 
 		JavaCompiler.CompilationTask compilationTask = systemJavaCompiler.getTask(stdout, fileManager, collector, null, null,
 				fileManager.getJavaFileObjects(files));
-		compilationTask.setProcessors(Arrays.asList(new EvaluatingProcessor()));
+		compilationTask.setProcessors(singletonList(new EvaluatingProcessor()));
 
 		compilationTask.call();
 	}
