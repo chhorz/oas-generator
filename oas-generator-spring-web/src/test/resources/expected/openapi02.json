@@ -1,0 +1,170 @@
+{
+  "openapi" : "3.0.2",
+  "info" : {
+    "title" : "MyService",
+    "contact" : {
+      "name" : "John Doe",
+      "email" : "john@doe.com",
+      "url" : "http://www.google.com"
+    },
+    "version" : "1.2.3-SNAPSHOT",
+    "license" : {
+      "name" : "Apache License, Version 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "servers" : [ {
+    "url" : "dev.server.lan",
+    "description" : "Internal DEV-Stage"
+  } ],
+  "paths" : {
+    "/articles" : {
+      "get" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "ArticleController#getArticles",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "deprecated" : false,
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Article"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      },
+      "post" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "ArticleController#createArticle",
+        "responses" : {
+          "default" : {
+            "description" : ""
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/Article"
+        }
+      }
+    },
+    "/articles/{id}" : {
+      "get" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "ArticleController#getArticle",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "deprecated" : false,
+          "allowEmptyValue" : false,
+          "schema" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int64",
+            "description" : ""
+          }
+        }, {
+          "name" : "filter",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "deprecated" : false,
+          "allowEmptyValue" : true,
+          "schema" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : "",
+            "default" : ""
+          }
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Article" : {
+        "deprecated" : false,
+        "type" : "object",
+        "description" : "An article that can be ordered.",
+        "properties" : {
+          "number" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int64",
+            "description" : ""
+          },
+          "name" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : ""
+          },
+          "price" : {
+            "deprecated" : false,
+            "type" : "number",
+            "format" : "double",
+            "description" : ""
+          },
+          "type" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : "",
+            "enum" : [ "SIMPLE", "PREMIUM" ]
+          }
+        }
+      }
+    },
+    "requestBodies" : {
+      "Article" : {
+        "description" : "",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Article"
+            }
+          }
+        },
+        "required" : true
+      }
+    },
+    "securitySchemes" : {
+      "read_role" : {
+        "type" : "http",
+        "description" : "Basic LDAP read role.",
+        "scheme" : "basic"
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Lorem ipsum ...",
+    "url" : "http://www.wikipedia.org"
+  }
+}

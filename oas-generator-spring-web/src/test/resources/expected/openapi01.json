@@ -1,0 +1,369 @@
+{
+  "openapi" : "3.0.2",
+  "info" : {
+    "title" : "MyService",
+    "contact" : {
+      "name" : "John Doe",
+      "url" : "http://www.google.com",
+      "email" : "john@doe.com"
+    },
+    "license" : {
+      "name" : "Apache License, Version 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "version" : "1.2.3-SNAPSHOT"
+  },
+  "servers" : [ {
+    "url" : "dev.server.lan",
+    "description" : "Internal DEV-Stage"
+  } ],
+  "paths" : {
+    "/orders" : {
+      "get" : {
+        "tags" : [ "order", "test" ],
+        "summary" : "",
+        "description" : "",
+        "operationId" : "OrderController#getOrders",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "application/xml" : {
+                "schema" : {
+                  "deprecated" : false,
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ {
+          "read_role" : [ ]
+        } ],
+        "parameters" : [ ]
+      },
+      "post" : {
+        "tags" : [ "order", "test" ],
+        "summary" : "",
+        "description" : "",
+        "operationId" : "OrderController#createOrder",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "deprecated" : false,
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/PrimitiveResource"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ],
+        "requestBody" : {
+          "$ref" : "#/components/requestBodies/Order"
+        }
+      }
+    },
+    "/orders/{id}" : {
+      "get" : {
+        "tags" : [ "order" ],
+        "summary" : "Get an order with an <code>id</code>.",
+        "description" : "Get an order with an <code>id</code>.\n\n Lorem ipsum.",
+        "operationId" : "OrderController#getOrder",
+        "responses" : {
+          "200" : {
+            "description" : "Returns a list of matching orders",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "deprecated" : false,
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Order"
+                  }
+                }
+              },
+              "application/xml" : {
+                "schema" : {
+                  "deprecated" : false,
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "The resource containing error information",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResource"
+                }
+              },
+              "application/xml" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResource"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "a list of orders that match the optional filters",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResource"
+                }
+              },
+              "application/xml" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorResource"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "the identifier",
+          "required" : true,
+          "deprecated" : false,
+          "allowEmptyValue" : false,
+          "schema" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "",
+            "pattern" : "\\d+"
+          }
+        }, {
+          "name" : "filter",
+          "in" : "query",
+          "description" : "the filter that can be applied",
+          "required" : false,
+          "deprecated" : false,
+          "allowEmptyValue" : true,
+          "schema" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : "",
+            "default" : "valid=true"
+          }
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Article" : {
+        "deprecated" : false,
+        "type" : "object",
+        "description" : "An article that can be ordered.",
+        "properties" : {
+          "name" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : ""
+          },
+          "number" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "The basic number of the resource."
+          },
+          "price" : {
+            "deprecated" : false,
+            "type" : "number",
+            "format" : "double",
+            "description" : ""
+          },
+          "type" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : "",
+            "enum" : [ "SIMPLE", "PREMIUM" ]
+          }
+        }
+      },
+      "ErrorResource" : {
+        "deprecated" : false,
+        "type" : "object",
+        "description" : "",
+        "properties" : {
+          "cause" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : "The error cause."
+          },
+          "title" : {
+            "deprecated" : true,
+            "type" : "string",
+            "description" : "Human readable title of the error."
+          },
+          "uid" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : ""
+          }
+        }
+      },
+      "ExternalResource" : {
+        "deprecated" : true,
+        "type" : "object",
+        "description" : "",
+        "properties" : {
+          "id" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int64",
+            "description" : ""
+          }
+        }
+      },
+      "Order" : {
+        "deprecated" : false,
+        "type" : "object",
+        "description" : "The order.",
+        "properties" : {
+          "article" : {
+            "deprecated" : false,
+            "type" : "array",
+            "description" : "The ordered article.",
+            "items" : {
+              "$ref" : "#/components/schemas/Article"
+            }
+          },
+          "number" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int64",
+            "description" : "The basic number of the resource."
+          },
+          "orderTs" : {
+            "deprecated" : false,
+            "type" : "string",
+            "format" : "date-time",
+            "description" : ""
+          },
+          "referenceNumber" : {
+            "deprecated" : false,
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "deprecated" : false,
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "PrimitiveResource" : {
+        "deprecated" : false,
+        "type" : "object",
+        "description" : "",
+        "properties" : {
+          "b" : {
+            "deprecated" : false,
+            "type" : "string",
+            "format" : "bype",
+            "description" : ""
+          },
+          "bool" : {
+            "deprecated" : false,
+            "type" : "boolean",
+            "description" : ""
+          },
+          "c" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : ""
+          },
+          "d" : {
+            "deprecated" : false,
+            "type" : "number",
+            "format" : "double",
+            "description" : ""
+          },
+          "f" : {
+            "deprecated" : false,
+            "type" : "number",
+            "format" : "float",
+            "description" : ""
+          },
+          "i" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int32",
+            "description" : ""
+          },
+          "l" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int64",
+            "description" : ""
+          },
+          "s" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int32",
+            "description" : ""
+          }
+        }
+      }
+    },
+    "requestBodies" : {
+      "Order" : {
+        "description" : "",
+        "content" : {
+          "application/xml" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Order"
+            }
+          },
+          "text/plain" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Order"
+            }
+          }
+        },
+        "required" : true
+      }
+    },
+    "securitySchemes" : {
+      "read_role" : {
+        "type" : "http",
+        "description" : "Basic LDAP read role.",
+        "scheme" : "basic"
+      }
+    }
+  },
+  "tags" : [ {
+    "name" : "order",
+    "description" : "The category collects all methods for orders.",
+    "externalDocs" : {
+      "url" : "http://www.google.com"
+    }
+  }, {
+    "name" : "test",
+    "description" : ""
+  } ],
+  "externalDocs" : {
+    "description" : "Lorem ipsum ...",
+    "url" : "http://www.wikipedia.org"
+  }
+}

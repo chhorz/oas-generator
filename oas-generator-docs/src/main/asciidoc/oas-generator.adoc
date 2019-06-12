@@ -75,7 +75,7 @@ Another way to include an annotation processor is the link:https://maven.apache.
             <path>
                 <groupId>com.github.chhorz</groupId>
                 <artifactId>oas-generator-spring-web</artifactId>
-                <version>${revnumber}</version>
+                <version>{revnumber}</version>
             </path>
             <!-- ... more ... -->
         </annotationProcessorPaths>

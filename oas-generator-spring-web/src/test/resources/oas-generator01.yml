@@ -33,5 +33,8 @@ tags:
 # Parser specific configuration
 parser:
   logLevel: DEBUG
-  outputDir: ./target/openapi-2
-  outputFile: openapi.json
+  outputDir: ./target/oas-test
+  outputFile: openapi01.json
+  schemaFile: ./src/test/resources/openapi.json
+  schemaPackages:
+  - com.github.chhorz.openapi.spring.test.controller.external

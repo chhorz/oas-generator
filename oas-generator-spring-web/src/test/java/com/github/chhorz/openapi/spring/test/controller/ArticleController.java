@@ -10,14 +10,14 @@ import java.util.List;
 public class ArticleController {
 
 	@RequestMapping(path = "/articles/{id}", method = RequestMethod.GET)
-	public Article getArticle(@PathVariable final Long id, @RequestParam final String filter) {
+	public Article getArticle(
+			@PathVariable final Long id,
+			@RequestParam(required = false, defaultValue = "") final String filter) {
 		return new Article();
 	}
 
 	@RequestMapping(path = "/articles", method = RequestMethod.POST)
-	public void createArticle(@RequestBody final Article article) {
-
-	}
+	public void createArticle(@RequestBody final Article article) {}
 
 	@GetMapping(path = "/articles")
 	public List<Article> getArticles(){

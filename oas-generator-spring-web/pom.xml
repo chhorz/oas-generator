@@ -33,7 +33,7 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Test -->
+		<!-- test dependencies -->
 		<dependency>
 			<groupId>com.github.chhorz</groupId>
 			<artifactId>oas-generator-common</artifactId>
@@ -50,6 +50,11 @@
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.skyscreamer</groupId>
+			<artifactId>jsonassert</artifactId>
+			<scope>teste</scope>
 		</dependency>
 	</dependencies>
 
