@@ -2,6 +2,8 @@
 :author: Christian Horz
 :icons: font
 
+image:https://travis-ci.org/chhorz/oas-generator.svg?branch=master["Build Status", link="https://travis-ci.org/chhorz/oas-generator"]
+
 == About
 The documentation can be found on the separate https://chhorz.github.io/oas-generator/[Github Page] but is still "Work in progress".
 
