@@ -51,7 +51,7 @@ public interface OpenAPIProcessor {
 	default JavaDocParser createJavadocParser() {
 		return JavaDocParserBuilder.withBasicTags()
 				.withCustomTag(new ResponseTag())
-				.withOutputType(OutputType.HTML)
+				.withOutputType(OutputType.MARKDOWN)
 				.build();
 	}
 

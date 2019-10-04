@@ -78,8 +78,8 @@
     "/orders/{id}" : {
       "get" : {
         "tags" : [ "order" ],
-        "summary" : "Get an order with an <code>id</code>.",
-        "description" : "Get an order with an <code>id</code>.\n\n Lorem ipsum.",
+        "summary" : "Get an order with an `id`.",
+        "description" : "Get an order with an `id`.\n\n Lorem ipsum.",
         "operationId" : "OrderController#getOrder",
         "responses" : {
           "200" : {
