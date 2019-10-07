@@ -138,7 +138,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 	}
 
 	private void mapOperationMethod(final ExecutableElement executableElement) {
-		log.debug("Parsing method: %s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement);
+		log.debug("Parsing method: %s#%s", getOperationId(executableElement));
 
 		JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
 
@@ -157,8 +157,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		Operation operation = new Operation();
 		operation.setSummary(javaDoc.getSummary());
 		operation.setDescription(javaDoc.getDescription());
-		operation.setOperationId(String.format("%s#%s", executableElement.getEnclosingElement().getSimpleName(),
-				executableElement.getSimpleName()));
+		operation.setOperationId(getOperationId(executableElement));
 		operation.setDeprecated(executableElement.getAnnotation(Deprecated.class) != null);
 
 		List<ParamTag> tags = javaDoc.getTags(ParamTag.class);

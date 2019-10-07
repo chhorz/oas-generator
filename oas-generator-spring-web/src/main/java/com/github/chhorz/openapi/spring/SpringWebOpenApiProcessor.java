@@ -153,7 +153,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
     }
 
     private void mapOperationMethod(final ExecutableElement executableElement) {
-        log.debug("Parsing method: %s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement);
+        log.debug("Parsing method: %s", getOperationId(executableElement));
 
         JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
 
@@ -178,13 +178,16 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
                 RequestMethod[] requestMethods = requestMapping.method();
 
+                if (requestMethods.length == 0) {
+                    log.error("No request method defined. operationId=%s", getOperationId(executableElement));
+                }
+
                 for (RequestMethod requestMethod : requestMethods) {
 
                     Operation operation = new Operation();
                     operation.setSummary(javaDoc.getSummary());
                     operation.setDescription(javaDoc.getDescription());
-                    operation.setOperationId(String.format("%s#%s", executableElement.getEnclosingElement().getSimpleName(),
-                            executableElement.getSimpleName()));
+                    operation.setOperationId(getOperationId(executableElement));
                     operation.setDeprecated(executableElement.getAnnotation(Deprecated.class) != null);
 
                     List<ParamTag> tags = javaDoc.getTags(ParamTag.class);

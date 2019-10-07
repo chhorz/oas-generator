@@ -4,6 +4,7 @@ import com.github.chhorz.openapi.common.OpenAPIConstants;
 import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
 import com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor;
 import com.github.chhorz.openapi.spring.test.controller.ArticleController;
+import com.github.chhorz.openapi.spring.test.controller.HttpMethodsController;
 import com.github.chhorz.openapi.spring.test.controller.OrderController;
 import com.github.chhorz.openapi.spring.test.controller.external.ExternalResource;
 import com.github.chhorz.openapi.spring.test.controller.resource.*;
@@ -44,6 +45,16 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 
         // compare result with reference documentation
         compareFileContent("expected/openapi02.json", "oas-test/openapi02.json");
+    }
+
+    @Test
+    void testHttpMethods() {
+        // run annotation processor
+        testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator03.yml"),
+                HttpMethodsController.class, Article.class);
+
+        // compare result with reference documentation
+        compareFileContent("expected/openapi03.json", "oas-test/openapi03.json");
     }
 
     /**

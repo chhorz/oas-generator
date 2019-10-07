@@ -55,6 +55,10 @@ public interface OpenAPIProcessor {
 				.build();
 	}
 
+	default String getOperationId(ExecutableElement element){
+		return String.format("%s#%s", element.getEnclosingElement().getSimpleName(), element.getSimpleName());
+	}
+
 	default Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
 		Map<String, List<String>> securityInformation = new TreeMap<>();
 

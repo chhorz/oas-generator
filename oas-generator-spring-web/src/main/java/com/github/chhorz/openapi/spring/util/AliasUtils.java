@@ -79,14 +79,14 @@ public class AliasUtils<T> {
 				public String[] value() {
 					String[] classPath = getValue(classMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
 					String[] methodPath = getValue(methodMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
-					return new String[] { String.format("%s%s", classPath[0], methodPath[0]) };
+					return new String[] { String.format("%s%s", prependSlash(classPath[0]), prependSlash(methodPath[0])) };
 				}
 
 				@Override
 				public String[] path() {
 					String[] classPath = getValue(classMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
 					String[] methodPath = getValue(methodMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
-					return new String[] { String.format("%s%s", classPath[0], methodPath[0]) };
+					return new String[] { String.format("%s%s", prependSlash(classPath[0]), prependSlash(methodPath[0])) };
 				}
 
 				@Override
@@ -136,7 +136,7 @@ public class AliasUtils<T> {
 		}
 	}
 
-	public String[] getValue(final RequestMapping mapping, final Function<RequestMapping, String[]> primary,
+	private String[] getValue(final RequestMapping mapping, final Function<RequestMapping, String[]> primary,
 			final Function<RequestMapping, String[]> secondary, final String[] defaultValue) {
 		if (primary.apply(mapping).length == 0 && secondary.apply(mapping).length == 0) {
 			return defaultValue;
@@ -146,6 +146,14 @@ public class AliasUtils<T> {
 			} else {
 				return secondary.apply(mapping);
 			}
+		}
+	}
+
+	private String prependSlash(String path) {
+		if (path == null || path.trim().isEmpty()){
+			return path;
+		} else {
+			return path.trim().startsWith("/") ? path : "/" + path;
 		}
 	}
 

@@ -11,7 +11,7 @@ import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 
-public class ResponseTagTest {
+class ResponseTagTest {
 
 	// @formatter:off
 	private String javaDocString =

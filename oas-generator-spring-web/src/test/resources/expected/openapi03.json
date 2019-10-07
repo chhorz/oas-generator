@@ -1,0 +1,189 @@
+{
+  "openapi" : "3.0.2",
+  "info" : {
+    "title" : "MyService",
+    "contact" : {
+      "name" : "John Doe",
+      "url" : "http://www.google.com",
+      "email" : "john@doe.com"
+    },
+    "license" : {
+      "name" : "Apache License, Version 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "version" : "1.2.3-SNAPSHOT"
+  },
+  "servers" : [ {
+    "url" : "dev.server.lan",
+    "description" : "Internal DEV-Stage"
+  } ],
+  "paths" : {
+    "/test/delete" : {
+      "delete" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "HttpMethodsController#delete",
+        "responses" : {
+          "default" : {
+            "description" : ""
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      }
+    },
+    "/test/get" : {
+      "get" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "HttpMethodsController#get",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      }
+    },
+    "/test/getrequest" : {
+      "get" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "HttpMethodsController#getRequest",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "deprecated" : false,
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Article"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      }
+    },
+    "/test/patch" : {
+      "patch" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "HttpMethodsController#patch",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      }
+    },
+    "/test/post" : {
+      "post" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "HttpMethodsController#post",
+        "responses" : {
+          "default" : {
+            "description" : ""
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      }
+    },
+    "/test/put" : {
+      "put" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "HttpMethodsController#put",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Article"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Article" : {
+        "deprecated" : false,
+        "type" : "object",
+        "description" : "An article that can be ordered.",
+        "properties" : {
+          "name" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : ""
+          },
+          "number" : {
+            "deprecated" : false,
+            "type" : "integer",
+            "format" : "int64",
+            "description" : ""
+          },
+          "price" : {
+            "deprecated" : false,
+            "type" : "number",
+            "format" : "double",
+            "description" : ""
+          },
+          "type" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : "",
+            "enum" : [ "SIMPLE", "PREMIUM" ]
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "read_role" : {
+        "type" : "http",
+        "description" : "Basic LDAP read role.",
+        "scheme" : "basic"
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Lorem ipsum ...",
+    "url" : "http://www.wikipedia.org"
+  }
+}
