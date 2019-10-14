@@ -8,7 +8,7 @@ image:https://travis-ci.org/chhorz/oas-generator.svg?branch=master["Build Status
 The documentation can be found on the separate https://chhorz.github.io/oas-generator/[Github Page] but is still "Work in progress".
 
 == Snapshots
-_tbd_
+Shapshots are not published to a public repository yes.
 
 == License
 OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].
