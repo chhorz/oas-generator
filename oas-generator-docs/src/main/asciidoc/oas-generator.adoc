@@ -3,6 +3,8 @@
 :icons: font
 :revnumber: {project-version}
 :source-highlighter: highlightjs
+:highlightjsdir: highlight
+:highlightjs-theme: obsidian
 // :docinfo: shared
 :toc: left
 :sectnums:
@@ -39,8 +41,6 @@ public class OrderController {
 	    // implementation
 	}
 ----
-
-
 
 == Installation
 In the following section possible options are shown in which way the *OAS Generator* can be included in your project.
@@ -271,7 +271,17 @@ include::{common-java}/com/github/chhorz/openapi/common/spi/OpenAPIPostProcessor
 . Create a file named `com.github.chhorz.openapi.common.spi.PostProcessorProvider` at `src/main/resources/META-INF/services` containing the fully qualified name of the class from step 1
 
 == Snapshots
-_tbd_
+Snapshots are available from the Sonatype OSS Snapshots repository.
+To configure the repository for your project to use the latest snapshot versions you have to add the following repository to your maven pom:
+[source,xml]
+----
+<repositories>
+    <repository>
+        <id>ossrh</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+</repositories>
+----
 
 == License
 OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].

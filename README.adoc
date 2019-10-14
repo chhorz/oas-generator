@@ -8,7 +8,17 @@ image:https://travis-ci.org/chhorz/oas-generator.svg?branch=master["Build Status
 The documentation can be found on the separate https://chhorz.github.io/oas-generator/[Github Page] but is still "Work in progress".
 
 == Snapshots
-Shapshots are not published to a public repository yes.
+Snapshots are available from the Sonatype OSS Snapshots repository.
+To configure the repository for your project to use the latest snapshot versions you have to add the following repository to your maven pom:
+[source,xml]
+----
+<repositories>
+    <repository>
+        <id>ossrh</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+</repositories>
+----
 
 == License
 OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].
