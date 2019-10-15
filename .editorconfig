@@ -6,9 +6,11 @@ insert_final_newline = true
 
 [*.java]
 indent_style = tab
+indent_size = 4
 
 [pom.xml]
 indent_style = tab
+indent_size = 4
 
 [*.{yml,yaml}]
 indent_style = space
