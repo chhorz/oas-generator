@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.github.chhorz.openapi.common.util.LoggingUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -26,11 +27,16 @@ public class GeneratorPropertyLoader {
 
 	private Map<String, String> processorOptions;
 
+	private LoggingUtils log;
 	private GeneratorProperties properties;
 
 	public GeneratorPropertyLoader(final Map<String, String> processorOptions) {
 		this.processorOptions = processorOptions;
 
+		final ParserProperties dummyProperties = new ParserProperties();
+		dummyProperties.setLogLevel("INFO");
+
+		this.log = new LoggingUtils(dummyProperties);
 		loadProperties();
 	}
 
@@ -38,10 +44,10 @@ public class GeneratorPropertyLoader {
 
 		InputStream resourceStream;
 		if (processorOptions.get("propertiesPath") == null) {
-			System.out.println("Using default properties location.");
+			log.info("Using default properties location");
 			resourceStream = GeneratorPropertyLoader.class.getClassLoader().getResourceAsStream("oas-generator.yml");
 		} else {
-			System.out.println("Using custom properties location.");
+			log.info("Using custom properties location");
 			resourceStream = GeneratorPropertyLoader.class.getClassLoader()
 					.getResourceAsStream(processorOptions.get("propertiesPath"));
 		}
@@ -49,11 +55,11 @@ public class GeneratorPropertyLoader {
 		try {
 			Yaml yaml = new Yaml(new Constructor(GeneratorProperties.class));
 			properties = yaml.load(resourceStream);
-			System.out.println("Loaded properties");
+			log.info("Loaded properties");
 		} catch (Exception e) {
 			// e.printStackTrace();
 			properties = new GeneratorProperties();
-			System.out.println("Using default properties");
+			log.info("Using default properties");
 		}
 	}
 
