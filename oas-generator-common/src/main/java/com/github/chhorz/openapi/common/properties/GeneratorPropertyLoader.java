@@ -1,27 +1,19 @@
 package com.github.chhorz.openapi.common.properties;
 
-import static java.util.stream.Collectors.toList;
+import com.github.chhorz.openapi.common.OpenAPIConstants;
+import com.github.chhorz.openapi.common.domain.*;
+import com.github.chhorz.openapi.common.domain.SecurityScheme.Type;
+import com.github.chhorz.openapi.common.util.LoggingUtils;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import com.github.chhorz.openapi.common.util.LoggingUtils;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
-
-import com.github.chhorz.openapi.common.OpenAPIConstants;
-import com.github.chhorz.openapi.common.domain.Contact;
-import com.github.chhorz.openapi.common.domain.ExternalDocumentation;
-import com.github.chhorz.openapi.common.domain.Info;
-import com.github.chhorz.openapi.common.domain.License;
-import com.github.chhorz.openapi.common.domain.SecurityScheme;
-import com.github.chhorz.openapi.common.domain.SecurityScheme.Type;
-import com.github.chhorz.openapi.common.domain.SecuritySchemeHttp;
-import com.github.chhorz.openapi.common.domain.Server;
+import static java.util.stream.Collectors.toList;
 
 public class GeneratorPropertyLoader {
 
@@ -42,22 +34,22 @@ public class GeneratorPropertyLoader {
 
 	private void loadProperties() {
 
-		InputStream resourceStream;
+		URL resourceLocation;
 		if (processorOptions.get("propertiesPath") == null) {
 			log.info("Using default properties location");
-			resourceStream = GeneratorPropertyLoader.class.getClassLoader().getResourceAsStream("oas-generator.yml");
+			resourceLocation = GeneratorPropertyLoader.class.getClassLoader().getResource("oas-generator.yml");
 		} else {
 			log.info("Using custom properties location");
-			resourceStream = GeneratorPropertyLoader.class.getClassLoader()
-					.getResourceAsStream(processorOptions.get("propertiesPath"));
+			resourceLocation = GeneratorPropertyLoader.class.getClassLoader()
+					.getResource(processorOptions.get("propertiesPath"));
 		}
 
 		try {
 			Yaml yaml = new Yaml(new Constructor(GeneratorProperties.class));
-			properties = yaml.load(resourceStream);
-			log.info("Loaded properties");
+			properties = yaml.load(resourceLocation.openStream());
+
+			log.info("Loaded properties (Path: %s)", resourceLocation.getPath());
 		} catch (Exception e) {
-			// e.printStackTrace();
 			properties = new GeneratorProperties();
 			log.info("Using default properties");
 		}
@@ -113,7 +105,7 @@ public class GeneratorPropertyLoader {
 		return createExternalDocsFromProperties(properties.getExternalDocs());
 	}
 
-	public ExternalDocumentation createExternalDocsFromProperties(final ExternalDocsProperties props) {
+	private ExternalDocumentation createExternalDocsFromProperties(final ExternalDocsProperties props) {
 		ExternalDocumentation externalDocs = new ExternalDocumentation();
 		externalDocs.setDescription(props.getDescription());
 		externalDocs.setUrl(resolveUrl(props.getUrl()));
@@ -132,7 +124,8 @@ public class GeneratorPropertyLoader {
 				scheme.setDescription(property.getDescription());
 				map.put(entry.getKey(), scheme);
 			}
-			// TODO add
+
+			// TODO add other security schemes
 
 		}
 		return map;
