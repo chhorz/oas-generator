@@ -7,6 +7,7 @@ import com.github.chhorz.openapi.spring.test.controller.ArticleController;
 import com.github.chhorz.openapi.spring.test.controller.HttpMethodsController;
 import com.github.chhorz.openapi.spring.test.controller.OrderController;
 import com.github.chhorz.openapi.spring.test.controller.external.ExternalResource;
+import com.github.chhorz.openapi.spring.test.controller.github.TestController;
 import com.github.chhorz.openapi.spring.test.controller.resource.*;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,16 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
         // compare result with reference documentation
         compareFileContent("expected/openapi03.json", "oas-test/openapi03.json");
     }
+
+	@Test
+	void getGithubIssues() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator-github.yml"),
+			TestController.class);
+
+		// compare result with reference documentation
+		compareFileContent("expected/openapi-github.json", "oas-test/openapi-github.json");
+	}
 
     /**
      * Compares JSON files for identical content. The order of properties is not checked. If the content does not match the test will be failed.

@@ -1,0 +1,63 @@
+{
+  "openapi" : "3.0.2",
+  "info" : {
+    "title" : "Title",
+    "version" : "Version"
+  },
+  "servers" : [ ],
+  "paths" : {
+    "/github/2" : {
+      "get" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "TestController#test",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ResponseEntity"
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "HttpHeaders" : {
+        "deprecated" : false,
+        "type" : "object",
+        "description" : ""
+      },
+      "ResponseEntity" : {
+        "deprecated" : false,
+        "type" : "object",
+        "description" : "",
+        "properties" : {
+          "body" : {
+            "$ref" : "#/components/schemas/T"
+          },
+          "headers" : {
+            "$ref" : "#/components/schemas/HttpHeaders"
+          },
+          "status" : {
+            "deprecated" : false,
+            "description" : ""
+          }
+        }
+      },
+      "T" : {
+        "deprecated" : false,
+        "type" : "object"
+      }
+    },
+    "securitySchemes" : { }
+  }
+}

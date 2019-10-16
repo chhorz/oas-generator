@@ -1,24 +1,5 @@
 package com.github.chhorz.openapi.common.test.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.assertj.core.util.Lists.list;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
-
 import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
@@ -30,8 +11,23 @@ import com.github.chhorz.openapi.common.test.util.resources.TestClass;
 import com.github.chhorz.openapi.common.test.util.resources.TestEnum;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class SchemaUtilsTest {
+import javax.lang.model.type.PrimitiveType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+
+class SchemaUtilsTest {
 
 	@RegisterExtension
 	ProcessingUtilsExtension extension = new ProcessingUtilsExtension();
@@ -40,19 +36,16 @@ public class SchemaUtilsTest {
 
 	private Elements elements;
 	private Types types;
-	private LoggingUtils log;
 
 	@BeforeEach
 	void setUpEach() {
 		ParserProperties parserProperties = new ParserProperties();
 		parserProperties.setLogLevel(LoggingUtils.DEBUG);
 
-		log = new LoggingUtils(parserProperties);
-
 		elements = extension.getElements();
 		types = extension.getTypes();
 
-		schemaUtils = new SchemaUtils(elements, types, log);
+		schemaUtils = new SchemaUtils(elements, types, new LoggingUtils(parserProperties));
 	}
 
 	@Test
@@ -82,7 +75,7 @@ public class SchemaUtilsTest {
 	@Test
 	void parsePackages() {
 		// given
-		List<String> packages = Arrays.asList("com.github.chhorz.openapi.common.test.util.resources");
+		List<String> packages = Collections.singletonList("com.github.chhorz.openapi.common.test.util.resources");
 
 		// when
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);

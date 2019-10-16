@@ -75,9 +75,7 @@ public class SchemaUtils {
 				.map(this::parsePackage)
 				.flatMap(map -> map.entrySet().stream())
 				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
-				.forEach(entry -> {
-					typeMirrorMap.put(entry.getKey(), entry.getValue());
-				});
+				.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
 
 		return typeMirrorMap;
 	}
@@ -91,9 +89,7 @@ public class SchemaUtils {
 				.map(this::mapTypeMirrorToSchema)
 				.flatMap(map -> map.entrySet().stream())
 				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
-				.forEach(entry -> {
-					typeMirrorMap.put(entry.getKey(), entry.getValue());
-				});
+				.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
 
 		return typeMirrorMap;
 	}
@@ -105,7 +101,7 @@ public class SchemaUtils {
 
 		Map<TypeMirror, Schema> schemaMap = new HashMap<>();
 
-		log.info(String.format("Parsing type: %s", typeMirror.toString()));
+		log.info("Parsing type: %s", typeMirror.toString());
 
 		Schema schema = new Schema();
 
@@ -122,7 +118,13 @@ public class SchemaUtils {
 				// schema.setDescription(propertyDoc.getDescription());
 			}
 			schemaMap.put(typeMirror, schema);
-		} else if (typeMirror.getKind().equals(TypeKind.ARRAY)) {
+		} else if (TypeKind.TYPEVAR.equals(typeMirror.getKind())) {
+			// TODO check ... at the moment all typevars are ignored
+
+			schema.setType(Type.OBJECT);
+
+			schemaMap.put(typeMirror, schema);
+		} else if (TypeKind.ARRAY.equals(typeMirror.getKind())) {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = elements.getTypeElement(typeMirror.toString().replaceAll("\\[]", "")).asType();

@@ -1,0 +1,5 @@
+# Parser specific configuration
+parser:
+  logLevel: DEBUG
+  outputDir: ./target/oas-test
+  outputFile: openapi-github.json
