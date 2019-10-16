@@ -23,7 +23,7 @@ jobs:
         project: pages
         skip-cleanup: true
         local_dir: docs/.vuepress/dist
-        github-token: ${env.GITHUB_TOKEN}
+        github-token: $GITHUB_TOKEN
         keep-history: true
         on:
           branch: master
