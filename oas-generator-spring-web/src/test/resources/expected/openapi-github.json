@@ -6,6 +6,21 @@
   },
   "servers" : [ ],
   "paths" : {
+    "/github/1" : {
+      "get" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "TestController#testVoidType",
+        "responses" : {
+          "default" : {
+            "description" : ""
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ ]
+      }
+    },
     "/github/2" : {
       "get" : {
         "summary" : "",

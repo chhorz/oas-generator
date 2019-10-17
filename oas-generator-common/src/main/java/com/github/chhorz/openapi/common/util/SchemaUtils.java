@@ -118,6 +118,9 @@ public class SchemaUtils {
 				// schema.setDescription(propertyDoc.getDescription());
 			}
 			schemaMap.put(typeMirror, schema);
+		} else if (TypeKind.VOID.equals(typeMirror.getKind()) || isAssignableFrom(elements, types, typeMirror, Void.class)) {
+			// TODO how to handle void type
+			schema.setDescription("Returntype is Void.");
 		} else if (TypeKind.TYPEVAR.equals(typeMirror.getKind())) {
 			// TODO check ... at the moment all typevars are ignored
 

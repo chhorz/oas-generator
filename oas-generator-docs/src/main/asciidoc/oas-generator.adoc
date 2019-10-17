@@ -3,7 +3,6 @@
 :icons: font
 :revnumber: {project-version}
 :source-highlighter: highlightjs
-:highlightjsdir: highlight
 :highlightjs-theme: obsidian
 // :docinfo: shared
 :toc: left
@@ -23,23 +22,23 @@ Additional the JavaDoc comments from the given methods or resource objects will 
 @RequestMapping(path = "/orders")
 public class OrderController {
 
-	/**
-	 * Get an order with an {@code id}.
-	 *
-	 * @category order
-	 *
-	 * @param id
-	 *            the identifier
-	 * @param filter
-	 *            the filter that can be applied
-	 * @return a list of orders that match the optional filters
-	 */
-	@GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
-	public List<Order> getOrder(
+    /**
+    * Get an order with an {@code id}.
+     *
+     * @category order
+     *
+     * @param id
+     *            the identifier
+     * @param filter
+     *            the filter that can be applied
+     * @return a list of orders that match the optional filters
+     */
+    @GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
+    public List<Order> getOrder(
                 @PathVariable Long id,
                 @RequestParam(defaultValue = "valid=true", required = false) String filter) {
-	    // implementation
-	}
+        // implementation
+    }
 ----
 
 == Installation
@@ -153,7 +152,7 @@ Both parts are in the same file (Default: _oas-generator.yml_).
 # Documentation information that will be included in openapi.json
 info:
   title: MyService
-  version: 1.2.3-SNAPSHOT
+  version: 1.2.3-SNAPSHOT #<1>
   contact:
     name: John Doe
     url: http://www.google.com
@@ -181,6 +180,28 @@ tags:
     description: The category collects all methods for orders.
     externalDocs:
       url: http://www.google.com
+----
+<1> The Version can be set fix within the configuration file.
+Otherwise the configuration file can be filtered by maven for example.
+The version has to be replaced with an variable for the maven project version: `@project.version@`.
++
+.Maven example for filtering
+[source,xml]
+----
+<project>
+  ...
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      ...
+    </resources>
+    ...
+  </build>
+  ...
+</project>
 ----
 
 The content of the part above will be included in the resulting OpenAPI document as it was defined.
@@ -223,9 +244,9 @@ This post processor converts the generated OpenAPI domain model into the asciido
 [source,xml,subs="verbatim,attributes"]
 ----
 <dependency>
-	<groupId>com.github.chhorz</groupId>
-	<artifactId>oas-generator-asciidoctor</artifactId>
-	<version>{revnumber}</version>
+    <groupId>com.github.chhorz</groupId>
+    <artifactId>oas-generator-asciidoctor</artifactId>
+    <version>{revnumber}</version>
 </dependency>
 ----
 

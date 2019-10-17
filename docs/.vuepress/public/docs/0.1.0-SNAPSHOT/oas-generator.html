@@ -2137,23 +2137,23 @@ Additional the JavaDoc comments from the given methods or resource objects will 
 <pre class="highlightjs highlight nowrap"><code class="language-java hljs" data-lang="java">@RequestMapping(path = "/orders")
 public class OrderController {
 
-	/**
-	 * Get an order with an {@code id}.
-	 *
-	 * @category order
-	 *
-	 * @param id
-	 *            the identifier
-	 * @param filter
-	 *            the filter that can be applied
-	 * @return a list of orders that match the optional filters
-	 */
-	@GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
-	public List&lt;Order&gt; getOrder(
+    /**
+    * Get an order with an {@code id}.
+     *
+     * @category order
+     *
+     * @param id
+     *            the identifier
+     * @param filter
+     *            the filter that can be applied
+     * @return a list of orders that match the optional filters
+     */
+    @GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
+    public List&lt;Order&gt; getOrder(
                 @PathVariable Long id,
                 @RequestParam(defaultValue = "valid=true", required = false) String filter) {
-	    // implementation
-	}</code></pre>
+        // implementation
+    }</code></pre>
 </div>
 </div>
 </div>
@@ -2338,7 +2338,7 @@ Both parts are in the same file (Default: <em>oas-generator.yml</em>).</p>
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Documentation information that will be included in openapi.json
 info:
   title: MyService
-  version: 1.2.3-SNAPSHOT
+  version: 1.2.3-SNAPSHOT <i class="conum" data-value="1"></i><b>(1)</b>
   contact:
     name: John Doe
     url: http://www.google.com
@@ -2367,6 +2367,35 @@ tags:
     externalDocs:
       url: http://www.google.com</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The Version can be set fix within the configuration file.
+Otherwise the configuration file can be filtered by maven for example.
+The version has to be replaced with an variable for the maven project version: <code>@project.version@</code>.
+<div class="listingblock">
+<div class="title">Maven example for filtering</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;project&gt;
+  ...
+  &lt;build&gt;
+    &lt;resources&gt;
+      &lt;resource&gt;
+        &lt;directory&gt;src/main/resources&lt;/directory&gt;
+        &lt;filtering&gt;true&lt;/filtering&gt;
+      &lt;/resource&gt;
+      ...
+    &lt;/resources&gt;
+    ...
+  &lt;/build&gt;
+  ...
+&lt;/project&gt;</code></pre>
+</div>
+</div></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>The content of the part above will be included in the resulting OpenAPI document as it was defined.
@@ -2426,9 +2455,9 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-	&lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
-	&lt;artifactId&gt;oas-generator-asciidoctor&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
+    &lt;artifactId&gt;oas-generator-asciidoctor&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -2585,11 +2614,11 @@ To configure the repository for your project to use the latest snapshot versions
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2019-10-14 20:21:20 MESZ
+Last updated 2019-10-17 21:28:03 MESZ
 </div>
 </div>
-<link rel="stylesheet" href="highlight/styles/obsidian.min.css">
-<script src="highlight/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/obsidian.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlighting()</script>
 </body>
 </html>
