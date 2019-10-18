@@ -27,8 +27,8 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	private static final String DEFAULT_TEMPLATE_FOLDER = "/templates/freemarker";
 	private static final String DEFAULT_TEMPLATE_NAME = "openapi.ftlh";
 	private static final boolean DEFAULT_EXCEPTION_LOGGING = true;
-	private static final String DEFAULT_OUTPUT_DIR = "/openapi";
-	private static final String DEFAULT_OUTPUT_FILE = "/openapi.adoc";
+	private static final String DEFAULT_OUTPUT_DIR = "./target/openapi";
+	private static final String DEFAULT_OUTPUT_FILE = "openapi.adoc";
 	private static final boolean DEFAULT_LOCALIZED_LOOKUP = false;
 
 	private static final boolean DEFAULT_STANDALONE_FILE = true;
