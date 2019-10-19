@@ -17,7 +17,6 @@ module.exports = {
     ],
     sidebar: {
       '/documentation/': [
-        ['', 'Documentation'],
         ['installation', 'Installation'],
         ['reference', 'Reference'],
         ['extensibility', 'Extensibility']
