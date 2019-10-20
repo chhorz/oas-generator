@@ -5,20 +5,26 @@ import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.util.FileUtils;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 
+/**
+ * A custom {@link OpenAPIPostProcessor} that writes the OpenAPI domain object to a local file.
+ *
+ * @author chhorz
+ */
 public class FileWriterPostProcessor implements OpenAPIPostProcessor {
+
+	private static final Integer POST_PROCESSOR_ORDER = Integer.MIN_VALUE;
 
 	private FileUtils fileUtils;
 	private LoggingUtils log;
 
-	private int postProcessorOrder;
-
-	public FileWriterPostProcessor(final ParserProperties parserProperties, final int postProcessorOrder) {
+	FileWriterPostProcessor(final ParserProperties parserProperties) {
 		log = new LoggingUtils(parserProperties);
 		fileUtils = new FileUtils(parserProperties);
-
-		this.postProcessorOrder = postProcessorOrder;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void execute(final OpenAPI openApi) {
 		log.info("FileWriterPostProcessor | Start");
@@ -26,8 +32,11 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 		log.info("FileWriterPostProcessor | Finish");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int getPostProcessorOrder() {
-		return postProcessorOrder;
+		return POST_PROCESSOR_ORDER;
 	}
 }

@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.chhorz.openapi.common.util.jackson.SchemaPropertyDeserializer;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#schema-object
+ * http://spec.openapis.org/oas/v3.0.2#schema-object
  *
  * @author chhorz
  *

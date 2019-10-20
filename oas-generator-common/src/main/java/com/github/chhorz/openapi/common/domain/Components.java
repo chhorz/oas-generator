@@ -9,7 +9,7 @@ import javax.lang.model.type.TypeMirror;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#components-object
+ * http://spec.openapis.org/oas/v3.0.2#components-object
  *
  * @author chhorz
  *

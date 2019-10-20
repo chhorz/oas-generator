@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#path-item-object
+ * http://spec.openapis.org/oas/v3.0.2#path-item-object
  *
  * @author chhorz
  *

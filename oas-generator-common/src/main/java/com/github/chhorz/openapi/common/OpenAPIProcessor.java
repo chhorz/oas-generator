@@ -24,8 +24,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
 
+/**
+ * Interface to provide some common functionality for all OpenAPI annotation processors.
+ *
+ * @author chhorz
+ */
 public interface OpenAPIProcessor {
 
+	/**
+	 * Returns a set of all annotation processor options that will be recognized by the implementators of this interface.
+	 *
+	 * @return a set of annotation processor compiler options
+	 */
 	default Set<String> getDocGeneratorOptions() {
 		return Stream.of(
 					OpenAPIConstants.OPTION_PROPERTIES_PATH,
@@ -34,6 +44,12 @@ public interface OpenAPIProcessor {
 				.collect(toSet());
 	}
 
+	/**
+	 * Initializes a new OpenAPI domain object with the information from the configuration file.
+	 *
+	 * @param propertyLoader the property loader that loads the properties from the configuration file
+	 * @return a new instance of an OpenAPI domain object
+	 */
 	default OpenAPI initializeFromProperties(final GeneratorPropertyLoader propertyLoader) {
 		OpenAPI openApi = new OpenAPI();
 		openApi.setOpenapi(OPEN_API_VERSION);
@@ -48,6 +64,12 @@ public interface OpenAPIProcessor {
 		return openApi;
 	}
 
+	/**
+	 * Initializes a new instance of the external JavaDocParser. The parser will be configured with additional Javadoc
+	 * tags and the Markdown converter.
+	 *
+	 * @return a new instance of the JavaDocParser
+	 */
 	default JavaDocParser createJavadocParser() {
 		return JavaDocParserBuilder.withBasicTags()
 				.withCustomTag(new ResponseTag())
@@ -55,10 +77,23 @@ public interface OpenAPIProcessor {
 				.build();
 	}
 
+	/**
+	 * Creates an OpenAPI operation id from a java method element.
+	 *
+	 * @param element the executable element that defines a specific method
+	 * @return the OpenAPI operation id (should be unique)
+	 */
 	default String getOperationId(ExecutableElement element){
 		return String.format("%s#%s", element.getEnclosingElement().getSimpleName(), element.getSimpleName());
 	}
 
+	/**
+	 * Creates a map of security information for a give method.
+	 *
+	 * @param executableElement the current method
+	 * @param map the security schemes from the configuration file
+	 * @return map of security information
+	 */
 	default Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
 		Map<String, List<String>> securityInformation = new TreeMap<>();
 
@@ -75,6 +110,12 @@ public interface OpenAPIProcessor {
 		return securityInformation;
 	}
 
+	/**
+	 * Runs all registered post processors from the service loader.
+	 *
+	 * @param parserProperties the configuration properties form the configuration file
+	 * @param openApi the generated OpenAPI domain object
+	 */
 	default void runPostProcessors(final ParserProperties parserProperties, final OpenAPI openApi) {
 		ServiceLoader<PostProcessorProvider> serviceLoader = ServiceLoader.load(PostProcessorProvider.class, getClass().getClassLoader());
 
@@ -84,6 +125,14 @@ public interface OpenAPIProcessor {
 				.forEach(openAPIPostProcessor -> openAPIPostProcessor.execute(openApi));
 	}
 
+	/**
+	 * Loads an existing OpenAPI schema file.
+	 *
+	 * @see ParserProperties#getSchemaFile()
+	 *
+	 * @param parserProperties the loaded configuration properties
+	 * @return an OpenAPI domain object of the configured schema file from the properties
+	 */
 	default Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {
 		FileUtils fileUtils = new FileUtils(parserProperties);
 		return fileUtils.readFromFile();

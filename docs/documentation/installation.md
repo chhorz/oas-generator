@@ -11,12 +11,13 @@ Each kind of installation also works with the `oas-generator-jaxrs` or `oas-gene
 ## Apache Maven
 
 ### Include via dependency
-The simpliest way to integrate the **OAS Generator** is to add the following dependency:
+The simplest way to integrate the **OAS Generator** is to add the following dependency:
 ``` xml
 <dependency>
     <groupId>com.github.chhorz</groupId>
     <artifactId>oas-generator-spring-web</artifactId>
     <version>${oas-generator.version}</version>
+    <scope>provided</scope>
 </dependency>
 ```
 
@@ -47,8 +48,8 @@ Another way to include an annotation processor is the [maven-compiler-plugin](ht
 1. Plugin documentation: [annotationProcessorPaths](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessorPaths)
 2. Plugin documentation: [annotationProcessors](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessors)
 
-It is not possible to mix this way of annotation processor integration with the dependency based one.
+It is not possible to mix this way of annotation processor integration with the dependency based one shown above.
 
 
 ## Other
-_Others will be added soon._
+_Others options like Gradle may be added soon._

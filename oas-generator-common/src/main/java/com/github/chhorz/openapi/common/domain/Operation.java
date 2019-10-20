@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#operation-object
+ * http://spec.openapis.org/oas/v3.0.2#operation-object
  *
  * @author chhorz
  *

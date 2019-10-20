@@ -4,7 +4,6 @@
 :revnumber: {project-version}
 :source-highlighter: highlightjs
 :highlightjs-theme: obsidian
-// :docinfo: shared
 :toc: left
 :sectnums:
 :sectlinks:
@@ -36,7 +35,8 @@ public class OrderController {
     @GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
     public List<Order> getOrder(
                 @PathVariable Long id,
-                @RequestParam(defaultValue = "valid=true", required = false) String filter) {
+                @RequestParam(defaultValue = "valid=true",
+                              required = false) String filter) {
         // implementation
     }
 ----
@@ -45,8 +45,10 @@ public class OrderController {
 In the following section possible options are shown in which way the *OAS Generator* can be included in your project.
 
 [TIP]
+====
 The following examples use the `oas-generator-spring-web`.
 Each kind of installation also works with the `oas-generator-jaxrs` or `oas-generator-schema` module.
+====
 
 === Apache Maven
 
@@ -58,9 +60,10 @@ The simplest way to add the *OAS Generator* to your project is adding the follow
     <groupId>com.github.chhorz</groupId>
     <artifactId>oas-generator-spring-web</artifactId>
     <version>{revnumber}</version>
+    <scope>provided</scope>
 </dependency>
 ----
-All dependencies contain some `META-INF` information which define the provided annotation processors.
+All dependencies contain additional information within the `META-INF` folder that define the provided annotation processors.
 
 ==== Maven compile plugin
 Another way to include an annotation processor is the link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html[maven-compiler-plugin]:
@@ -95,13 +98,25 @@ In this section we describe the default structure of the Javadoc comments.
 A common structure is needed to get all data parsed correct.
 This is necessary because Javadoc comments in general are unstructured comments and can be formatted in different ways.
 
+This project uses the link:https://github.com/chhorz/javadoc-parser[Javadoc Parser] project to load all information from the Javadoc comments as structured data.
+
+.Maven dependency for the Javadoc Parser:
+[source,yml]
+----
+<dependency>
+    <groupId>com.github.chhorz</groupId>
+    <artifactId>javadoc-parser</artifactId>
+    <version>${javadoc-parser.version}</version>
+</dependency>
+----
+
 == Configuration
 The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
-Compiler options described below should be used to customize the name or path of the configuration file.
+Compiler options described below could be used to customize the name or path of the configuration file.
 
 === Compiler options
 A basic set of configuration options can be done by compiler options.
-Compiler options with the prefix `-A` will recognized by an annotation processor.
+Compiler options with the prefix `-A` will be recognized by an annotation processor.
 The following options can be used:
 
 `propertiesPath`::
@@ -176,7 +191,7 @@ securitySchemes:
     scheme: basic
 
 tags:
-  order:
+  tag_name:
     description: The category collects all methods for orders.
     externalDocs:
       url: http://www.google.com
@@ -247,6 +262,7 @@ This post processor converts the generated OpenAPI domain model into the asciido
     <groupId>com.github.chhorz</groupId>
     <artifactId>oas-generator-asciidoctor</artifactId>
     <version>{revnumber}</version>
+    <scope>provided</scope>
 </dependency>
 ----
 
@@ -264,12 +280,12 @@ parser:
     asciidoctor.template.localizedLookup: false
     asciidoctor.template.folder: /templates/freemarker # <1>
     asciidoctor.template.name: openapi.ftlh
-    asciidoctor.output.dir: /openapi # <2>
+    asciidoctor.output.dir: ./target/openapi # <2>
     asciidoctor.output.file: /openapi.adoc
     asciidoctor.standlone.file: true # <3>
 ----
 <1> The path of the templates is based on `/src/main/resources`
-<2> Output base directory is the `/target` folder
+<2> Output base directory is the `/target/openapi` folder
 <3> A standalone file is generated with an asciidoctor document header and a section title on level 0.
 Files generated with `false` can easier integrated in other asciidoctor files.
 
@@ -290,6 +306,23 @@ include::{common-java}/com/github/chhorz/openapi/common/spi/PostProcessorProvide
 include::{common-java}/com/github/chhorz/openapi/common/spi/OpenAPIPostProcessor.java[]
 ----
 . Create a file named `com.github.chhorz.openapi.common.spi.PostProcessorProvider` at `src/main/resources/META-INF/services` containing the fully qualified name of the class from step 1
++
+.Director structure
+[source]
+----
+/src
+  /main
+    /resources
+      /META-INF
+        /services
+          com.github.chhorz.openapi.common.spi.PostProcessorProvider
+----
++
+.File content is the full name of the custom post processor. (Example for `AsciidoctorProvider.java`)
+[source]
+----
+com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider
+----
 
 == Snapshots
 Snapshots are available from the Sonatype OSS Snapshots repository.

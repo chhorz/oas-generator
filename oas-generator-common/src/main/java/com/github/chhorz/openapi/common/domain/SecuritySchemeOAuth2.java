@@ -3,7 +3,7 @@ package com.github.chhorz.openapi.common.domain;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md#security-scheme-object
+ * http://spec.openapis.org/oas/v3.0.2#implicit-oauth2-sample
  *
  * @author chhorz
  *
