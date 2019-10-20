@@ -2086,7 +2086,7 @@ p {
 <h1>OAS Generator</h1>
 <div class="details">
 <span id="author" class="author">Christian Horz</span><br>
-<span id="revnumber">version 0.0.1-SNAPSHOT</span>
+<span id="revnumber">version 0.1.0-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2152,7 +2152,8 @@ public class OrderController {
     @GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
     public List&lt;Order&gt; getOrder(
                 @PathVariable Long id,
-                @RequestParam(defaultValue = "valid=true", required = false) String filter) {
+                @RequestParam(defaultValue = "valid=true",
+                              required = false) String filter) {
         // implementation
     }</code></pre>
 </div>
@@ -2172,8 +2173,10 @@ public class OrderController {
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-The following examples use the <code>oas-generator-spring-web</code>.
-Each kind of installation also works with the <code>oas-generator-jaxrs</code> or <code>oas-generator-schema</code> module.
+<div class="paragraph">
+<p>The following examples use the <code>oas-generator-spring-web</code>.
+Each kind of installation also works with the <code>oas-generator-jaxrs</code> or <code>oas-generator-schema</code> module.</p>
+</div>
 </td>
 </tr>
 </table>
@@ -2190,12 +2193,13 @@ Each kind of installation also works with the <code>oas-generator-jaxrs</code> o
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
     &lt;artifactId&gt;oas-generator-spring-web&lt;/artifactId&gt;
-    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;0.1.0-SNAPSHOT&lt;/version&gt;
+    &lt;scope&gt;provided&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>All dependencies contain some <code>META-INF</code> information which define the provided annotation processors.</p>
+<p>All dependencies contain additional information within the <code>META-INF</code> folder that define the provided annotation processors.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2213,7 +2217,7 @@ Each kind of installation also works with the <code>oas-generator-jaxrs</code> o
             &lt;path&gt;
                 &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
                 &lt;artifactId&gt;oas-generator-spring-web&lt;/artifactId&gt;
-                &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+                &lt;version&gt;0.1.0-SNAPSHOT&lt;/version&gt;
             &lt;/path&gt;
             &lt;!-- ... more ... --&gt;
         &lt;/annotationProcessorPaths&gt;
@@ -2252,6 +2256,19 @@ Each kind of installation also works with the <code>oas-generator-jaxrs</code> o
 A common structure is needed to get all data parsed correct.
 This is necessary because Javadoc comments in general are unstructured comments and can be formatted in different ways.</p>
 </div>
+<div class="paragraph">
+<p>This project uses the <a href="https://github.com/chhorz/javadoc-parser">Javadoc Parser</a> project to load all information from the Javadoc comments as structured data.</p>
+</div>
+<div class="listingblock">
+<div class="title">Maven dependency for the Javadoc Parser:</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">&lt;dependency&gt;
+    &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
+    &lt;artifactId&gt;javadoc-parser&lt;/artifactId&gt;
+    &lt;version&gt;${javadoc-parser.version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2259,13 +2276,13 @@ This is necessary because Javadoc comments in general are unstructured comments 
 <div class="sectionbody">
 <div class="paragraph">
 <p>The configuration of the <em>OAS Generator</em> is primarily done with the <a href="#configuration-file">configuration file</a>.
-Compiler options described below should be used to customize the name or path of the configuration file.</p>
+Compiler options described below could be used to customize the name or path of the configuration file.</p>
 </div>
 <div class="sect2">
 <h3 id="_compiler_options"><a class="anchor" href="#_compiler_options"></a><a class="link" href="#_compiler_options">4.1. Compiler options</a></h3>
 <div class="paragraph">
 <p>A basic set of configuration options can be done by compiler options.
-Compiler options with the prefix <code>-A</code> will recognized by an annotation processor.
+Compiler options with the prefix <code>-A</code> will be recognized by an annotation processor.
 The following options can be used:</p>
 </div>
 <div class="dlist">
@@ -2363,7 +2380,7 @@ securitySchemes:
     scheme: basic
 
 tags:
-  order:
+  tag_name:
     description: The category collects all methods for orders.
     externalDocs:
       url: http://www.google.com</code></pre>
@@ -2458,7 +2475,8 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
     &lt;artifactId&gt;oas-generator-asciidoctor&lt;/artifactId&gt;
-    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;0.1.0-SNAPSHOT&lt;/version&gt;
+    &lt;scope&gt;provided&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -2479,7 +2497,7 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
     asciidoctor.template.localizedLookup: false
     asciidoctor.template.folder: /templates/freemarker <i class="conum" data-value="1"></i><b>(1)</b>
     asciidoctor.template.name: openapi.ftlh
-    asciidoctor.output.dir: /openapi <i class="conum" data-value="2"></i><b>(2)</b>
+    asciidoctor.output.dir: ./target/openapi <i class="conum" data-value="2"></i><b>(2)</b>
     asciidoctor.output.file: /openapi.adoc
     asciidoctor.standlone.file: true <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
@@ -2492,7 +2510,7 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Output base directory is the <code>/target</code> folder</td>
+<td>Output base directory is the <code>/target/openapi</code> folder</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -2578,6 +2596,23 @@ public interface OpenAPIPostProcessor {
 </li>
 <li>
 <p>Create a file named <code>com.github.chhorz.openapi.common.spi.PostProcessorProvider</code> at <code>src/main/resources/META-INF/services</code> containing the fully qualified name of the class from step 1</p>
+<div class="listingblock">
+<div class="title">Director structure</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>/src
+  /main
+    /resources
+      /META-INF
+        /services
+          com.github.chhorz.openapi.common.spi.PostProcessorProvider</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">File content is the full name of the custom post processor. (Example for <code>AsciidoctorProvider.java</code>)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider</code></pre>
+</div>
+</div>
 </li>
 </ol>
 </div>
@@ -2614,8 +2649,8 @@ To configure the repository for your project to use the latest snapshot versions
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.0.1-SNAPSHOT<br>
-Last updated 2019-10-17 21:28:03 MESZ
+Version 0.1.0-SNAPSHOT<br>
+Last updated 2019-10-20 15:15:48 MESZ
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/obsidian.min.css">
