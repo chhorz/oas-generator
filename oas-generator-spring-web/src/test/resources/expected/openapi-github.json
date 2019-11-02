@@ -4,7 +4,6 @@
     "title" : "Title",
     "version" : "Version"
   },
-  "servers" : [ ],
   "paths" : {
     "/github/1" : {
       "get" : {

@@ -179,6 +179,13 @@ info:
 servers:
 - url: dev.server.lan
   description: Internal DEV-Stage
+  variables:
+    port:
+      enumValues:
+        - 8080
+        - 443
+      defaultValue: "443"
+      description: The port of the application
 
 externalDocs:
   url: http://www.wikipedia.org
@@ -247,7 +254,7 @@ In this map contributors can define their own properties for their post processo
 == Extensibility
 The OAS Generator provides a service provider interface (SPI) to include custom post processors.
 Per default the `FileWriterPostProcessor` is included to write the _openapi.json_ file.
-Currently the following post processors (see module _oas-generator-spi_) are also provided:
+Currently the following post processors (see module link:https://github.com/chhorz/oas-generator/tree/master/oas-generator-spi[_oas-generator-spi_]) are also provided:
 
 - `AsciidoctorPostProcessor`
 
@@ -334,6 +341,16 @@ com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider
 
 . If the post processor uses custom properties these should be placed below the parser properties as shown for the <<asciidoctor.properties, Asciidoctor Post Processor>>.
 All custom property classes should extend the provided `AbstractPostProcessorProperties` class.
+
+== Limitations
+
+There are some limitations based on the underlying concept of java annotation processors.
+These annotation processors are processing the abstract syntax tree of the java classes.
+
+* Annotation processors have no information about the method body.
+Only the method signature and the documentation comment (javadoc comment) are available.
+If you choose a different return object or status code during runtime you have to document these information on a place that if available at compile time.
+Either the documentation comments or other annotations should be used in this place.
 
 == Snapshots
 Snapshots are available from the Sonatype OSS Snapshots repository.

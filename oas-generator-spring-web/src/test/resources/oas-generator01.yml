@@ -13,7 +13,13 @@ info:
 servers:
 - url: dev.server.lan
   description: Internal DEV-Stage
-
+  variables:
+    port:
+      enumValues:
+        - 8080
+        - 443
+      defaultValue: "443"
+      description: The port of the application
 externalDocs:
   url: http://www.wikipedia.org
   description: Lorem ipsum ...

@@ -1,6 +1,7 @@
 package com.github.chhorz.openapi.common.domain;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
@@ -33,4 +34,18 @@ public class Server {
 		this.description = description;
 	}
 
+	public Map<String, ServerVariableObject> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(Map<String, ServerVariableObject> variables) {
+		this.variables = variables;
+	}
+
+	public void addVariable(String variable, ServerVariableObject variableObject){
+		if (variables == null) {
+			variables = new TreeMap<>();
+		}
+		variables.put(variable, variableObject);
+	}
 }

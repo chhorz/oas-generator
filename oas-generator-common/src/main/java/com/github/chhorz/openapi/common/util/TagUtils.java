@@ -1,16 +1,17 @@
 package com.github.chhorz.openapi.common.util;
 
-import static java.util.stream.Collectors.toList;
+import com.github.chhorz.openapi.common.SpecificationViolationException;
+import com.github.chhorz.openapi.common.domain.Operation;
+import com.github.chhorz.openapi.common.domain.PathItemObject;
+import com.github.chhorz.openapi.common.domain.Tag;
+import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import com.github.chhorz.openapi.common.domain.Operation;
-import com.github.chhorz.openapi.common.domain.PathItemObject;
-import com.github.chhorz.openapi.common.domain.Tag;
-import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
+import static java.util.stream.Collectors.toList;
 
 public class TagUtils {
 
@@ -46,6 +47,10 @@ public class TagUtils {
 	}
 
 	public Tag createTag(final String tagName) {
+		if (tagName == null) {
+			throw new SpecificationViolationException("Missing property 'name' for 'Tag' object");
+		}
+
 		Tag tag = new Tag();
 		tag.setName(tagName);
 		tag.setDescription(propertyLoader.getDescriptionForTag(tagName));

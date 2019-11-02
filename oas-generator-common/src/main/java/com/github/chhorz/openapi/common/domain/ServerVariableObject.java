@@ -20,4 +20,29 @@ public class ServerVariableObject {
 	private String defaultValue;
 	private String description;
 
+	public List<String> getEnumValue() {
+		return enumValue;
+	}
+
+	public void setEnumValue(List<String> enumValue) {
+		this.enumValue = enumValue;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
 }

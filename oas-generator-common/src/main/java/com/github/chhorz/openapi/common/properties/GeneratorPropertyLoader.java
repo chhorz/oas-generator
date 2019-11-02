@@ -1,18 +1,18 @@
 package com.github.chhorz.openapi.common.properties;
 
 import com.github.chhorz.openapi.common.OpenAPIConstants;
+import com.github.chhorz.openapi.common.SpecificationViolationException;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.SecurityScheme.Type;
-import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
-import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
-import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import static java.util.stream.Collectors.toList;
 
@@ -42,7 +42,7 @@ public class GeneratorPropertyLoader {
 		} else {
 			log.info("Using custom properties location");
 			resourceLocation = GeneratorPropertyLoader.class.getClassLoader()
-					.getResource(processorOptions.get("propertiesPath"));
+				.getResource(processorOptions.get("propertiesPath"));
 		}
 
 		try {
@@ -61,6 +61,14 @@ public class GeneratorPropertyLoader {
 
 		String version = processorOptions.getOrDefault(OpenAPIConstants.OPTION_VERSION, null);
 
+		if (infoProperties.getTitle() == null) {
+			throw new SpecificationViolationException("Missing 'title' property for 'Info' object.");
+		}
+
+		if (version == null && infoProperties.getVersion() == null) {
+			throw new SpecificationViolationException("Missing 'version' property for 'Info' object.");
+		}
+
 		Info info = new Info();
 		info.setTitle(infoProperties.getTitle());
 		info.setDescription(infoProperties.getDescription());
@@ -74,43 +82,94 @@ public class GeneratorPropertyLoader {
 	private Contact createContactFromProperties(final InfoProperties infoProperties) {
 		ContactProperties contactProperties = infoProperties.getContact();
 
-		Contact contact = new Contact();
-		contact.setName(contactProperties.getName());
-		contact.setEmail(contactProperties.getEmail());
-		contact.setUrl(resolveUrl(contactProperties.getUrl()));
-		return contact.getName() != null || contact.getEmail() != null || contact.getUrl() != null ? contact : null;
+		if (contactProperties != null) {
+			Contact contact = new Contact();
+			contact.setName(contactProperties.getName());
+			contact.setEmail(contactProperties.getEmail());
+			contact.setUrl(resolveUrl(contactProperties.getUrl()));
+
+			return contact.getName() != null || contact.getEmail() != null || contact.getUrl() != null ? contact : null;
+		} else {
+			return null;
+		}
 	}
 
 	private License createLicenseFromProperties(final InfoProperties infoProperties) {
 		LicenseProperties licenseProperties = infoProperties.getLicense();
 
-		License license = new License();
-		license.setName(licenseProperties.getName());
-		license.setUrl(resolveUrl(licenseProperties.getUrl()));
-		return license.getName() != null ? license : null;
+		if (licenseProperties != null) {
+			if (licenseProperties.getName() == null) {
+				throw new SpecificationViolationException("Missing name for the 'License' object.");
+			}
+
+			License license = new License();
+			license.setName(licenseProperties.getName());
+			license.setUrl(resolveUrl(licenseProperties.getUrl()));
+			return license;
+		} else {
+			return null;
+		}
 	}
 
 	public List<Server> createServerFromProperties() {
-		return properties.getServers().stream()
+		if (properties.getServers() != null) {
+			return properties.getServers()
+				.stream()
 				.map(s -> {
+					if (s.getUrl() == null) {
+						throw new SpecificationViolationException("Missing url for the 'Server' object.");
+					}
+
 					Server server = new Server();
 					server.setDescription(s.getDescription());
 					server.setUrl(s.getUrl());
+					if (s.getVariables() != null) {
+						s.getVariables().forEach((variable, variableObject) -> {
+							server.addVariable(variable, createServerVariable(variableObject));
+						});
+					}
 					return server;
 				})
-				.filter(server -> server.getUrl() != null)
 				.collect(toList());
+		} else {
+			return null;
+		}
+	}
+
+	private ServerVariableObject createServerVariable(ServerVariableProperties properties) {
+		if (properties == null) {
+			throw new SpecificationViolationException("Missing information for the 'ServerVariableObject'.");
+		} else if (properties.getDefaultValue() == null) {
+			throw new SpecificationViolationException("Missing description for 'ServerVariableObject'.");
+		}
+
+		ServerVariableObject variableObject = new ServerVariableObject();
+		variableObject.setEnumValue(properties.getEnumValues());
+		variableObject.setDefaultValue(properties.getDefaultValue());
+		variableObject.setDescription(properties.getDescription());
+		return variableObject;
 	}
 
 	public ExternalDocumentation createExternalDocsFromProperties() {
-		return createExternalDocsFromProperties(properties.getExternalDocs());
+		ExternalDocsProperties externalDocsProperties = properties.getExternalDocs();
+
+		if (externalDocsProperties != null) {
+			return createExternalDocumentation(externalDocsProperties);
+		} else {
+			return null;
+		}
 	}
 
-	private ExternalDocumentation createExternalDocsFromProperties(final ExternalDocsProperties props) {
+	private ExternalDocumentation createExternalDocumentation(ExternalDocsProperties externalDocsProperties) {
+		if (externalDocsProperties.getUrl() == null) {
+			throw new SpecificationViolationException("Missing 'url' property for 'ExternalDocumentation'.");
+		}
+
 		ExternalDocumentation externalDocs = new ExternalDocumentation();
-		externalDocs.setDescription(props.getDescription());
-		externalDocs.setUrl(resolveUrl(props.getUrl()));
-		return externalDocs.getUrl() != null ? externalDocs : null;
+		externalDocs.setDescription(externalDocsProperties.getDescription());
+		externalDocs.setUrl(resolveUrl(externalDocsProperties.getUrl()));
+
+		return externalDocs;
 	}
 
 	public Map<String, SecurityScheme> createSecuritySchemesFromProperties() {
@@ -134,13 +193,13 @@ public class GeneratorPropertyLoader {
 
 	public String getDescriptionForTag(final String tag) {
 		TagProperties tagProperties = properties.getTags().getOrDefault(tag, null);
-		return tagProperties != null ? tagProperties.getDescription() : "";
+		return tagProperties != null ? tagProperties.getDescription() : null;
 	}
 
 	public ExternalDocumentation getExternalDocumentationForTag(final String tag) {
 		TagProperties tagProperties = properties.getTags().getOrDefault(tag, null);
 		if (tagProperties != null) {
-			return createExternalDocsFromProperties(tagProperties.getExternalDocs());
+			return createExternalDocumentation(tagProperties.getExternalDocs());
 		}
 		return null;
 	}

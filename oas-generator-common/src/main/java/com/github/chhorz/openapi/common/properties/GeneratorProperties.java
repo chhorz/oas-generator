@@ -1,6 +1,5 @@
 package com.github.chhorz.openapi.common.properties;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,8 +15,8 @@ public class GeneratorProperties {
 
 	public GeneratorProperties() {
 		info = new InfoProperties();
-		servers = new ArrayList<>();
-		externalDocs = new ExternalDocsProperties();
+		servers = null;
+		externalDocs = null;
 		securitySchemes = new TreeMap<>();
 		tags = new TreeMap<>();
 		parser = new ParserProperties();

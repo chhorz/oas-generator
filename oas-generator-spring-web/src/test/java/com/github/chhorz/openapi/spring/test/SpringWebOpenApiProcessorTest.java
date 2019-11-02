@@ -28,35 +28,35 @@ import static org.assertj.core.api.Assertions.fail;
  */
 class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 
-    @Test
-    void aTest() {
-        // run annotation processor
-        testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator01.yml"), OrderController.class, BaseResource.class, Order.class, Article.class,
-                PrimitiveResource.class, ErrorResource.class, ExternalResource.class);
+	@Test
+	void aTest() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator01.yml"), OrderController.class, BaseResource.class, Order.class, Article.class,
+			PrimitiveResource.class, ErrorResource.class, ExternalResource.class);
 
-        // compare result with reference documentation
-        compareFileContent("expected/openapi01.json", "oas-test/openapi01.json");
-    }
+		// compare result with reference documentation
+		compareFileContent("expected/openapi01.json", "oas-test/openapi01.json");
+	}
 
-    @Test
-    void testArticleController() {
-        // run annotation processor
-        testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator02.yml"),
-                ArticleController.class, Article.class);
+	@Test
+	void testArticleController() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator02.yml"),
+			ArticleController.class, Article.class);
 
-        // compare result with reference documentation
-        compareFileContent("expected/openapi02.json", "oas-test/openapi02.json");
-    }
+		// compare result with reference documentation
+		compareFileContent("expected/openapi02.json", "oas-test/openapi02.json");
+	}
 
-    @Test
-    void testHttpMethods() {
-        // run annotation processor
-        testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator03.yml"),
-                HttpMethodsController.class, Article.class);
+	@Test
+	void testHttpMethods() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator03.yml"),
+			HttpMethodsController.class, Article.class);
 
-        // compare result with reference documentation
-        compareFileContent("expected/openapi03.json", "oas-test/openapi03.json");
-    }
+		// compare result with reference documentation
+		compareFileContent("expected/openapi03.json", "oas-test/openapi03.json");
+	}
 
 	@Test
 	void getGithubIssues() {
@@ -68,24 +68,26 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 		compareFileContent("expected/openapi-github.json", "oas-test/openapi-github.json");
 	}
 
-    /**
-     * Compares JSON files for identical content. The order of properties is not checked. If the content does not match the test will be failed.
-     *
-     * @param expectedFile Filename of the expected json content. The file must be placed in {@code src/test/resources/} directory.
-     * @param actualFile   Filename of the actual json content. The file must be placed in {@code target/} directory.
-     */
-    private void compareFileContent(String expectedFile, String actualFile) {
-        try {
-            String expected = String.join("", Files.readAllLines(Paths.get("src/test/resources/" + expectedFile)));
-            String actual = String.join("", Files.readAllLines(Paths.get("target/" + actualFile)));
-            JSONAssert.assertEquals(expected, actual, true);
-        } catch (JSONException | IOException e) {
-            fail("Could not check openapi.json against expected file.", e);
-        }
-    }
+	/**
+	 * Compares JSON files for identical content. The order of properties is not checked. If the content does not match
+	 * the test will be failed.
+	 *
+	 * @param expectedFile filename of the expected json content. The file must be placed in {@code src/test/resources/}
+	 *                     directory.
+	 * @param actualFile   filename of the actual json content. The file must be placed in {@code target/} directory.
+	 */
+	private void compareFileContent(String expectedFile, String actualFile) {
+		try {
+			String expected = String.join("", Files.readAllLines(Paths.get("src/test/resources/" + expectedFile)));
+			String actual = String.join("", Files.readAllLines(Paths.get("target/" + actualFile)));
+			JSONAssert.assertEquals(expected, actual, true);
+		} catch (JSONException | IOException e) {
+			fail("Could not check openapi.json against expected file.", e);
+		}
+	}
 
-    private Map<String, String> createConfigMap(String configFile) {
-        return Collections.singletonMap(OpenAPIConstants.OPTION_PROPERTIES_PATH, configFile);
-    }
+	private Map<String, String> createConfigMap(String configFile) {
+		return Collections.singletonMap(OpenAPIConstants.OPTION_PROPERTIES_PATH, configFile);
+	}
 
 }

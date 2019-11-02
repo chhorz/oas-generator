@@ -15,8 +15,8 @@ public class InfoProperties {
 		title = GeneratorPropertiesDefaults.INFO_TITLE;
 		description = GeneratorPropertiesDefaults.INFO_DESCRIPTION;
 		termsOfService = GeneratorPropertiesDefaults.INFO_TERMS_OF_SERVICE;
-		contact = new ContactProperties();
-		license = new LicenseProperties();
+		contact = null;
+		license = null;
 		version = GeneratorPropertiesDefaults.INFO_VERSION;
 	}
 

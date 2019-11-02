@@ -15,7 +15,17 @@
   },
   "servers" : [ {
     "url" : "dev.server.lan",
-    "description" : "Internal DEV-Stage"
+    "description": "Internal DEV-Stage",
+    "variables": {
+      "port": {
+        "description": "The port of the application",
+        "enum": [
+          "8080",
+          "443"
+        ],
+        "default": "443"
+      }
+    }
   } ],
   "paths" : {
     "/orders" : {
@@ -359,8 +369,7 @@
       "url" : "http://www.google.com"
     }
   }, {
-    "name" : "test",
-    "description" : ""
+    "name": "test"
   } ],
   "externalDocs" : {
     "description" : "Lorem ipsum ...",
