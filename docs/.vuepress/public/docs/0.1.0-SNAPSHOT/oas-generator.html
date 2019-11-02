@@ -2431,8 +2431,11 @@ parser:
   schemaPackages:
   - com.github.chhorz.openapi.spring.test.controller.external
   postProcessor:
-    key1: value1
-    key2: value2</code></pre>
+    postProcessor1:
+      key1: value1
+      key2: value2
+    postProcessor2:
+      key1: value1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2484,7 +2487,7 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 <p>After the creation during the compile phase, the <code>asciidoctor-maven-plugin</code> (<a href="https://asciidoctor.org/docs/asciidoctor-maven-plugin/">Link</a>) can be used to render the <code>.adoc</code> file to HTML, PDF or other formats</p>
 </div>
 <div class="sect4">
-<h5 id="_configuration_properties"><a class="anchor" href="#_configuration_properties"></a><a class="link" href="#_configuration_properties">Configuration properties</a></h5>
+<h5 id="asciidoctor.properties"><a class="anchor" href="#asciidoctor.properties"></a><a class="link" href="#asciidoctor.properties">Configuration properties</a></h5>
 <div class="paragraph">
 <p>All of the following properties are passed as key-value list in the <a href="#configuration-file">configuration file</a>.</p>
 </div>
@@ -2493,13 +2496,14 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">parser:
   postProcessor:
-    asciidoctor.logging: true
-    asciidoctor.template.localizedLookup: false
-    asciidoctor.template.folder: /templates/freemarker <i class="conum" data-value="1"></i><b>(1)</b>
-    asciidoctor.template.name: openapi.ftlh
-    asciidoctor.output.dir: ./target/openapi <i class="conum" data-value="2"></i><b>(2)</b>
-    asciidoctor.output.file: /openapi.adoc
-    asciidoctor.standlone.file: true <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+    asciidoctor:
+      logging: true
+      templateLocalizedLookup: false
+      templatePath: ./templates/freemarker <i class="conum" data-value="1"></i><b>(1)</b>
+      templateFile: openapi.ftlh
+      outputPath: ./target/openapi <i class="conum" data-value="2"></i><b>(2)</b>
+      outputFile: /openapi.adoc
+      standaloneFile: true <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2518,6 +2522,10 @@ Currently the following post processors (see module <em>oas-generator-spi</em>) 
 Files generated with <code>false</code> can easier integrated in other asciidoctor files.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>The conversion of the internal openapi domain object into a asciidoctor file is done via the <a href="https://freemarker.apache.org/">Apache FreeMarker</a> template engine.
+Some of the configuration properties shown above are related to this engine.</p>
 </div>
 </div>
 </div>
@@ -2597,7 +2605,7 @@ public interface OpenAPIPostProcessor {
 <li>
 <p>Create a file named <code>com.github.chhorz.openapi.common.spi.PostProcessorProvider</code> at <code>src/main/resources/META-INF/services</code> containing the fully qualified name of the class from step 1</p>
 <div class="listingblock">
-<div class="title">Director structure</div>
+<div class="title">Directory structure</div>
 <div class="content">
 <pre class="highlightjs highlight"><code>/src
   /main
@@ -2613,6 +2621,10 @@ public interface OpenAPIPostProcessor {
 <pre class="highlightjs highlight"><code>com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider</code></pre>
 </div>
 </div>
+</li>
+<li>
+<p>If the post processor uses custom properties these should be placed below the parser properties as shown for the <a href="#asciidoctor.properties">Asciidoctor Post Processor</a>.
+All custom property classes should extend the provided <code>AbstractPostProcessorProperties</code> class.</p>
 </li>
 </ol>
 </div>
@@ -2650,7 +2662,7 @@ To configure the repository for your project to use the latest snapshot versions
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0-SNAPSHOT<br>
-Last updated 2019-10-20 15:15:48 MESZ
+Last updated 2019-11-02 17:39:57 MEZ
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/obsidian.min.css">

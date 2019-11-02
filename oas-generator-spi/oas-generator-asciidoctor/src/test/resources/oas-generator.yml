@@ -1,0 +1,10 @@
+parser:
+  postProcessor:
+    asciidoctor:
+      logging: true
+      templateLocalizedLookup: false
+      templatePath: ./templates/freemarker
+      templateFile: openapi.ftlh
+      outputPath: ./target/openapi
+      outputFile: /openapi.adoc
+      standaloneFile: true

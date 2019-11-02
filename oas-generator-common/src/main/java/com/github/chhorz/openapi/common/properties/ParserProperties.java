@@ -1,8 +1,10 @@
 package com.github.chhorz.openapi.common.properties;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class ParserProperties {
 
@@ -14,7 +16,7 @@ public class ParserProperties {
 
 	private List<String> schemaPackages;
 
-	private Map<String, String> postProcessor;
+	private Map<String, LinkedHashMap> postProcessor;
 
 	public ParserProperties() {
 		logLevel = GeneratorPropertiesDefaults.PARSER_LOG_LEVEL;
@@ -65,22 +67,27 @@ public class ParserProperties {
 		this.schemaPackages = schemaPackages;
 	}
 
-	public Map<String, String> getPostProcessor() {
+	public Map<String, LinkedHashMap> getPostProcessor() {
 		return postProcessor;
 	}
 
-	public void setPostProcessor(final Map<String, String> postProcessor) {
+	public void setPostProcessor(final Map<String, LinkedHashMap> postProcessor) {
 		this.postProcessor = postProcessor;
 	}
 
-	public boolean getPostProcessorValue(final String key, final Boolean defaultValue) {
-		Objects.requireNonNull(key, "Property key must not be null");
-		return Boolean.parseBoolean(getPostProcessorValue(key, defaultValue.toString()));
-	}
-
-	public String getPostProcessorValue(final String key, final String defaultValue) {
-		Objects.requireNonNull(key, "Property key must not be null");
-		return postProcessor.getOrDefault(key, defaultValue);
+	public <T extends AbstractPostProcessorProperties> T getPostProcessor(final String key, final Class<T> clazz) {
+		LinkedHashMap yamlProperties = postProcessor.get(key);
+		try {
+			Constructor<T> constructor = clazz.getConstructor(Map.class);
+			return constructor.newInstance(yamlProperties);
+		} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+			try {
+				return clazz.newInstance();
+			} catch (InstantiationException | IllegalAccessException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 }

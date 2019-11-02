@@ -1,44 +1,45 @@
 package com.github.chhorz.openapi.common.properties;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 
-public class GeneratorPropertiesDefaults {
+public final class GeneratorPropertiesDefaults {
 
-	public static final String INFO_TITLE = "Title";
-	public static final String INFO_DESCRIPTION = null;
-	public static final URL INFO_TERMS_OF_SERVICE = null;
-	public static final String INFO_VERSION = "Version";
+	static final String INFO_TITLE = "Title";
+	static final String INFO_DESCRIPTION = null;
+	static final URL INFO_TERMS_OF_SERVICE = null;
+	static final String INFO_VERSION = "Version";
 
-	public static final String CONTACT_NAME = null;
-	public static final String CONTACT_EMAIL = null;
-	public static final URL CONTACT_URL = null;
+	static final String CONTACT_NAME = null;
+	static final String CONTACT_EMAIL = null;
+	static final URL CONTACT_URL = null;
 
-	public static final String LICENSE_NAME = null;
-	public static final URL LICENSE_URL = null;
+	static final String LICENSE_NAME = null;
+	static final URL LICENSE_URL = null;
 
 	public static final String SERVER_URL = null;
 	public static final String SERVER_DESCRIPTION = null;
 
-	public static final URL EXTERNAL_DOCS_URL = null;
-	public static final String EXTERNAL_DOCS_DESCRIPTION = null;
+	static final URL EXTERNAL_DOCS_URL = null;
+	static final String EXTERNAL_DOCS_DESCRIPTION = null;
 
-	public static final String SECURITY_SCHEME_TYPE = null;
-	public static final String SECURITY_SCHEME_DESCRIPTION = null;
-	public static final String SECURITY_SCHEME_SCHEME = null;
+	static final String SECURITY_SCHEME_TYPE = null;
+	static final String SECURITY_SCHEME_DESCRIPTION = null;
+	static final String SECURITY_SCHEME_SCHEME = null;
 
-	public static final String TAG_DESCRIPTION = null;
+	static final String TAG_DESCRIPTION = null;
 
-	public static final String PARSER_LOG_LEVEL = LoggingUtils.INFO;
-	public static final String PARSER_OUTPUT_DIR = "./target/openapi";
-	public static final String PARSER_OUTPUT_FILE = "openapi.json";
-	public static final String PARSER_SCHEMA_FILE = null;
-	public static final List<String> PARSER_SCHEMA_PACKAGES = new ArrayList<>();
-	public static final Map<String, String> PARSER_POST_PROCESSOR = new TreeMap<>();
+	static final String PARSER_LOG_LEVEL = LoggingUtils.INFO;
+	static final String PARSER_OUTPUT_DIR = "./target/openapi";
+	static final String PARSER_OUTPUT_FILE = "openapi.json";
+	static final String PARSER_SCHEMA_FILE = null;
+	static final List<String> PARSER_SCHEMA_PACKAGES = new ArrayList<>();
+	static final Map<String, LinkedHashMap> PARSER_POST_PROCESSOR = new LinkedHashMap<>();
+
+	private GeneratorPropertiesDefaults(){
+		throw new InstantiationError("Final class must not be instantiated.");
+	}
 
 }

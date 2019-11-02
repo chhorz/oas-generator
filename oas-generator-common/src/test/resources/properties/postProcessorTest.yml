@@ -1,0 +1,5 @@
+parser:
+  postProcessor:
+    one:
+      valueOne: "Test"
+      valueTwo: 2

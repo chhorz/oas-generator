@@ -234,8 +234,11 @@ parser:
   schemaPackages:
   - com.github.chhorz.openapi.spring.test.controller.external
   postProcessor:
-    key1: value1
-    key2: value2
+    postProcessor1:
+      key1: value1
+      key2: value2
+    postProcessor2:
+      key1: value1
 ----
 
 The `postProcessor` properties define a generic list of properties.
@@ -268,6 +271,7 @@ This post processor converts the generated OpenAPI domain model into the asciido
 
 After the creation during the compile phase, the `asciidoctor-maven-plugin` (link:https://asciidoctor.org/docs/asciidoctor-maven-plugin/[Link]) can be used to render the `.adoc` file to HTML, PDF or other formats
 
+[[asciidoctor.properties]]
 ===== Configuration properties
 All of the following properties are passed as key-value list in the <<configuration-file, configuration file>>.
 
@@ -276,18 +280,22 @@ All of the following properties are passed as key-value list in the <<configurat
 ----
 parser:
   postProcessor:
-    asciidoctor.logging: true
-    asciidoctor.template.localizedLookup: false
-    asciidoctor.template.folder: /templates/freemarker # <1>
-    asciidoctor.template.name: openapi.ftlh
-    asciidoctor.output.dir: ./target/openapi # <2>
-    asciidoctor.output.file: /openapi.adoc
-    asciidoctor.standlone.file: true # <3>
+    asciidoctor:
+      logging: true
+      templateLocalizedLookup: false
+      templatePath: ./templates/freemarker # <1>
+      templateFile: openapi.ftlh
+      outputPath: ./target/openapi # <2>
+      outputFile: /openapi.adoc
+      standaloneFile: true # <3>
 ----
 <1> The path of the templates is based on `/src/main/resources`
 <2> Output base directory is the `/target/openapi` folder
 <3> A standalone file is generated with an asciidoctor document header and a section title on level 0.
 Files generated with `false` can easier integrated in other asciidoctor files.
+
+The conversion of the internal openapi domain object into a asciidoctor file is done via the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
+Some of the configuration properties shown above are related to this engine.
 
 === Custom Post-Processors
 Providing your own post processor is very simple.
@@ -307,7 +315,7 @@ include::{common-java}/com/github/chhorz/openapi/common/spi/OpenAPIPostProcessor
 ----
 . Create a file named `com.github.chhorz.openapi.common.spi.PostProcessorProvider` at `src/main/resources/META-INF/services` containing the fully qualified name of the class from step 1
 +
-.Director structure
+.Directory structure
 [source]
 ----
 /src
@@ -323,6 +331,9 @@ include::{common-java}/com/github/chhorz/openapi/common/spi/OpenAPIPostProcessor
 ----
 com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider
 ----
+
+. If the post processor uses custom properties these should be placed below the parser properties as shown for the <<asciidoctor.properties, Asciidoctor Post Processor>>.
+All custom property classes should extend the provided `AbstractPostProcessorProperties` class.
 
 == Snapshots
 Snapshots are available from the Sonatype OSS Snapshots repository.

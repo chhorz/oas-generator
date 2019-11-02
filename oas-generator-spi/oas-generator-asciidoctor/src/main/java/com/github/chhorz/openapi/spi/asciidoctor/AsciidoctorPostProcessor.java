@@ -4,7 +4,6 @@ import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
-import freemarker.core.OutputFormat;
 import freemarker.core.PlainTextOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -24,26 +23,18 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
 	private static final int POST_PROCESSOR_ORDER = 0;
 
-	private static final String DEFAULT_TEMPLATE_FOLDER = "/templates/freemarker";
-	private static final String DEFAULT_TEMPLATE_NAME = "openapi.ftlh";
-	private static final boolean DEFAULT_EXCEPTION_LOGGING = true;
-	private static final String DEFAULT_OUTPUT_DIR = "./target/openapi";
-	private static final String DEFAULT_OUTPUT_FILE = "openapi.adoc";
-	private static final boolean DEFAULT_LOCALIZED_LOOKUP = false;
-
-	private static final boolean DEFAULT_STANDALONE_FILE = true;
-
-	private ParserProperties parserProperties;
+	private AsciidoctorProperties asciidoctorProperties;
 	private LoggingUtils log;
 
 	private Configuration freemarkerConfiguration;
 
 	public AsciidoctorPostProcessor(final ParserProperties parserProperties) {
-		this.parserProperties = parserProperties;
+		this.asciidoctorProperties = parserProperties.getPostProcessor("asciidoctor", AsciidoctorProperties.class);
+
 		log = new LoggingUtils(parserProperties, "[Asciidoctor]");
 
-		final boolean logTemplateExceptions = parserProperties.getPostProcessorValue("asciidoctor.logging", DEFAULT_EXCEPTION_LOGGING);
-		final boolean localizedLookup = parserProperties.getPostProcessorValue("asciidoctor.template.localizedLookup", DEFAULT_LOCALIZED_LOOKUP);
+		final boolean logTemplateExceptions = asciidoctorProperties.getExceptionLogging();
+		final boolean localizedLookup = asciidoctorProperties.getLocalizedLookup();
 
 		freemarkerConfiguration = new Configuration(Configuration.VERSION_2_3_28);
 		freemarkerConfiguration.setOutputFormat(PlainTextOutputFormat.INSTANCE);
@@ -58,36 +49,36 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	public void execute(final OpenAPI openApi) {
 		log.info("AsciidoctorPostProcessor | Start");
 
-		final String templateFolder = parserProperties.getPostProcessorValue("asciidoctor.template.folder", DEFAULT_TEMPLATE_FOLDER);
-		final String templateName = parserProperties.getPostProcessorValue("asciidoctor.template.name", DEFAULT_TEMPLATE_NAME);
-		final String outputDir = parserProperties.getPostProcessorValue("asciidoctor.output.dir", DEFAULT_OUTPUT_DIR);
-		final String outputFile = parserProperties.getPostProcessorValue("asciidoctor.output.file", DEFAULT_OUTPUT_FILE);
+		final String templatePath = asciidoctorProperties.getTemplatePath();
+		final String templateFile = asciidoctorProperties.getTemplateFile();
+		final String outputPath = asciidoctorProperties.getOutputPath();
+		final String outputFile = asciidoctorProperties.getOutputFile();
 
 		try {
-			Template template = freemarkerConfiguration.getTemplate(String.format("%s/%s", templateFolder, templateName));
+			Template template = freemarkerConfiguration.getTemplate(String.format("%s/%s", templatePath, templateFile));
 
-
-			Path outputPath = Paths.get(outputDir, outputFile);
-			File asciidoctorfile = outputPath.toFile();
+			Path outputFilePath = Paths.get(outputPath, outputFile);
+			File asciidoctorfile = outputFilePath.toFile();
 			log.debug("AsciidoctorPostProcessor | Filepath: " + asciidoctorfile.getAbsolutePath());
 
-			if (!Files.exists(outputPath)){
+			if (!Files.exists(outputFilePath)){
 				try {
-					Files.createDirectories(outputPath.getParent());
-					Files.createFile(outputPath);
+					Files.createDirectories(outputFilePath.getParent());
+					Files.createFile(outputFilePath);
 
-					asciidoctorfile = outputPath.toFile();
+					asciidoctorfile = outputFilePath.toFile();
 				} catch (IOException e) {
 					log.error("Could not create output file", e);
 				}
 			}
+
 			FileWriter fileWriter = new FileWriter(asciidoctorfile);
 
 			template.process(prepareTemplateVariables(openApi), fileWriter);
 		} catch (IOException e) {
-			log.error(String.format("Could not load template=%s", templateName), e);
+			log.error(String.format("Could not load template=%s", templateFile), e);
 		} catch (TemplateException e) {
-			log.error(String.format("Error while templating %s", templateName), e);
+			log.error(String.format("Error while templating %s", templateFile), e);
 		}
 
 		log.info("AsciidoctorPostProcessor | Finish");
@@ -96,7 +87,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	private Map<String, Object> prepareTemplateVariables(final OpenAPI openAPI){
 		Map<String, Object> templateVariables = new HashMap<>();
 		templateVariables.put("openapi", openAPI);
-		templateVariables.put("standalone", parserProperties.getPostProcessorValue("asciidoctor.standalone.file", DEFAULT_STANDALONE_FILE));
+		templateVariables.put("standalone", asciidoctorProperties.getStandaloneFile());
 		return templateVariables;
 	}
 

@@ -257,12 +257,12 @@ class AsciidoctorPostProcessorTest {
 	}
 
 	private AsciidoctorPostProcessor createAsciidoctorPostProcessor(String folder, boolean standalone) {
-		Map<String, String> propertyMap = new HashMap<>();
-		propertyMap.put("asciidoctor.output.dir", "target/generated-test-docs" + folder);
-		propertyMap.put("asciidoctor.standalone.file", String.valueOf(standalone));
+		LinkedHashMap<String, Object> propertyMap = new LinkedHashMap<>();
+		propertyMap.put("outputPath", "target/generated-test-docs" + folder);
+		propertyMap.put("standaloneFile", String.valueOf(standalone));
 
 		ParserProperties parserProperties = new ParserProperties();
-		parserProperties.setPostProcessor(propertyMap);
+		parserProperties.setPostProcessor(Collections.singletonMap("asciidoctor", propertyMap));
 
 		return new AsciidoctorPostProcessor(parserProperties);
 	}
