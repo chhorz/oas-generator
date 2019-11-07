@@ -109,9 +109,19 @@ class AsciidoctorPostProcessorTest {
 		Tag tag2 = new Tag();
 		tag2.setName("TAG_2");
 
+		ServerVariableObject v1 = new ServerVariableObject();
+		v1.setDescription("Lorem ipsum");
+		v1.setDefaultValue("8080");
+		v1.setEnumValue(Arrays.asList("8080", "443"));
+
+		ServerVariableObject v2 = new ServerVariableObject();
+		v2.setDefaultValue("8080");
+
 		Server s1 = new Server();
 		s1.setUrl("www.github.com");
 		s1.setDescription("We love code.");
+		s1.addVariable("port", v1);
+		s1.addVariable("test", v2);
 
 		Server s2 = new Server();
 		s2.setUrl("www.gitlab.com");

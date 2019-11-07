@@ -101,7 +101,7 @@ This is necessary because Javadoc comments in general are unstructured comments 
 This project uses the link:https://github.com/chhorz/javadoc-parser[Javadoc Parser] project to load all information from the Javadoc comments as structured data.
 
 .Maven dependency for the Javadoc Parser:
-[source,yml]
+[source,xml]
 ----
 <dependency>
     <groupId>com.github.chhorz</groupId>

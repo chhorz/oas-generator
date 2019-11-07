@@ -68,7 +68,7 @@ mark {
 
 code, kbd, pre, samp {
     font-family: monospace;
-    font-size: 1em
+    font-size: 0.8em
 }
 
 pre {
@@ -270,7 +270,7 @@ select {
 }
 
 p.lead, .paragraph.lead > p, #preamble > .sectionbody > .paragraph:first-of-type p {
-    font-size: 1.21875em;
+    font-size: 1em;
     line-height: 1.6
 }
 
@@ -1903,7 +1903,7 @@ p strong, td.content strong, div.footnote strong {
 }
 
 p, blockquote, dt, td.content, span.alt {
-    font-size: 1.0625rem
+    font-size: 1em
 }
 
 p {
