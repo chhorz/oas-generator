@@ -1,7 +1,5 @@
 package com.github.chhorz.openapi.common.test.github;
 
-import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
-
 import java.lang.annotation.*;
 
 /**
@@ -14,6 +12,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 public @interface GithubIssue {
 
-	int number();
+	String value();
 
 }

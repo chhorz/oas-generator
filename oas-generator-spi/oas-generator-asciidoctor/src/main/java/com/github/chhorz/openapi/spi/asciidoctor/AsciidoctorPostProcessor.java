@@ -29,7 +29,8 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	private Configuration freemarkerConfiguration;
 
 	public AsciidoctorPostProcessor(final ParserProperties parserProperties) {
-		this.asciidoctorProperties = parserProperties.getPostProcessor("asciidoctor", AsciidoctorProperties.class);
+		this.asciidoctorProperties = parserProperties.getPostProcessor("asciidoctor", AsciidoctorProperties.class)
+			.orElse(new AsciidoctorProperties());
 
 		log = new LoggingUtils(parserProperties, "[Asciidoctor]");
 

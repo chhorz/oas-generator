@@ -1,10 +1,10 @@
 package com.github.chhorz.openapi.common.properties;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ParserProperties {
 
@@ -75,19 +75,18 @@ public class ParserProperties {
 		this.postProcessor = postProcessor;
 	}
 
-	public <T extends AbstractPostProcessorProperties> T getPostProcessor(final String key, final Class<T> clazz) {
+	public <T extends AbstractPostProcessorProperties> Optional<T> getPostProcessor(final String key, final Class<T> clazz) {
 		LinkedHashMap yamlProperties = postProcessor.get(key);
 		try {
-			Constructor<T> constructor = clazz.getConstructor(Map.class);
-			return constructor.newInstance(yamlProperties);
+			return Optional.of(clazz.getConstructor(Map.class).newInstance(yamlProperties));
 		} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
 			try {
-				return clazz.newInstance();
+				return Optional.ofNullable(clazz.newInstance());
 			} catch (InstantiationException | IllegalAccessException ex) {
 				ex.printStackTrace();
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 }
