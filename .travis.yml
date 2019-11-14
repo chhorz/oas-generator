@@ -27,6 +27,5 @@ jobs:
         keep-history: true
         on:
           branch: master
-      if:
-        commit_message !~ /\[skip-docs\].*/
+      if: commit_message !~ /\[skip-docs\].*/
 
