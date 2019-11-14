@@ -28,5 +28,5 @@ jobs:
         on:
           branch: master
       if:
-        commit_message !~ /\[skip docs\].*/
+        commit_message !~ /\[skip-docs\].*/
 
