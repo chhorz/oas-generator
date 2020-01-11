@@ -12,9 +12,9 @@
 :common-java: ../../../../oas-generator-common/src/main/java
 
 == About
-The *OAS Generator* is a java annotation processor that creates an openapi specification during the build process.
+The *OAS Generator* is a java annotation processor that creates an OpenAPI specification during the build process.
 It is based on static code analysis, especially annotations that are used to create a REST API.
-Additional the JavaDoc comments from the given methods or resource objects will be included.
+Additional the JavaDoc comments from the given methods or resource objects will be included if they follow a defined format.
 
 [source%nowrap,java]
 ----
@@ -63,9 +63,9 @@ The simplest way to add the *OAS Generator* to your project is adding the follow
     <scope>provided</scope>
 </dependency>
 ----
-All dependencies contain additional information within the `META-INF` folder that define the provided annotation processors.
+All dependencies contain additional information within the `META-INF` folder that define the dependency as annotation processor.
 
-==== Maven compile plugin
+==== Maven compiler plugin
 Another way to include an annotation processor is the link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html[maven-compiler-plugin]:
 [source%nowrap,xml,subs="verbatim,attributes"]
 ----
@@ -226,8 +226,10 @@ The version has to be replaced with an variable for the maven project version: `
 </project>
 ----
 
-The content of the part above will be included in the resulting OpenAPI document as it was defined.
-Parser properties shown below customize the behavior of the _oas-generator_:
+The content of the part above will be included in the resulting OpenAPI document as it is defined.
+It is static content that will not change often so it should be defined in a static way.
+Only data that could not be retrieved from the source code and is required by the OpenAPI specification must be present in the shown file.
+Parser properties shown below customize the behavior of the *OAS Generator*:
 
 .Configuration to adjust the generator behavior
 [source,yaml]
@@ -252,7 +254,7 @@ The `postProcessor` properties define a generic list of properties.
 In this map contributors can define their own properties for their post processors using the provided spi.
 
 == Extensibility
-The OAS Generator provides a service provider interface (SPI) to include custom post processors.
+The *OAS Generator* provides a service provider interface (SPI) to include custom post processors.
 Per default the `FileWriterPostProcessor` is included to write the _openapi.json_ file.
 Currently the following post processors (see module link:https://github.com/chhorz/oas-generator/tree/master/oas-generator-spi[_oas-generator-spi_]) are also provided:
 

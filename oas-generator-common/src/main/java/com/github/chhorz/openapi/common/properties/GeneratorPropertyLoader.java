@@ -124,9 +124,8 @@ public class GeneratorPropertyLoader {
 					server.setDescription(s.getDescription());
 					server.setUrl(s.getUrl());
 					if (s.getVariables() != null) {
-						s.getVariables().forEach((variable, variableObject) -> {
-							server.addVariable(variable, createServerVariable(variableObject));
-						});
+						s.getVariables()
+							.forEach((variable, variableObject) -> server.addVariable(variable, createServerVariable(variableObject)));
 					}
 					return server;
 				})

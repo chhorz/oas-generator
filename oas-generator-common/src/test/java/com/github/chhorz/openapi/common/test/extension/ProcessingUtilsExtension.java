@@ -1,16 +1,7 @@
 package com.github.chhorz.openapi.common.test.extension;
 
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toSet;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Stream;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Messager;
@@ -20,14 +11,16 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
+import javax.tools.*;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Stream;
 
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toSet;
 
 public class ProcessingUtilsExtension implements BeforeEachCallback {
 
@@ -79,6 +72,29 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 		return messager;
 	}
 
+	private void javac() {
+		JavaCompiler systemJavaCompiler = ToolProvider.getSystemJavaCompiler();
+		DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
+		StandardJavaFileManager fileManager = systemJavaCompiler.getStandardFileManager(collector, Locale.US, StandardCharsets.UTF_8);
+
+		ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();
+		OutputStreamWriter stdout = new OutputStreamWriter(stdoutStream);
+
+		String[] files = new String[]{
+			"src/test/java/com/github/chhorz/openapi/common/test/extension/Dummy.java",
+			"src/test/java/com/github/chhorz/openapi/common/test/util/resources/TestClass.java"
+		};
+
+		JavaCompiler.CompilationTask compilationTask = systemJavaCompiler.getTask(stdout, fileManager, collector, null, null,
+			fileManager.getJavaFileObjects(files));
+		compilationTask.setProcessors(singletonList(new EvaluatingProcessor()));
+
+		compilationTask.call();
+	}
+
+	/**
+	 * Custom annotation processor that is used to fill the fields within the JUnit extension.
+	 */
 	final class EvaluatingProcessor extends AbstractProcessor {
 
 		@Override
@@ -102,33 +118,8 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 
 		@Override
 		public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-			// just run the test on the last round after compilation is over
-			if (roundEnv.processingOver()) {
-				// base.evaluate();
-			}
 			return false;
 		}
-	}
-
-	private void javac() {
-		JavaCompiler systemJavaCompiler = ToolProvider.getSystemJavaCompiler();
-		DiagnosticCollector<JavaFileObject> collector = new DiagnosticCollector<>();
-		StandardJavaFileManager fileManager = systemJavaCompiler.getStandardFileManager(collector, Locale.US,
-				Charset.forName("UTF-8"));
-
-		ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();
-		OutputStreamWriter stdout = new OutputStreamWriter(stdoutStream);
-
-		String[] files = new String[] {
-				"src/test/java/com/github/chhorz/openapi/common/test/extension/Dummy.java",
-				"src/test/java/com/github/chhorz/openapi/common/test/util/resources/TestClass.java"
-				};
-
-		JavaCompiler.CompilationTask compilationTask = systemJavaCompiler.getTask(stdout, fileManager, collector, null, null,
-				fileManager.getJavaFileObjects(files));
-		compilationTask.setProcessors(singletonList(new EvaluatingProcessor()));
-
-		compilationTask.call();
 	}
 
 }
