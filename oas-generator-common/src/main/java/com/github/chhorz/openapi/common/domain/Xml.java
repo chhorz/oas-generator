@@ -1,7 +1,7 @@
 package com.github.chhorz.openapi.common.domain;
 
 /**
- * http://spec.openapis.org/oas/v3.0.2#xml-object
+ * http://spec.openapis.org/oas/v3.0.3#xml-object
  *
  * @author chhorz
  *

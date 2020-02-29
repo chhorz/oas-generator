@@ -6,7 +6,7 @@ import java.util.TreeMap;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * http://spec.openapis.org/oas/v3.0.2#request-body-object
+ * http://spec.openapis.org/oas/v3.0.3#request-body-object
  *
  * @author chhorz
  *

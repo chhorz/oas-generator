@@ -3,7 +3,7 @@ package com.github.chhorz.openapi.common.domain;
 import java.util.Map;
 
 /**
- * http://spec.openapis.org/oas/v3.0.2#oauth-flow-object
+ * http://spec.openapis.org/oas/v3.0.3#oauth-flow-object
  *
  * @author chhorz
  *

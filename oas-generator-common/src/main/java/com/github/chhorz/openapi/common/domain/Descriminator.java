@@ -5,7 +5,7 @@ import java.util.Map;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * http://spec.openapis.org/oas/v3.0.2#discriminator-object
+ * http://spec.openapis.org/oas/v3.0.3#discriminator-object
  *
  * @author chhorz
  *
