@@ -22,7 +22,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
- * http://jcavallotti.blogspot.de/2013/05/how-to-unit-test-annotation-processor.html
+ * https://jcavallotti.blogspot.de/2013/05/how-to-unit-test-annotation-processor.html
  *
  * @author chhorz
  */

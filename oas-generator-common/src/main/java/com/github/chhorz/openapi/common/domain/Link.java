@@ -5,7 +5,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * http://spec.openapis.org/oas/v3.0.3#link-object
+ * https://spec.openapis.org/oas/v3.0.3#link-object
  *
  * @author chhorz
  *

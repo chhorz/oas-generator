@@ -4,11 +4,11 @@ info:
   version: 1.2.3-SNAPSHOT
   contact:
     name: John Doe
-    url: http://www.google.com
+    url: https://www.google.com
     email: john@doe.com
   license:
     name: Apache License, Version 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
 
 servers:
 - url: dev.server.lan
@@ -21,7 +21,7 @@ servers:
       defaultValue: "443"
       description: The port of the application
 externalDocs:
-  url: http://www.wikipedia.org
+  url: https://www.openapis.org/
   description: Lorem ipsum ...
 
 securitySchemes:
@@ -34,7 +34,7 @@ tags:
   order:
     description: The category collects all methods for orders.
     externalDocs:
-      url: http://www.google.com
+      url: https://www.google.com
 
 # Parser specific configuration
 parser:

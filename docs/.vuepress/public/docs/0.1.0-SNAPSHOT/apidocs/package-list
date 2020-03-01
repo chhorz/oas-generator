@@ -7,8 +7,3 @@ com.github.chhorz.openapi.common.properties
 com.github.chhorz.openapi.common.spi
 com.github.chhorz.openapi.common.util
 com.github.chhorz.openapi.common.util.jackson
-com.github.chhorz.openapi.jaxrs
-com.github.chhorz.openapi.schema
-com.github.chhorz.openapi.spi.asciidoctor
-com.github.chhorz.openapi.spring
-com.github.chhorz.openapi.spring.util

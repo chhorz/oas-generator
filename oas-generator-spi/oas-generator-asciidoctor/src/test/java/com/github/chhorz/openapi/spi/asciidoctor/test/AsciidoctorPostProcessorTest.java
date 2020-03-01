@@ -82,7 +82,7 @@ class AsciidoctorPostProcessorTest {
 		// given
 		License license = new License();
 		license.setName("Apache License, Version 2.0");
-		license.setUrl("http://www.apache.org/licenses/LICENSE-2.0");
+		license.setUrl("https://www.apache.org/licenses/LICENSE-2.0");
 
 		Contact contact = new Contact();
 		contact.setName("John doe");

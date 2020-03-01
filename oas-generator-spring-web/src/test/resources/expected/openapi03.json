@@ -4,12 +4,12 @@
     "title" : "MyService",
     "contact" : {
       "name" : "John Doe",
-      "url" : "http://www.google.com",
+      "url" : "https://www.google.com",
       "email" : "john@doe.com"
     },
     "license" : {
       "name" : "Apache License, Version 2.0",
-      "url" : "http://www.apache.org/licenses/LICENSE-2.0"
+      "url" : "https://www.apache.org/licenses/LICENSE-2.0"
     },
     "version" : "1.2.3-SNAPSHOT"
   },
@@ -184,6 +184,6 @@
   },
   "externalDocs" : {
     "description" : "Lorem ipsum ...",
-    "url" : "http://www.wikipedia.org"
+    "url" : "https://www.openapis.org/"
   }
 }

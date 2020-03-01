@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * http://spec.openapis.org/oas/v3.0.3#operation-object
+ * https://spec.openapis.org/oas/v3.0.3#operation-object
  *
  * @author chhorz
  *

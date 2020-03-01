@@ -5,12 +5,12 @@
     "contact" : {
       "name" : "John Doe",
       "email" : "john@doe.com",
-      "url" : "http://www.google.com"
+      "url" : "https://www.google.com"
     },
     "version" : "1.2.3-SNAPSHOT",
     "license" : {
       "name" : "Apache License, Version 2.0",
-      "url" : "http://www.apache.org/licenses/LICENSE-2.0"
+      "url" : "https://www.apache.org/licenses/LICENSE-2.0"
     }
   },
   "servers" : [ {
@@ -165,6 +165,6 @@
   },
   "externalDocs" : {
     "description" : "Lorem ipsum ...",
-    "url" : "http://www.wikipedia.org"
+    "url" : "https://www.openapis.org/"
   }
 }

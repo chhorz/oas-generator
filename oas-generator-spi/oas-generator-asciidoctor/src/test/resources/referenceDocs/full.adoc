@@ -191,4 +191,4 @@ Lorem ipsum dolor sit amet. https://en.wikipedia.org[Link]
 Terms of Service ...
 
 == License
-The service is licensed under http://www.apache.org/licenses/LICENSE-2.0[Apache License, Version 2.0].
+The service is licensed under https://www.apache.org/licenses/LICENSE-2.0[Apache License, Version 2.0].

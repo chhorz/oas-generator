@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * http://spec.openapis.org/oas/v3.0.3#parameter-object
+ * https://spec.openapis.org/oas/v3.0.3#parameter-object
  *
  * @author chhorz
  *

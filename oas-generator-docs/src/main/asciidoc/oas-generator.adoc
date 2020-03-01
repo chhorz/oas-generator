@@ -170,11 +170,11 @@ info:
   version: 1.2.3-SNAPSHOT #<1>
   contact:
     name: John Doe
-    url: http://www.google.com
+    url: https://www.google.com
     email: john@doe.com
   license:
     name: Apache License, Version 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
 
 servers:
 - url: dev.server.lan
@@ -188,7 +188,7 @@ servers:
       description: The port of the application
 
 externalDocs:
-  url: http://www.wikipedia.org
+  url: https://www.openapis.org/
   description: Lorem ipsum ...
 
 securitySchemes:
@@ -201,7 +201,7 @@ tags:
   tag_name:
     description: The category collects all methods for orders.
     externalDocs:
-      url: http://www.google.com
+      url: https://www.google.com
 ----
 <1> The Version can be set fix within the configuration file.
 Otherwise the configuration file can be filtered by maven for example.
@@ -368,4 +368,4 @@ To configure the repository for your project to use the latest snapshot versions
 ----
 
 == License
-OAS Generator is Open Source software released under the link:http://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].
+OAS Generator is Open Source software released under the link:https://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].
