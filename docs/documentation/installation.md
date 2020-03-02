@@ -51,5 +51,8 @@ Another way to include an annotation processor is the [maven-compiler-plugin](ht
 It is not possible to mix this way of annotation processor integration with the dependency based one shown above.
 
 
-## Other
-_Others options like Gradle may be added soon._
+## Gradle
+_Gradle installation steps may be added soon._
+
+## Others
+_Others options may be added soon._

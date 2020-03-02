@@ -1,14 +1,15 @@
 # Extensibility
 
 The **OAS Generator** provides an _Service Provider Interface (SPI)_ to register other dependencies as post processors.
-All of them have to implement two specific interfaces that perform different actions on the internal domain model afterwards.
+These *post processors* will be executed after the generation of the `openapi.json` file.
+All of them have to implement two specific java interfaces that perform different actions on the internal domain model afterwards.
 
 Currently the following post processors are included in this project.
 They can be found in the `oas-generator-spi` module.
 
 ## AsciidoctorPostProcessor
-This post processor creates an `.adoc` file from the domain model.
-After the creation the `asciidoctor-maven-plugin` can be used to render the generated file.
+This post processor creates an AsciiDoctor file _(`.adoc`)_ from the OpenAPI domain model.
+After the creation the `asciidoctor-maven-plugin` needs to be added to render the generated file into the requested output format.
 
 ``` xml
 <dependency>
