@@ -67,18 +67,18 @@
 		<!-- dependency versions -->
 		<jackson-databind.version>2.10.2</jackson-databind.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
-		<snakeyaml.version>1.25</snakeyaml.version>
+		<snakeyaml.version>1.26</snakeyaml.version>
 
-		<spring-web.version>5.2.0.RELEASE</spring-web.version>
-		<spring-security-core.version>5.2.0.RELEASE</spring-security-core.version>
+		<spring-web.version>5.2.4.RELEASE</spring-web.version>
+		<spring-security-core.version>5.2.2.RELEASE</spring-security-core.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
 		<nohttp-checkstyle.version>0.0.4.RELEASE</nohttp-checkstyle.version>
 
 		<!-- test dependency versions -->
-		<assertj-core.version>3.14.0</assertj-core.version>
-		<junit-jupiter.verison>5.5.2</junit-jupiter.verison>
+		<assertj-core.version>3.15.0</assertj-core.version>
+		<junit-jupiter.verison>5.6.0</junit-jupiter.verison>
 		<jsonassert.version>1.5.0</jsonassert.version>
 
 		<!-- plugin versions -->
