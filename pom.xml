@@ -74,6 +74,8 @@
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
+		<nohttp-checkstyle.version>0.0.4.RELEASE</nohttp-checkstyle.version>
+
 		<!-- test dependency versions -->
 		<assertj-core.version>3.14.0</assertj-core.version>
 		<junit-jupiter.verison>5.5.2</junit-jupiter.verison>
@@ -86,6 +88,7 @@
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
 		<maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
 		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+		<maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
 		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
@@ -171,23 +174,18 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>${maven-checkstyle-plugin.version}</version>
 					<dependencies>
-						<dependency>
-							<groupId>com.puppycrawl.tools</groupId>
-							<artifactId>checkstyle</artifactId>
-							<version>8.29</version>
-						</dependency>
 						<dependency>
 							<groupId>io.spring.nohttp</groupId>
 							<artifactId>nohttp-checkstyle</artifactId>
-							<version>0.0.4.RELEASE</version>
+							<version>${nohttp-checkstyle.version}</version>
 						</dependency>
 					</dependencies>
 					<configuration>
 						<configLocation>nohttp-checkstyle.xml</configLocation>
 						<includes>**/*</includes>
-						<excludes>.git/**/*,/**/target/**/*,docs/.vuepress/**/*</excludes>
+						<excludes>.git/**/*,/**/target/**/*,docs/.vuepress/**/*,node_modules/**/*</excludes>
 						<sourceDirectories>./</sourceDirectories>
 					</configuration>
 					<executions>
