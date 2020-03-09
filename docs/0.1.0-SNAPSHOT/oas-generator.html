@@ -2102,7 +2102,11 @@ p {
 </li>
 </ul>
 </li>
-<li><a href="#_javadoc">3. Javadoc</a></li>
+<li><a href="#_javadoc">3. Javadoc</a>
+<ul class="sectlevel2">
+<li><a href="#_structure">3.1. Structure</a></li>
+</ul>
+</li>
 <li><a href="#_configuration">4. Configuration</a>
 <ul class="sectlevel2">
 <li><a href="#_compiler_options">4.1. Compiler options</a></li>
@@ -2156,7 +2160,9 @@ public class OrderController {
                 @RequestParam(defaultValue = "valid=true",
                               required = false) String filter) {
         // implementation
-    }</code></pre>
+    }
+
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2270,6 +2276,31 @@ This is necessary because Javadoc comments in general are unstructured comments 
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_structure"><a class="anchor" href="#_structure"></a><a class="link" href="#_structure">3.1. Structure</a></h3>
+<div class="paragraph">
+<p>In general the method description and summary is extracted for all API methods.
+The description is the complete text from the beginning of the Javadoc comment to the first Javadoc tag.
+Additionally the summary is, unless not marked with the <code>@summary</code> tag, the first sentence of the description.
+Other included tags are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>@param</code> tag for a description of the method parameters and and so the API parameters</p>
+</li>
+<li>
+<p><code>@return</code> for the semantic meaning of the response</p>
+</li>
+<li>
+<p>Custom <code>@response</code> tag to define HTTP response status and type</p>
+</li>
+<li>
+<p><code>@category</code> to represent OpenAPI tags</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2349,7 +2380,7 @@ The following table explains the availability:</p>
 <h3 id="configuration-file"><a class="anchor" href="#configuration-file"></a><a class="link" href="#configuration-file">4.2. Configuration file</a></h3>
 <div class="paragraph">
 <p>The configuration file is split into two parts.
-Both parts are in the same file (Default: <em>oas-generator.yml</em>).</p>
+Both parts are content of the same file (Default: <em>oas-generator.yml</em> within the classpath).</p>
 </div>
 <div class="listingblock">
 <div class="title">Content included in <code>openapi.json</code></div>
@@ -2426,27 +2457,45 @@ The version has to be replaced with an variable for the maven project version: <
 <div class="paragraph">
 <p>The content of the part above will be included in the resulting OpenAPI document as it is defined.
 It is static content that will not change often so it should be defined in a static way.
-Only data that could not be retrieved from the source code and is required by the OpenAPI specification must be present in the shown file.
-Parser properties shown below customize the behavior of the <strong>OAS Generator</strong>:</p>
+Only data that could not be retrieved from the source code and is required by the OpenAPI specification must be present in the shown file.</p>
+</div>
+<div class="paragraph">
+<p>Parser properties shown below customize the behavior of the <strong>OAS Generator</strong>:</p>
 </div>
 <div class="listingblock">
 <div class="title">Configuration to adjust the generator behavior</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Parser specific configuration
 parser:
-  logLevel: DEBUG
-  outputDir: ./target/openapi
-  outputFile: openapi.json
-  schemaFile: api-module/target/openapi/openapi-schema.json
+  logLevel: DEBUG # DEBUG, INFO, ERROR
+  outputDir: ./target/openapi <i class="conum" data-value="1"></i><b>(1)</b>
+  outputFile: openapi.json <i class="conum" data-value="1"></i><b>(1)</b>
+  schemaFile: api-module/target/openapi/openapi-schema.json <i class="conum" data-value="2"></i><b>(2)</b>
   schemaPackages:
-  - com.github.chhorz.openapi.spring.test.controller.external
-  postProcessor:
+  - com.github.chhorz.openapi.spring.test.controller.external <i class="conum" data-value="2"></i><b>(2)</b>
+  postProcessor: <i class="conum" data-value="3"></i><b>(3)</b>
     postProcessor1:
       key1: value1
       key2: value2
     postProcessor2:
       key1: value1</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Output path and filename of the generate OpenAPI specification file</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Path to previously generate schema files - <em>(Optional)</em></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Key-Value maps for custom post processors, e.g. <a href="#asciidoctor.properties">asciidoctor postprocessor</a> -  <em>(Optional)</em></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>The <code>postProcessor</code> properties define a generic list of properties.
@@ -2691,7 +2740,7 @@ To configure the repository for your project to use the latest snapshot versions
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0-SNAPSHOT<br>
-Last updated 2020-01-06 17:17:04 MEZ
+Last updated 2020-03-09 14:31:51 CET
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/obsidian.min.css">
