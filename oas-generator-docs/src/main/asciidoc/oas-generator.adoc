@@ -39,6 +39,8 @@ public class OrderController {
                               required = false) String filter) {
         // implementation
     }
+
+}
 ----
 
 == Installation
@@ -110,6 +112,17 @@ This project uses the link:https://github.com/chhorz/javadoc-parser[Javadoc Pars
 </dependency>
 ----
 
+=== Structure
+In general the method description and summary is extracted for all API methods.
+The description is the complete text from the beginning of the Javadoc comment to the first Javadoc tag.
+Additionally the summary is, unless not marked with the `@summary` tag, the first sentence of the description.
+Other included tags are:
+
+* `@param` tag for a description of the method parameters and and so the API parameters
+* `@return` for the semantic meaning of the response
+* Custom `@response` tag to define HTTP response status and type
+* `@category` to represent OpenAPI tags
+
 == Configuration
 The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
 Compiler options described below could be used to customize the name or path of the configuration file.
@@ -159,7 +172,7 @@ The following table explains the availability:
 [[configuration-file]]
 === Configuration file
 The configuration file is split into two parts.
-Both parts are in the same file (Default: _oas-generator.yml_).
+Both parts are content of the same file (Default: _oas-generator.yml_ within the classpath).
 
 .Content included in `openapi.json`
 [source,yaml]
@@ -229,6 +242,7 @@ The version has to be replaced with an variable for the maven project version: `
 The content of the part above will be included in the resulting OpenAPI document as it is defined.
 It is static content that will not change often so it should be defined in a static way.
 Only data that could not be retrieved from the source code and is required by the OpenAPI specification must be present in the shown file.
+
 Parser properties shown below customize the behavior of the *OAS Generator*:
 
 .Configuration to adjust the generator behavior
@@ -236,19 +250,22 @@ Parser properties shown below customize the behavior of the *OAS Generator*:
 ----
 # Parser specific configuration
 parser:
-  logLevel: DEBUG
-  outputDir: ./target/openapi
-  outputFile: openapi.json
-  schemaFile: api-module/target/openapi/openapi-schema.json
+  logLevel: DEBUG # DEBUG, INFO, ERROR
+  outputDir: ./target/openapi # <1>
+  outputFile: openapi.json # <1>
+  schemaFile: api-module/target/openapi/openapi-schema.json # <2>
   schemaPackages:
-  - com.github.chhorz.openapi.spring.test.controller.external
-  postProcessor:
+  - com.github.chhorz.openapi.spring.test.controller.external # <2>
+  postProcessor: # <3>
     postProcessor1:
       key1: value1
       key2: value2
     postProcessor2:
       key1: value1
 ----
+<1> Output path and filename of the generate OpenAPI specification file
+<2> Path to previously generate schema files - _(Optional)_
+<3> Key-Value maps for custom post processors, e.g. <<asciidoctor.properties,asciidoctor postprocessor>> -  _(Optional)_
 
 The `postProcessor` properties define a generic list of properties.
 In this map contributors can define their own properties for their post processors using the provided spi.
