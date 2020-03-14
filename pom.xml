@@ -1,3 +1,21 @@
+<!--
+
+
+       Copyright 2018-2020 the original author or authors.
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+            https://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -83,6 +101,7 @@
 
 		<!-- plugin versions -->
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
+		<license.maven.plugin.version>3.0</license.maven.plugin.version>
 		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 		<maven.gpg.plugin.version>1.5</maven.gpg.plugin.version>
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
@@ -197,6 +216,31 @@
 					</executions>
 				</plugin>
 				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>${license.maven.plugin.version}</version>
+					<configuration>
+						<header>${basedir}/../LICENSE.txt</header>
+						<strictCheck>true</strictCheck>
+						<excludes>
+							<exclude>**/*.adoc</exclude>
+							<exclude>docs/.vuepress/**</exclude>
+							<exclude>**/LICENSE.txt</exclude>
+							<exclude>build/**</exclude>
+							<exclude>.github/**</exclude>
+							<exclude>.gitattributes</exclude>
+							<exclude>.gitignore</exclude>
+						</excludes>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven-compiler-plugin.version}</version>
@@ -268,6 +312,13 @@
 		</pluginManagement>
 
 		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>LICENSE.txt</header>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
