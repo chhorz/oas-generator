@@ -18,6 +18,8 @@ package com.github.chhorz.openapi.common.domain;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
+import java.util.Objects;
+
 /**
  * https://spec.openapis.org/oas/v3.0.3#external-documentation-object
  *
@@ -46,4 +48,17 @@ public class ExternalDocumentation {
 		this.url = url;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ExternalDocumentation that = (ExternalDocumentation) o;
+		return Objects.equals(description, that.description) &&
+			url.equals(that.url);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(description, url);
+	}
 }

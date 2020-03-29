@@ -17,6 +17,7 @@
 package com.github.chhorz.openapi.common.domain;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.openapi.common.domain.meta.Required;
@@ -60,5 +61,18 @@ public class ServerVariableObject {
 		this.description = description;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ServerVariableObject that = (ServerVariableObject) o;
+		return Objects.equals(enumValue, that.enumValue) &&
+			defaultValue.equals(that.defaultValue) &&
+			Objects.equals(description, that.description);
+	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(enumValue, defaultValue, description);
+	}
 }

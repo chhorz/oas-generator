@@ -17,6 +17,7 @@
 package com.github.chhorz.openapi.common.domain;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
@@ -63,5 +64,20 @@ public class Server {
 			variables = new TreeMap<>();
 		}
 		variables.put(variable, variableObject);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Server server = (Server) o;
+		return url.equals(server.url) &&
+			Objects.equals(description, server.description) &&
+			Objects.equals(variables, server.variables);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(url, description, variables);
 	}
 }

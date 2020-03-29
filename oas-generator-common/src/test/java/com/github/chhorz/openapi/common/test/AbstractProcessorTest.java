@@ -16,12 +16,15 @@
  */
 package com.github.chhorz.openapi.common.test;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +39,11 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import com.github.chhorz.openapi.common.OpenAPIConstants;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.internal.ParseContextImpl;
+import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -56,6 +64,15 @@ public abstract class AbstractProcessorTest {
 		// configure the diagnostics collector.
 		collector = new DiagnosticCollector<>();
 		fileManager = javaCompiler.getStandardFileManager(collector, Locale.US, Charset.forName("UTF-8"));
+	}
+
+	public void testCompilation(final Processor processor, final Class<?>... classes) {
+		testCompilation(processor, emptyMap(),
+			Stream.of(classes)
+				.map(Class::getCanonicalName)
+				.map(clazz -> clazz.replaceAll("\\.", "/"))
+				.map(clazz -> String.format("src/test/java/%s.java", clazz))
+				.toArray(String[]::new));
 	}
 
 	public void testCompilation(final Processor processor, final Map<String, String> options, final Class<?>... classes) {
@@ -95,6 +112,31 @@ public abstract class AbstractProcessorTest {
 		} finally {
 			// no-op
 		}
+	}
+
+	/**
+	 * Creates a <i>json-path</i> context for the openapi file at the default output path.
+	 *
+	 * @return the json content
+	 */
+	public DocumentContext createJsonPathDocumentContext() {
+		return createJsonPathDocumentContext("target/openapi/openapi.json");
+	}
+
+	/**
+	 * Creates a <i>json-path</i> context for the openapi file at the given path.
+	 *
+	 * @param filePath the file path of the json file
+	 *
+	 * @return the json content
+	 */
+	public DocumentContext createJsonPathDocumentContext(String filePath) {
+		try {
+			return JsonPath.parse(Paths.get(filePath).toFile(), Configuration.builder().mappingProvider(new JacksonMappingProvider()).build());
+		} catch (IOException e) {
+			fail("Could not read openapi file.", e);
+		}
+		return new ParseContextImpl().parse("{}");
 	}
 
 }

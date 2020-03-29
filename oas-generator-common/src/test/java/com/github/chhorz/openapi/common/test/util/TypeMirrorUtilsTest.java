@@ -28,12 +28,15 @@ import javax.lang.model.util.Types;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
 import com.github.chhorz.openapi.common.test.util.resources.TestClass;
 import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
 
+@EnabledForJreRange(max = JRE.JAVA_8)
 public class TypeMirrorUtilsTest {
 
 	@RegisterExtension

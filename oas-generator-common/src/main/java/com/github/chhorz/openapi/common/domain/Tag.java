@@ -18,6 +18,8 @@ package com.github.chhorz.openapi.common.domain;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
+import java.util.Objects;
+
 /**
  * https://spec.openapis.org/oas/v3.0.3#tag-object
  *
@@ -55,4 +57,18 @@ public class Tag {
 		this.externalDocs = externalDocs;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Tag tag = (Tag) o;
+		return name.equals(tag.name) &&
+			Objects.equals(description, tag.description) &&
+			Objects.equals(externalDocs, tag.externalDocs);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, description, externalDocs);
+	}
 }

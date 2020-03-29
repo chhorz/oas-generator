@@ -29,6 +29,8 @@ import com.github.chhorz.openapi.common.util.ResponseUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.lang.model.type.TypeMirror;
@@ -42,6 +44,7 @@ import java.util.Map;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@EnabledForJreRange(max = JRE.JAVA_8)
 class ResponseUtilsTest {
 
 	@RegisterExtension

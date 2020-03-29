@@ -22,16 +22,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("github")
-public class TestController {
-
-	@GithubIssue("#1")
-	@GetMapping("1")
-	public ResponseEntity<Void> testVoidType() {
-		return ResponseEntity.ok().build();
-	}
+public class GitHubIssue002 {
 
 	@GithubIssue("#2")
-	@GetMapping("2")
+	@GetMapping("issue")
 	public ResponseEntity test(){
 		return ResponseEntity.ok().build();
 	}

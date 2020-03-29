@@ -24,6 +24,8 @@ import javax.lang.model.util.Elements;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import com.github.chhorz.openapi.common.domain.Reference;
@@ -31,6 +33,7 @@ import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
 import com.github.chhorz.openapi.common.test.util.resources.TestClass;
 import com.github.chhorz.openapi.common.util.ReferenceUtils;
 
+@EnabledForJreRange(max = JRE.JAVA_8)
 public class ReferenceUtilsTest {
 
 	@RegisterExtension

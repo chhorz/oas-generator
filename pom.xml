@@ -98,6 +98,7 @@
 		<assertj-core.version>3.15.0</assertj-core.version>
 		<junit-jupiter.verison>5.6.0</junit-jupiter.verison>
 		<jsonassert.version>1.5.0</jsonassert.version>
+		<json-path.version>2.4.0</json-path.version>
 
 		<!-- plugin versions -->
 		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
@@ -173,6 +174,12 @@
 				<version>${jsonassert.version}</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.jayway.jsonpath</groupId>
+				<artifactId>json-path</artifactId>
+				<version>${json-path.version}</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -225,6 +232,7 @@
 						<excludes>
 							<exclude>**/*.adoc</exclude>
 							<exclude>docs/.vuepress/**</exclude>
+							<exclude>node_modules/**</exclude>
 							<exclude>**/LICENSE.txt</exclude>
 							<exclude>build/**</exclude>
 							<exclude>.github/**</exclude>

@@ -29,6 +29,8 @@ import com.github.chhorz.openapi.common.util.LoggingUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.lang.model.type.PrimitiveType;
@@ -43,6 +45,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
+@EnabledForJreRange(max = JRE.JAVA_8)
 class SchemaUtilsTest {
 
 	@RegisterExtension
