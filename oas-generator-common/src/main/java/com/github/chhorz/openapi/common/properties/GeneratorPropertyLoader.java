@@ -176,7 +176,7 @@ public class GeneratorPropertyLoader {
 	}
 
 	private ExternalDocumentation createExternalDocumentation(ExternalDocsProperties externalDocsProperties) {
-		if (externalDocsProperties.getUrl() == null) {
+		if (externalDocsProperties.getUrl() == null && externalDocsProperties.getDescription() != null) {
 			throw new SpecificationViolationException("Missing 'url' property for 'ExternalDocumentation'.");
 		}
 

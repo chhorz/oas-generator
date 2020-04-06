@@ -41,14 +41,14 @@ public class TagUtils {
 		List<String> result = new ArrayList<>();
 
 		if (pathItemObject != null) {
-			getTags(pathItemObject, PathItemObject::getDelete).forEach(result::add);
-			getTags(pathItemObject, PathItemObject::getGet).forEach(result::add);
-			getTags(pathItemObject, PathItemObject::getHead).forEach(result::add);
-			getTags(pathItemObject, PathItemObject::getOptions).forEach(result::add);
-			getTags(pathItemObject, PathItemObject::getPatch).forEach(result::add);
-			getTags(pathItemObject, PathItemObject::getPost).forEach(result::add);
-			getTags(pathItemObject, PathItemObject::getPut).forEach(result::add);
-			getTags(pathItemObject, PathItemObject::getTrace).forEach(result::add);
+			result.addAll(getTags(pathItemObject, PathItemObject::getDelete));
+			result.addAll(getTags(pathItemObject, PathItemObject::getGet));
+			result.addAll(getTags(pathItemObject, PathItemObject::getHead));
+			result.addAll(getTags(pathItemObject, PathItemObject::getOptions));
+			result.addAll(getTags(pathItemObject, PathItemObject::getPatch));
+			result.addAll(getTags(pathItemObject, PathItemObject::getPost));
+			result.addAll(getTags(pathItemObject, PathItemObject::getPut));
+			result.addAll(getTags(pathItemObject, PathItemObject::getTrace));
 		}
 
 		return result;

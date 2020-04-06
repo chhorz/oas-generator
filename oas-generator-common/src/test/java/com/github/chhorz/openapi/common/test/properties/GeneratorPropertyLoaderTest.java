@@ -16,6 +16,7 @@
  */
 package com.github.chhorz.openapi.common.test.properties;
 
+import com.github.chhorz.openapi.common.domain.ExternalDocumentation;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
@@ -67,6 +68,52 @@ class GeneratorPropertyLoaderTest {
 		assertThat(parserProperties.getPostProcessor("one", ProcessorAProperties.class))
 			.isNotNull()
 			.isEmpty();
+	}
+
+	@Test
+	void testTagWithExternalDocumentation(){
+		// given
+		String tagName = "tag_a";
+
+		Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagTest.yml");
+		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+		// when
+		String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
+		ExternalDocumentation externalDocumentationForTag = generatorPropertyLoader.getExternalDocumentationForTag(tagName);
+
+		// then
+		assertThat(tagDescription)
+			.isNotNull()
+			.isEqualTo("Lorem ipsum");
+
+		assertThat(externalDocumentationForTag)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("url", "https://www.google.com")
+			.hasAllNullFieldsOrPropertiesExcept("url");
+	}
+
+	@GithubIssue("#9")
+	@Test
+	void testTagWithoutExternalDocumentation(){
+		// given
+		String tagName = "tag_b";
+
+		Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagTest.yml");
+		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+		// when
+		String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
+		ExternalDocumentation externalDocumentationForTag = generatorPropertyLoader.getExternalDocumentationForTag(tagName);
+
+		// then
+		assertThat(tagDescription)
+			.isNotNull()
+			.isEqualTo("Lorem ipsum");
+
+		assertThat(externalDocumentationForTag)
+			.isNotNull()
+			.hasAllNullFieldsOrProperties();
 	}
 
 }
