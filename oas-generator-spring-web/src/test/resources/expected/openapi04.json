@@ -1,0 +1,49 @@
+{
+  "openapi" : "3.0.3",
+  "info" : {
+    "title" : "MyService",
+    "version" : "1.2.3-SNAPSHOT"
+  },
+  "paths" : {
+    "/hello" : {
+      "get" : {
+        "summary" : "",
+        "description" : "",
+        "operationId" : "HelloWorldController#hello",
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "content" : {
+              "text/plain" : {
+                "schema" : {
+                  "deprecated" : false,
+                  "type" : "string",
+                  "description" : ""
+                }
+              }
+            }
+          }
+        },
+        "deprecated" : false,
+        "security" : [ { } ],
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "deprecated" : false,
+          "allowEmptyValue" : false,
+          "schema" : {
+            "deprecated" : false,
+            "type" : "string",
+            "description" : ""
+          }
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : { },
+    "securitySchemes" : { }
+  }
+}

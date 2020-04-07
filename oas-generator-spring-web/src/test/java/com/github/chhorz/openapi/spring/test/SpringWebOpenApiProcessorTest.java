@@ -22,6 +22,7 @@ import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor;
 import com.github.chhorz.openapi.spring.test.controller.ArticleController;
+import com.github.chhorz.openapi.spring.test.controller.HelloWorldController;
 import com.github.chhorz.openapi.spring.test.controller.HttpMethodsController;
 import com.github.chhorz.openapi.spring.test.controller.OrderController;
 import com.github.chhorz.openapi.spring.test.controller.external.ExternalResource;
@@ -31,11 +32,8 @@ import com.github.chhorz.openapi.spring.test.controller.resource.*;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ParseContext;
-import com.jayway.jsonpath.internal.ParseContextImpl;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.assertj.core.api.InstanceOfAssertFactory;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -96,16 +94,21 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 		port.setDescription("The port of the application");
 		port.setEnumValue(Arrays.asList("8080", "443"));
 
-		Server server = new Server();
-		server.setDescription("Internal DEV-Stage");
-		server.setUrl("dev.server.lan");
-		server.setVariables(singletonMap("port", port));
+		Server server01 = new Server();
+		server01.setDescription("Internal DEV-Stage");
+		server01.setUrl("dev01.server.lan");
+		server01.setVariables(singletonMap("port", port));
+
+		Server server02 = new Server();
+		server02.setDescription("Internal DEV-Stage");
+		server02.setUrl("dev02.server.lan");
+		server02.setVariables(singletonMap("port", port));
 
 		Server[] servers = ctx.read("$.servers", Server[].class);
 		assertThat(servers)
 			.isNotNull()
-			.hasSize(1)
-			.contains(server);
+			.hasSize(2)
+			.contains(server01, server02);
 
 		// tags
 		ExternalDocumentation orderTagDocs = new ExternalDocumentation();
@@ -167,6 +170,15 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 		assertThat(article.getProperties())
 			.hasSize(4)
 			.containsOnlyKeys("name", "number", "price", "type");
+	}
+
+	@Test
+	void testArticleControllerWithMinimalConfigFile() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator04.yml"), HelloWorldController.class);
+
+		// compare result with reference documentation
+		compareFileContent("expected/openapi04.json", "openapi/openapi.json");
 	}
 
 	@Test

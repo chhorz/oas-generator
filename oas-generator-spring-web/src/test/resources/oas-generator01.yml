@@ -28,15 +28,19 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0
 
 servers:
-- url: dev.server.lan
-  description: Internal DEV-Stage
-  variables:
-    port:
-      enumValues:
-        - 8080
-        - 443
-      defaultValue: "443"
-      description: The port of the application
+  - url: dev01.server.lan
+    description: Internal DEV-Stage
+    variables: &server_variables
+      port:
+        enumValues:
+          - 8080
+          - 443
+        defaultValue: "443"
+        description: The port of the application
+  - url: dev02.server.lan
+    description: Internal DEV-Stage
+    variables: *server_variables
+
 externalDocs:
   url: https://www.openapis.org/
   description: Lorem ipsum ...
@@ -60,4 +64,4 @@ parser:
   outputFile: openapi01.json
   schemaFile: ./src/test/resources/openapi.json
   schemaPackages:
-  - com.github.chhorz.openapi.spring.test.controller.external
+    - com.github.chhorz.openapi.spring.test.controller.external
