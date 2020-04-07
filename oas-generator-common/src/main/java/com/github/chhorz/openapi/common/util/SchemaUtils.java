@@ -117,7 +117,7 @@ public class SchemaUtils {
 
 		Map<TypeMirror, Schema> schemaMap = new HashMap<>();
 
-		log.info("Parsing type: %s", typeMirror.toString());
+		log.debug("Parsing type: %s", typeMirror.toString());
 
 		Schema schema = new Schema();
 
