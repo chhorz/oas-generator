@@ -1,16 +1,14 @@
 name: Java CI
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # test against LTS versions:
-        java: [ 8, 11 ]
-
+        # test against LTS and current version:
+        java: [ 8, 11, 14 ]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v1
