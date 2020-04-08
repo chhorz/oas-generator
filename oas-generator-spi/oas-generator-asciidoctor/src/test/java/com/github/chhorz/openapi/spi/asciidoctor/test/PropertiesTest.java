@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PropertiesTest {
@@ -53,6 +54,22 @@ class PropertiesTest {
 		assertThat(asciidoctorProperties.getOutputPath()).isEqualTo("./target/openapi");
 		assertThat(asciidoctorProperties.getOutputFile()).isEqualTo("/openapi.adoc");
 		assertThat(asciidoctorProperties.getExceptionLogging()).isTrue();
+	}
+
+	@Test
+	void testEmptyPropertyLoading() {
+		// given
+		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(singletonMap("propertiesPath", "oas-generator-empty.yml"));
+
+		// when
+		Optional<AsciidoctorProperties> optionalAsciidoctorProperties = generatorPropertyLoader.getParserProperties()
+			.getPostProcessor("asciidoctor", AsciidoctorProperties.class);
+
+		// then
+		assertThat(optionalAsciidoctorProperties)
+			.isNotNull()
+			.isNotPresent();
+
 	}
 
 }

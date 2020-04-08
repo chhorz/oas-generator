@@ -92,14 +92,16 @@ public class ParserProperties {
 	}
 
 	public <T extends AbstractPostProcessorProperties> Optional<T> getPostProcessor(final String key, final Class<T> clazz) {
-		LinkedHashMap yamlProperties = postProcessor.get(key);
-		try {
-			return Optional.of(clazz.getConstructor(Map.class).newInstance(yamlProperties));
-		} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+		if (postProcessor != null) {
+			LinkedHashMap yamlProperties = postProcessor.get(key);
 			try {
-				return Optional.ofNullable(clazz.newInstance());
-			} catch (InstantiationException | IllegalAccessException ex) {
-				ex.printStackTrace();
+				return Optional.of(clazz.getConstructor(Map.class).newInstance(yamlProperties));
+			} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+				try {
+					return Optional.ofNullable(clazz.newInstance());
+				} catch (InstantiationException | IllegalAccessException ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 		return Optional.empty();
