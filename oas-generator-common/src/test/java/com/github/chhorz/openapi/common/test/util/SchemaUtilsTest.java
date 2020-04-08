@@ -138,6 +138,22 @@ class SchemaUtilsTest {
 	@Test
 	void objectTest() {
 		// given
+		TypeMirror objectType = elements.getTypeElement(Object.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(objectType);
+
+		// then
+		assertThat(schemaMap).hasSize(1)
+			.containsKey(objectType)
+			.extracting(map -> map.get(objectType))
+			.extracting("type", "format")
+			.containsExactly(Type.OBJECT, null);
+	}
+
+	@Test
+	void customObjectTest() {
+		// given
 		TypeMirror test = elements.getTypeElement(TestClass.class.getCanonicalName()).asType();
 		TypeMirror other = elements.getTypeElement(Other.class.getCanonicalName()).asType();
 

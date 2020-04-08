@@ -143,6 +143,10 @@ public class SchemaUtils {
 			schema.setType(Type.OBJECT);
 
 			schemaMap.put(typeMirror, schema);
+		} else if (isTypeOf(elements, types, typeMirror, Object.class)) {
+			schema.setType(Type.OBJECT);
+
+			schemaMap.put(typeMirror, schema);
 		} else if (TypeKind.ARRAY.equals(typeMirror.getKind())) {
 			schema.setType(Type.ARRAY);
 
