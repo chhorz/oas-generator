@@ -77,22 +77,22 @@ public class Components {
 		return schemas;
 	}
 
-	public void putRequestBody(final String key, final RequestBody requestBody) {
+	public void putRequestBody(final TypeMirror typeMirror, final RequestBody requestBody) {
 		if (requestBodies == null) {
 			requestBodies = new TreeMap<>();
 		}
-		requestBodies.put(normalizeKey(key), requestBody);
+		requestBodies.put(getKey(typeMirror), requestBody);
 	}
 
 	public Map<String, RequestBody> getRequestBodies() {
 		return requestBodies;
 	}
 
-	public void putResponse(final String key, final Response response) {
+	public void putResponse(final TypeMirror typeMirror, final Response response) {
 		if (responses == null) {
 			responses = new TreeMap<>();
 		}
-		responses.put(normalizeKey(key), response);
+		responses.put(getKey(typeMirror), response);
 	}
 
 	public Map<String, Response> getResponses() {
@@ -105,10 +105,6 @@ public class Components {
 
 	public void setSecuritySchemes(final Map<String, SecurityScheme> securitySchemes) {
 		this.securitySchemes = securitySchemes;
-	}
-
-	private String normalizeKey(final String key) {
-		return key.substring(key.lastIndexOf('.') + 1);
 	}
 
 	private String getKey(final TypeMirror typeMirror) {

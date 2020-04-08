@@ -18,6 +18,8 @@ package com.github.chhorz.openapi.common.domain;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
+import java.util.Objects;
+
 /**
  * https://spec.openapis.org/oas/v3.0.3#reference-object
  *

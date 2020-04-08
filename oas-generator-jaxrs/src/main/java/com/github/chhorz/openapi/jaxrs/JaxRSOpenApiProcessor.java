@@ -230,7 +230,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 			}
 
 			openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
-			openApi.getComponents().putRequestBody(requestBody.asType().toString(), r);
+			openApi.getComponents().putRequestBody(requestBody.asType(), r);
 
 			operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
 		}

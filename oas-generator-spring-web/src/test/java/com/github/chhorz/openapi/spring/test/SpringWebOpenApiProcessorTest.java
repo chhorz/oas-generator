@@ -28,6 +28,7 @@ import com.github.chhorz.openapi.spring.test.controller.OrderController;
 import com.github.chhorz.openapi.spring.test.controller.external.ExternalResource;
 import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue001;
 import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue002;
+import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue012;
 import com.github.chhorz.openapi.spring.test.controller.resource.*;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
@@ -226,6 +227,33 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT)
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasAllNullFieldsOrPropertiesExcept("type", "deprecated");
+	}
+
+	@Test
+	@GithubIssue("#12")
+	void getGithubIssue012() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue012.class);
+
+		// create json-path context
+		DocumentContext ctx = createJsonPathDocumentContext();
+
+		// assertions
+		Components components = ctx.read("$.components", Components.class);
+
+		assertThat(components.getRequestBodies())
+			.containsOnlyKeys("Test");
+
+		RequestBody requestBody = ctx.read("$.components.requestBodies.Test", RequestBody.class);
+
+		assertThat(requestBody)
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("required", true);
+
+		String reference = ctx.read("$.components.requestBodies.Test.content.application/json.schema.$ref", String.class);
+
+		assertThat(reference)
+			.isEqualTo("#/components/schemas/Test");
 	}
 
 	/**
