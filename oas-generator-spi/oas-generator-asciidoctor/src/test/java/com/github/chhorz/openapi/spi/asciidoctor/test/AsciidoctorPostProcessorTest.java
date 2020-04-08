@@ -175,11 +175,15 @@ class AsciidoctorPostProcessorTest {
 		orderTypeSchema.addEnumValue("STANDARD");
 		orderTypeSchema.addEnumValue("RETURN");
 
+		Schema valueSchema = new Schema();
+		valueSchema.setDescription("Lorem ipsum");
+
 		Schema orderSchema = new Schema();
 		orderSchema.setDescription("This is an order resource.");
 		orderSchema.putProperty("number", longSchema);
 		orderSchema.putProperty("articles", articlesSchema);
 		orderSchema.putProperty("type", orderTypeSchema);
+		orderSchema.putProperty("value", valueSchema);
 
 		Map<String, Schema> schemas = new HashMap<>();
 		schemas.put("ArticleResource", articleSchema);

@@ -32,6 +32,7 @@ Map a Schema to an asciidoc string or reference
 <#if schema.$ref??>
 <<<@clean_ref schema.$ref/>>>
 <#else>
+<#if schema.type??>
 <#if schema.type.openApiValue == "array">
 <#if schema.items.$ref??>
 <<<@clean_ref schema.items.$ref/>,<@clean_ref_name schema.items.$ref/>[]>>
@@ -42,6 +43,7 @@ ${schema.items.type.openApiValue}[]
 ${schema.type.openApiValue} (<#list schema.enumValues as enumValue>${enumValue}<#sep>, </#list>)
 <#else>
 ${schema.type.openApiValue} <#if schema.format??>(${schema.format.openApiValue})</#if>
+</#if>
 </#if>
 </#if>
 </#compress>

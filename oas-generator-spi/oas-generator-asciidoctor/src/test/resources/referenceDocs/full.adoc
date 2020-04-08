@@ -160,6 +160,10 @@ m| integer (int64)
 m| enum (STANDARD, RETURN)
 |
 
+| value
+m|
+| pass:[Lorem ipsum]
+
 |===
 
 
