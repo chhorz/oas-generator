@@ -16,6 +16,7 @@ ${openapi.info.contact.name} <${openapi.info.contact.email}>
 :revnumber: ${openapi.info.version}
 :icons: font
 :toc: left
+:toclevels: 3
 
 <#if openapi.info.description??>
 
@@ -38,9 +39,12 @@ ${openapi.info.description}
 <#if openapi.servers??>
 
 == Servers
+|===
 <#list openapi.servers as s>
 <@server s/>
+
 </#list>
+|===
 
 </#if>
 <#--

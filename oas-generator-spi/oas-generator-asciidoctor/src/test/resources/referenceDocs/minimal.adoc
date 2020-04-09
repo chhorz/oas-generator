@@ -3,4 +3,5 @@
 :revnumber: 1.2.3-SNAPSHOT
 :icons: font
 :toc: left
+:toclevels: 3
 
