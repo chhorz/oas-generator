@@ -241,6 +241,15 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 		// assertions
 		Components components = ctx.read("$.components", Components.class);
 
+		assertThat(components.getSchemas())
+			.containsOnlyKeys("Test");
+
+		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
 		assertThat(components.getRequestBodies())
 			.containsOnlyKeys("Test");
 

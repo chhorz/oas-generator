@@ -115,7 +115,7 @@ public class SchemaUtils {
 			return Collections.emptyMap();
 		}
 
-		Map<TypeMirror, Schema> schemaMap = new HashMap<>();
+		Map<TypeMirror, Schema> schemaMap = new LinkedHashMap<>();
 
 		log.debug("Parsing type: %s", typeMirror.toString());
 

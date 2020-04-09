@@ -98,12 +98,12 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         return Stream.of(RequestMapping.class,
-                GetMapping.class,
-                PostMapping.class,
-                PutMapping.class,
-                DeleteMapping.class,
-                PatchMapping.class,
-                ExceptionHandler.class)
+					GetMapping.class,
+					PostMapping.class,
+					PutMapping.class,
+					DeleteMapping.class,
+					PatchMapping.class,
+					ExceptionHandler.class)
                 .map(Class::getCanonicalName)
                 .collect(toSet());
     }
@@ -139,7 +139,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                 .flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
                 .filter(element -> element instanceof ExecutableElement)
                 .map(ExecutableElement.class::cast)
-                // .peek(e -> System.out.println(e))
                 .forEach(this::mapOperationMethod);
 
         Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
@@ -199,7 +198,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                 }
 
                 for (RequestMethod requestMethod : requestMethods) {
-
                     Operation operation = new Operation();
                     operation.setSummary(javaDoc.getSummary());
                     operation.setDescription(javaDoc.getDescription());
