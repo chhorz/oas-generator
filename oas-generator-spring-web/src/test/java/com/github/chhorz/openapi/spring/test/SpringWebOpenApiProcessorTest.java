@@ -28,6 +28,7 @@ import com.github.chhorz.openapi.spring.test.controller.OrderController;
 import com.github.chhorz.openapi.spring.test.controller.external.ExternalResource;
 import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue001;
 import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue002;
+import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue011;
 import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue012;
 import com.github.chhorz.openapi.spring.test.controller.resource.*;
 import com.jayway.jsonpath.Configuration;
@@ -227,6 +228,28 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT)
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasAllNullFieldsOrPropertiesExcept("type", "deprecated");
+	}
+
+	@Test
+	@GithubIssue("#11")
+	void getGithubIssue011() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue011.class);
+
+		// create json-path context
+		DocumentContext ctx = createJsonPathDocumentContext();
+
+		// assertions
+		Components components = ctx.read("$.components", Components.class);
+
+		assertThat(components.getSchemas())
+			.containsOnlyKeys("Test", "Link", "LinkRelation");
+
+		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 	}
 
 	@Test

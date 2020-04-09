@@ -28,6 +28,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -259,7 +260,7 @@ public class SchemaUtils {
 
 				TypeMirror superType = element.asType();
 
-				while (!isSameType(superType, object) && !isSameType(types.erasure(superType), enumeration)) {
+				while (!(superType instanceof NoType) && !isSameType(superType, object) && !isSameType(types.erasure(superType), enumeration)) {
 					TypeElement typeElement = elements.getTypeElement(types.erasure(superType).toString());
 
 					typeElement.getEnclosedElements()

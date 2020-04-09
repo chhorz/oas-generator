@@ -79,6 +79,14 @@
 			<artifactId>json-path</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- dependencies that is needed for tests -->
+		<dependency>
+			<groupId>org.springframework.hateoas</groupId>
+			<artifactId>spring-hateoas</artifactId>
+			<version>1.0.4.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
