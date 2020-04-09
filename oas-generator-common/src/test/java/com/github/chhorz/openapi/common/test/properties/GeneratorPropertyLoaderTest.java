@@ -24,6 +24,7 @@ import com.github.chhorz.openapi.common.test.properties.test.ProcessorAPropertie
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,9 +66,13 @@ class GeneratorPropertyLoaderTest {
 		assertThat(parserProperties)
 			.isNotNull();
 
-		assertThat(parserProperties.getPostProcessor("one", ProcessorAProperties.class))
+		Optional<ProcessorAProperties> optionalProcessorAProperties = parserProperties.getPostProcessor("one", ProcessorAProperties.class);
+
+		assertThat(optionalProcessorAProperties)
 			.isNotNull()
-			.isEmpty();
+			.isPresent()
+			.get()
+			.hasFieldOrPropertyWithValue("valueTwo", 0);
 	}
 
 	@Test

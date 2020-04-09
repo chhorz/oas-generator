@@ -24,4 +24,4 @@ parser:
       templateFile: openapi.ftlh
       outputPath: ./target/openapi
       outputFile: /openapi.adoc
-      standaloneFile: true
+      standaloneFile: false

@@ -19,6 +19,8 @@ package com.github.chhorz.openapi.common.properties;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Collections.emptyMap;
+
 /**
  * Base class for custom post processor properties.
  *
@@ -28,8 +30,8 @@ public abstract class AbstractPostProcessorProperties {
 
 	private Map<String, Object> postProcessorProperties;
 
-	public AbstractPostProcessorProperties(Map<String, Object> yamlPropertyMap) {
-		this.postProcessorProperties = yamlPropertyMap;
+	public AbstractPostProcessorProperties(Map<String, Object> postProcessorProperties) {
+		setPostProcessorProperties(postProcessorProperties);
 	}
 
 	public Map<String, Object> getPostProcessorProperties() {
@@ -37,6 +39,9 @@ public abstract class AbstractPostProcessorProperties {
 	}
 
 	public void setPostProcessorProperties(Map<String, Object> postProcessorProperties) {
+		if (postProcessorProperties == null) {
+			postProcessorProperties = emptyMap();
+		}
 		this.postProcessorProperties = postProcessorProperties;
 	}
 

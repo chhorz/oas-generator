@@ -47,7 +47,7 @@ class PropertiesTest {
 		assertThat(asciidoctorProperties.getPostProcessorProperties())
 			.containsOnlyKeys("standaloneFile", "templateLocalizedLookup", "templatePath", "templateFile", "outputPath", "outputFile","logging");
 
-		assertThat(asciidoctorProperties.getStandaloneFile()).isTrue();
+		assertThat(asciidoctorProperties.getStandaloneFile()).isFalse();
 		assertThat(asciidoctorProperties.getLocalizedLookup()).isFalse();
 		assertThat(asciidoctorProperties.getTemplatePath()).isEqualTo("./templates/freemarker");
 		assertThat(asciidoctorProperties.getTemplateFile()).isEqualTo("openapi.ftlh");
@@ -68,8 +68,28 @@ class PropertiesTest {
 		// then
 		assertThat(optionalAsciidoctorProperties)
 			.isNotNull()
-			.isNotPresent();
+			.isPresent();
 
+		assertThat(optionalAsciidoctorProperties.get().getStandaloneFile())
+			.isTrue();
+	}
+
+	@Test
+	void testNullPropertyLoading() {
+		// given
+		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(singletonMap("propertiesPath", "oas-generator-null.yml"));
+
+		// when
+		Optional<AsciidoctorProperties> optionalAsciidoctorProperties = generatorPropertyLoader.getParserProperties()
+			.getPostProcessor("asciidoctor", AsciidoctorProperties.class);
+
+		// then
+		assertThat(optionalAsciidoctorProperties)
+			.isNotNull()
+			.isPresent();
+
+		assertThat(optionalAsciidoctorProperties.get().getStandaloneFile())
+			.isTrue();
 	}
 
 }

@@ -17,5 +17,3 @@
 
 parser:
   logLevel: DEBUG
-  postProcessor:
-    asciidoctor:
