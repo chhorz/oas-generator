@@ -85,6 +85,52 @@ m! pass:[*/*]
 
 |===
 
+[[ArticleController_postArticle]]
+==== POST
+
+[cols="1,1,1,1,2"]
+|===
+4+h| /articles
+^h| POST
+
+h| Tags
+4+| icon:tag[] <<TAG_1,TAG_1>>
+
+h| Summary
+4+| Here we post a new article.
+
+h| Description
+4+| Here we create a new article. Or something else.
+
+5+h| Request Body
+
+e|Type
+4+a| <<components_requestBodies_ArticleResource,ArticleResource>>
+
+5+h| Responses
+
+e| Status
+4+e| Response
+
+^| default
+4+a| The response description
+
+[cols="1,2"]
+!===
+e! MediaType
+e! Schema
+
+m! pass:[application/json]
+! <<components_schemas_ArticleResource>>
+
+!===
+
+.1+h| Security
+4+| icon:lock[] <<key,_key_>>
+
+
+|===
+
 
 === /orders
 [[OrderController_getOrders]]
@@ -167,6 +213,22 @@ m| enum (STANDARD, RETURN)
 | value
 m|
 | pass:[Lorem ipsum]
+
+|===
+
+
+
+=== Request Bodies
+[[components_requestBodies_ArticleResource]]
+==== ArticleResource
+*REQUIRED* Lorem ipsum
+
+[cols="1,2", options="header"]
+|===
+| Type | Schema
+
+| application/json
+m| <<components_schemas_ArticleResource>>
 
 |===
 

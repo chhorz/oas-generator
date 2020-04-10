@@ -38,17 +38,17 @@ public class HttpMethodsController {
     }
 
     @PostMapping("post")
-    public void post(Article article){
+    public void post(@RequestBody Article article){
 
     }
 
     @PutMapping("put")
-    public Article put(Article article){
+    public Article put(@RequestBody Article article){
         return new Article();
     }
 
     @PatchMapping("patch")
-    public Article patch(Article article){
+    public Article patch(@RequestBody Article article){
         return new Article();
     }
 

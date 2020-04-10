@@ -50,6 +50,18 @@ ${schema.type.openApiValue} <#if schema.format??>(${schema.format.openApiValue})
 </#macro>
 <#--
 
+Map a MediaType to an asciidoc formatted element
+
+-->
+<#macro asciidoc_mediatype mediatype>
+<#compress>
+<#if mediatype.schema??>
+<@asciidoc_schema mediatype.schema/>
+</#if>
+</#compress>
+</#macro>
+<#--
+
 Replace special characters within asciidoc
 
 -->

@@ -122,6 +122,30 @@ m| <@asciidoc_schema property/>
 </#if>
 <#if openapi.components.securitySchemes??>
 
+=== Request Bodies
+<#list openapi.components.requestBodies as requestBodyName, requestBody>
+[[components_requestBodies_${requestBodyName}]]
+==== ${requestBodyName}
+<#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description??>${requestBody.description}</#if>
+
+<#if requestBody.content??>
+[cols="1,2", options="header"]
+|===
+| Type | Schema
+
+<#list requestBody.content as type, mediatype>
+| ${type}
+m| <@asciidoc_mediatype mediatype/>
+
+</#list>
+|===
+
+</#if>
+</#list>
+
+</#if>
+<#if openapi.components.securitySchemes??>
+
 === Security Schemes
 [cols="1,1,2", options="header"]
 |===

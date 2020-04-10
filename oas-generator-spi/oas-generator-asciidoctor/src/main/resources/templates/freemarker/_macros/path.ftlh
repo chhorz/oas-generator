@@ -50,6 +50,13 @@ m| <@asciidoc_schema parameter.schema/>
 
 </#list>
 </#if>
+<#if operation.requestBodyReference??>
+5+h| Request Body
+
+e|Type
+4+a| <<<@clean_ref operation.requestBodyReference.$ref/>,<@clean_ref_name operation.requestBodyReference.$ref/>>>
+
+</#if>
 <#if operation.responses??>
 5+h| Responses
 

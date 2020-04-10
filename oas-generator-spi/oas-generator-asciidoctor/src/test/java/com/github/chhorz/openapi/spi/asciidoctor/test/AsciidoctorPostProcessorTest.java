@@ -196,9 +196,18 @@ class AsciidoctorPostProcessorTest {
 		Map<String, SecurityScheme> securitySchemes = new HashMap<>();
 		securitySchemes.put("key", scheme);
 
+		MediaType articleResourceJsonType = new MediaType();
+		articleResourceJsonType.setSchema(new Reference("#/components/schemas/ArticleResource"));
+
+		RequestBody articleResourceRequestBody = new RequestBody();
+		articleResourceRequestBody.setRequired(true);
+		articleResourceRequestBody.setDescription("Lorem ipsum");
+		articleResourceRequestBody.putContent("application/json", articleResourceJsonType);
+
 		Components components = new Components();
 		components.putAllParsedSchemas(schemas);
 		components.setSecuritySchemes(securitySchemes);
+		components.putRequestBody("ArticleResource", articleResourceRequestBody);
 
 		Parameter filter = new Parameter();
 		filter.setDeprecated(false);
@@ -225,6 +234,19 @@ class AsciidoctorPostProcessorTest {
 		getArticles.addParameterObject(filter);
 		getArticles.putDefaultResponse(response);
 
+		Response articleResponse = new Response();
+		articleResponse.setDescription("The response description");
+		articleResponse.putContent("application/json", articleResourceJsonType);
+
+		Operation postArticle = new Operation();
+		postArticle.setOperationId("ArticleController#postArticle");
+		postArticle.setSummary("Here we post a new article.");
+		postArticle.setDescription("Here we create a new article. Or something else.");
+		postArticle.addTag("TAG_1");
+		postArticle.setSecurity(Collections.singletonList(Collections.singletonMap("key", new ArrayList<>())));
+		postArticle.setRequestBodyReference(new Reference("#/components/requestBodies/ArticleResource"));
+		postArticle.putDefaultResponse(articleResponse);
+
 		Operation getOrders = new Operation();
 		getOrders.setDeprecated(true);
 		getOrders.setOperationId("OrderController#getOrders");
@@ -238,6 +260,7 @@ class AsciidoctorPostProcessorTest {
 
 		PathItemObject articles = new PathItemObject();
 		articles.setGet(getArticles);
+		articles.setPost(postArticle);
 
 		OpenAPI openApi = new OpenAPI();
 		openApi.setOpenapi("3.0.3");

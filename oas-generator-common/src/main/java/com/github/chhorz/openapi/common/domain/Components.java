@@ -84,6 +84,13 @@ public class Components {
 		requestBodies.put(getKey(typeMirror), requestBody);
 	}
 
+	public void putRequestBody(final String type, final RequestBody requestBody) {
+		if (requestBodies == null) {
+			requestBodies = new TreeMap<>();
+		}
+		requestBodies.put(type, requestBody);
+	}
+
 	public Map<String, RequestBody> getRequestBodies() {
 		return requestBodies;
 	}
