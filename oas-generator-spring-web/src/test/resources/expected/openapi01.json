@@ -78,7 +78,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ ],
         "requestBody" : {
           "$ref" : "#/components/requestBodies/Order"
@@ -147,7 +146,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ {
           "name" : "id",
           "in" : "path",

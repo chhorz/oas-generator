@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ParserProperties {
 
@@ -28,6 +29,7 @@ public class ParserProperties {
 
 	private String outputDir;
 	private String outputFile;
+	private String outputFormat;
 	private String schemaFile;
 
 	private List<String> schemaPackages;
@@ -38,6 +40,7 @@ public class ParserProperties {
 		logLevel = GeneratorPropertiesDefaults.PARSER_LOG_LEVEL;
 		outputDir = GeneratorPropertiesDefaults.PARSER_OUTPUT_DIR;
 		outputFile = GeneratorPropertiesDefaults.PARSER_OUTPUT_FILE;
+		outputFormat = GeneratorPropertiesDefaults.PARSER_OUTPUT_FORMAT;
 		schemaFile = GeneratorPropertiesDefaults.PARSER_SCHEMA_FILE;
 		schemaPackages = GeneratorPropertiesDefaults.PARSER_SCHEMA_PACKAGES;
 		postProcessor = GeneratorPropertiesDefaults.PARSER_POST_PROCESSOR;
@@ -65,6 +68,25 @@ public class ParserProperties {
 
 	public void setOutputFile(final String outputFile) {
 		this.outputFile = outputFile;
+	}
+
+	public String getOutputFormat() {
+		return outputFormat;
+	}
+
+	public void setOutputFormat(String outputFormat) {
+		this.outputFormat = outputFormat;
+	}
+
+	public boolean hasJsonOutputFormat(){
+		return outputFormat != null && Stream.of(outputFormat.split(","))
+			.anyMatch(format -> format.equalsIgnoreCase("JSON"));
+	}
+
+	public boolean hasYamlOutputFormat(){
+		return outputFormat != null && Stream.of(outputFormat.split(","))
+			.map(String::toLowerCase)
+			.anyMatch(format -> format.matches("ya?ml"));
 	}
 
 	public String getSchemaFile() {

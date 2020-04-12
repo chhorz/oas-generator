@@ -27,75 +27,94 @@ import java.util.Optional;
 //import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.properties.ParserProperties;
 
 public class FileUtils {
 
-	private ObjectMapper objectMapper;
+	private final LoggingUtils log;
+
+	private final ObjectMapper objectMapper;
+	private final ObjectMapper yamlObjectMapper;
 
 	private File outputFile;
+	private File yamlOutputFile;
 	private File sourceFile;
 
-	// private Yaml yaml;
-
 	public FileUtils(final ParserProperties properties) {
-		Path outputPath = Paths.get(properties.getOutputDir(), properties.getOutputFile());
+		log = new LoggingUtils(properties);
+
+		if (properties.hasJsonOutputFormat()) {
+			this.outputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".json");
+		}
+
+		if (properties.hasYamlOutputFormat()) {
+			this.yamlOutputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".yaml");
+		}
+
 		if (properties.getSchemaFile() != null) {
 			sourceFile = Paths.get(properties.getSchemaFile()).toFile();
 		}
 
-		if (!Files.exists(outputPath)) {
-			try {
-				Files.createDirectories(outputPath.getParent());
-				Files.createFile(outputPath);
-
-				this.outputFile = outputPath.toFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			this.outputFile = outputPath.toFile();
-		}
-
-		objectMapper = new ObjectMapper();
-		objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
-		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-		// TODO include
-		objectMapper.setSerializationInclusion(Include.NON_NULL);
-		// objectMapper.setSerializationInclusion(Include.NON_EMPTY);
+		objectMapper = configureObjectMapper(new ObjectMapper());
+		yamlObjectMapper = configureObjectMapper(new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)));
 	}
 
 	public void writeToFile(final OpenAPI openAPI) {
-		try {
-			objectMapper.writeValue(outputFile, openAPI);
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (outputFile != null) {
+			try {
+				objectMapper.writeValue(outputFile, openAPI);
+			} catch (IOException e) {
+				log.error("Could not write .json file", e);
+			}
+		}
+		if (yamlOutputFile != null) {
+			try {
+				yamlObjectMapper.writeValue(yamlOutputFile, openAPI);
+			} catch (IOException e) {
+				log.error("Could not write .yaml file", e);
+			}
 		}
 	}
 
 	public Optional<OpenAPI> readFromFile() {
 		try {
 			return Optional.ofNullable(objectMapper.readValue(sourceFile, OpenAPI.class));
-		} catch (JsonParseException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Could not read schema file", e);
 		}
-
 		return Optional.empty();
+	}
+
+	private File createOutputFile(String outputDir, String outputFile, String fileFormat){
+		Path outputPath = Paths.get(outputDir, outputFile + fileFormat);
+		if (!Files.exists(outputPath)) {
+			try {
+				Files.createDirectories(outputPath.getParent());
+				Files.createFile(outputPath);
+
+				return outputPath.toFile();
+			} catch (IOException e) {
+				log.error("Could not create file " + outputPath, e);
+				return null;
+			}
+		} else {
+			return outputPath.toFile();
+		}
+	}
+
+	private ObjectMapper configureObjectMapper(ObjectMapper objectMapper){
+		objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
+		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		// TODO configure include
+		objectMapper.setSerializationInclusion(Include.NON_NULL);
+		// objectMapper.setSerializationInclusion(Include.NON_EMPTY);
+		return objectMapper;
 	}
 
 }

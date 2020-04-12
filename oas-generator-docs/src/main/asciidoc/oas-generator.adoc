@@ -284,7 +284,8 @@ Parser properties shown below customize the behavior of the *OAS Generator*:
 parser:
   logLevel: DEBUG # DEBUG, INFO, ERROR
   outputDir: ./target/openapi # <1>
-  outputFile: openapi.json # <1>
+  outputFile: openapi # <1>
+  outputFormay: json,yaml
   schemaFile: api-module/target/openapi/openapi-schema.json # <2>
   schemaPackages:
     - com.github.chhorz.openapi.spring.test.controller.external # <2>
@@ -295,7 +296,7 @@ parser:
     postProcessor2:
       key1: value1
 ----
-<1> Output path and filename of the generate OpenAPI specification file
+<1> Output path and filename of the generated OpenAPI specification file
 <2> Path to previously generate schema files - _(Optional)_
 <3> Key-Value maps for custom post processors, e.g. <<asciidoctor.properties,asciidoctor postprocessor>> -  _(Optional)_
 

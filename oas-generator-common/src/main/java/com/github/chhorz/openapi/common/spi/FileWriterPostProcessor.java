@@ -30,8 +30,8 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 
 	private static final Integer POST_PROCESSOR_ORDER = Integer.MIN_VALUE;
 
-	private FileUtils fileUtils;
-	private LoggingUtils log;
+	private final FileUtils fileUtils;
+	private final LoggingUtils log;
 
 	FileWriterPostProcessor(final ParserProperties parserProperties) {
 		log = new LoggingUtils(parserProperties);

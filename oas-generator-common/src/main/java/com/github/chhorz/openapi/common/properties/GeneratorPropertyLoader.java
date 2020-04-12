@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import static java.util.stream.Collectors.toList;
@@ -187,7 +188,7 @@ public class GeneratorPropertyLoader {
 		return externalDocs;
 	}
 
-	public Map<String, SecurityScheme> createSecuritySchemesFromProperties() {
+	public Optional<Map<String, SecurityScheme>> createSecuritySchemesFromProperties() {
 		Map<String, SecurityScheme> map = new TreeMap<>();
 		for (Entry<String, SecuritySchemeProperties> entry : properties.getSecuritySchemes().entrySet()) {
 			SecuritySchemeProperties property = entry.getValue();
@@ -203,7 +204,7 @@ public class GeneratorPropertyLoader {
 			// TODO add other security schemes
 
 		}
-		return map;
+		return map.isEmpty() ? Optional.empty() : Optional.of(map);
 	}
 
 	public String getDescriptionForTag(final String tag) {

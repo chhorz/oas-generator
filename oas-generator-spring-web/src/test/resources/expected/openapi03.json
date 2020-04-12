@@ -29,7 +29,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ ]
       }
     },
@@ -51,7 +50,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ ]
       }
     },
@@ -77,7 +75,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ ]
       }
     },
@@ -99,7 +96,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ ]
       }
     },
@@ -114,7 +110,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ ]
       }
     },
@@ -136,7 +131,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ ]
       }
     }

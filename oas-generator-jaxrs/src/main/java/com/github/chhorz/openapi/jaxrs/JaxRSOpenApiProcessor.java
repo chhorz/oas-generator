@@ -16,6 +16,7 @@
  */
 package com.github.chhorz.openapi.jaxrs;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -265,9 +266,8 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 				.map(CategoryTag::getCategoryName)
 				.forEach(operation::addTag);
 
-		Map<String, List<String>> securityInformation = getSecurityInformation(executableElement,
-				openApi.getComponents().getSecuritySchemes());
-		operation.setSecurity(Arrays.asList(securityInformation));
+		getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes())
+			.ifPresent(securityInformation -> operation.setSecurity(singletonList(securityInformation)));
 
 		PathItemObject pathItemObject = openApi.getPaths().getOrDefault(path, new PathItemObject());
 		if (executableElement.getAnnotation(GET.class) != null) {

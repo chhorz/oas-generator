@@ -49,7 +49,8 @@ public final class GeneratorPropertiesDefaults {
 
 	static final String PARSER_LOG_LEVEL = LoggingUtils.INFO;
 	static final String PARSER_OUTPUT_DIR = "./target/openapi";
-	static final String PARSER_OUTPUT_FILE = "openapi.json";
+	static final String PARSER_OUTPUT_FILE = "openapi";
+	static final String PARSER_OUTPUT_FORMAT = "json,yaml";
 	static final String PARSER_SCHEMA_FILE = null;
 	static final List<String> PARSER_SCHEMA_PACKAGES = new ArrayList<>();
 	static final Map<String, LinkedHashMap> PARSER_POST_PROCESSOR = new LinkedHashMap<>();

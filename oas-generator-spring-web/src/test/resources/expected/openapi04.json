@@ -25,7 +25,6 @@
           }
         },
         "deprecated" : false,
-        "security" : [ { } ],
         "parameters" : [ {
           "name" : "name",
           "in" : "query",
@@ -43,7 +42,6 @@
     }
   },
   "components" : {
-    "schemas" : { },
-    "securitySchemes" : { }
+    "schemas" : { }
   }
 }

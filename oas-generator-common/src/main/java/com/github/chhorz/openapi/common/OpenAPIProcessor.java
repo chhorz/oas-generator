@@ -74,7 +74,7 @@ public interface OpenAPIProcessor {
 		openApi.setExternalDocs(propertyLoader.createExternalDocsFromProperties());
 
 		Components components = new Components();
-		components.setSecuritySchemes(propertyLoader.createSecuritySchemesFromProperties());
+		propertyLoader.createSecuritySchemesFromProperties().ifPresent(components::setSecuritySchemes);
 		openApi.setComponents(components);
 
 		return openApi;
@@ -110,7 +110,7 @@ public interface OpenAPIProcessor {
 	 * @param map the security schemes from the configuration file
 	 * @return map of security information
 	 */
-	default Map<String, List<String>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
+	default Optional<Map<String, List<String>>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
 		Map<String, List<String>> securityInformation = new TreeMap<>();
 
 		for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
@@ -123,7 +123,7 @@ public interface OpenAPIProcessor {
 			}
 		}
 
-		return securityInformation;
+		return securityInformation.isEmpty() ? Optional.empty() : Optional.of(securityInformation);
 	}
 
 	/**

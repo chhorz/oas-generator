@@ -61,7 +61,8 @@ tags:
 parser:
   logLevel: DEBUG
   outputDir: ./target/oas-test
-  outputFile: openapi01.json
+  outputFile: openapi01
+  outputFormat: json,yaml
   schemaFile: ./src/test/resources/openapi.json
   schemaPackages:
     - com.github.chhorz.openapi.spring.test.controller.external

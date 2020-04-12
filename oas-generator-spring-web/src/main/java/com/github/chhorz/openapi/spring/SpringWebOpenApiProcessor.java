@@ -329,9 +329,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                             .map(CategoryTag::getCategoryName)
                             .forEach(operation::addTag);
 
-                    Map<String, List<String>> securityInformation = getSecurityInformation(executableElement,
-                            openApi.getComponents().getSecuritySchemes());
-                    operation.setSecurity(singletonList(securityInformation));
+                    getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes())
+						.ifPresent(securityInformation -> operation.setSecurity(singletonList(securityInformation)));
 
                     PathItemObject pathItemObject = openApi.getPaths().getOrDefault(cleanedPath, new PathItemObject());
                     switch (requestMethod) {

@@ -83,7 +83,7 @@
 		<java.target.version>1.8</java.target.version>
 
 		<!-- dependency versions -->
-		<jackson-databind.version>2.10.3</jackson-databind.version>
+		<jackson.version>2.10.3</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
 		<snakeyaml.version>1.26</snakeyaml.version>
 
@@ -120,7 +120,12 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>${jackson-databind.version}</version>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.dataformat</groupId>
+				<artifactId>jackson-dataformat-yaml</artifactId>
+				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.chhorz</groupId>
