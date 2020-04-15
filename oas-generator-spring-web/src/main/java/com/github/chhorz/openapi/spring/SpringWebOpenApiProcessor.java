@@ -151,20 +151,22 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         List<String> tags = new ArrayList<>();
         openApi.getPaths()
                 .values()
-                .stream()
-                .map(tagUtils::getAllTags)
-                .flatMap(Collection::stream)
-                .forEach(tags::add);
+			.stream()
+			.map(tagUtils::getAllTags)
+			.flatMap(Collection::stream)
+			.forEach(tags::add);
 
-        tags.stream()
-                .distinct()
-                .map(tagUtils::createTag)
-                .forEach(openApi::addTag);
+		tags.stream()
+			.distinct()
+			.map(tagUtils::createTag)
+			.forEach(openApi::addTag);
 
-        runPostProcessors(parserProperties, openApi);
+		if (roundEnv.processingOver()) {
+			runPostProcessors(parserProperties, openApi);
+		}
 
-        return false;
-    }
+		return false;
+	}
 
     private void mapOperationMethod(final ExecutableElement executableElement) {
         log.debug("Parsing method: %s", getOperationId(executableElement));

@@ -112,19 +112,20 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 		TagUtils tagUtils = new TagUtils(propertyLoader);
 		List<String> tags = new ArrayList<>();
-		openApi.getPaths()
-				.values()
-				.stream()
-				.map(tagUtils::getAllTags)
-				.flatMap(Collection::stream)
-				.forEach(tags::add);
+		openApi.getPaths().values()
+			.stream()
+			.map(tagUtils::getAllTags)
+			.flatMap(Collection::stream)
+			.forEach(tags::add);
 
 		tags.stream()
-				.distinct()
-				.map(tagUtils::createTag)
-				.forEach(openApi::addTag);
+			.distinct()
+			.map(tagUtils::createTag)
+			.forEach(openApi::addTag);
 
-		runPostProcessors(parserProperties, openApi);
+		if (roundEnv.processingOver()) {
+			runPostProcessors(parserProperties, openApi);
+		}
 
 		return false;
 	}
