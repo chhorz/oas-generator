@@ -141,15 +141,15 @@
     },
     "requestBodies" : {
       "Article" : {
-        "description" : "",
-        "content" : {
-          "*/*" : {
-            "schema" : {
-              "$ref" : "#/components/schemas/Article"
+        "description": "the new article",
+        "content": {
+          "*/*": {
+            "schema": {
+              "$ref": "#/components/schemas/Article"
             }
           }
         },
-        "required" : true
+        "required": true
       }
     },
     "securitySchemes" : {

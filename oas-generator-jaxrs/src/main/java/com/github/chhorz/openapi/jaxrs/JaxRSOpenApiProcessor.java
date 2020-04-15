@@ -16,12 +16,18 @@
  */
 package com.github.chhorz.openapi.jaxrs;
 
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-
-import java.util.*;
-import java.util.stream.Stream;
+import com.github.chhorz.javadoc.JavaDoc;
+import com.github.chhorz.javadoc.JavaDocParser;
+import com.github.chhorz.javadoc.tags.CategoryTag;
+import com.github.chhorz.javadoc.tags.ParamTag;
+import com.github.chhorz.javadoc.tags.ReturnTag;
+import com.github.chhorz.openapi.common.OpenAPIProcessor;
+import com.github.chhorz.openapi.common.domain.*;
+import com.github.chhorz.openapi.common.domain.Parameter.In;
+import com.github.chhorz.openapi.common.domain.Schema.Type;
+import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
+import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.util.*;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -34,44 +40,13 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.PATCH;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
+import java.util.*;
+import java.util.stream.Stream;
 
-import com.github.chhorz.javadoc.JavaDoc;
-import com.github.chhorz.javadoc.JavaDocParser;
-import com.github.chhorz.javadoc.tags.CategoryTag;
-import com.github.chhorz.javadoc.tags.ParamTag;
-import com.github.chhorz.javadoc.tags.ReturnTag;
-import com.github.chhorz.openapi.common.OpenAPIProcessor;
-import com.github.chhorz.openapi.common.domain.MediaType;
-import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.domain.Operation;
-import com.github.chhorz.openapi.common.domain.Parameter;
-import com.github.chhorz.openapi.common.domain.Parameter.In;
-import com.github.chhorz.openapi.common.domain.PathItemObject;
-import com.github.chhorz.openapi.common.domain.RequestBody;
-import com.github.chhorz.openapi.common.domain.Response;
-import com.github.chhorz.openapi.common.domain.Schema;
-import com.github.chhorz.openapi.common.domain.Schema.Type;
-import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
-import com.github.chhorz.openapi.common.properties.ParserProperties;
-import com.github.chhorz.openapi.common.util.LoggingUtils;
-import com.github.chhorz.openapi.common.util.ReferenceUtils;
-import com.github.chhorz.openapi.common.util.ResponseUtils;
-import com.github.chhorz.openapi.common.util.SchemaUtils;
-import com.github.chhorz.openapi.common.util.TagUtils;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
@@ -208,26 +183,22 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		if (requestBody != null) {
 			RequestBody r = new RequestBody();
 
-			Optional<ParamTag> optionalParameter = javaDoc.getTags(ParamTag.class)
-					.stream()
-					.filter(tag -> requestBody.toString().equals(tag.getParamName()))
-					.findFirst();
-			if (optionalParameter.isPresent()) {
-				r.setDescription(optionalParameter.get().getParamDescription());
-			} else {
-				r.setDescription("");
-			}
+			javaDoc.getTags(ParamTag.class)
+				.stream()
+				.filter(tag -> requestBody.toString().equals(tag.getParamName()))
+				.findFirst()
+				.ifPresent(parameter -> r.setDescription(parameter.getParamDescription()));
 
 			r.setRequired(Boolean.TRUE);
 
+			MediaType mediaType = schemaUtils.createMediaType(requestBody.asType());
 			Consumes consumes = executableElement.getAnnotation(Consumes.class);
 			if (consumes != null) {
 				for (String c : consumes.value()) {
-					MediaType mediaType = new MediaType();
-					mediaType.setSchema(ReferenceUtils.createSchemaReference(requestBody.asType()));
-
 					r.putContent(c, mediaType);
 				}
+			} else {
+				r.putContent("*/*", mediaType);
 			}
 
 			openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));

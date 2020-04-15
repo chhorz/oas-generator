@@ -45,7 +45,6 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.print.attribute.standard.Media;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -242,39 +241,30 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                             .orElse(null);
 
                     if (requestBody != null) {
-                        com.github.chhorz.openapi.common.domain.RequestBody r = new com.github.chhorz.openapi.common.domain.RequestBody();
+						com.github.chhorz.openapi.common.domain.RequestBody r = new com.github.chhorz.openapi.common.domain.RequestBody();
 
-                        Optional<ParamTag> optionalParameter = javaDoc.getTags(ParamTag.class)
-                                .stream()
-                                .filter(tag -> requestBody.toString().equals(tag.getParamName()))
-                                .findFirst();
-                        if (optionalParameter.isPresent()) {
-                            r.setDescription(optionalParameter.get().getParamDescription());
-                        } else {
-                            r.setDescription("");
-                        }
+						javaDoc.getTags(ParamTag.class)
+							.stream()
+							.filter(tag -> requestBody.toString().equals(tag.getParamName()))
+							.findFirst()
+							.ifPresent(parameter -> r.setDescription(parameter.getParamDescription()));
 
-                        r.setRequired(Boolean.TRUE);
+						r.setRequired(Boolean.TRUE);
 
-                        if (requestMapping.consumes().length == 0) {
-                            MediaType mediaType = new MediaType();
-                            mediaType.setSchema(ReferenceUtils.createSchemaReference(requestBody.asType()));
+						MediaType mediaType = schemaUtils.createMediaType(requestBody.asType());
+						if (requestMapping.consumes().length == 0) {
+							r.putContent("*/*", mediaType);
+						} else {
+							for (String consumes : requestMapping.consumes()) {
+								r.putContent(consumes, mediaType);
+							}
+						}
 
-                            r.putContent("*/*", mediaType);
-                        } else {
-                            for (String consumes : requestMapping.consumes()) {
-                                MediaType mediaType = new MediaType();
-                                mediaType.setSchema(ReferenceUtils.createSchemaReference(requestBody.asType()));
+						openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
+						openApi.getComponents().putRequestBody(requestBody.asType(), r);
 
-                                r.putContent(consumes, mediaType);
-                            }
-                        }
-
-                        openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
-                        openApi.getComponents().putRequestBody(requestBody.asType(), r);
-
-                        operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
-                    }
+						operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
+					}
 
                     String returnTag = "";
                     List<ReturnTag> returnTags = javaDoc.getTags(ReturnTag.class);

@@ -16,16 +16,15 @@
  */
 package com.github.chhorz.openapi.common.util;
 
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -49,14 +48,7 @@ public class ResponseUtils {
 		Response response = new Response();
 		response.setDescription(description != null ? description : "");
 
-		Schema schema = schemaUtils.mapTypeMirrorToSchema(typeMirror).get(typeMirror);
-
-		MediaType mediaType = new MediaType();
-		if (schema.getType().equals(Schema.Type.ARRAY)) {
-			mediaType.setSchema(schema);
-		} else {
-			mediaType.setSchema(ReferenceUtils.createSchemaReference(typeMirror));
-		}
+		MediaType mediaType = schemaUtils.createMediaType(typeMirror);
 
 		if (produces == null || produces.length == 0) {
 			response.putContent("*/*", mediaType);

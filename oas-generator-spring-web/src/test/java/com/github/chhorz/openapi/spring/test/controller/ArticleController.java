@@ -16,9 +16,8 @@
  */
 package com.github.chhorz.openapi.spring.test.controller;
 
-import org.springframework.web.bind.annotation.*;
-
 import com.github.chhorz.openapi.spring.test.controller.resource.Article;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +26,20 @@ public class ArticleController {
 
 	@RequestMapping(path = "/articles/{id}", method = RequestMethod.GET)
 	public Article getArticle(
-			@PathVariable final Long id,
-			@RequestParam(required = false, defaultValue = "") final String filter) {
+		@PathVariable final Long id,
+		@RequestParam(required = false, defaultValue = "") final String filter) {
 		return new Article();
 	}
 
+	/**
+	 * @param article the new article
+	 */
 	@RequestMapping(path = "/articles", method = RequestMethod.POST)
-	public void createArticle(@RequestBody final Article article) {}
+	public void createArticle(@RequestBody final Article article) {
+	}
 
 	@GetMapping(path = "/articles")
-	public List<Article> getArticles(){
+	public List<Article> getArticles() {
 		return new ArrayList<>();
 	}
 

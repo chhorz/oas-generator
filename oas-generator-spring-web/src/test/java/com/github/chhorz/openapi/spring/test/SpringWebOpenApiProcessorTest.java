@@ -279,12 +279,20 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 		RequestBody requestBody = ctx.read("$.components.requestBodies.Test", RequestBody.class);
 
 		assertThat(requestBody)
-			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("description", null)
 			.hasFieldOrPropertyWithValue("required", true);
 
-		String reference = ctx.read("$.components.requestBodies.Test.content.application/json.schema.$ref", String.class);
+		Schema requestBodySchema = ctx.read("$.components.requestBodies.Test.content.application/json.schema", Schema.class);
 
-		assertThat(reference)
+		assertThat(requestBodySchema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.ARRAY);
+
+		String testObjectReference = ctx.read("$.components.requestBodies.Test.content.application/json.schema.items.$ref", String.class);
+
+		assertThat(testObjectReference)
+			.isNotNull()
 			.isEqualTo("#/components/schemas/Test");
 	}
 

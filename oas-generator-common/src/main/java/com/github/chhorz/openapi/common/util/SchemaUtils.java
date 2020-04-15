@@ -16,34 +16,29 @@
  */
 package com.github.chhorz.openapi.common.util;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.function.Function;
-
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.NoType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
+import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
+
+import javax.lang.model.element.*;
+import javax.lang.model.type.NoType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.*;
+import java.util.function.Function;
 
 public class SchemaUtils {
 
@@ -101,14 +96,27 @@ public class SchemaUtils {
 		Map<TypeMirror, Schema> typeMirrorMap = new HashMap<>();
 
 		packageElement.getEnclosedElements()
-				.stream()
-				.map(Element::asType)
-				.map(this::mapTypeMirrorToSchema)
-				.flatMap(map -> map.entrySet().stream())
-				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
-				.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
+			.stream()
+			.map(Element::asType)
+			.map(this::mapTypeMirrorToSchema)
+			.flatMap(map -> map.entrySet().stream())
+			.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
+			.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
 
 		return typeMirrorMap;
+	}
+
+	public MediaType createMediaType(final TypeMirror typeMirror) {
+		Schema schema = mapTypeMirrorToSchema(typeMirror).get(typeMirror);
+
+		MediaType mediaType = new MediaType();
+		if (schema.getType().equals(Schema.Type.ARRAY)) {
+			mediaType.setSchema(schema);
+		} else {
+			mediaType.setSchema(ReferenceUtils.createSchemaReference(typeMirror));
+		}
+
+		return mediaType;
 	}
 
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
