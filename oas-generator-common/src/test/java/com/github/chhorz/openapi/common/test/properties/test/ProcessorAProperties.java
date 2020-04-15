@@ -16,9 +16,8 @@
  */
 package com.github.chhorz.openapi.common.test.properties.test;
 
-import com.github.chhorz.openapi.common.properties.AbstractPostProcessorProperties;
+import com.github.chhorz.openapi.common.properties.domain.AbstractPostProcessorProperties;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ProcessorAProperties extends AbstractPostProcessorProperties {

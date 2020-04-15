@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.common.spi;
 
-import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 
 /**
  * Creates a new {@link PostProcessorProvider} for the {@link FileWriterPostProcessor}.

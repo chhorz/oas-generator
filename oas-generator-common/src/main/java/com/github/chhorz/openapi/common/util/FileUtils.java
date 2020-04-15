@@ -16,6 +16,15 @@
  */
 package com.github.chhorz.openapi.common.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.github.chhorz.openapi.common.domain.OpenAPI;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,15 +34,6 @@ import java.util.Optional;
 
 //import org.yaml.snakeyaml.DumperOptions;
 //import org.yaml.snakeyaml.Yaml;
-
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.properties.ParserProperties;
 
 public class FileUtils {
 

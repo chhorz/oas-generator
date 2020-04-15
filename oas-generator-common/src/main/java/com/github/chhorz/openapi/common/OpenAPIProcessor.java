@@ -16,13 +16,6 @@
  */
 package com.github.chhorz.openapi.common;
 
-import static com.github.chhorz.openapi.common.OpenAPIConstants.OPEN_API_VERSION;
-import static java.util.stream.Collectors.toSet;
-
-import java.util.*;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
@@ -31,7 +24,7 @@ import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
-import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
 import com.github.chhorz.openapi.common.util.FileUtils;
@@ -39,6 +32,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
+import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import static com.github.chhorz.openapi.common.OpenAPIConstants.OPEN_API_VERSION;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Interface to provide some common functionality for all OpenAPI annotation processors.

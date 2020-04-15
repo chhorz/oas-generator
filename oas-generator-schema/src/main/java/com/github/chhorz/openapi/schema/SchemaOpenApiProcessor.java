@@ -16,11 +16,16 @@
  */
 package com.github.chhorz.openapi.schema;
 
-import static java.util.stream.Collectors.toSet;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
+import com.github.chhorz.openapi.common.OpenAPIConstants;
+import com.github.chhorz.openapi.common.OpenAPIProcessor;
+import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
+import com.github.chhorz.openapi.common.domain.Components;
+import com.github.chhorz.openapi.common.domain.OpenAPI;
+import com.github.chhorz.openapi.common.domain.Schema;
+import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.util.LoggingUtils;
+import com.github.chhorz.openapi.common.util.SchemaUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -31,17 +36,11 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
-import com.github.chhorz.openapi.common.OpenAPIConstants;
-import com.github.chhorz.openapi.common.OpenAPIProcessor;
-import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
-import com.github.chhorz.openapi.common.domain.Components;
-import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.domain.Schema;
-import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
-import com.github.chhorz.openapi.common.properties.ParserProperties;
-import com.github.chhorz.openapi.common.util.LoggingUtils;
-import com.github.chhorz.openapi.common.util.SchemaUtils;
+import static java.util.stream.Collectors.toSet;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
@@ -96,7 +95,9 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
 		openApi.getComponents().putAllSchemas(schemaMap);
 
-		runPostProcessors(parserProperties, openApi);
+		if (roundEnv.processingOver()) {
+			runPostProcessors(parserProperties, openApi);
+		}
 
 		return false;
 	}

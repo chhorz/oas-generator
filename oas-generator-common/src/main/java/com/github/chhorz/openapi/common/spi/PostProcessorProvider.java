@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.common.spi;
 
-import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 
 /**
  * Instances of this interface will be used to create post processor instances.

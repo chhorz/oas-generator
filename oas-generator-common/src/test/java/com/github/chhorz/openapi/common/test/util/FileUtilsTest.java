@@ -16,23 +16,22 @@
  */
 package com.github.chhorz.openapi.common.test.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.github.chhorz.openapi.common.domain.OpenAPI;
+import com.github.chhorz.openapi.common.domain.Reference;
+import com.github.chhorz.openapi.common.domain.Schema;
+import com.github.chhorz.openapi.common.domain.Schema.Format;
+import com.github.chhorz.openapi.common.domain.Schema.Type;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.util.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.domain.Reference;
-import com.github.chhorz.openapi.common.domain.Schema;
-import com.github.chhorz.openapi.common.domain.Schema.Format;
-import com.github.chhorz.openapi.common.domain.Schema.Type;
-import com.github.chhorz.openapi.common.properties.ParserProperties;
-import com.github.chhorz.openapi.common.util.FileUtils;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileUtilsTest {
 

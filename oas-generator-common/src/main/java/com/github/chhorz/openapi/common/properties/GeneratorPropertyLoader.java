@@ -20,6 +20,7 @@ import com.github.chhorz.openapi.common.OpenAPIConstants;
 import com.github.chhorz.openapi.common.SpecificationViolationException;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.SecurityScheme.Type;
+import com.github.chhorz.openapi.common.properties.domain.*;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -33,11 +34,17 @@ import java.util.TreeMap;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Utility class to load property file into domain objects.
+ *
+ * @author chhorz
+ */
 public class GeneratorPropertyLoader {
 
-	private Map<String, String> processorOptions;
+	private final LoggingUtils log;
 
-	private LoggingUtils log;
+	private final Map<String, String> processorOptions;
+
 	private GeneratorProperties properties;
 
 	public GeneratorPropertyLoader(final Map<String, String> processorOptions) {
@@ -170,13 +177,13 @@ public class GeneratorPropertyLoader {
 		ExternalDocsProperties externalDocsProperties = properties.getExternalDocs();
 
 		if (externalDocsProperties != null) {
-			return createExternalDocumentation(externalDocsProperties);
+			return createExternalDocumentation(externalDocsProperties).orElse(null);
 		} else {
 			return null;
 		}
 	}
 
-	private ExternalDocumentation createExternalDocumentation(ExternalDocsProperties externalDocsProperties) {
+	private Optional<ExternalDocumentation> createExternalDocumentation(ExternalDocsProperties externalDocsProperties) {
 		if (externalDocsProperties.getUrl() == null && externalDocsProperties.getDescription() != null) {
 			throw new SpecificationViolationException("Missing 'url' property for 'ExternalDocumentation'.");
 		}
@@ -185,7 +192,11 @@ public class GeneratorPropertyLoader {
 		externalDocs.setDescription(externalDocsProperties.getDescription());
 		externalDocs.setUrl(resolveUrl(externalDocsProperties.getUrl()));
 
-		return externalDocs;
+		if (externalDocs.getUrl() != null) {
+			return Optional.of(externalDocs);
+		} else {
+			return Optional.empty();
+		}
 	}
 
 	public Optional<Map<String, SecurityScheme>> createSecuritySchemesFromProperties() {
@@ -215,7 +226,7 @@ public class GeneratorPropertyLoader {
 	public ExternalDocumentation getExternalDocumentationForTag(final String tag) {
 		TagProperties tagProperties = properties.getTags().getOrDefault(tag, null);
 		if (tagProperties != null) {
-			return createExternalDocumentation(tagProperties.getExternalDocs());
+			return createExternalDocumentation(tagProperties.getExternalDocs()).orElse(null);
 		}
 		return null;
 	}

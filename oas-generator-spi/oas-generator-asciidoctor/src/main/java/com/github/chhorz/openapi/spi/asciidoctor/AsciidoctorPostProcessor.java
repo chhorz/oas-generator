@@ -17,7 +17,7 @@
 package com.github.chhorz.openapi.spi.asciidoctor;
 
 import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import freemarker.core.PlainTextOutputFormat;

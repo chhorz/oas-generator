@@ -17,7 +17,7 @@
 package com.github.chhorz.openapi.spi.asciidoctor.test;
 
 import com.github.chhorz.openapi.common.domain.*;
-import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorPostProcessor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

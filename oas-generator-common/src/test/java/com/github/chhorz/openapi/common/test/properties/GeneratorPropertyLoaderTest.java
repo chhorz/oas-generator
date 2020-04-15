@@ -18,7 +18,7 @@ package com.github.chhorz.openapi.common.test.properties;
 
 import com.github.chhorz.openapi.common.domain.ExternalDocumentation;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
-import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.common.test.properties.test.ProcessorAProperties;
 import org.junit.jupiter.api.Test;
@@ -117,8 +117,7 @@ class GeneratorPropertyLoaderTest {
 			.isEqualTo("Lorem ipsum");
 
 		assertThat(externalDocumentationForTag)
-			.isNotNull()
-			.hasAllNullFieldsOrProperties();
+			.isNull();
 	}
 
 }

@@ -16,10 +16,9 @@
  */
 package com.github.chhorz.openapi.spi.asciidoctor;
 
-import com.github.chhorz.openapi.common.properties.AbstractPostProcessorProperties;
+import com.github.chhorz.openapi.common.properties.domain.AbstractPostProcessorProperties;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public  class AsciidoctorProperties extends AbstractPostProcessorProperties {

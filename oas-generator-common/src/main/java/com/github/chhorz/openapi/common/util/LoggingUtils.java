@@ -17,7 +17,7 @@
 
 package com.github.chhorz.openapi.common.util;
 
-import com.github.chhorz.openapi.common.properties.ParserProperties;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 
 import java.util.Objects;
 
