@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -55,7 +54,6 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class SpringWebOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
 
     private Elements elements;
@@ -96,38 +94,43 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Stream.of(RequestMapping.class,
-					GetMapping.class,
-					PostMapping.class,
-					PutMapping.class,
-					DeleteMapping.class,
-					PatchMapping.class,
-					ExceptionHandler.class)
-                .map(Class::getCanonicalName)
-                .collect(toSet());
-    }
+		return Stream.of(RequestMapping.class,
+			GetMapping.class,
+			PostMapping.class,
+			PutMapping.class,
+			DeleteMapping.class,
+			PatchMapping.class,
+			ExceptionHandler.class)
+			.map(Class::getCanonicalName)
+			.collect(toSet());
+	}
 
-    @Override
-    public Set<String> getSupportedOptions() {
-        return getDocGeneratorOptions();
-    }
+	@Override
+	public SourceVersion getSupportedSourceVersion() {
+		return SourceVersion.latest();
+	}
 
-    @Override
-    public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        Set<? extends Element> exceptionHandler = roundEnv.getElementsAnnotatedWith(ExceptionHandler.class);
-        if (exceptionHandler != null && !exceptionHandler.isEmpty()) {
-            exceptionHandler.stream()
-                    .filter(element -> element instanceof ExecutableElement)
-                    .map(ExecutableElement.class::cast)
-                    .peek(exElement -> log.info("Parsing exception handler: %s", exElement))
-                    .map(ExecutableElement::getReturnType)
-                    .map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
-                    .map(schemaUtils::mapTypeMirrorToSchema)
-                    .forEach(openApi.getComponents()::putAllSchemas);
+	@Override
+	public Set<String> getSupportedOptions() {
+		return getOasGeneratorOptions();
+	}
 
-            exceptionHanderReturntype = exceptionHandler.stream()
-                    .filter(element -> element instanceof ExecutableElement)
-                    .map(ExecutableElement.class::cast)
+	@Override
+	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
+		Set<? extends Element> exceptionHandler = roundEnv.getElementsAnnotatedWith(ExceptionHandler.class);
+		if (exceptionHandler != null && !exceptionHandler.isEmpty()) {
+			exceptionHandler.stream()
+				.filter(element -> element instanceof ExecutableElement)
+				.map(ExecutableElement.class::cast)
+				.peek(exElement -> log.info("Parsing exception handler: %s", exElement))
+				.map(ExecutableElement::getReturnType)
+				.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
+				.map(schemaUtils::mapTypeMirrorToSchema)
+				.forEach(openApi.getComponents()::putAllSchemas);
+
+			exceptionHanderReturntype = exceptionHandler.stream()
+				.filter(element -> element instanceof ExecutableElement)
+				.map(ExecutableElement.class::cast)
                     .map(ExecutableElement::getReturnType)
                     .map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
                     .findFirst()

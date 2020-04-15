@@ -51,12 +51,12 @@ public interface OpenAPIProcessor {
 	 *
 	 * @return a set of annotation processor compiler options
 	 */
-	default Set<String> getDocGeneratorOptions() {
+	default Set<String> getOasGeneratorOptions() {
 		return Stream.of(
-					OpenAPIConstants.OPTION_PROPERTIES_PATH,
-					OpenAPIConstants.OPTION_SCHEMA_FILE_PATH,
-					OpenAPIConstants.OPTION_VERSION)
-				.collect(toSet());
+			OpenAPIConstants.OPTION_PROPERTIES_PATH,
+			OpenAPIConstants.OPTION_SCHEMA_FILE_PATH,
+			OpenAPIConstants.OPTION_VERSION)
+			.collect(toSet());
 	}
 
 	/**

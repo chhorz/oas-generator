@@ -30,7 +30,6 @@ import com.github.chhorz.openapi.common.util.SchemaUtils;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -42,7 +41,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
 
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
 
 	private Elements elements;
@@ -72,16 +70,21 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
 		return Stream.of(OpenAPISchema.class)
-				.map(Class::getCanonicalName)
-				.collect(toSet());
+			.map(Class::getCanonicalName)
+			.collect(toSet());
 	}
 
 	@Override
-	public Set<String> getDocGeneratorOptions() {
+	public SourceVersion getSupportedSourceVersion() {
+		return SourceVersion.latest();
+	}
+
+	@Override
+	public Set<String> getOasGeneratorOptions() {
 		return Stream.of(
-				OpenAPIConstants.OPTION_PROPERTIES_PATH)
+			OpenAPIConstants.OPTION_PROPERTIES_PATH)
 			.collect(toSet());
-}
+	}
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {

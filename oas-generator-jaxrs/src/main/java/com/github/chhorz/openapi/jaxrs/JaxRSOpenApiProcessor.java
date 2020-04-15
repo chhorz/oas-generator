@@ -32,7 +32,6 @@ import com.github.chhorz.openapi.common.util.*;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -48,7 +47,6 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
 
 	private Elements elements;
@@ -85,21 +83,26 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
 		return Stream.of(Path.class)
-				.map(Class::getCanonicalName)
-				.collect(toSet());
+			.map(Class::getCanonicalName)
+			.collect(toSet());
+	}
+
+	@Override
+	public SourceVersion getSupportedSourceVersion() {
+		return SourceVersion.latest();
 	}
 
 	@Override
 	public Set<String> getSupportedOptions() {
-		return getDocGeneratorOptions();
+		return getOasGeneratorOptions();
 	}
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		annotations.stream()
-				.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
-				.filter(element -> element instanceof ExecutableElement)
-				.map(ExecutableElement.class::cast)
+			.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
+			.filter(element -> element instanceof ExecutableElement)
+			.map(ExecutableElement.class::cast)
 				// .peek(e -> System.out.println(e))
 				.forEach(this::mapOperationMethod);
 
