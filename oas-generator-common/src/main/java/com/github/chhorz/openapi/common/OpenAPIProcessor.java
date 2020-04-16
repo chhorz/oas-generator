@@ -23,6 +23,7 @@ import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
+import com.github.chhorz.openapi.common.javadoc.SecurityTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
@@ -37,6 +38,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.github.chhorz.openapi.common.OpenAPIConstants.OPEN_API_VERSION;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -88,6 +91,7 @@ public interface OpenAPIProcessor {
 	default JavaDocParser createJavadocParser() {
 		return JavaDocParserBuilder.withBasicTags()
 				.withCustomTag(new ResponseTag())
+				.withCustomTag(new SecurityTag())
 				.withOutputType(OutputType.MARKDOWN)
 				.build();
 	}
@@ -107,10 +111,12 @@ public interface OpenAPIProcessor {
 	 *
 	 * @param executableElement the current method
 	 * @param map the security schemes from the configuration file
+	 * @param securityTags the security tags from the javadoc comment
 	 * @return map of security information
 	 */
-	default Optional<Map<String, List<String>>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map) {
-		Map<String, List<String>> securityInformation = new TreeMap<>();
+	default List<Map<String, List<String>>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map,
+																	   final List<SecurityTag> securityTags) {
+		List<Map<String, List<String>>> securityInformation = new ArrayList<>();
 
 		for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
 			if (annotation.getAnnotationType().toString().equalsIgnoreCase(
@@ -118,11 +124,19 @@ public interface OpenAPIProcessor {
 				PreAuthorize preAuthorized = executableElement.getAnnotation(PreAuthorize.class);
 				map.entrySet().stream()
 						.filter(entry -> preAuthorized.value().toLowerCase().contains(entry.getKey().toLowerCase()))
-						.forEach(entry -> securityInformation.put(entry.getKey(), new ArrayList<>()));
+						.forEach(entry -> securityInformation.add(singletonMap(entry.getKey(), emptyList())));
 			}
 		}
 
-		return securityInformation.isEmpty() ? Optional.empty() : Optional.of(securityInformation);
+		if (securityTags != null && map != null) {
+			securityTags.stream()
+				.filter(Objects::nonNull)
+				.map(SecurityTag::getSecurityRequirement)
+				.filter(map::containsKey)
+				.forEach(securityRequirement -> securityInformation.add(singletonMap(securityRequirement, emptyList())));
+		}
+
+		return securityInformation;
 	}
 
 	/**

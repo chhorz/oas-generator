@@ -40,6 +40,7 @@
           }
         },
         "deprecated" : false,
+        "security" : [ ],
         "parameters" : [ ]
       },
       "post" : {
@@ -52,6 +53,7 @@
           }
         },
         "deprecated" : false,
+        "security" : [ ],
         "parameters" : [ ],
         "requestBody" : {
           "$ref" : "#/components/requestBodies/Article"
@@ -76,6 +78,7 @@
           }
         },
         "deprecated" : false,
+        "security" : [ ],
         "parameters" : [ {
           "name" : "id",
           "in" : "path",

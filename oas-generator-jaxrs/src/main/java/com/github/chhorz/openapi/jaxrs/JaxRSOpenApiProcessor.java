@@ -25,6 +25,7 @@ import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
+import com.github.chhorz.openapi.common.javadoc.SecurityTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.*;
@@ -241,8 +242,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 				.map(CategoryTag::getCategoryName)
 				.forEach(operation::addTag);
 
-		getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes())
-			.ifPresent(securityInformation -> operation.setSecurity(singletonList(securityInformation)));
+		operation.setSecurity(getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes(), javaDoc.getTags(SecurityTag.class)));
 
 		PathItemObject pathItemObject = openApi.getPaths().getOrDefault(path, new PathItemObject());
 		if (executableElement.getAnnotation(GET.class) != null) {

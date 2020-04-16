@@ -25,6 +25,7 @@
           }
         },
         "deprecated" : false,
+        "security" : [ ],
         "parameters" : [ {
           "name" : "name",
           "in" : "query",

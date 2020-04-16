@@ -16,26 +16,27 @@
  */
 package com.github.chhorz.openapi.common.test.javadoc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
+import com.github.chhorz.openapi.common.javadoc.SecurityTag;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-class ResponseTagTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+
+class SecurityTagTest {
 
 	// @formatter:off
 	private String javaDocString =
 			"Test\n" +
 			"@since 0.1\n" +
 			"@author name\n" +
-			"@response 201 String The resulting number.\n" +
+			"@response 201 String \n" +
 			"@deprecated use xyz instead\n" +
+			"@security read_role\n" + // The required security requirement.
 			"@version 1.2.3\n" +
 			"@see documentation in section abc\n" +
 			"@throws NullpointerException when something is null\n" +
@@ -48,19 +49,19 @@ class ResponseTagTest {
 
 	@BeforeEach
 	void setUp() {
-		parser = JavaDocParserBuilder.withBasicTags().withCustomTag(new ResponseTag()).build();
+		parser = JavaDocParserBuilder.withBasicTags().withCustomTag(new ResponseTag()).withCustomTag(new SecurityTag()).build();
 	}
 
 	@Test
 	void parseResponseTag() {
 		JavaDoc javaDoc = parser.parse(javaDocString);
 
-		assertThat(javaDoc.getTags(ResponseTag.class))
+		assertThat(javaDoc.getTags(SecurityTag.class))
 			.isNotNull()
 			.isNotEmpty()
 			.hasSize(1)
-				.extracting(ResponseTag::getStatusCode, ResponseTag::getResponseType , ResponseTag::getDescription)
-				.contains(tuple("201", "String" , "The resulting number." ));
+				.extracting(SecurityTag::getSecurityRequirement)
+				.contains("read_role");
 
 	}
 }

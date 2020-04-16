@@ -26,10 +26,7 @@ import com.github.chhorz.openapi.spring.test.controller.HelloWorldController;
 import com.github.chhorz.openapi.spring.test.controller.HttpMethodsController;
 import com.github.chhorz.openapi.spring.test.controller.OrderController;
 import com.github.chhorz.openapi.spring.test.controller.external.ExternalResource;
-import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue001;
-import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue002;
-import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue011;
-import com.github.chhorz.openapi.spring.test.controller.github.GitHubIssue012;
+import com.github.chhorz.openapi.spring.test.controller.github.*;
 import com.github.chhorz.openapi.spring.test.controller.resource.*;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
@@ -228,6 +225,45 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT)
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasAllNullFieldsOrPropertiesExcept("type", "deprecated");
+	}
+
+	@Test
+	@GithubIssue("#8")
+	void getGithubIssue008() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator-withoutparser.yml"), GitHubIssue008.class);
+
+		// create json-path context
+		DocumentContext ctx = createJsonPathDocumentContext();
+
+		// assertions
+		Operation operation = ctx.read("$.paths./github/issue.get", Operation.class);
+
+		assertThat(operation)
+			.isNotNull();
+
+		assertThat(operation.getSecurity())
+			.isNotNull()
+			.isNotEmpty()
+			.hasSize(1);
+
+		assertThat(operation.getSecurity().get(0))
+			.isNotNull()
+			.containsKeys("read_role");
+
+		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		SecuritySchemeHttp securityScheme = ctx.read("$.components.securitySchemes.read_role", SecuritySchemeHttp.class);
+
+		assertThat(securityScheme)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.http)
+			.hasFieldOrPropertyWithValue("description", "Basic LDAP read role.")
+			.hasFieldOrPropertyWithValue("scheme", "basic");
 	}
 
 	@Test
