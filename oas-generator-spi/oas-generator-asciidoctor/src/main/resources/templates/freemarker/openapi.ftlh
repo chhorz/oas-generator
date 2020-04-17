@@ -120,17 +120,17 @@ m| <@asciidoc_schema property/>
 </#list>
 
 </#if>
-<#if openapi.components.securitySchemes??>
+<#if openapi.components.requestBodies??>
 
-=== Request Bodies
-<#list openapi.components.requestBodies as requestBodyName, requestBody>
-[[components_requestBodies_${requestBodyName}]]
-==== ${requestBodyName}
-<#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description??>${requestBody.description}</#if>
+    === Request Bodies
+    <#list openapi.components.requestBodies as requestBodyName, requestBody>
+        [[components_requestBodies_${requestBodyName}]]
+        ==== ${requestBodyName}
+        <#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description??>${requestBody.description}</#if>
 
-<#if requestBody.content??>
-[cols="1,2", options="header"]
-|===
+        <#if requestBody.content??>
+            [cols="1,2", options="header"]
+            |===
 | Type | Schema
 
 <#list requestBody.content as type, mediatype>
