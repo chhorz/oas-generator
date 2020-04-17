@@ -118,22 +118,24 @@ public interface OpenAPIProcessor {
 																	   final List<SecurityTag> securityTags) {
 		List<Map<String, List<String>>> securityInformation = new ArrayList<>();
 
-		for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
-			if (annotation.getAnnotationType().toString().equalsIgnoreCase(
+		if (map != null) {
+			for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
+				if (annotation.getAnnotationType().toString().equalsIgnoreCase(
 					"org.springframework.security.access.prepost.PreAuthorize")) {
-				PreAuthorize preAuthorized = executableElement.getAnnotation(PreAuthorize.class);
-				map.entrySet().stream()
+					PreAuthorize preAuthorized = executableElement.getAnnotation(PreAuthorize.class);
+					map.entrySet().stream()
 						.filter(entry -> preAuthorized.value().toLowerCase().contains(entry.getKey().toLowerCase()))
 						.forEach(entry -> securityInformation.add(singletonMap(entry.getKey(), emptyList())));
+				}
 			}
-		}
 
-		if (securityTags != null && map != null) {
-			securityTags.stream()
-				.filter(Objects::nonNull)
-				.map(SecurityTag::getSecurityRequirement)
-				.filter(map::containsKey)
-				.forEach(securityRequirement -> securityInformation.add(singletonMap(securityRequirement, emptyList())));
+			if (securityTags != null) {
+				securityTags.stream()
+					.filter(Objects::nonNull)
+					.map(SecurityTag::getSecurityRequirement)
+					.filter(map::containsKey)
+					.forEach(securityRequirement -> securityInformation.add(singletonMap(securityRequirement, emptyList())));
+			}
 		}
 
 		return securityInformation;
