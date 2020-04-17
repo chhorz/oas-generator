@@ -110,7 +110,7 @@ public class SchemaUtils {
 		Schema schema = mapTypeMirrorToSchema(typeMirror).get(typeMirror);
 
 		MediaType mediaType = new MediaType();
-		if (schema.getType().equals(Schema.Type.ARRAY)) {
+		if (Type.ARRAY.equals(schema.getType())) {
 			mediaType.setSchema(schema);
 		} else {
 			mediaType.setSchema(ReferenceUtils.createSchemaReference(typeMirror));
