@@ -206,6 +206,25 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 			}
 			schemaMap.put(typeMirror, schema);
+		} else if (isAssignableFrom(elements, types, typeMirror, Optional.class)) {
+			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, Optional.class)[0];
+			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
+
+			if (isTypeInPackage(type, javaLangPackage)) {
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				Schema typeSchema = new Schema();
+				if (typeAndFormat != null) {
+					typeSchema.setType(typeAndFormat.getKey());
+					typeSchema.setFormat(typeAndFormat.getValue());
+				}
+				schema.setItems(typeSchema);
+			} else {
+				schema.setItems(ReferenceUtils.createSchemaReference(type));
+			}
+
+			schemaMap.putAll(propertySchemaMap);
+
+			schemaMap.put(typeMirror, schema);
 		} else if (isAssignableFrom(elements, types, typeMirror, List.class)) {
 			schema.setType(Type.ARRAY);
 
@@ -405,11 +424,11 @@ public class SchemaUtils {
 		return typeAndFormat;
 	}
 
-	private boolean isTypeOf(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
+	public boolean isTypeOf(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
 		return types.isSameType(typeMirror, elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
 
-	private boolean isAssignableFrom(final Elements elements, final Types types, final TypeMirror typeMirror,
+	public boolean isAssignableFrom(final Elements elements, final Types types, final TypeMirror typeMirror,
 			final Class<?> clazz) {
 		return types.isAssignable(types.erasure(typeMirror), elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}

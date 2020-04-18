@@ -412,6 +412,9 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         parameter.setIn(In.QUERY);
         parameter.setName(name);
         parameter.setRequired(requestParam.required());
+        if (schemaUtils.isAssignableFrom(elements, types, variableElement.asType(), Optional.class)) {
+        	parameter.setRequired(false);
+		}
 
         Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
                 .get(variableElement.asType());

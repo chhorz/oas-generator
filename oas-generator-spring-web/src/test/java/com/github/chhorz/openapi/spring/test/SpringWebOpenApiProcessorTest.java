@@ -332,6 +332,39 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 			.isEqualTo("#/components/schemas/Test");
 	}
 
+	@Test
+	@GithubIssue("#15")
+	void getGithubIssue015() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue015.class);
+
+		// create json-path context
+		DocumentContext ctx = createJsonPathDocumentContext();
+
+		// assertions
+		Parameter[] parameters = ctx.read("$.paths./github/issue.get.parameters", Parameter[].class);
+
+		assertThat(parameters)
+			.isNotNull()
+			.hasSize(1);
+
+		assertThat(parameters[0])
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("name", "filter")
+			.hasFieldOrPropertyWithValue("required", false);
+
+		Components components = ctx.read("$.components", Components.class);
+
+		assertThat(components.getSchemas())
+			.containsOnlyKeys("Test");
+
+		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+	}
+
 	/**
 	 * Compares JSON files for identical content. The order of properties is not checked. If the content does not match
 	 * the test will be failed.

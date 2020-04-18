@@ -38,9 +38,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
@@ -228,6 +226,24 @@ class SchemaUtilsTest {
 		assertThat(schemaMap.get(test).getEnumValues())
 				.hasSize(3)
 				.contains("A", "B", "XYZ");
+	}
+
+	@Test
+	void optionalTest() {
+		// given
+		TypeMirror stringType = elements.getTypeElement(String.class.getCanonicalName()).asType();
+		TypeMirror optionalType = types.getDeclaredType(elements.getTypeElement(Optional.class.getCanonicalName()), stringType);
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(optionalType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(2)
+			.containsKeys(stringType, optionalType)
+			.extracting(map -> map.get(stringType))
+			.extracting("type", "format")
+			.contains(Type.STRING);
 	}
 
 }
