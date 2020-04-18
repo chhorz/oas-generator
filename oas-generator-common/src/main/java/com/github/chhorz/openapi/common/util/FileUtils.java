@@ -18,6 +18,7 @@ package com.github.chhorz.openapi.common.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -32,61 +33,65 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-//import org.yaml.snakeyaml.DumperOptions;
-//import org.yaml.snakeyaml.Yaml;
-
 public class FileUtils {
+
+	private final ParserProperties properties;
 
 	private final LoggingUtils log;
 
 	private final ObjectMapper objectMapper;
 	private final ObjectMapper yamlObjectMapper;
 
-	private File outputFile;
-	private File yamlOutputFile;
-	private File sourceFile;
-
 	public FileUtils(final ParserProperties properties) {
+		this.properties = properties;
+
 		log = new LoggingUtils(properties);
 
-		if (properties.hasJsonOutputFormat()) {
-			this.outputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".json");
-		}
-
-		if (properties.hasYamlOutputFormat()) {
-			this.yamlOutputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".yaml");
-		}
-
-		if (properties.getSchemaFile() != null) {
-			sourceFile = Paths.get(properties.getSchemaFile()).toFile();
-		}
-
 		objectMapper = configureObjectMapper(new ObjectMapper());
-		yamlObjectMapper = configureObjectMapper(new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)));
+		yamlObjectMapper = configureObjectMapper(new ObjectMapper(new YAMLFactory()
+				.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+				.disable(YAMLGenerator.Feature.SPLIT_LINES)));
 	}
 
+	/**
+	 * Writes the given OpenAPI object to <i>.json</i> and <i>.yaml</i> files. Which files are written is configurable
+	 * within the property file.
+	 *
+	 * @param openAPI the generated OpenAPI object
+	 */
 	public void writeToFile(final OpenAPI openAPI) {
-		if (outputFile != null) {
+		if (properties.hasJsonOutputFormat()) {
+			File outputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".json");
 			try {
 				objectMapper.writeValue(outputFile, openAPI);
 			} catch (IOException e) {
 				log.error("Could not write .json file", e);
 			}
+		} else {
+			log.debug("JSON output is disabled in property file");
 		}
-		if (yamlOutputFile != null) {
+		if (properties.hasYamlOutputFormat()) {
+			File yamlOutputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".yaml");
 			try {
 				yamlObjectMapper.writeValue(yamlOutputFile, openAPI);
 			} catch (IOException e) {
 				log.error("Could not write .yaml file", e);
 			}
+		} else {
+			log.debug("YAML output is disabled in property file");
 		}
 	}
 
 	public Optional<OpenAPI> readFromFile() {
-		try {
-			return Optional.ofNullable(objectMapper.readValue(sourceFile, OpenAPI.class));
-		} catch (IOException e) {
-			log.error("Could not read schema file", e);
+		if (properties.getSchemaFile() != null) {
+			File sourceFile = Paths.get(properties.getSchemaDir(), properties.getSchemaFile() + ".json").toFile();
+			if (sourceFile.exists()) {
+				try {
+					return Optional.ofNullable(objectMapper.readValue(sourceFile, OpenAPI.class));
+				} catch (IOException e) {
+					log.error("Could not read schema file", e);
+				}
+			}
 		}
 		return Optional.empty();
 	}

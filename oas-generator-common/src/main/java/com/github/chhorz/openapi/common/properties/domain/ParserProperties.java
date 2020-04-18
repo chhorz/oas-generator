@@ -32,6 +32,7 @@ public class ParserProperties {
 	private String outputDir;
 	private String outputFile;
 	private String outputFormat;
+	private String schemaDir;
 	private String schemaFile;
 
 	private List<String> schemaPackages;
@@ -43,6 +44,7 @@ public class ParserProperties {
 		outputDir = GeneratorPropertiesDefaults.PARSER_OUTPUT_DIR;
 		outputFile = GeneratorPropertiesDefaults.PARSER_OUTPUT_FILE;
 		outputFormat = GeneratorPropertiesDefaults.PARSER_OUTPUT_FORMAT;
+		schemaDir = GeneratorPropertiesDefaults.PARSER_SCHEMA_DIR;
 		schemaFile = GeneratorPropertiesDefaults.PARSER_SCHEMA_FILE;
 		schemaPackages = GeneratorPropertiesDefaults.PARSER_SCHEMA_PACKAGES;
 		postProcessor = GeneratorPropertiesDefaults.PARSER_POST_PROCESSOR;
@@ -89,6 +91,14 @@ public class ParserProperties {
 		return outputFormat != null && Stream.of(outputFormat.split(","))
 			.map(String::toLowerCase)
 			.anyMatch(format -> format.matches("ya?ml"));
+	}
+
+	public String getSchemaDir() {
+		return schemaDir;
+	}
+
+	public void setSchemaDir(String schemaDir) {
+		this.schemaDir = schemaDir;
 	}
 
 	public String getSchemaFile() {

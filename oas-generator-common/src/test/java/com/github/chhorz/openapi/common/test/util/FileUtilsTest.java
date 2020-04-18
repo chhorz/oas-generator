@@ -92,10 +92,10 @@ public class FileUtilsTest {
 	}
 
 	@Test
-	void testRead() {
+	void testReadDefaultFile() {
 		// given
 		ParserProperties properties = new ParserProperties();
-		properties.setSchemaFile("./src/test/resources/openapi-schema.json");
+		properties.setSchemaDir("./src/test/resources");
 
 		FileUtils fileUtils = new FileUtils(properties);
 
@@ -119,6 +119,39 @@ public class FileUtilsTest {
 			.isNotEmpty()
 			.hasSize(2)
 				.containsKeys("Article", "Order");
+
+		assertThat(openAPI.getComponents().getSchemas().toString()).isEqualTo(schemaMap.toString());
+	}
+
+	@Test
+	void testRead() {
+		// given
+		ParserProperties properties = new ParserProperties();
+		properties.setSchemaDir("./src/test/resources");
+		properties.setSchemaFile("openapi-custom-schema");
+
+		FileUtils fileUtils = new FileUtils(properties);
+
+		// when
+		Optional<OpenAPI> optionalOpenAPI = fileUtils.readFromFile();
+
+		// then
+		assertThat(optionalOpenAPI)
+			.isNotNull()
+			.isPresent();
+
+		OpenAPI openAPI = optionalOpenAPI.get();
+
+		assertThat(openAPI)
+			.isNotNull()
+			.extracting(OpenAPI::getComponents)
+			.isNotNull();
+
+		assertThat(openAPI.getComponents().getSchemas())
+			.isNotNull()
+			.isNotEmpty()
+			.hasSize(2)
+			.containsKeys("Article", "Order");
 
 		assertThat(openAPI.getComponents().getSchemas().toString()).isEqualTo(schemaMap.toString());
 	}

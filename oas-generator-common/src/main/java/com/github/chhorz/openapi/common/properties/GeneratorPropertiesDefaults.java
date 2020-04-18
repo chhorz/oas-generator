@@ -51,7 +51,8 @@ public final class GeneratorPropertiesDefaults {
 	public static final String PARSER_OUTPUT_DIR = "./target/openapi";
 	public static final String PARSER_OUTPUT_FILE = "openapi";
 	public static final String PARSER_OUTPUT_FORMAT = "json,yaml";
-	public static final String PARSER_SCHEMA_FILE = null;
+	public static final String PARSER_SCHEMA_DIR = "./target/openapi";
+	public static final String PARSER_SCHEMA_FILE = "openapi-schema";
 	public static final List<String> PARSER_SCHEMA_PACKAGES = new ArrayList<>();
 	public static final Map<String, LinkedHashMap> PARSER_POST_PROCESSOR = new LinkedHashMap<>();
 
