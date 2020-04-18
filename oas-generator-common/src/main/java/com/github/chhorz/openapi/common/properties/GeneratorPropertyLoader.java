@@ -31,7 +31,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -203,6 +206,10 @@ public class GeneratorPropertyLoader {
 		Map<String, SecurityScheme> map = new TreeMap<>();
 		for (Entry<String, SecuritySchemeProperties> entry : properties.getSecuritySchemes().entrySet()) {
 			SecuritySchemeProperties property = entry.getValue();
+
+			if (Stream.of(Type.values()).map(Type::name).noneMatch(type -> type.equals(property.getType()))) {
+				throw new SpecificationViolationException("Security type must be one of " + Stream.of(Type.values()).map(Type::name).collect(joining(",")));
+			}
 
 			if (Type.http.name().equalsIgnoreCase(property.getType())) {
 				SecuritySchemeHttp scheme = new SecuritySchemeHttp();
