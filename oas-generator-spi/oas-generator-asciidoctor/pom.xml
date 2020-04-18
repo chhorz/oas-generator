@@ -28,6 +28,7 @@
 	</parent>
 
 	<artifactId>oas-generator-asciidoctor</artifactId>
+	<name>OAS Generator :: SPI :: Asciidoctor</name>
 
 	<properties>
 		<!-- dependency versions -->

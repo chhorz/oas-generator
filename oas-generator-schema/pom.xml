@@ -27,6 +27,7 @@
 	</parent>
 
 	<artifactId>oas-generator-schema</artifactId>
+	<name>OAS Generator :: Schema</name>
 
 	<dependencies>
 		<dependency>

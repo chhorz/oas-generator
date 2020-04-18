@@ -30,6 +30,8 @@
 	<artifactId>oas-generator-spi</artifactId>
 	<packaging>pom</packaging>
 
+	<name>OAS Generator :: SPI</name>
+
 	<modules>
 		<module>oas-generator-asciidoctor</module>
 	</modules>

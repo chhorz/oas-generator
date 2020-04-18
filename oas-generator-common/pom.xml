@@ -28,6 +28,7 @@
 	</parent>
 
 	<artifactId>oas-generator-common</artifactId>
+	<name>OAS Generator :: Common</name>
 
 	<dependencies>
 		<dependency>

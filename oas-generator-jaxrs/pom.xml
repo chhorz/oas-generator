@@ -27,6 +27,8 @@
 	</parent>
 
 	<artifactId>oas-generator-jaxrs</artifactId>
+	<name>OAS Generator :: JaxRS</name>
+
 
 	<dependencies>
 		<dependency>

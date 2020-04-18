@@ -27,6 +27,7 @@
 	</parent>
 
 	<artifactId>oas-generator-spring-web</artifactId>
+	<name>OAS Generator :: Spring-Web</name>
 
 	<dependencies>
 		<dependency>

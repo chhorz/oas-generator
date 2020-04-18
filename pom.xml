@@ -27,7 +27,8 @@
 	<packaging>pom</packaging>
 
 	<name>OAS Generator</name>
-	<description>Java annotation processor for generating open api specification based on java annotations.
+	<description>
+		Java annotation processor for generating open api specification based on java annotations.
 	</description>
 	<url>https://github.com/chhorz/oas-generator</url>
 	<inceptionYear>2018</inceptionYear>

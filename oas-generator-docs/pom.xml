@@ -28,6 +28,7 @@
 	</parent>
 
 	<artifactId>oas-generator-docs</artifactId>
+	<name>OAS Generator :: Documentation</name>
 
 	<build>
 		<plugins>
