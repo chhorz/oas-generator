@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>com.github.chhorz</groupId>
 		<artifactId>oas-generator-spi</artifactId>
-		<version>0.1.0.RC2</version>
+		<version>0.1.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>oas-generator-asciidoctor</artifactId>
