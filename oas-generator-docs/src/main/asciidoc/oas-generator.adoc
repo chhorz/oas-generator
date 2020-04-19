@@ -2,13 +2,14 @@
 :author: Christian Horz
 :icons: font
 :revnumber: {project-version}
-:source-highlighter: highlightjs
-:highlightjs-theme: obsidian
+:docinfo: shared-head
 :toc: left
+:toclevels: 3
 :sectnums:
 :sectlinks:
 :sectanchors:
-:toclevels: 3
+:source-highlighter: highlightjs
+:highlightjs-theme: zenburn
 :common-java: ../../../../oas-generator-common/src/main/java
 
 == About
@@ -97,7 +98,7 @@ It is not possible to mix this way of annotation processor integration with the 
 
 == Javadoc
 In this section we describe the default structure of the Javadoc comments.
-A common structure is needed to get all data parsed correct.
+A common structure is required to get all data parsed correct.
 This is necessary because Javadoc comments in general are unstructured comments and can be formatted in different ways.
 
 This project uses the link:https://github.com/chhorz/javadoc-parser[Javadoc Parser] project to load all information from the Javadoc comments as structured data.
@@ -112,16 +113,51 @@ This project uses the link:https://github.com/chhorz/javadoc-parser[Javadoc Pars
 </dependency>
 ----
 
-=== Structure
-In general the method description and summary is extracted for all API methods.
+=== Supported tags
+In general the method description and summary are extracted for all API methods.
 The description is the complete text from the beginning of the Javadoc comment to the first Javadoc tag.
 Additionally the summary is, unless not marked with the `@summary` tag, the first sentence of the description.
 Other included tags are:
 
 * `@param` tag for a description of the method parameters and and so the API parameters
 * `@return` for the semantic meaning of the response
-* Custom `@response` tag to define HTTP response status and type
 * `@category` to represent OpenAPI tags
+
+==== Define responses
+Because the different response codes and contents are defined within the method body, the *OAS Generator* is not capable of reading this information.
+To specify the possible response status the `@response` javadoc tag could be used:
+
+.Example Javadoc comment
+[source,java]
+----
+
+/**
+ * ...
+ * @response 200 SomeResource
+ *                      the resource that will be returned
+ * @response 404 ProblemResource
+ *                      the generic problem resource for error case
+ * ...
+ */
+----
+
+==== Security schemes
+The *OAS Generator* reads information about the required security schemes form some _spring-security_ annotations (e.g. `@PreAuthorize`).
+If none of these annotations is present on the API method, the security scheme can also be defined in the javadoc comment:
+
+The content of the tag must match the name of a security requirement from the `oas-generator.yml` file.
+
+.Example Javadoc comment
+[source,java]
+----
+
+/**
+ * ...
+ * @security read_role
+ * ...
+ */
+----
+
 
 == Configuration
 The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
@@ -203,7 +239,7 @@ info:
 Full description of the possible values is shown below:
 
 .Content included in `openapi.json`
-[source,yaml]
+[source,yml]
 ----
 # Documentation information that will be included in openapi.json
 info:
@@ -272,7 +308,7 @@ The version has to be replaced with an variable for the maven project version: `
 <2> YAML references can be used to remove redundant parts of the configuration.
 
 The content of the part above will be included in the resulting OpenAPI document as it is defined.
-It is static content that will not change often so it should be defined in a static way.
+It is static content that will not change often, so it should be defined as static data.
 Only data that could not be retrieved from the source code and is required by the OpenAPI specification must be present in the shown file.
 
 Parser properties shown below customize the behavior of the *OAS Generator*:
@@ -286,6 +322,7 @@ parser:
   outputDir: ./target/openapi # <1>
   outputFile: openapi # <1>
   outputFormay: json,yaml
+  schemaDir: ./target/openapi
   schemaFile: api-module/target/openapi/openapi-schema.json # <2>
   schemaPackages:
     - com.github.chhorz.openapi.spring.test.controller.external # <2>
@@ -305,15 +342,19 @@ In this map contributors can define their own properties for their post processo
 
 == Extensibility
 The *OAS Generator* provides a service provider interface (SPI) to include custom post processors.
-Per default the `FileWriterPostProcessor` is included to write the _openapi.json_ file.
-Currently the following post processors (see module link:https://github.com/chhorz/oas-generator/tree/master/oas-generator-spi[_oas-generator-spi_]) are also provided:
+Currently, the following post processors (see module link:https://github.com/chhorz/oas-generator/tree/master/oas-generator-spi[_oas-generator-spi_]) are provided:
 
+- `FileWriterPostProcessor`
 - `AsciidoctorPostProcessor`
 
 If other post processors should be listed and added in the *OAS Generator* repo please open a Github issue.
 
 === Post-Processor Documentation
 In the following section all post processors from the `oas-generator-spi` module are documented.
+
+==== FileWriterPostProcessor
+The `FileWriterPostProcessor` is used internally to write the OpenAPI domain model to the resulting output file.
+This Post-Processor is included within all *OAS Generator* modules and must not be included with adn additional dependency.
 
 ==== AsciidoctorPostProcessor
 This post processor converts the generated OpenAPI domain model into the asciidoctor format.
@@ -332,7 +373,7 @@ After the creation during the compile phase, the `asciidoctor-maven-plugin` (lin
 
 [[asciidoctor.properties]]
 ===== Configuration properties
-All of the following properties are passed as key-value list in the <<configuration-file, configuration file>>.
+All the following properties will be defined as key-value list in the <<configuration-file, configuration file>>.
 
 .Configuration with default values
 [source,yaml]
@@ -401,7 +442,7 @@ These annotation processors are processing the abstract syntax tree of the java 
 
 * Annotation processors have no information about the method body.
 Only the method signature and the documentation comment (javadoc comment) are available.
-If you choose a different return object or status code during runtime you have to document these information on a place that if available at compile time.
+If you choose a different return object or status code during runtime you have to document this information on a place that is available at compile time.
 Either the documentation comments or other annotations should be used in this place.
 
 == Snapshots

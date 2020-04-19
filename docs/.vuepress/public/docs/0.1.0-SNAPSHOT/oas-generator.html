@@ -2096,6 +2096,9 @@ p {
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<!--<link rel="stylesheet" href="/path/to/styles/default.css">-->
+<script src="./highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
@@ -2120,7 +2123,12 @@ p {
 </li>
 <li><a href="#_javadoc">3. Javadoc</a>
 <ul class="sectlevel2">
-<li><a href="#_structure">3.1. Structure</a></li>
+<li><a href="#_supported_tags">3.1. Supported tags</a>
+<ul class="sectlevel3">
+<li><a href="#_define_responses">3.1.1. Define responses</a></li>
+<li><a href="#_security_schemes">3.1.2. Security schemes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_configuration">4. Configuration</a>
@@ -2137,7 +2145,8 @@ p {
 <ul class="sectlevel2">
 <li><a href="#_post_processor_documentation">5.1. Post-Processor Documentation</a>
 <ul class="sectlevel3">
-<li><a href="#_asciidoctorpostprocessor">5.1.1. AsciidoctorPostProcessor</a></li>
+<li><a href="#_filewriterpostprocessor">5.1.1. FileWriterPostProcessor</a></li>
+<li><a href="#_asciidoctorpostprocessor">5.1.2. AsciidoctorPostProcessor</a></li>
 </ul>
 </li>
 <li><a href="#_custom_post_processors">5.2. Custom Post-Processors</a></li>
@@ -2280,7 +2289,7 @@ Each kind of installation also works with the <code>oas-generator-jaxrs</code> o
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this section we describe the default structure of the Javadoc comments.
-A common structure is needed to get all data parsed correct.
+A common structure is required to get all data parsed correct.
 This is necessary because Javadoc comments in general are unstructured comments and can be formatted in different ways.</p>
 </div>
 <div class="paragraph">
@@ -2297,9 +2306,9 @@ This is necessary because Javadoc comments in general are unstructured comments 
 </div>
 </div>
 <div class="sect2">
-<h3 id="_structure"><a class="anchor" href="#_structure"></a><a class="link" href="#_structure">3.1. Structure</a></h3>
+<h3 id="_supported_tags"><a class="anchor" href="#_supported_tags"></a><a class="link" href="#_supported_tags">3.1. Supported tags</a></h3>
 <div class="paragraph">
-<p>In general the method description and summary is extracted for all API methods.
+<p>In general the method description and summary are extracted for all API methods.
 The description is the complete text from the beginning of the Javadoc comment to the first Javadoc tag.
 Additionally the summary is, unless not marked with the <code>@summary</code> tag, the first sentence of the description.
 Other included tags are:</p>
@@ -2313,12 +2322,49 @@ Other included tags are:</p>
 <p><code>@return</code> for the semantic meaning of the response</p>
 </li>
 <li>
-<p>Custom <code>@response</code> tag to define HTTP response status and type</p>
-</li>
-<li>
 <p><code>@category</code> to represent OpenAPI tags</p>
 </li>
 </ul>
+</div>
+<div class="sect3">
+<h4 id="_define_responses"><a class="anchor" href="#_define_responses"></a><a class="link" href="#_define_responses">3.1.1. Define responses</a></h4>
+<div class="paragraph">
+<p>Because the different response codes and contents are defined within the method body, the <strong>OAS Generator</strong> is not capable of reading this information.
+To specify the possible response status the <code>@response</code> javadoc tag could be used:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example Javadoc comment</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/**
+ * ...
+ * @response 200 SomeResource
+ *                      the resource that will be returned
+ * @response 404 ProblemResource
+ *                      the generic problem resource for error case
+ * ...
+ */</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_security_schemes"><a class="anchor" href="#_security_schemes"></a><a class="link" href="#_security_schemes">3.1.2. Security schemes</a></h4>
+<div class="paragraph">
+<p>The <strong>OAS Generator</strong> reads information about the required security schemes form some <em>spring-security</em> annotations (e.g. <code>@PreAuthorize</code>).
+If none of these annotations is present on the API method, the security scheme can also be defined in the javadoc comment:</p>
+</div>
+<div class="paragraph">
+<p>The content of the tag must match the name of a security requirement from the <code>oas-generator.yml</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example Javadoc comment</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/**
+ * ...
+ * @security read_role
+ * ...
+ */</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2444,7 +2490,7 @@ Both parts are content of the same file (Default: <em>oas-generator.yml</em> wit
 <div class="listingblock">
 <div class="title">Content included in <code>openapi.json</code></div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># Documentation information that will be included in openapi.json
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml"># Documentation information that will be included in openapi.json
 info:
   title: MyService # REQUIRED
   version: 1.2.3-SNAPSHOT # REQUIRED <i class="conum" data-value="1"></i><b>(1)</b>
@@ -2522,7 +2568,7 @@ The version has to be replaced with an variable for the maven project version: <
 </div>
 <div class="paragraph">
 <p>The content of the part above will be included in the resulting OpenAPI document as it is defined.
-It is static content that will not change often so it should be defined in a static way.
+It is static content that will not change often, so it should be defined as static data.
 Only data that could not be retrieved from the source code and is required by the OpenAPI specification must be present in the shown file.</p>
 </div>
 <div class="paragraph">
@@ -2537,6 +2583,7 @@ parser:
   outputDir: ./target/openapi <i class="conum" data-value="1"></i><b>(1)</b>
   outputFile: openapi <i class="conum" data-value="1"></i><b>(1)</b>
   outputFormay: json,yaml
+  schemaDir: ./target/openapi
   schemaFile: api-module/target/openapi/openapi-schema.json <i class="conum" data-value="2"></i><b>(2)</b>
   schemaPackages:
     - com.github.chhorz.openapi.spring.test.controller.external <i class="conum" data-value="2"></i><b>(2)</b>
@@ -2576,11 +2623,13 @@ In this map contributors can define their own properties for their post processo
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <strong>OAS Generator</strong> provides a service provider interface (SPI) to include custom post processors.
-Per default the <code>FileWriterPostProcessor</code> is included to write the <em>openapi.json</em> file.
-Currently the following post processors (see module <a href="https://github.com/chhorz/oas-generator/tree/master/oas-generator-spi"><em>oas-generator-spi</em></a>) are also provided:</p>
+Currently, the following post processors (see module <a href="https://github.com/chhorz/oas-generator/tree/master/oas-generator-spi"><em>oas-generator-spi</em></a>) are provided:</p>
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p><code>FileWriterPostProcessor</code></p>
+</li>
 <li>
 <p><code>AsciidoctorPostProcessor</code></p>
 </li>
@@ -2595,7 +2644,14 @@ Currently the following post processors (see module <a href="https://github.com/
 <p>In the following section all post processors from the <code>oas-generator-spi</code> module are documented.</p>
 </div>
 <div class="sect3">
-<h4 id="_asciidoctorpostprocessor"><a class="anchor" href="#_asciidoctorpostprocessor"></a><a class="link" href="#_asciidoctorpostprocessor">5.1.1. AsciidoctorPostProcessor</a></h4>
+<h4 id="_filewriterpostprocessor"><a class="anchor" href="#_filewriterpostprocessor"></a><a class="link" href="#_filewriterpostprocessor">5.1.1. FileWriterPostProcessor</a></h4>
+<div class="paragraph">
+<p>The <code>FileWriterPostProcessor</code> is used internally to write the OpenAPI domain model to the resulting output file.
+This Post-Processor is included within all <strong>OAS Generator</strong> modules and must not be included with adn additional dependency.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_asciidoctorpostprocessor"><a class="anchor" href="#_asciidoctorpostprocessor"></a><a class="link" href="#_asciidoctorpostprocessor">5.1.2. AsciidoctorPostProcessor</a></h4>
 <div class="paragraph">
 <p>This post processor converts the generated OpenAPI domain model into the asciidoctor format.</p>
 </div>
@@ -2615,7 +2671,7 @@ Currently the following post processors (see module <a href="https://github.com/
 <div class="sect4">
 <h5 id="asciidoctor.properties"><a class="anchor" href="#asciidoctor.properties"></a><a class="link" href="#asciidoctor.properties">Configuration properties</a></h5>
 <div class="paragraph">
-<p>All of the following properties are passed as key-value list in the <a href="#configuration-file">configuration file</a>.</p>
+<p>All the following properties will be defined as key-value list in the <a href="#configuration-file">configuration file</a>.</p>
 </div>
 <div class="listingblock">
 <div class="title">Configuration with default values</div>
@@ -2801,7 +2857,7 @@ These annotation processors are processing the abstract syntax tree of the java 
 <li>
 <p>Annotation processors have no information about the method body.
 Only the method signature and the documentation comment (javadoc comment) are available.
-If you choose a different return object or status code during runtime you have to document these information on a place that if available at compile time.
+If you choose a different return object or status code during runtime you have to document this information on a place that is available at compile time.
 Either the documentation comments or other annotations should be used in this place.</p>
 </li>
 </ul>
@@ -2839,10 +2895,10 @@ To configure the repository for your project to use the latest snapshot versions
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0-SNAPSHOT<br>
-Last updated 2020-04-14 08:04:05 CEST
+Last updated 2020-04-19 11:14:52 CEST
 </div>
 </div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/obsidian.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/zenburn.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlighting()</script>
 </body>
