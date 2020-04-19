@@ -32,7 +32,7 @@ public class SecurityTag extends StructuredTag {
 	private static final String SECURITY_REQUIREMENT = "securityRequirement";
 
 	/**
-	 * Represents a tag in the following form:
+	 * Represents a tag in the following form: {@code @security read_role}
 	 *
 	 * @security read_role
 	 */

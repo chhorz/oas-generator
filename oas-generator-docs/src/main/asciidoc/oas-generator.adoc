@@ -116,12 +116,34 @@ This project uses the link:https://github.com/chhorz/javadoc-parser[Javadoc Pars
 === Supported tags
 In general the method description and summary are extracted for all API methods.
 The description is the complete text from the beginning of the Javadoc comment to the first Javadoc tag.
-Additionally the summary is, unless not marked with the `@summary` tag, the first sentence of the description.
+Additional the summary is, unless not marked with the `@summary` tag, the first sentence of the description.
 Other included tags are:
 
 * `@param` tag for a description of the method parameters and and so the API parameters
 * `@return` for the semantic meaning of the response
 * `@category` to represent OpenAPI tags
+
+=== Custom javadoc tags
+To render the custom javadoc tags properly within the HTML javadoc api documentation, the following configuration of the `maven-javadoc-plugin` has to be done:
+
+.Configuration of `maven-javadoc-plugin`
+[source,xml]
+----
+<configuration>
+    <tags>
+        <tag>
+            <name>response</name>
+            <placement>a</placement>
+            <head>OpenAPI response:</head>
+        </tag>
+        <tag>
+            <name>security</name>
+            <placement>a</placement>
+            <head>OpenAPI security scheme:</head>
+        </tag>
+    </tags>
+</configuration>
+----
 
 ==== Define responses
 Because the different response codes and contents are defined within the method body, the *OAS Generator* is not capable of reading this information.

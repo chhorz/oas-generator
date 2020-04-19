@@ -34,7 +34,7 @@ public class ResponseTag extends StructuredTag {
 	private static final String DESCRIPTION = "description";
 
 	/**
-	 * Represents a tag in the following form:
+	 * Represents a tag in the following form: {@code @response 200 String the content as string}
 	 *
 	 * @response 200 String the content as string
 	 */

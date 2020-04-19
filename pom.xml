@@ -296,8 +296,13 @@
 						<tags>
 							<tag>
 								<name>response</name>
-								<placement>m</placement>
+								<placement>a</placement>
 								<head>OpenAPI response:</head>
+							</tag>
+							<tag>
+								<name>security</name>
+								<placement>a</placement>
+								<head>OpenAPI security scheme:</head>
 							</tag>
 						</tags>
 					</configuration>
