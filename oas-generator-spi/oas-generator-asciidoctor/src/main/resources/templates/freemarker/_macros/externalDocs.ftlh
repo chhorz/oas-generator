@@ -4,7 +4,7 @@
 -->
 <#macro externalDocs docs>
 <#if docs.description??>
-${docs.description} ${docs.url}[Link]
+${docs.description} (icon:external-link[] link:${docs.url}[_Link_])
 <#else>
 ${docs.url}
 </#if>

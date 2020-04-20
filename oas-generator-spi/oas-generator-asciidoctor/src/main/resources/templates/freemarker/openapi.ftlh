@@ -104,7 +104,7 @@ This schema is deprecated.
 </#if>
 <#if schema.description??>${schema.description}</#if>
 <#if schema.properties??>
-[cols="1,2,2", options="header"]
+[cols="1,2,3", options="header"]
 |===
 | Name | Type | Description
 

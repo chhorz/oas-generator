@@ -32,7 +32,7 @@ h| Description
 4+| ${operation.description}
 
 </#if>
-<#if operation.parameterObjects??>
+<#if operation.parameterObjects?? && operation.parameterObjects?has_content>
 5+h| Parameters
 
 e| Type

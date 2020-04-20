@@ -165,7 +165,7 @@ h| Description
 This schema is deprecated.
 
 This is an article resource.
-[cols="1,2,2", options="header"]
+[cols="1,2,3", options="header"]
 |===
 | Name | Type | Description
 
@@ -194,7 +194,7 @@ m| <<components_schemas_OrderResource>>
 [[components_schemas_OrderResource]]
 ==== OrderResource
 This is an order resource.
-[cols="1,2,2", options="header"]
+[cols="1,2,3", options="header"]
 |===
 | Name | Type | Description
 
@@ -248,14 +248,14 @@ m| <<components_schemas_ArticleResource>>
 == Tags
 _TAG_1_::
 [[TAG_1]] This is a description
-Lorem ipsum dolor sit amet. https://en.wikipedia.org[Link]
+Lorem ipsum dolor sit amet. (icon:external-link[] link:https://en.wikipedia.org[_Link_])
 
 _TAG_2_::
 [[TAG_2]]
 
 
 == External documentation
-Lorem ipsum dolor sit amet. https://en.wikipedia.org[Link]
+Lorem ipsum dolor sit amet. (icon:external-link[] link:https://en.wikipedia.org[_Link_])
 
 == Terms of Service
 Terms of Service ...
