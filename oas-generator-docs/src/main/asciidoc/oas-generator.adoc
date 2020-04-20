@@ -63,9 +63,19 @@ The simplest way to add the *OAS Generator* to your project is adding the follow
     <groupId>com.github.chhorz</groupId>
     <artifactId>oas-generator-spring-web</artifactId>
     <version>{revnumber}</version>
-    <scope>provided</scope>
+    <scope>provided</scope> <!--1-->
+</dependency>
+
+<!-- Required if 'oas-generator-spring-web' or 'oas-generator-jaxrs' are of scope provided -->
+<dependency>
+    <groupId>org.yaml</groupId>
+    <artifactId>snakeyaml</artifactId> <!--2-->
+    <scope>compile</scope>
 </dependency>
 ----
+<1> The _scope_ `provided` is useful, if you want to exclude the *OAS Generator* dependencies during runtime.
+<2> This additional dependency is required for Spring-Boot applications because the `snakeyaml` dependency is declared of scope `runtime` within the spring boot starter dependency.
+
 All dependencies contain additional information within the `META-INF` folder that define the dependency as annotation processor.
 
 ==== Maven compiler plugin
@@ -154,12 +164,10 @@ To specify the possible response status the `@response` javadoc tag could be use
 ----
 
 /**
- * ...
  * @response 200 SomeResource
  *                      the resource that will be returned
  * @response 404 ProblemResource
  *                      the generic problem resource for error case
- * ...
  */
 ----
 
@@ -174,9 +182,7 @@ The content of the tag must match the name of a security requirement from the `o
 ----
 
 /**
- * ...
  * @security read_role
- * ...
  */
 ----
 
