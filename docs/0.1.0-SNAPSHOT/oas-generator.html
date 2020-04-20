@@ -2234,9 +2234,28 @@ Each kind of installation also works with the <code>oas-generator-jaxrs</code> o
     &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
     &lt;artifactId&gt;oas-generator-spring-web&lt;/artifactId&gt;
     &lt;version&gt;0.1.0-SNAPSHOT&lt;/version&gt;
-    &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;scope&gt;provided&lt;/scope&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+&lt;/dependency&gt;
+
+&lt;!-- Required if 'oas-generator-spring-web' or 'oas-generator-jaxrs' are of scope provided --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.yaml&lt;/groupId&gt;
+    &lt;artifactId&gt;snakeyaml&lt;/artifactId&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+    &lt;scope&gt;compile&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <em>scope</em> <code>provided</code> is useful, if you want to exclude the <strong>OAS Generator</strong> dependencies during runtime.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This additional dependency is required for Spring-Boot applications because the <code>snakeyaml</code> dependency is declared of scope <code>runtime</code> within the spring boot starter dependency.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>All dependencies contain additional information within the <code>META-INF</code> folder that define the dependency as annotation processor.</p>
@@ -2365,12 +2384,10 @@ To specify the possible response status the <code>@response</code> javadoc tag c
 <div class="title">Example Javadoc comment</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/**
- * ...
  * @response 200 SomeResource
  *                      the resource that will be returned
  * @response 404 ProblemResource
  *                      the generic problem resource for error case
- * ...
  */</code></pre>
 </div>
 </div>
@@ -2388,9 +2405,7 @@ If none of these annotations is present on the API method, the security scheme c
 <div class="title">Example Javadoc comment</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/**
- * ...
  * @security read_role
- * ...
  */</code></pre>
 </div>
 </div>
@@ -2834,8 +2849,8 @@ public interface OpenAPIPostProcessor {
     /**
      * Returns the value for the order in which the post processor should be
      * executed. Possible values are between {@code Integer.MIN_VALUE} and
-     * {@code Integer.MAX_VALUE}. The processors will be executed starting with
-     * the lowest value.
+     * {@code Integer.MAX_VALUE}. The processors will be executed &lt;b&gt;starting with
+     * the highest&lt;/b&gt; value.
      *
      * @return the order in which the post processor should be executed
      */
@@ -2924,7 +2939,7 @@ To configure the repository for your project to use the latest snapshot versions
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0-SNAPSHOT<br>
-Last updated 2020-04-19 13:37:11 CEST
+Last updated 2020-04-20 14:56:28 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/zenburn.min.css">
