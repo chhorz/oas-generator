@@ -36,8 +36,8 @@ public interface OpenAPIPostProcessor {
     /**
      * Returns the value for the order in which the post processor should be
      * executed. Possible values are between {@code Integer.MIN_VALUE} and
-     * {@code Integer.MAX_VALUE}. The processors will be executed starting with
-     * the lowest value.
+     * {@code Integer.MAX_VALUE}. The processors will be executed <b>starting with
+     * the highest</b> value.
      *
      * @return the order in which the post processor should be executed
      */

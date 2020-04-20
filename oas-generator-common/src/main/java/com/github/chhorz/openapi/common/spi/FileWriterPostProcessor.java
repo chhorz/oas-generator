@@ -28,7 +28,7 @@ import com.github.chhorz.openapi.common.util.LoggingUtils;
  */
 public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 
-	private static final Integer POST_PROCESSOR_ORDER = Integer.MIN_VALUE;
+	private static final Integer POST_PROCESSOR_ORDER = Integer.MAX_VALUE;
 
 	private final FileUtils fileUtils;
 	private final LoggingUtils log;

@@ -40,6 +40,7 @@ import java.util.stream.StreamSupport;
 import static com.github.chhorz.openapi.common.OpenAPIConstants.OPEN_API_VERSION;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -152,7 +153,7 @@ public interface OpenAPIProcessor {
 
 		StreamSupport.stream(serviceLoader.spliterator(), false)
 				.map(provider -> provider.create(parserProperties))
-				.sorted(Comparator.comparing(OpenAPIPostProcessor::getPostProcessorOrder))
+				.sorted(comparing(OpenAPIPostProcessor::getPostProcessorOrder).reversed())
 				.forEach(openAPIPostProcessor -> openAPIPostProcessor.execute(openApi));
 	}
 
