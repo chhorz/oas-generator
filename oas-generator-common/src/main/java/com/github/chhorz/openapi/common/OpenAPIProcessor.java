@@ -20,6 +20,7 @@ import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.openapi.common.domain.Components;
+import com.github.chhorz.openapi.common.domain.Info;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
@@ -33,11 +34,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.github.chhorz.openapi.common.OpenAPIConstants.OPEN_API_VERSION;
+import static com.github.chhorz.openapi.common.OpenAPIConstants.X_GENERATED_FIELD;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static java.util.Comparator.comparing;
@@ -72,7 +77,12 @@ public interface OpenAPIProcessor {
 	default OpenAPI initializeFromProperties(final GeneratorPropertyLoader propertyLoader) {
 		OpenAPI openApi = new OpenAPI();
 		openApi.setOpenapi(OPEN_API_VERSION);
-		openApi.setInfo(propertyLoader.createInfoFromProperties());
+
+		Info info = propertyLoader.createInfoFromProperties();
+		info.setxGeneratedBy(X_GENERATED_FIELD);
+		info.setxGeneratedTs(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+		openApi.setInfo(info);
+
 		openApi.setServers(propertyLoader.createServerFromProperties());
 		openApi.setExternalDocs(propertyLoader.createExternalDocsFromProperties());
 

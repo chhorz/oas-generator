@@ -14,29 +14,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.common;
+package com.github.chhorz.openapi.common.domain.meta;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * Basic set of project internal constants.
+ * Indicates that the annotated attribute is a OpenAPI specification extension.
+ *
+ * @see https://spec.openapis.org/oas/v3.0.3#specification-extensions
  *
  * @author chhorz
+ *
  */
-public final class OpenAPIConstants {
-
-	/*
-	 * Version of the generated OpenAPI file.
-	 */
-
-	public static final String OPEN_API_VERSION = "3.0.3";
-	public static final String X_GENERATED_FIELD = "oas-generator";
-
-	/*
-	 * Command-Line option names
-	 */
-
-	public static final String OPTION_PROPERTIES_PATH = "propertiesPath";
-	public static final String OPTION_VERSION = "version";
-
-	public static final String OPTION_SCHEMA_FILE_PATH = "schemaPath";
-
+@Documented
+@Retention(RetentionPolicy.SOURCE)
+public @interface SpecificationExtension {
 }

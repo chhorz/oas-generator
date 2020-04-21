@@ -463,6 +463,24 @@ com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider
 . If the post processor uses custom properties these should be placed below the parser properties as shown for the <<asciidoctor.properties, Asciidoctor Post Processor>>.
 All custom property classes should extend the provided `AbstractPostProcessorProperties` class.
 
+== Specification Extensions
+The OpenAPI specification allows using additional properties within a specification file.
+These link:https://spec.openapis.org/oas/v3.0.3#specification-extensions[specification extensions] have to follow a specific naming convention.
+
+The *OAS Generator* adds the following properties to the `info` object:
+
+[source,json]
+----
+{
+  "info" : {
+    "x-generated-by" : "oas-generator",
+    "x-generated-ts" : "2020-04-21T08:16:42.509+02:00"
+  }
+}
+----
+
+These properties should act as hint, that the current file was generated automatically and ideally should not be changed manually.
+
 == Limitations
 
 There are some limitations based on the underlying concept of java annotation processors.

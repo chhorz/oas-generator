@@ -16,7 +16,9 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.openapi.common.domain.meta.Required;
+import com.github.chhorz.openapi.common.domain.meta.SpecificationExtension;
 
 /**
  * https://spec.openapis.org/oas/v3.0.3#info-object
@@ -34,6 +36,13 @@ public class Info {
 	private License license;
 	@Required
 	private String version;
+
+	@SpecificationExtension
+	@JsonProperty("x-generated-by")
+	private String xGeneratedBy;
+	@SpecificationExtension
+	@JsonProperty("x-generated-ts")
+	private String xGeneratedTs;
 
 	public String getTitle() {
 		return title;
@@ -83,4 +92,19 @@ public class Info {
 		this.version = version;
 	}
 
+	public String getxGeneratedBy() {
+		return xGeneratedBy;
+	}
+
+	public void setxGeneratedBy(String xGeneratedBy) {
+		this.xGeneratedBy = xGeneratedBy;
+	}
+
+	public String getxGeneratedTs() {
+		return xGeneratedTs;
+	}
+
+	public void setxGeneratedTs(String xGeneratedTs) {
+		this.xGeneratedTs = xGeneratedTs;
+	}
 }
