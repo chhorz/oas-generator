@@ -2156,9 +2156,10 @@ p {
 <li><a href="#_custom_post_processors">5.2. Custom Post-Processors</a></li>
 </ul>
 </li>
-<li><a href="#_limitations">6. Limitations</a></li>
-<li><a href="#_snapshots">7. Snapshots</a></li>
-<li><a href="#_license">8. License</a></li>
+<li><a href="#_specification_extensions">6. Specification Extensions</a></li>
+<li><a href="#_limitations">7. Limitations</a></li>
+<li><a href="#_snapshots">8. Snapshots</a></li>
+<li><a href="#_license">9. License</a></li>
 </ul>
 </div>
 </div>
@@ -2890,7 +2891,32 @@ All custom property classes should extend the provided <code>AbstractPostProcess
 </div>
 </div>
 <div class="sect1">
-<h2 id="_limitations"><a class="anchor" href="#_limitations"></a><a class="link" href="#_limitations">6. Limitations</a></h2>
+<h2 id="_specification_extensions"><a class="anchor" href="#_specification_extensions"></a><a class="link" href="#_specification_extensions">6. Specification Extensions</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The OpenAPI specification allows using additional properties within a specification file.
+These <a href="https://spec.openapis.org/oas/v3.0.3#specification-extensions">specification extensions</a> have to follow a specific naming convention.</p>
+</div>
+<div class="paragraph">
+<p>The <strong>OAS Generator</strong> adds the following properties to the <code>info</code> object:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "info" : {
+    "x-generated-by" : "oas-generator",
+    "x-generated-ts" : "2020-04-21T08:16:42.509+02:00"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These properties should act as hint, that the current file was generated automatically and ideally should not be changed manually.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_limitations"><a class="anchor" href="#_limitations"></a><a class="link" href="#_limitations">7. Limitations</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>There are some limitations based on the underlying concept of java annotation processors.
@@ -2909,7 +2935,7 @@ Either the documentation comments or other annotations should be used in this pl
 </div>
 </div>
 <div class="sect1">
-<h2 id="_snapshots"><a class="anchor" href="#_snapshots"></a><a class="link" href="#_snapshots">7. Snapshots</a></h2>
+<h2 id="_snapshots"><a class="anchor" href="#_snapshots"></a><a class="link" href="#_snapshots">8. Snapshots</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Snapshots are available from the Sonatype OSS Snapshots repository.
@@ -2928,7 +2954,7 @@ To configure the repository for your project to use the latest snapshot versions
 </div>
 </div>
 <div class="sect1">
-<h2 id="_license"><a class="anchor" href="#_license"></a><a class="link" href="#_license">8. License</a></h2>
+<h2 id="_license"><a class="anchor" href="#_license"></a><a class="link" href="#_license">9. License</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>OAS Generator is Open Source software released under the <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0 license</a>.</p>
@@ -2939,7 +2965,7 @@ To configure the repository for your project to use the latest snapshot versions
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0-SNAPSHOT<br>
-Last updated 2020-04-20 14:56:28 CEST
+Last updated 2020-04-21 08:38:33 CEST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/zenburn.min.css">
