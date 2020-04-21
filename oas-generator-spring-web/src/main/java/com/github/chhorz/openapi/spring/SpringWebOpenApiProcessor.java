@@ -382,7 +382,10 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         parameter.setDescription(parameterDescription.isPresent() ? parameterDescription.get().getParamDescription() : "");
         parameter.setIn(In.PATH);
         parameter.setName(name);
-        parameter.setRequired(Boolean.TRUE);
+        parameter.setRequired(pathVariable.required());
+		if (schemaUtils.isAssignableFrom(elements, types, variableElement.asType(), Optional.class)) {
+			parameter.setRequired(false);
+		}
 
         Map<TypeMirror, Schema> map = schemaUtils.mapTypeMirrorToSchema(variableElement.asType());
         Schema schema = map.get(variableElement.asType());
@@ -446,6 +449,9 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         parameter.setIn(In.HEADER);
         parameter.setName(name);
         parameter.setRequired(requestHeader.required());
+		if (schemaUtils.isAssignableFrom(elements, types, variableElement.asType(), Optional.class)) {
+			parameter.setRequired(false);
+		}
 
         Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
                 .get(variableElement.asType());

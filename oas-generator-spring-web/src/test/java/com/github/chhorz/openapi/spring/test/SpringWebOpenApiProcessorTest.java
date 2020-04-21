@@ -35,7 +35,10 @@ import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.comparator.CustomComparator;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,6 +76,7 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("title", "MyService")
 			.hasFieldOrPropertyWithValue("version", "1.2.3-SNAPSHOT")
+			.hasFieldOrPropertyWithValue("xGeneratedBy", "oas-generator")
 			.hasNoNullFieldsOrPropertiesExcept("description", "termsOfService");
 
 		assertThat(info.getContact())
@@ -80,7 +84,6 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("name", "John Doe")
 			.hasFieldOrPropertyWithValue("url", "https://www.google.com")
 			.hasFieldOrPropertyWithValue("email", "john@doe.com");
-
 
 		assertThat(info.getLicense())
 			.isNotNull()
@@ -377,7 +380,9 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 		try {
 			String expected = String.join("", Files.readAllLines(Paths.get("src/test/resources/" + expectedFile)));
 			String actual = String.join("", Files.readAllLines(Paths.get("target/" + actualFile)));
-			JSONAssert.assertEquals(expected, actual, true);
+			JSONAssert.assertEquals(expected, actual, new CustomComparator(JSONCompareMode.LENIENT,
+				new Customization("x-generated-ts", (o1, o2) -> true)
+			));
 		} catch (JSONException | IOException e) {
 			fail("Could not check openapi.json against expected file.", e);
 		}
