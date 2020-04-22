@@ -70,3 +70,15 @@ Replace special characters within asciidoc
 ${content?replace('|', '&#124;')}
 </#compress>
 </#macro>
+<#--
+
+Create section title with correct intend
+
+-->
+<#macro section title level>
+<#if standaloneFile>
+<#list 0..<level as i>=</#list> ${title}
+<#else>
+<#list -1..<level as i>=</#list> ${title}
+</#if>
+</#macro>

@@ -1,2 +1,2 @@
-== Test Service (1.2.3-SNAPSHOT)
+== OpenAPI Documentation
 

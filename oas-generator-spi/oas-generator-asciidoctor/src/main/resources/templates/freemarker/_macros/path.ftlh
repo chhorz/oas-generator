@@ -1,11 +1,11 @@
 <#ftl auto_esc=false>
 <#include "utils.ftlh"/>
 <#--
-
+    Macro for the table of a single operation
 -->
 <#macro pathTable path method operation>
 <#if operation.operationId??>[[<@clean_operationid operation.operationId/>]]</#if>
-==== ${method}
+<@section title=method level=4/>
 <#if operation.deprecated>
 [WARNING]
 This operation is deprecated.

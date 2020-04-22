@@ -1,7 +1,7 @@
 <#ftl auto_esc=false>
 <#include "externalDocs.ftlh"/>
 <#--
-
+    Macro for a single OpenAPI tag in Asciidoctor format
 -->
 <#macro tag tag>
 _${tag.name}_::

@@ -4,11 +4,12 @@
 <#include "_macros/server.ftlh"/>
 <#include "_macros/tag.ftlh"/>
 <#include "_macros/utils.ftlh"/>
+<#global standaloneFile = standalone />
 <#--
 
 -->
 <#if standalone>
-= ${openapi.info.title}
+<@section title=openapi.info.title level=1/>
 <#if openapi.info.contact??>
 ${openapi.info.contact.name} <${openapi.info.contact.email}>
 </#if>
@@ -19,11 +20,10 @@ ${openapi.info.contact.name} <${openapi.info.contact.email}>
 :toclevels: 3
 
 <#if openapi.info.description??>
-
 ${openapi.info.description}
 </#if>
 <#else>
-== ${openapi.info.title} (${openapi.info.version})
+<@section title="OpenAPI Documentation" level=1/>
 <#if openapi.info.contact??>
 ${openapi.info.contact.name} <${openapi.info.contact.email}>
 </#if>
@@ -38,7 +38,7 @@ ${openapi.info.description}
 -->
 <#if openapi.servers??>
 
-== Servers
+<@section title="Servers" level=2/>
 |===
 <#list openapi.servers as s>
 <@server s/>
@@ -53,10 +53,10 @@ ${openapi.info.description}
 <#if openapi.paths??>
 <#if openapi.paths?size gt 0>
 
-== Paths
+<@section title="Paths" level=2/>
 <#list openapi.paths as path, pathItem>
 
-=== ${path}
+<@section title=path level=3/>
 <#if pathItem.description??>${pathItem.description}</#if><#t>
 <#if pathItem.get??>
 <@pathTable path "GET" pathItem.get/>
@@ -91,12 +91,12 @@ ${openapi.info.description}
 -->
 <#if openapi.components??>
 
-== Components
+<@section title="Components" level=2/>
 <#if openapi.components.schemas??>
-=== Schemas
+<@section title="Schemas" level=3/>
 <#list openapi.components.schemas as schemaName, schema>
 [[components_schemas_${schemaName}]]
-==== ${schemaName}
+<@section title=schemaName level=4/>
 <#if schema.deprecated>
 [WARNING]
 This schema is deprecated.
@@ -111,7 +111,7 @@ This schema is deprecated.
 <#list schema.properties as propertyName, property>
 | ${propertyName}
 m| <@asciidoc_schema property/>
-| <#if property.description??>pass:[<@clean property.description/>]</#if>
+|<#if property.description??> pass:[<@clean property.description/>]</#if>
 
 </#list>
 |===
@@ -122,10 +122,10 @@ m| <@asciidoc_schema property/>
 </#if>
 <#if openapi.components.requestBodies??>
 
-=== Request Bodies
+<@section title="Request Bodies" level=3/>
 <#list openapi.components.requestBodies as requestBodyName, requestBody>
 [[components_requestBodies_${requestBodyName}]]
-==== ${requestBodyName}
+<@section title=requestBodyName level=4/>
 <#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description??>${requestBody.description}</#if>
 
 <#if requestBody.content??>
@@ -146,7 +146,7 @@ m| <@asciidoc_mediatype mediatype/>
 </#if>
 <#if openapi.components.securitySchemes??>
 
-=== Security Schemes
+<@section title="Security Schemes" level=3/>
 [cols="1,1,2", options="header"]
 |===
 | Scheme | Type | Description
@@ -165,7 +165,7 @@ m| <@asciidoc_mediatype mediatype/>
 -->
 <#if openapi.tags??>
 
-== Tags
+<@section title="Tags" level=2/>
 <#list openapi.tags as t>
 <@tag t/>
 </#list>
@@ -175,7 +175,7 @@ m| <@asciidoc_mediatype mediatype/>
 -->
 <#if openapi.externalDocs??>
 
-== External documentation
+<@section title="External documentation" level=2/>
 <@externalDocs openapi.externalDocs/>
 </#if>
 <#--
@@ -183,7 +183,7 @@ m| <@asciidoc_mediatype mediatype/>
 -->
 <#if openapi.info.termsOfService??>
 
-== Terms of Service
+<@section title="Terms of Service" level=2/>
 ${openapi.info.termsOfService}
 </#if>
 <#--
@@ -191,7 +191,7 @@ ${openapi.info.termsOfService}
 -->
 <#if openapi.info.license??>
 
-== License
+<@section title="License" level=2/>
 <#if openapi.info.license.url??>
 The service is licensed under ${openapi.info.license.url}[${openapi.info.license.name}].
 <#else>

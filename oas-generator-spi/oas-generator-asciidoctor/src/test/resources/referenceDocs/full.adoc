@@ -6,7 +6,6 @@ John doe <john.doe@test.org>
 :toc: left
 :toclevels: 3
 
-
 Lorem ipsum
 
 == Servers
