@@ -25,7 +25,7 @@ ${openapi.info.description}
 <#else>
 <@section title="OpenAPI Documentation" level=1/>
 <#if openapi.info.contact??>
-${openapi.info.contact.name} <${openapi.info.contact.email}>
+${openapi.info.contact.name} (${openapi.info.contact.email})
 </#if>
 
 <#if openapi.info.description??>

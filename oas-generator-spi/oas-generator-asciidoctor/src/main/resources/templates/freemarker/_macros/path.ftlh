@@ -14,8 +14,8 @@ This operation is deprecated.
 
 [cols="1,1,1,1,2"]
 |===
-4+h| ${path}
 ^h| ${method}
+4+h| ${path}
 
 <#if operation.tags??>
 h| Tags
@@ -24,12 +24,12 @@ h| Tags
 </#if>
 <#if operation.summary??>
 h| Summary
-4+| ${operation.summary}
+4+|<#if operation.summary??> pass:[<@clean operation.summary/>]</#if>
 
 </#if>
 <#if operation.description??>
 h| Description
-4+| ${operation.description}
+4+|<#if operation.description??> pass:[<@clean operation.description/>]</#if>
 
 </#if>
 <#if operation.parameterObjects?? && operation.parameterObjects?has_content>
@@ -46,7 +46,7 @@ e| Description
 | ${parameter.name}
 | ${parameter.required?c}
 m| <@asciidoc_schema parameter.schema/>
-| <#if parameter.description??>pass:[<@clean parameter.description/>]</#if>
+|<#if parameter.description??> pass:[<@clean parameter.description/>]</#if>
 
 </#list>
 </#if>

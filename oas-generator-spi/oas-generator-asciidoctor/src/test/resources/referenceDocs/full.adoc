@@ -10,7 +10,7 @@ Lorem ipsum
 
 == Servers
 |===
-2+h|www.github.com
+2+h|`www.github.com`
 |We love code.
 a|
 port::
@@ -20,7 +20,7 @@ _Lorem ipsum_
 test::
 Default: `8080`
 
-2+h|www.gitlab.com
+2+h|`www.gitlab.com`
 |
 a|
 |===
@@ -34,17 +34,17 @@ a|
 
 [cols="1,1,1,1,2"]
 |===
-4+h| /articles
 ^h| GET
+4+h| /articles
 
 h| Tags
 4+| icon:tag[] <<TAG_1,TAG_1>>
 
 h| Summary
-4+| Here we get some articles.
+4+| pass:[Here we get some articles.]
 
 h| Description
-4+| Here we get some articles. Or something else.
+4+| pass:[Here we get some articles. Or something else.]
 
 5+h| Parameters
 
@@ -89,17 +89,17 @@ m! pass:[*/*]
 
 [cols="1,1,1,1,2"]
 |===
-4+h| /articles
 ^h| POST
+4+h| /articles
 
 h| Tags
 4+| icon:tag[] <<TAG_1,TAG_1>>
 
 h| Summary
-4+| Here we post a new article.
+4+| pass:[Here we post a new article.]
 
 h| Description
-4+| Here we create a new article. Or something else.
+4+| pass:[Here we create a new article. Or something else.]
 
 5+h| Request Body
 
@@ -140,17 +140,17 @@ This operation is deprecated.
 
 [cols="1,1,1,1,2"]
 |===
-4+h| /orders
 ^h| GET
+4+h| /orders
 
 h| Tags
 4+| icon:tag[] <<TAG_1,TAG_1>>, icon:tag[] <<TAG_2,TAG_2>>
 
 h| Summary
-4+| Here we get some orders.
+4+| pass:[Here we get some orders.]
 
 h| Description
-4+| Here we get some orders. Or something else.
+4+| pass:[Here we get some orders. Or something else.]
 
 |===
 
