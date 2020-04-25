@@ -48,13 +48,15 @@ public class ResponseUtils {
 		Response response = new Response();
 		response.setDescription(description != null ? description : "");
 
-		MediaType mediaType = schemaUtils.createMediaType(typeMirror);
+		if (typeMirror != null && !schemaUtils.isAssignableFrom(typeMirror, Void.class)) {
+			MediaType mediaType = schemaUtils.createMediaType(typeMirror);
 
-		if (produces == null || produces.length == 0) {
-			response.putContent("*/*", mediaType);
-		} else {
-			for (String producesHeader : produces) {
-				response.putContent(producesHeader, mediaType);
+			if (produces == null || produces.length == 0) {
+				response.putContent("*/*", mediaType);
+			} else {
+				for (String producesHeader : produces) {
+					response.putContent(producesHeader, mediaType);
+				}
 			}
 		}
 
@@ -65,14 +67,16 @@ public class ResponseUtils {
 		Response response = new Response();
 		response.setDescription(description != null ? description : "");
 
-		MediaType mediaType = new MediaType();
-		mediaType.setSchema(schema);
+		if (schema.getType() != null) {
+			MediaType mediaType = new MediaType();
+			mediaType.setSchema(schema);
 
-		if (produces == null || produces.length == 0) {
-			response.putContent("*/*", mediaType);
-		} else {
-			for (String producesHeader : produces) {
-				response.putContent(producesHeader, mediaType);
+			if (produces == null || produces.length == 0) {
+				response.putContent("*/*", mediaType);
+			} else {
+				for (String producesHeader : produces) {
+					response.putContent(producesHeader, mediaType);
+				}
 			}
 		}
 

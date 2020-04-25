@@ -14,28 +14,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.spring.test.controller.github;
+package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
-
 @RequestMapping("github")
-public class GitHubIssue012 {
+public class GitHubIssue001 {
 
-	@GithubIssue("#12")
-	@GetMapping(path = "/issue", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE )
-	public ResponseEntity<List<Test>> test(@RequestBody List<Test> responses) {
-		return ResponseEntity.ok(responses);
-	}
-
-	public static class Test {
-		public String value;
+	@GithubIssue("#1")
+	@GetMapping("issue")
+	public ResponseEntity<Void> testVoidType() {
+		return ResponseEntity.ok().build();
 	}
 
 }

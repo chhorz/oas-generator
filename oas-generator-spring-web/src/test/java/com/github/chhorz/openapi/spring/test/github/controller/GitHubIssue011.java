@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.spring.test.controller.github;
+package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import org.springframework.hateoas.Link;
@@ -22,8 +22,10 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,22 +33,17 @@ import static java.util.Collections.singletonList;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RequestMapping("github")
-public class GitHubIssue008 {
+public class GitHubIssue011 {
 
-	/**
-	 * @security read_role
-	 * @security dummy_test_role
-	 *
-	 * @return a list of tags
-	 */
-	@GithubIssue("#8")
-	@GetMapping(path = "/issue")
+	@GithubIssue("#11")
+	@GetMapping(path = "/issue", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<List<Test>> test() {
 		Test test = new Test(UUID.randomUUID().toString());
+		test.add(new Link("/github/issue/" + test.getId()));
 		return ok(singletonList(test));
 	}
 
-	public static class Test {
+	public static class Test extends RepresentationModel<Test> {
 		private String id;
 
 		public Test(String id) {

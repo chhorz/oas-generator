@@ -19,20 +19,17 @@ package com.github.chhorz.openapi.spring.test;
 import com.github.chhorz.openapi.common.OpenAPIConstants;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor;
 import com.github.chhorz.openapi.spring.test.controller.ArticleController;
 import com.github.chhorz.openapi.spring.test.controller.HelloWorldController;
 import com.github.chhorz.openapi.spring.test.controller.HttpMethodsController;
 import com.github.chhorz.openapi.spring.test.controller.OrderController;
 import com.github.chhorz.openapi.spring.test.controller.external.ExternalResource;
-import com.github.chhorz.openapi.spring.test.controller.github.*;
 import com.github.chhorz.openapi.spring.test.controller.resource.*;
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
@@ -181,191 +178,6 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 
 		// compare result with reference documentation
 		compareFileContent("expected/openapi04.json", "openapi/openapi.json");
-	}
-
-	@Test
-	@GithubIssue("#1")
-	void getGithubIssue001() {
-		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue001.class);
-
-		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
-
-		// assertions
-		Response response = ctx.read("$.paths./github/issue.get.responses.default", Response.class);
-
-		assertThat(response.getContent())
-			.isNull();
-	}
-
-	@Test
-	@GithubIssue("#2")
-	void getGithubIssue002() {
-		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue002.class);
-
-		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
-
-		// assertions
-		Response response = ctx.read("$.paths./github/issue.get.responses.default", Response.class);
-
-		assertThat(response.getContent())
-			.isNotNull()
-			.containsOnlyKeys("*/*");
-
-		assertThat(response.getContent().get("*/*").getSchema())
-			.asInstanceOf(InstanceOfAssertFactories.MAP)
-			.containsOnlyKeys("$ref")
-			.extractingByKey("$ref")
-			.isEqualTo("#/components/schemas/ResponseEntity");
-
-		Schema schema = ctx.read("$.components.schemas.T", Schema.class);
-
-		assertThat(schema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT)
-			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasAllNullFieldsOrPropertiesExcept("type", "deprecated");
-	}
-
-	@Test
-	@GithubIssue("#8")
-	void getGithubIssue008() {
-		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator-withoutparser.yml"), GitHubIssue008.class);
-
-		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
-
-		// assertions
-		Operation operation = ctx.read("$.paths./github/issue.get", Operation.class);
-
-		assertThat(operation)
-			.isNotNull();
-
-		assertThat(operation.getSecurity())
-			.isNotNull()
-			.isNotEmpty()
-			.hasSize(1);
-
-		assertThat(operation.getSecurity().get(0))
-			.isNotNull()
-			.containsKeys("read_role");
-
-		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
-
-		assertThat(schema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
-
-		SecuritySchemeHttp securityScheme = ctx.read("$.components.securitySchemes.read_role", SecuritySchemeHttp.class);
-
-		assertThat(securityScheme)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.http)
-			.hasFieldOrPropertyWithValue("description", "Basic LDAP read role.")
-			.hasFieldOrPropertyWithValue("scheme", "basic");
-	}
-
-	@Test
-	@GithubIssue("#11")
-	void getGithubIssue011() {
-		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue011.class);
-
-		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
-
-		// assertions
-		Components components = ctx.read("$.components", Components.class);
-
-		assertThat(components.getSchemas())
-			.containsOnlyKeys("Test", "Link", "LinkRelation");
-
-		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
-
-		assertThat(schema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
-	}
-
-	@Test
-	@GithubIssue("#12")
-	void getGithubIssue012() {
-		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue012.class);
-
-		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
-
-		// assertions
-		Components components = ctx.read("$.components", Components.class);
-
-		assertThat(components.getSchemas())
-			.containsOnlyKeys("Test");
-
-		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
-
-		assertThat(schema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
-
-		assertThat(components.getRequestBodies())
-			.containsOnlyKeys("Test");
-
-		RequestBody requestBody = ctx.read("$.components.requestBodies.Test", RequestBody.class);
-
-		assertThat(requestBody)
-			.hasFieldOrPropertyWithValue("description", null)
-			.hasFieldOrPropertyWithValue("required", true);
-
-		Schema requestBodySchema = ctx.read("$.components.requestBodies.Test.content.application/json.schema", Schema.class);
-
-		assertThat(requestBodySchema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("type", Schema.Type.ARRAY);
-
-		String testObjectReference = ctx.read("$.components.requestBodies.Test.content.application/json.schema.items.$ref", String.class);
-
-		assertThat(testObjectReference)
-			.isNotNull()
-			.isEqualTo("#/components/schemas/Test");
-	}
-
-	@Test
-	@GithubIssue("#15")
-	void getGithubIssue015() {
-		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue015.class);
-
-		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
-
-		// assertions
-		Parameter[] parameters = ctx.read("$.paths./github/issue.get.parameters", Parameter[].class);
-
-		assertThat(parameters)
-			.isNotNull()
-			.hasSize(1);
-
-		assertThat(parameters[0])
-			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
-			.hasFieldOrPropertyWithValue("name", "filter")
-			.hasFieldOrPropertyWithValue("required", false);
-
-		Components components = ctx.read("$.components", Components.class);
-
-		assertThat(components.getSchemas())
-			.containsOnlyKeys("Test");
-
-		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
-
-		assertThat(schema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 	}
 
 	/**

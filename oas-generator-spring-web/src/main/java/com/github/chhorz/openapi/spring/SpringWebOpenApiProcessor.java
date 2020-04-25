@@ -383,7 +383,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         parameter.setIn(In.PATH);
         parameter.setName(name);
         parameter.setRequired(pathVariable.required());
-		if (schemaUtils.isAssignableFrom(elements, types, variableElement.asType(), Optional.class)) {
+		if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
 			parameter.setRequired(false);
 		}
 
@@ -415,7 +415,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         parameter.setIn(In.QUERY);
         parameter.setName(name);
         parameter.setRequired(requestParam.required());
-        if (schemaUtils.isAssignableFrom(elements, types, variableElement.asType(), Optional.class)) {
+        if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
         	parameter.setRequired(false);
 		}
 
@@ -449,7 +449,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         parameter.setIn(In.HEADER);
         parameter.setName(name);
         parameter.setRequired(requestHeader.required());
-		if (schemaUtils.isAssignableFrom(elements, types, variableElement.asType(), Optional.class)) {
+		if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
 			parameter.setRequired(false);
 		}
 

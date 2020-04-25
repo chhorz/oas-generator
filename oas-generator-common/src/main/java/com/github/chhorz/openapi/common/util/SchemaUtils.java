@@ -143,16 +143,18 @@ public class SchemaUtils {
 				// schema.setDescription(propertyDoc.getDescription());
 			}
 			schemaMap.put(typeMirror, schema);
-		} else if (TypeKind.VOID.equals(typeMirror.getKind()) || isAssignableFrom(elements, types, typeMirror, Void.class)) {
+		} else if (TypeKind.VOID.equals(typeMirror.getKind()) || isAssignableFrom(typeMirror, Void.class)) {
 			// TODO how to handle void type
-			schema.setDescription("Returntype is Void.");
+			schema.setDescription("Type is Void.");
+
+			schemaMap.put(typeMirror, schema);
 		} else if (TypeKind.TYPEVAR.equals(typeMirror.getKind())) {
 			// TODO check ... at the moment all typevars are ignored
 
 			schema.setType(Type.OBJECT);
 
 			schemaMap.put(typeMirror, schema);
-		} else if (isTypeOf(elements, types, typeMirror, Object.class)) {
+		} else if (isTypeOf(typeMirror, Object.class)) {
 			schema.setType(Type.OBJECT);
 
 			schemaMap.put(typeMirror, schema);
@@ -163,7 +165,7 @@ public class SchemaUtils {
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
 			if (isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
 					typeSchema.setType(typeAndFormat.getKey());
@@ -181,7 +183,7 @@ public class SchemaUtils {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
 
-			SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, typeMirror);
+			SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(typeMirror);
 			if (typeAndFormat != null) {
 				schema.setType(typeAndFormat.getKey());
 				schema.setFormat(typeAndFormat.getValue());
@@ -200,18 +202,18 @@ public class SchemaUtils {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
 
-			SimpleEntry<Type, Format> typeAndFormat = getJavaTimeTypeAndFormat(elements, types, typeMirror);
+			SimpleEntry<Type, Format> typeAndFormat = getJavaTimeTypeAndFormat(typeMirror);
 			if (typeAndFormat != null) {
 				schema.setType(typeAndFormat.getKey());
 				schema.setFormat(typeAndFormat.getValue());
 			}
 			schemaMap.put(typeMirror, schema);
-		} else if (isAssignableFrom(elements, types, typeMirror, Optional.class)) {
+		} else if (isAssignableFrom(typeMirror, Optional.class)) {
 			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, Optional.class)[0];
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
 			if (isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
 					typeSchema.setType(typeAndFormat.getKey());
@@ -225,14 +227,14 @@ public class SchemaUtils {
 			schemaMap.putAll(propertySchemaMap);
 
 			schemaMap.put(typeMirror, schema);
-		} else if (isAssignableFrom(elements, types, typeMirror, List.class)) {
+		} else if (isAssignableFrom(typeMirror, List.class)) {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, List.class)[0];
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
 			if (isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
 					typeSchema.setType(typeAndFormat.getKey());
@@ -246,14 +248,14 @@ public class SchemaUtils {
 			schemaMap.putAll(propertySchemaMap);
 
 			schemaMap.put(typeMirror, schema);
-		} else if (isAssignableFrom(elements, types, typeMirror, Set.class)) {
+		} else if (isAssignableFrom(typeMirror, Set.class)) {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, Set.class)[0];
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
 
 			if (isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(elements, types, type);
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
 					typeSchema.setType(typeAndFormat.getKey());
@@ -267,7 +269,7 @@ public class SchemaUtils {
 			schemaMap.putAll(propertySchemaMap);
 
 			schemaMap.put(typeMirror, schema);
-		} else if (isAssignableFrom(elements, types, typeMirror, Map.class)) {
+		} else if (isAssignableFrom(typeMirror, Map.class)) {
 			// TODO implement
 		} else {
 			Element element = elements.getTypeElement(typeMirror.toString());
@@ -394,11 +396,10 @@ public class SchemaUtils {
 		}
 	}
 
-	private SimpleEntry<Type, Format> getJavaLangTypeAndFormat(final Elements elements, final Types types,
-			final TypeMirror typeMirror) {
+	private SimpleEntry<Type, Format> getJavaLangTypeAndFormat(final TypeMirror typeMirror) {
 		SimpleEntry<Type, Format> typeAndFormat = null;
 
-		if (isTypeOf(elements, types, typeMirror, String.class)) {
+		if (isTypeOf(typeMirror, String.class)) {
 			typeAndFormat = new SimpleEntry<>(Type.STRING, null);
 		}
 
@@ -411,25 +412,23 @@ public class SchemaUtils {
 		return typeAndFormat;
 	}
 
-	private SimpleEntry<Type, Format> getJavaTimeTypeAndFormat(final Elements elements, final Types types,
-			final TypeMirror typeMirror) {
+	private SimpleEntry<Type, Format> getJavaTimeTypeAndFormat(final TypeMirror typeMirror) {
 		SimpleEntry<Type, Format> typeAndFormat = null;
 
-		if (isTypeOf(elements, types, typeMirror, LocalDate.class)) {
+		if (isTypeOf(typeMirror, LocalDate.class)) {
 			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE);
-		} else if (isTypeOf(elements, types, typeMirror, LocalDateTime.class)) {
+		} else if (isTypeOf(typeMirror, LocalDateTime.class)) {
 			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE_TIME);
 		}
 
 		return typeAndFormat;
 	}
 
-	public boolean isTypeOf(final Elements elements, final Types types, final TypeMirror typeMirror, final Class<?> clazz) {
+	public boolean isTypeOf(final TypeMirror typeMirror, final Class<?> clazz) {
 		return types.isSameType(typeMirror, elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
 
-	public boolean isAssignableFrom(final Elements elements, final Types types, final TypeMirror typeMirror,
-			final Class<?> clazz) {
+	public boolean isAssignableFrom(final TypeMirror typeMirror, final Class<?> clazz) {
 		return types.isAssignable(types.erasure(typeMirror), elements.getTypeElement(clazz.getCanonicalName()).asType());
 	}
 

@@ -14,35 +14,48 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.spring.test.controller.github;
+package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
+
+import static java.util.Collections.singletonList;
+import static org.springframework.http.ResponseEntity.ok;
 
 @RequestMapping("github")
-public class GitHubIssue015 {
+public class GitHubIssue008 {
 
-	/*
-	 * Beside the fact that the Optional type was intended as return type, the oas-generator
-	 * should not throw an exception.
+	/**
+	 * @security read_role
+	 * @security dummy_test_role
+	 *
+	 * @return a list of tags
 	 */
-
-	@GithubIssue("#15")
-	@GetMapping(path = "/issue", produces = MediaType.APPLICATION_JSON_VALUE )
-	public ResponseEntity<List<Test>> test(@RequestParam Optional<String> filter) {
-		return ResponseEntity.noContent().build();
+	@GithubIssue("#8")
+	@GetMapping(path = "/issue")
+	public ResponseEntity<List<Test>> test() {
+		Test test = new Test(UUID.randomUUID().toString());
+		return ok(singletonList(test));
 	}
 
 	public static class Test {
-		public String value;
+		private String id;
+
+		public Test(String id) {
+			this.id = id;
+		}
+
+		public String getId() {
+			return id;
+		}
 	}
 
 }
