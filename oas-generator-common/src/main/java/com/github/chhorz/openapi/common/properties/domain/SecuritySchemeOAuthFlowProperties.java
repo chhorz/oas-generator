@@ -14,27 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.common.domain;
+package com.github.chhorz.openapi.common.properties.domain;
 
-import com.github.chhorz.openapi.common.domain.meta.Required;
-
-/**
- * https://spec.openapis.org/oas/v3.0.3#security-scheme-object
- *
- * @author chhorz
- *
- */
-public class SecuritySchemeOpenIdConnect extends SecurityScheme {
-
-	@Required
-	private String openIdConnectUrl;
-
-	public String getOpenIdConnectUrl() {
-		return openIdConnectUrl;
-	}
-
-	public void setOpenIdConnectUrl(String openIdConnectUrl) {
-		this.openIdConnectUrl = openIdConnectUrl;
-	}
-
+public class SecuritySchemeOAuthFlowProperties {
 }

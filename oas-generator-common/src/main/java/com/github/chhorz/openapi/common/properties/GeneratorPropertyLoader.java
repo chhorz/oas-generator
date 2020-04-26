@@ -20,18 +20,19 @@ import com.github.chhorz.openapi.common.OpenAPIConstants;
 import com.github.chhorz.openapi.common.SpecificationViolationException;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.SecurityScheme.Type;
+import com.github.chhorz.openapi.common.domain.SecuritySchemeApiKey.In;
 import com.github.chhorz.openapi.common.properties.domain.*;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
@@ -216,11 +217,45 @@ public class GeneratorPropertyLoader {
 				scheme.setType(Type.http);
 				scheme.setScheme(property.getScheme());
 				scheme.setDescription(property.getDescription());
+
+				if ("bearer".equalsIgnoreCase(property.getScheme())) {
+					scheme.setBearerFormat(property.getBearerFormat());
+				}
+
+				map.put(entry.getKey(), scheme);
+			} else if (Type.apiKey.name().equalsIgnoreCase(property.getType())) {
+				if (Stream.of(In.values()).map(In::name).noneMatch(in -> in.equals(property.getIn()))) {
+					throw new SpecificationViolationException("Security property 'in' must be one of " + Stream.of(In.values()).map(In::name).collect(joining(",")));
+				} else if (property.getName() == null || property.getName().isEmpty()) {
+					throw new SpecificationViolationException("Security property 'name' must be present");
+				}
+
+				SecuritySchemeApiKey scheme = new SecuritySchemeApiKey();
+				scheme.setType(Type.apiKey);
+				scheme.setIn(In.of(property.getIn()));
+				scheme.setName(property.getName());
+				scheme.setDescription(property.getDescription());
+
+				map.put(entry.getKey(), scheme);
+			} else if (Type.oauth2.name().equalsIgnoreCase(property.getType())) {
+				// TODO add other security schemes
+			} else if (Type.openIdConnect.name().equalsIgnoreCase(property.getType())) {
+				if (property.getOpenIdConnectUrl() == null || property.getOpenIdConnectUrl().isEmpty()) {
+					throw new SpecificationViolationException("Security property 'openIdUrl' must be present");
+				}
+				try {
+					new URL(property.getOpenIdConnectUrl());
+				} catch (MalformedURLException e) {
+					throw new SpecificationViolationException("Security property 'openIdUrl' is not a valid URL");
+				}
+
+				SecuritySchemeOpenIdConnect scheme = new SecuritySchemeOpenIdConnect();
+				scheme.setType(Type.openIdConnect);
+				scheme.setOpenIdConnectUrl(property.getOpenIdConnectUrl());
+				scheme.setDescription(property.getDescription());
+
 				map.put(entry.getKey(), scheme);
 			}
-
-			// TODO add other security schemes
-
 		}
 		return map.isEmpty() ? Optional.empty() : Optional.of(map);
 	}

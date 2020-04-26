@@ -16,11 +16,16 @@
  */
 package com.github.chhorz.openapi.common.test.properties;
 
+import com.github.chhorz.openapi.common.SpecificationViolationException;
 import com.github.chhorz.openapi.common.domain.ExternalDocumentation;
+import com.github.chhorz.openapi.common.domain.SecurityScheme;
+import com.github.chhorz.openapi.common.domain.SecuritySchemeApiKey;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.common.test.properties.test.ProcessorAProperties;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -28,6 +33,7 @@ import java.util.Optional;
 
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GeneratorPropertyLoaderTest {
 
@@ -52,8 +58,8 @@ class GeneratorPropertyLoaderTest {
 			.hasFieldOrPropertyWithValue("valueTwo", 2);
 	}
 
-	@GithubIssue("#3")
 	@Test
+	@GithubIssue("#3")
 	void testEmptyPostProcessorProperties() {
 		// given
 		Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/postProcessorEmptyTest.yml");
@@ -76,7 +82,7 @@ class GeneratorPropertyLoaderTest {
 	}
 
 	@Test
-	void testTagWithExternalDocumentation(){
+	void testTagWithExternalDocumentation() {
 		// given
 		String tagName = "tag_a";
 
@@ -98,9 +104,9 @@ class GeneratorPropertyLoaderTest {
 			.hasAllNullFieldsOrPropertiesExcept("url");
 	}
 
-	@GithubIssue("#9")
 	@Test
-	void testTagWithoutExternalDocumentation(){
+	@GithubIssue("#9")
+	void testTagWithoutExternalDocumentation() {
 		// given
 		String tagName = "tag_b";
 
@@ -118,6 +124,165 @@ class GeneratorPropertyLoaderTest {
 
 		assertThat(externalDocumentationForTag)
 			.isNull();
+	}
+
+	@Nested
+	@GithubIssue("#19")
+	@DisplayName("Security Schemes from Properties")
+	class SecuritySchemesTest {
+
+		@Test
+		@DisplayName("Invalid type")
+		void testInvalidSecurityType() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityInvalidType.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when - then
+			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
+				.isInstanceOf(SpecificationViolationException.class)
+				.hasMessage("Security type must be one of apiKey,http,oauth2,openIdConnect");
+		}
+
+		@Test
+		@DisplayName("Basic Authentication")
+		void testHttpBasicSecurity() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityBasicHttp.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+			// then
+			assertThat(securitySchemesFromProperties)
+				.isNotNull()
+				.isPresent();
+
+			assertThat(securitySchemesFromProperties.get())
+				.isNotNull()
+				.isNotEmpty()
+				.hasSize(1)
+				.containsOnlyKeys("read_role");
+
+			assertThat(securitySchemesFromProperties.get().get("read_role"))
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("description", "Basic LDAP read role.")
+				.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.http)
+				.hasFieldOrPropertyWithValue("scheme", "basic");
+		}
+
+		@Test
+		@DisplayName("API Key")
+		void testApiKeySecurity() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityApiKey.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+			// then
+			assertThat(securitySchemesFromProperties)
+				.isNotNull()
+				.isPresent();
+
+			assertThat(securitySchemesFromProperties.get())
+				.isNotNull()
+				.isNotEmpty()
+				.hasSize(1)
+				.containsOnlyKeys("api_key_name");
+
+			assertThat(securitySchemesFromProperties.get().get("api_key_name"))
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("description", "Authentication by api key")
+				.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.apiKey)
+				.hasFieldOrPropertyWithValue("name", "api_key")
+				.hasFieldOrPropertyWithValue("in", SecuritySchemeApiKey.In.header);
+		}
+
+		@Test
+		@DisplayName("API key with invalid IN value")
+		void testApiKeySecurityWithInvalidInValue() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityApiKeyInvalidInValue.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when - then
+			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
+				.isInstanceOf(SpecificationViolationException.class)
+				.hasMessage("Security property 'in' must be one of query,header,cookie");
+		}
+
+		@Test
+		@DisplayName("JWT Bearer")
+		void testHttpBearerSecurity() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityJwtBearer.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+			// then
+			assertThat(securitySchemesFromProperties)
+				.isNotNull()
+				.isPresent();
+
+			assertThat(securitySchemesFromProperties.get())
+				.isNotNull()
+				.isNotEmpty()
+				.hasSize(1)
+				.containsOnlyKeys("bearer_example");
+
+			assertThat(securitySchemesFromProperties.get().get("bearer_example"))
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("description", "Basic LDAP read role.")
+				.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.http)
+				.hasFieldOrPropertyWithValue("scheme", "bearer")
+				.hasFieldOrPropertyWithValue("bearerFormat", "JWT");
+		}
+
+		@Test
+		@DisplayName("OpenId Connect")
+		void testOpenIdConnectSecurity() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOpenIdConnect.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+			// then
+			assertThat(securitySchemesFromProperties)
+				.isNotNull()
+				.isPresent();
+
+			assertThat(securitySchemesFromProperties.get())
+				.isNotNull()
+				.isNotEmpty()
+				.hasSize(1)
+				.containsOnlyKeys("open_id_connect_name");
+
+			assertThat(securitySchemesFromProperties.get().get("open_id_connect_name"))
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.openIdConnect)
+				.hasFieldOrPropertyWithValue("openIdConnectUrl", "https://www.google.com");
+		}
+
+		@Test
+		@DisplayName("OpenId Connect with invalid URL")
+		void testOpenIdConnectSecurityWithInvalidUrl() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOpenIdConnectInvalidUrl.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when - then
+			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
+				.isInstanceOf(SpecificationViolationException.class)
+				.hasMessage("Security property 'openIdUrl' is not a valid URL");
+		}
+
 	}
 
 }

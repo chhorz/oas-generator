@@ -23,11 +23,21 @@ public class SecuritySchemeProperties {
 	private String type;
 	private String description;
 	private String scheme;
+	private String bearerFormat;
+	private String name;
+	private String in;
+	private String openIdConnectUrl;
+	private SecuritySchemeOAuthFlowProperties flows;
 
 	public SecuritySchemeProperties() {
 		type = GeneratorPropertiesDefaults.SECURITY_SCHEME_TYPE;
 		description = GeneratorPropertiesDefaults.SECURITY_SCHEME_DESCRIPTION;
 		scheme = GeneratorPropertiesDefaults.SECURITY_SCHEME_SCHEME;
+		bearerFormat = GeneratorPropertiesDefaults.SECURITY_SCHEME_BEARER_FORMAT;
+		name = GeneratorPropertiesDefaults.SECURITY_SCHEME_NAME;
+		in = GeneratorPropertiesDefaults.SECURITY_SCHEME_IN;
+		openIdConnectUrl = GeneratorPropertiesDefaults.SECURITY_SCHEME_OPEN_ID_URL;
+		flows = GeneratorPropertiesDefaults.SECURITY_SCHEME_OAUTH_FLOW;
 	}
 
 	public String getType() {
@@ -52,6 +62,46 @@ public class SecuritySchemeProperties {
 
 	public void setScheme(final String scheme) {
 		this.scheme = scheme;
+	}
+
+	public String getBearerFormat() {
+		return bearerFormat;
+	}
+
+	public void setBearerFormat(String bearerFormat) {
+		this.bearerFormat = bearerFormat;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getIn() {
+		return in;
+	}
+
+	public void setIn(String in) {
+		this.in = in;
+	}
+
+	public String getOpenIdConnectUrl() {
+		return openIdConnectUrl;
+	}
+
+	public void setOpenIdConnectUrl(String openIdConnectUrl) {
+		this.openIdConnectUrl = openIdConnectUrl;
+	}
+
+	public SecuritySchemeOAuthFlowProperties getFlows() {
+		return flows;
+	}
+
+	public void setFlows(SecuritySchemeOAuthFlowProperties flows) {
+		this.flows = flows;
 	}
 
 }

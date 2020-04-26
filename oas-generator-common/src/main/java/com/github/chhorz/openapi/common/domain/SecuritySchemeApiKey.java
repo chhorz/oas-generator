@@ -18,6 +18,8 @@ package com.github.chhorz.openapi.common.domain;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
+import java.util.stream.Stream;
+
 /**
  * https://spec.openapis.org/oas/v3.0.3#api-key-sample
  *
@@ -31,10 +33,33 @@ public class SecuritySchemeApiKey extends SecurityScheme {
 	@Required
 	private In in;
 
-	enum In {
+	public enum In {
 		query,
 		header,
-		cookie
+		cookie;
+
+		public static In of(String value) {
+			return Stream.of(values())
+				.filter(enumValue -> enumValue.name().equalsIgnoreCase(value))
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("Invalid value for enumeration SecuritySchemeApiKey#In"));
+		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public In getIn() {
+		return in;
+	}
+
+	public void setIn(In in) {
+		this.in = in;
 	}
 
 }
