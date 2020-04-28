@@ -3,8 +3,8 @@ name: Java CI
 on: [push, pull_request]
 
 env:
-  SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-  SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+  OSSRH_JIRA_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+  OSSRH_JIRA_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
 jobs:
   test:
