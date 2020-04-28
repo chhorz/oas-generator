@@ -242,8 +242,10 @@
 							<exclude>**/LICENSE.txt</exclude>
 							<exclude>build/**</exclude>
 							<exclude>.github/**</exclude>
+							<exclude>.mvn/**</exclude>
 							<exclude>.gitattributes</exclude>
 							<exclude>.gitignore</exclude>
+							<exclude>mvnw.cmd</exclude>
 							<exclude>**/*.js</exclude>
 							<exclude>**/*.html</exclude>
 						</excludes>
