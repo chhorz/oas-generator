@@ -1,0 +1,40 @@
+name: Java CI
+
+on: [push, pull_request]
+
+env:
+  SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+  SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # test against LTS version:
+        java: [ 8, 11 ]
+    steps:
+    - name: 'Checkout repository'
+      uses: actions/checkout@v2
+    - name: 'Set up JDK'
+      uses: actions/setup-java@v1
+      with:
+        java-package: jdk
+        java-version: ${{ matrix.java }}
+    - name: 'Build with Maven'
+      #run: mvn package --file pom.xml
+      run: ./mvnw -V -B --no-transfer-progress install
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v2
+      - name: 'Set up JDK 8'
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: 'Test'
+        run: ./mvnw -V -B --no-transfer-progress install
+      - name: 'Publish Snapshots'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'chhorz/oas-generator'
+        run: ./mvnw -s build/settings.xml -P build-extras -DskipTests=true deploy

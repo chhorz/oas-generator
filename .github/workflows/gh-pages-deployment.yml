@@ -11,15 +11,15 @@ jobs:
   build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: 'Checkout repository'
         uses: actions/checkout@v2
 
-      - name: Setup Node
+      - name: 'Setup Node'
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
 
-      - name: Cache dependencies
+      - name: 'Cache dependencies'
         uses: actions/cache@v1
         with:
           path: ~/.npm
@@ -30,7 +30,7 @@ jobs:
       - run: npm ci
       - run: npm run docs:build
 
-      - name: Deploy
+      - name: 'Deploy'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
