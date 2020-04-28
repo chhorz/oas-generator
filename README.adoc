@@ -2,7 +2,8 @@
 :author: Christian Horz
 :icons: font
 
-image:https://github.com/chhorz/oas-generator/workflows/Java%20CI/badge.svg?branch=master["Java CI"]
+
+image:https://github.com/chhorz/oas-generator/workflows/Java%20CI/badge.svg?branch=master["Java CI",link=https://github.com/chhorz/oas-generator/actions?query=workflow%3A%22Java+CI%22]
 
 == About
 The *OAS Generator* is a java annotation processor that generates an OpenAPI specification file from the java annotations within the source code.
