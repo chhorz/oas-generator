@@ -14,20 +14,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.spring.test.github.controller;
+package com.github.chhorz.openapi.common.annotation;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.lang.annotation.*;
 
-@RequestMapping("github")
-public class GitHubIssue002 {
-
-	@GithubIssue("#2")
-	@GetMapping("issues")
-	public ResponseEntity test(){
-		return ResponseEntity.ok().build();
-	}
+/**
+ * This annotation can be used to mark specific java classes or methods that should not be included within the
+ * generated OpenAPI file. If it is used as class-level annotation, all methods within this class will be ignored.
+ * Otherwise only a single method is excluded.
+ *
+ * @author chhorz
+ */
+@Documented
+@Retention(RetentionPolicy.SOURCE)
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface OpenAPIExclusion {
 
 }

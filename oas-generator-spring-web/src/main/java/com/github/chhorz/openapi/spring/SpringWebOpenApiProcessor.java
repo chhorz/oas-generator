@@ -51,7 +51,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -153,8 +152,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
         TagUtils tagUtils = new TagUtils(propertyLoader);
         List<String> tags = new ArrayList<>();
-        openApi.getPaths()
-                .values()
+        openApi.getPaths().values()
 			.stream()
 			.map(tagUtils::getAllTags)
 			.flatMap(Collection::stream)
@@ -173,7 +171,12 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 	}
 
     private void mapOperationMethod(final ExecutableElement executableElement) {
-        log.debug("Parsing method: %s", getOperationId(executableElement));
+    	if (exclude(executableElement)) {
+			log.info("Skipping method: %s (excluded with @OpenAPIExclusion)", getOperationId(executableElement));
+			return;
+		} else {
+			log.debug("Parsing method: %s", getOperationId(executableElement));
+		}
 
         JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
 

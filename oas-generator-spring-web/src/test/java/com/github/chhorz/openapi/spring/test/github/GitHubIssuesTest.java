@@ -55,7 +55,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateDefaultInfoObject(ctx);
 
-		Response response = ctx.read("$.paths./github/issue.get.responses.default", Response.class);
+		Response response = ctx.read("$.paths./github/issues.get.responses.default", Response.class);
 
 		assertThat(response.getContent())
 			.isNotNull()
@@ -80,7 +80,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	@GithubIssue("#8")
 	void getGithubIssue008() {
 		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator-withoutparser.yml"), GitHubIssue008.class);
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator-withoutparser.yml"), GitHubIssue008.class, Resource.class);
 
 		// create json-path context
 		DocumentContext ctx = createJsonPathDocumentContext();
@@ -104,7 +104,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isNotEmpty();
 
-		Operation operation = ctx.read("$.paths./github/issue.get", Operation.class);
+		Operation operation = ctx.read("$.paths./github/issues.get", Operation.class);
 
 		assertThat(operation)
 			.isNotNull();
@@ -118,11 +118,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.containsKeys("read_role");
 
-		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
-
-		assertThat(schema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+		validateSchemaForTestResource(ctx);
 
 		SecuritySchemeHttp securityScheme = ctx.read("$.components.securitySchemes.read_role", SecuritySchemeHttp.class);
 
@@ -233,7 +229,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateDefaultInfoObject(ctx);
 
-		Parameter[] parameters = ctx.read("$.paths./github/issue.get.parameters", Parameter[].class);
+		Parameter[] parameters = ctx.read("$.paths./github/issues.get.parameters", Parameter[].class);
 
 		assertThat(parameters)
 			.isNotNull()
@@ -277,6 +273,38 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateSchemaForTestResource(ctx);
 		validateRequestBodyForTestResource(ctx);
+	}
+
+	@Test
+	@GithubIssue("#22")
+	void getGithubIssue022() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue022.class, Resource.class);
+
+		// create json-path context
+		DocumentContext ctx = createJsonPathDocumentContext();
+
+		// assertions
+		String openApiVersion = ctx.read("$.openapi", String.class);
+
+		assertThat(openApiVersion)
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(ctx);
+
+		PathItemObject pathItemObject = ctx.read("$.paths./github/issues/{id}", PathItemObject.class);
+
+		assertThat(pathItemObject)
+			.isNotNull()
+			.hasAllNullFieldsOrPropertiesExcept("get");
+
+		Components components = ctx.read("$.components", Components.class);
+
+		assertThat(components.getSchemas())
+			.containsOnlyKeys("Resource");
+
+		validateSchemaForTestResource(ctx);
 	}
 
 	private Map<String, String> createConfigMap(String configFile) {

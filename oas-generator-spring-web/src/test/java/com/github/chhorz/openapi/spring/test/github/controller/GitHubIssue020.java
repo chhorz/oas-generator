@@ -20,7 +20,9 @@ import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("github")
 public class GitHubIssue020 {
@@ -34,7 +36,7 @@ public class GitHubIssue020 {
 	 * @response 204 Void No Content
 	 */
 	@GithubIssue("#20")
-	@PostMapping(path = "/issue", consumes = MediaType.APPLICATION_JSON_VALUE )
+	@PostMapping(path = "/issues", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<Void> test(@RequestBody Resource resource) {
 		return ResponseEntity.noContent().build();
 	}

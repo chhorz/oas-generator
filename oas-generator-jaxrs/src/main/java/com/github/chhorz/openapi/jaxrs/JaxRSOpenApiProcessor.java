@@ -44,7 +44,6 @@ import javax.ws.rs.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -135,7 +134,12 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 	}
 
 	private void mapOperationMethod(final ExecutableElement executableElement) {
-		log.debug("Parsing method: %s#%s", getOperationId(executableElement));
+		if (exclude(executableElement)) {
+			log.info("Skipping method: %s (excluded with @OpenAPIExclusion)", getOperationId(executableElement));
+			return;
+		} else {
+			log.debug("Parsing method: %s", getOperationId(executableElement));
+		}
 
 		JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
 

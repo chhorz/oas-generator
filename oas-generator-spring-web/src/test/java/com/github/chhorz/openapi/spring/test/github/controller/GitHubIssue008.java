@@ -17,17 +17,11 @@
 package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.http.MediaType;
+import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
-import java.util.UUID;
-
-import static java.util.Collections.singletonList;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RequestMapping("github")
@@ -40,22 +34,9 @@ public class GitHubIssue008 {
 	 * @return a list of tags
 	 */
 	@GithubIssue("#8")
-	@GetMapping(path = "/issue")
-	public ResponseEntity<List<Test>> test() {
-		Test test = new Test(UUID.randomUUID().toString());
-		return ok(singletonList(test));
-	}
-
-	public static class Test {
-		private String id;
-
-		public Test(String id) {
-			this.id = id;
-		}
-
-		public String getId() {
-			return id;
-		}
+	@GetMapping(path = "/issues")
+	public ResponseEntity<Resource> test() {
+		return ok(new Resource());
 	}
 
 }

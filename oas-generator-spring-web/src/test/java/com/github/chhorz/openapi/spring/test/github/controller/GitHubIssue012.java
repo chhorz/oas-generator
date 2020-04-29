@@ -30,7 +30,7 @@ import java.util.List;
 public class GitHubIssue012 {
 
 	@GithubIssue("#12")
-	@GetMapping(path = "/issue", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE )
+	@GetMapping(path = "/issues", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<List<Resource>> test(@RequestBody List<Resource> responses) {
 		return ResponseEntity.ok(responses);
 	}

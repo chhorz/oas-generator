@@ -19,6 +19,7 @@ package com.github.chhorz.openapi.common;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
+import com.github.chhorz.openapi.common.annotation.OpenAPIExclusion;
 import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.Info;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
@@ -34,7 +35,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -108,13 +108,24 @@ public interface OpenAPIProcessor {
 	}
 
 	/**
-	 * Creates an OpenAPI operation id from a java method element.
+	 * Creates an OpenAPI operation id from a java method executableElement.
 	 *
-	 * @param element the executable element that defines a specific method
+	 * @param executableElement the executable executableElement that defines a specific method
 	 * @return the OpenAPI operation id (should be unique)
 	 */
-	default String getOperationId(ExecutableElement element){
-		return String.format("%s#%s", element.getEnclosingElement().getSimpleName(), element.getSimpleName());
+	default String getOperationId(final ExecutableElement executableElement){
+		return String.format("%s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement.getSimpleName());
+	}
+
+	/**
+	 * Checks if the given method should be excluded from the generated OpenAPI file.
+	 *
+	 * @param executableElement the executable executableElement that defines a specific method
+	 * @return a flag if the given method should be excluded
+	 */
+	default boolean exclude(final ExecutableElement executableElement) {
+		return executableElement.getEnclosingElement().getAnnotation(OpenAPIExclusion.class) != null ||
+			executableElement.getAnnotation(OpenAPIExclusion.class) != null;
 	}
 
 	/**

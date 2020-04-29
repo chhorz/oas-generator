@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class GitHubIssue001 {
 
 	@GithubIssue("#1")
-	@GetMapping("issue")
+	@GetMapping("issues")
 	public ResponseEntity<Void> testVoidType() {
 		return ResponseEntity.ok().build();
 	}
