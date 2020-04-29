@@ -44,6 +44,50 @@ public class OrderController {
 }
 ----
 
+=== Project Structure
+The project itself consists of multiple maven modules.
+A _oas-generator-common_ module that contains the internal OpenAPI domain model and core functionality that is used in multiple modules.
+The _oas-generator-spring-web_, _oas-generator-jaxrs_ and _oas-generator-schema_ are dedicated modules for a REST API implementation.
+
+An additional _SPI_ module covers the extensibility of the OAS Generator.
+There is currently the <<asciidoctor_postprocessor,Asciidoctor Post-Processor>> that generates an Asciidoctor file from the generated OpenAPI file.
+
+.Diagram of internal module structure
+[ditaa,align=center]
+....
+                                   +----------------------------+
+                                   |cGRE                        |
+                                +->+  OAS Generator Spring Web  |
+                                |  |                            |
+                                |  +----------------------------+
+                                |
++----------------------------+  |  +----------------------------+
+|                            |  |  |cGRE                        |
+|    OAS Generator Common    +--+->+    OAS Generator Jax RS    |
+|                            |  |  |                            |
++-----------------------+----+  |  +----------------------------+
+                        |       |
+                        |       |  +----------------------------+
+                        |       |  |cGRE                        |
+                        |       +->+    OAS Generator Schema    |
+                        |          |                            |
+                        |          +----------------------------+
+                        |
++-----------------------|---------------------------------------------+
+: OAS Generator SPI     |                                             |
+|                       |                                             |
+|                  +----+-----------------------------+               |
+|                  |                                  |               |
+|                  v                                  v               |
+|  +----------------------------+     +----------------------------+  |
+|  |cGRE                        |     |                            |  |
+|  |  OAS Generator AsciiDoctor |     |            ...             |  |
+|  |                            |     |                            |  |
+|  +----------------------------+     +----------------------------+  |
+|                                                                     |
++---------------------------------------------------------------------+
+....
+
 == Installation
 In the following section possible options are shown in which way the *OAS Generator* can be included in your project.
 
@@ -380,10 +424,12 @@ If other post processors should be listed and added in the *OAS Generator* repo 
 === Post-Processor Documentation
 In the following section all post processors from the `oas-generator-spi` module are documented.
 
+[[filewriter_postprocessor]]
 ==== FileWriterPostProcessor
 The `FileWriterPostProcessor` is used internally to write the OpenAPI domain model to the resulting output file.
 This Post-Processor is included within all *OAS Generator* modules and must not be included with adn additional dependency.
 
+[[asciidoctor_postprocessor]]
 ==== AsciidoctorPostProcessor
 This post processor converts the generated OpenAPI domain model into the asciidoctor format.
 

@@ -37,6 +37,9 @@
 				<artifactId>asciidoctor-maven-plugin</artifactId>
 				<version>${asciidoctor-maven-plugin.version}</version>
 				<configuration>
+					<requires>
+						<require>asciidoctor-diagram</require>
+					</requires>
 					<sourceDirectory>src/main/asciidoc</sourceDirectory>
 					<backend>html</backend>
 					<embedAssets>true</embedAssets>
@@ -55,6 +58,13 @@
 						</goals>
 					</execution>
 				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctorj-diagram</artifactId>
+						<version>${asciidoctorj-diagram.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

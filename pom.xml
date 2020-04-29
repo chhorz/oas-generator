@@ -84,6 +84,7 @@
 		<java.target.version>1.8</java.target.version>
 
 		<!-- dependency versions -->
+		<asciidoctorj-diagram.version>1.5.18</asciidoctorj-diagram.version>
 		<jackson.version>2.10.3</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
 		<snakeyaml.version>1.26</snakeyaml.version>
@@ -102,7 +103,7 @@
 		<json-path.version>2.4.0</json-path.version>
 
 		<!-- plugin versions -->
-		<asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
+		<asciidoctor-maven-plugin.version>1.5.8</asciidoctor-maven-plugin.version>
 		<license.maven.plugin.version>3.0</license.maven.plugin.version>
 		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 		<maven.gpg.plugin.version>1.5</maven.gpg.plugin.version>
