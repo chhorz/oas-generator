@@ -18,26 +18,37 @@ package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequestMapping("github")
-public class GitHubIssue015 {
+public class GitHubIssue018 {
 
 	/**
-	 * Beside the fact that the Optional type was intended as return type, the oas-generator
-	 * should not throw an exception.
+	 * Test method A.
+	 *
+	 * @param a parameter a for method a
+	 * @return a list of resources
 	 */
-	@GithubIssue("#15")
-	@GetMapping(path = "/issues", produces = MediaType.APPLICATION_JSON_VALUE )
-	public ResponseEntity<List<Resource>> test(@RequestParam Optional<String> filter) {
-		return ResponseEntity.noContent().build();
+	@GithubIssue("#18")
+	@GetMapping(path = "/issues", params = "a", produces = "*/*")
+	public ResponseEntity<List<Resource>> testParamA(@RequestParam String a) {
+		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * Test method B.
+	 *
+	 * @param b parameter b for method b
+	 * @return a list of resources
+	 */
+	@GetMapping(path = "/issues", params = "b", produces = "*/*")
+	public ResponseEntity<List<Resource>> testParamB(@RequestParam String b) {
+		return ResponseEntity.ok().build();
 	}
 
 }

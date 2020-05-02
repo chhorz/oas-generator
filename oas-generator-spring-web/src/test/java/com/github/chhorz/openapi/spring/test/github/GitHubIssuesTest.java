@@ -16,20 +16,20 @@
  */
 package com.github.chhorz.openapi.spring.test.github;
 
-import com.github.chhorz.openapi.common.OpenAPIConstants;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor;
 import com.github.chhorz.openapi.spring.test.github.controller.*;
+import com.github.chhorz.openapi.spring.test.github.resources.HateoasResource;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import com.jayway.jsonpath.DocumentContext;
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static java.util.Collections.singletonMap;
+import static com.github.chhorz.openapi.spring.test.github.GitHubIssuesTestAssertions.*;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -44,36 +44,42 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue002.class);
 
 		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
+		DocumentContext documentContext = createJsonPathDocumentContext();
 
 		// assertions
-		String openApiVersion = ctx.read("$.openapi", String.class);
-
-		assertThat(openApiVersion)
+		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
 			.isEqualTo("3.0.3");
 
-		validateDefaultInfoObject(ctx);
+		validateDefaultInfoObject(documentContext);
 
-		Response response = ctx.read("$.paths./github/issues.get.responses.default", Response.class);
-
-		assertThat(response.getContent())
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
 			.isNotNull()
-			.containsOnlyKeys("*/*");
-
-		assertThat(response.getContent().get("*/*").getSchema())
-			.asInstanceOf(InstanceOfAssertFactories.MAP)
-			.containsOnlyKeys("$ref")
-			.extractingByKey("$ref")
-			.isEqualTo("#/components/schemas/ResponseEntity");
-
-		Schema schema = ctx.read("$.components.schemas.T", Schema.class);
-
-		assertThat(schema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT)
+			.hasFieldOrPropertyWithValue("summary", "")
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue002#test")
 			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasAllNullFieldsOrPropertiesExcept("type", "deprecated");
+			.hasFieldOrPropertyWithValue("security", emptyList())
+			.hasFieldOrPropertyWithValue("parameterObjects", emptyList());
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("default")
+			.extractingByKey("default")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "");
+		assertThat(operation.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull());
+//				.extracting(MediaType::getSchema)
+//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+
+		validateSchemaForResponseEntity(documentContext);
 	}
 
 	@Test
@@ -83,16 +89,14 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator-withoutparser.yml"), GitHubIssue008.class, Resource.class);
 
 		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
+		DocumentContext documentContext = createJsonPathDocumentContext();
 
-		// assertions
-		String openApiVersion = ctx.read("$.openapi", String.class);
-
-		assertThat(openApiVersion)
+		// assertions // TODO
+		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
 			.isEqualTo("3.0.3");
 
-		Info info = ctx.read("$.info", Info.class);
+		Info info = documentContext.read("$.info", Info.class);
 
 		assertThat(info)
 			.isNotNull()
@@ -104,7 +108,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isNotEmpty();
 
-		Operation operation = ctx.read("$.paths./github/issues.get", Operation.class);
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 
 		assertThat(operation)
 			.isNotNull();
@@ -118,9 +122,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.containsKeys("read_role");
 
-		validateSchemaForTestResource(ctx);
+		validateSchemaForTestResource(documentContext);
 
-		SecuritySchemeHttp securityScheme = ctx.read("$.components.securitySchemes.read_role", SecuritySchemeHttp.class);
+		SecuritySchemeHttp securityScheme = documentContext.read("$.components.securitySchemes.read_role", SecuritySchemeHttp.class);
 
 		assertThat(securityScheme)
 			.isNotNull()
@@ -133,30 +137,53 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	@GithubIssue("#11")
 	void getGithubIssue011() {
 		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue011.class);
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue011.class, HateoasResource.class);
 
 		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
+		DocumentContext documentContext = createJsonPathDocumentContext();
 
 		// assertions
-		String openApiVersion = ctx.read("$.openapi", String.class);
-
-		assertThat(openApiVersion)
+		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
 			.isEqualTo("3.0.3");
 
-		validateDefaultInfoObject(ctx);
+		validateDefaultInfoObject(documentContext);
 
-		Components components = ctx.read("$.components", Components.class);
-
-		assertThat(components.getSchemas())
-			.containsOnlyKeys("Test", "Link", "LinkRelation");
-
-		Schema schema = ctx.read("$.components.schemas.Test", Schema.class);
-
-		assertThat(schema)
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+			.hasFieldOrPropertyWithValue("summary", "")
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue011#test")
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("security", emptyList())
+			.hasFieldOrPropertyWithValue("parameterObjects", emptyList());
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("default")
+			.extractingByKey("default")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "");
+		assertThat(operation.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("application/json")
+			.extractingByKey("application/json")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(Map.class, map -> {
+					assertThat(map)
+						.isNotNull()
+						.containsOnlyKeys("deprecated", "items", "type");
+//						.containsEntry("deprecated", false)
+//						.containsEntry("type", "array")
+//						.extractingByKey("items")
+//						.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity"));
+				}));
+
+		validateSchemaForHateoasTestResource(documentContext);
 	}
 
 	@Test
@@ -166,23 +193,21 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue012.class, Resource.class);
 
 		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
+		DocumentContext documentContext = createJsonPathDocumentContext();
 
 		// assertions
-		String openApiVersion = ctx.read("$.openapi", String.class);
-
-		assertThat(openApiVersion)
+		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
 			.isEqualTo("3.0.3");
 
-		validateDefaultInfoObject(ctx);
+		validateDefaultInfoObject(documentContext);
 
-		Components components = ctx.read("$.components", Components.class);
+		Components components = documentContext.read("$.components", Components.class);
 
 		assertThat(components.getSchemas())
 			.containsOnlyKeys("Resource");
 
-		Schema schema = ctx.read("$.components.schemas.Resource", Schema.class);
+		Schema schema = documentContext.read("$.components.schemas.Resource", Schema.class);
 
 		assertThat(schema)
 			.isNotNull()
@@ -191,20 +216,20 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(components.getRequestBodies())
 			.containsOnlyKeys("Resource");
 
-		RequestBody requestBody = ctx.read("$.components.requestBodies.Resource", RequestBody.class);
+		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
 
 		assertThat(requestBody)
 			.hasFieldOrPropertyWithValue("description", null)
 			.hasFieldOrPropertyWithValue("required", true);
 
-		Schema requestBodySchema = ctx.read("$.components.requestBodies.Resource.content.application/json.schema", Schema.class);
+		Schema requestBodySchema = documentContext.read("$.components.requestBodies.Resource.content.application/json.schema", Schema.class);
 
 		assertThat(requestBodySchema)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("type", Schema.Type.ARRAY);
 
-		String testObjectReference = ctx.read("$.components.requestBodies.Resource.content.application/json.schema.items.$ref", String.class);
+		String testObjectReference = documentContext.read("$.components.requestBodies.Resource.content.application/json.schema.items.$ref", String.class);
 
 		assertThat(testObjectReference)
 			.isNotNull()
@@ -218,18 +243,16 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue015.class, Resource.class);
 
 		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
+		DocumentContext documentContext = createJsonPathDocumentContext();
 
 		// assertions
-		String openApiVersion = ctx.read("$.openapi", String.class);
-
-		assertThat(openApiVersion)
+		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
 			.isEqualTo("3.0.3");
 
-		validateDefaultInfoObject(ctx);
+		validateDefaultInfoObject(documentContext);
 
-		Parameter[] parameters = ctx.read("$.paths./github/issues.get.parameters", Parameter[].class);
+		Parameter[] parameters = documentContext.read("$.paths./github/issues.get.parameters", Parameter[].class);
 
 		assertThat(parameters)
 			.isNotNull()
@@ -240,12 +263,88 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("name", "filter")
 			.hasFieldOrPropertyWithValue("required", false);
 
-		Components components = ctx.read("$.components", Components.class);
+		Components components = documentContext.read("$.components", Components.class);
 
 		assertThat(components.getSchemas())
 			.containsOnlyKeys("Resource");
 
-		validateSchemaForTestResource(ctx);
+		validateSchemaForTestResource(documentContext);
+	}
+
+	@Test
+	@GithubIssue("#18")
+	void getGithubIssue018() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue018.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("summary", "Test method A.\n\nTest method B.")
+			.hasFieldOrPropertyWithValue("description", "Test method A.\n\nTest method B.")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue018#testParamA")
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("security", emptyList());
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("default")
+			.extractingByKey("default")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "a list of resources");
+		assertThat(operation.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull());
+//				.extracting(MediaType::getSchema)
+//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+		assertThat(operation.getParameterObjects())
+			.isNotNull()
+			.hasSize(2);
+		assertThat(operation.getParameterObjects().get(0))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "a")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "parameter a for method a")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		assertThat(operation.getParameterObjects().get(1))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "b")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "parameter b for method b")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		validateSchemaForTestResource(documentContext);
 	}
 
 	@Test
@@ -255,24 +354,22 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue020.class, Resource.class);
 
 		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
+		DocumentContext documentContext = createJsonPathDocumentContext();
 
 		// assertions
-		String openApiVersion = ctx.read("$.openapi", String.class);
-
-		assertThat(openApiVersion)
+		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
 			.isEqualTo("3.0.3");
 
-		validateDefaultInfoObject(ctx);
+		validateDefaultInfoObject(documentContext);
 
-		Components components = ctx.read("$.components", Components.class);
+		Components components = documentContext.read("$.components", Components.class);
 
 		assertThat(components.getSchemas())
 			.containsOnlyKeys("Resource");
 
-		validateSchemaForTestResource(ctx);
-		validateRequestBodyForTestResource(ctx);
+		validateSchemaForTestResource(documentContext);
+		validateRequestBodyForTestResource(documentContext);
 	}
 
 	@Test
@@ -282,110 +379,27 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue022.class, Resource.class);
 
 		// create json-path context
-		DocumentContext ctx = createJsonPathDocumentContext();
+		DocumentContext documentContext = createJsonPathDocumentContext();
 
 		// assertions
-		String openApiVersion = ctx.read("$.openapi", String.class);
-
-		assertThat(openApiVersion)
+		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
 			.isEqualTo("3.0.3");
 
-		validateDefaultInfoObject(ctx);
+		validateDefaultInfoObject(documentContext);
 
-		PathItemObject pathItemObject = ctx.read("$.paths./github/issues/{id}", PathItemObject.class);
+		PathItemObject pathItemObject = documentContext.read("$.paths./github/issues/{id}", PathItemObject.class);
 
 		assertThat(pathItemObject)
 			.isNotNull()
 			.hasAllNullFieldsOrPropertiesExcept("get");
 
-		Components components = ctx.read("$.components", Components.class);
+		Components components = documentContext.read("$.components", Components.class);
 
 		assertThat(components.getSchemas())
 			.containsOnlyKeys("Resource");
 
-		validateSchemaForTestResource(ctx);
-	}
-
-	private Map<String, String> createConfigMap(String configFile) {
-		return singletonMap(OpenAPIConstants.OPTION_PROPERTIES_PATH, configFile);
-	}
-
-	/**
-	 * Validates the default info object.
-	 *
-	 * @param documentContext the json document context
-	 */
-	private void validateDefaultInfoObject(final DocumentContext documentContext){
-		Info info = documentContext.read("$.info", Info.class);
-
-		assertThat(info)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("title", "Title")
-			.hasFieldOrPropertyWithValue("version", "Version")
-			.hasFieldOrPropertyWithValue("xGeneratedBy", "oas-generator");
-
-		assertThat(info.getxGeneratedTs())
-			.isNotNull()
-			.isNotEmpty();
-	}
-
-	/**
-	 * Validates the given test resource.
-	 *
-	 * @param documentContext the json document context
-	 *
-	 * @see Resource
-	 */
-	private void validateSchemaForTestResource(final DocumentContext documentContext) {
-		Schema schema = documentContext.read("$.components.schemas.Resource", Schema.class);
-
-		assertThat(schema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("description","a test resource for GitHub issue tests")
-			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
-
-		assertThat(schema.getProperties())
-			.isNotNull()
-			.hasSize(1)
-			.containsOnlyKeys("value");
-
-		assertThat(schema.getProperties().get("value"))
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
-			.hasFieldOrPropertyWithValue("description","some test value");
-	}
-
-	/**
-	 * Validates the given test resource.
-	 *
-	 * @param documentContext the json document context
-	 *
-	 * @see Resource
-	 */
-	private void validateRequestBodyForTestResource(final DocumentContext documentContext) {
-		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
-
-		assertThat(requestBody)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("required", true)
-			.hasFieldOrPropertyWithValue("description","the request body");
-
-		assertThat(requestBody.getContent())
-			.isNotNull()
-			.hasSize(1)
-			.containsOnlyKeys("application/json");
-
-		assertThat(requestBody.getContent().get("application/json"))
-			.isNotNull();
-
-		String resourceReference = documentContext.read("$.components.requestBodies.Resource.content.application/json.schema.$ref", String.class);
-
-		assertThat(resourceReference)
-			.isNotNull()
-			.isEqualTo("#/components/schemas/Resource");
+		validateSchemaForTestResource(documentContext);
 	}
 
 }

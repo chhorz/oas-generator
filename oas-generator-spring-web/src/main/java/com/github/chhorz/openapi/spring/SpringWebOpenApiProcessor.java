@@ -30,6 +30,7 @@ import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.*;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
+import com.github.chhorz.openapi.spring.util.PathItemUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
@@ -330,7 +331,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 					operation.setSecurity(getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes(), javaDoc.getTags(SecurityTag.class)));
 
-                    PathItemObject pathItemObject = openApi.getPaths().getOrDefault(cleanedPath, new PathItemObject());
+                    PathItemObject pathItemObject = new PathItemObject();
+//					PathItemObject pathItemObject = openApi.getPaths().getOrDefault(cleanedPath, new PathItemObject());
                     switch (requestMethod) {
                         case GET:
                             pathItemObject.setGet(operation);
@@ -361,7 +363,13 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                             throw new RuntimeException("Unknown RequestMethod value.");
                     }
 
-                    openApi.putPathItemObject(cleanedPath, pathItemObject);
+                    if (openApi.getPaths().containsKey(cleanedPath)) {
+						PathItemUtils utils = new PathItemUtils();
+						openApi.putPathItemObject(cleanedPath, utils.mergePathItems(openApi.getPaths().get(cleanedPath), pathItemObject));
+                    	// TODO merge paths
+					} else {
+						openApi.putPathItemObject(cleanedPath, pathItemObject);
+					}
                 }
             }
         }
