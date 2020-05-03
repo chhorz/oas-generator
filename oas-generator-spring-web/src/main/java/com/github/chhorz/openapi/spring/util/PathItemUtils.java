@@ -34,8 +34,8 @@ public class PathItemUtils {
 			return pathItemOne;
 		} else {
 			PathItemObject mergedPathItemObject = new PathItemObject();
-			mergedPathItemObject.setSummary(format("%s%n%n%s", pathItemOne.getSummary(), pathItemTwo.getSummary()));
-			mergedPathItemObject.setDescription(format("%s%n%n%s", pathItemOne.getDescription(), pathItemTwo.getDescription()));
+			mergedPathItemObject.setSummary(format("%s\n\n%s", pathItemOne.getSummary(), pathItemTwo.getSummary()));
+			mergedPathItemObject.setDescription(format("%s\n\n%s", pathItemOne.getDescription(), pathItemTwo.getDescription()));
 
 			mergedPathItemObject.setGet(mergeOperations(pathItemOne.getGet(), pathItemTwo.getGet()));
 			mergedPathItemObject.setPut(mergeOperations(pathItemOne.getPut(), pathItemTwo.getPut()));
@@ -57,10 +57,10 @@ public class PathItemUtils {
 			return operationOne;
 		} else {
 			Operation mergedOperation = new Operation();
-			mergedOperation.setSummary(format("%s%n%n%s", operationOne.getSummary(), operationTwo.getSummary()));
-			mergedOperation.setDescription(format("%s%n%n%s", operationOne.getDescription(), operationTwo.getDescription()));
+			mergedOperation.setSummary(format("%s\n\n%s", operationOne.getSummary(), operationTwo.getSummary()));
+			mergedOperation.setDescription(format("%s\n\n%s", operationOne.getDescription(), operationTwo.getDescription()));
 
-			if (operationOne.getTags() !=  null) {
+			if (operationOne.getTags() != null) {
 				operationOne.getTags().forEach(mergedOperation::addTag);
 			}
 			if (operationTwo.getTags() != null) {
