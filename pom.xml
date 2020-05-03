@@ -23,7 +23,7 @@
 
 	<groupId>com.github.chhorz</groupId>
 	<artifactId>oas-generator</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>0.1.0-RC.3</version>
 	<packaging>pom</packaging>
 
 	<name>OAS Generator</name>
