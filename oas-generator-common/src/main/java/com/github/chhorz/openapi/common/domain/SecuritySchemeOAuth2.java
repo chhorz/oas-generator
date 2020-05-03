@@ -29,12 +29,13 @@ public class SecuritySchemeOAuth2 extends SecurityScheme {
 	@Required
 	private OAuthFlows flows;
 
-	public OAuthFlows getFlows() {
-		return flows;
+	public SecuritySchemeOAuth2(OAuthFlows flows) {
+		setType(Type.oauth2);
+		this.flows = flows;
 	}
 
-	public void setFlows(OAuthFlows flows) {
-		this.flows = flows;
+	public OAuthFlows getFlows() {
+		return flows;
 	}
 
 }

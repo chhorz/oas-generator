@@ -16,5 +16,53 @@
  */
 package com.github.chhorz.openapi.common.properties.domain;
 
+import com.github.chhorz.openapi.common.properties.GeneratorPropertiesDefaults;
+
+import java.util.Map;
+
 public class SecuritySchemeOAuthFlowProperties {
+
+	private String authorizationUrl;
+	private String tokenUrl;
+	private String refreshUrl;
+	private Map<String, String> scopes;
+
+	public SecuritySchemeOAuthFlowProperties() {
+		this.authorizationUrl = GeneratorPropertiesDefaults.SECURITY_SCHEME_OAUTH_FLOW_AUTH_URL;
+		this.tokenUrl = GeneratorPropertiesDefaults.SECURITY_SCHEME_OAUTH_FLOW_TOKEN_URL;
+		this.refreshUrl = GeneratorPropertiesDefaults.SECURITY_SCHEME_OAUTH_FLOW_REFRESH_URL;
+		this.scopes = GeneratorPropertiesDefaults.SECURITY_SCHEME_OAUTH_FLOW_SCOPES;
+	}
+
+	public String getAuthorizationUrl() {
+		return authorizationUrl;
+	}
+
+	public void setAuthorizationUrl(String authorizationUrl) {
+		this.authorizationUrl = authorizationUrl;
+	}
+
+	public String getTokenUrl() {
+		return tokenUrl;
+	}
+
+	public void setTokenUrl(String tokenUrl) {
+		this.tokenUrl = tokenUrl;
+	}
+
+	public String getRefreshUrl() {
+		return refreshUrl;
+	}
+
+	public void setRefreshUrl(String refreshUrl) {
+		this.refreshUrl = refreshUrl;
+	}
+
+	public Map<String, String> getScopes() {
+		return scopes;
+	}
+
+	public void setScopes(Map<String, String> scopes) {
+		this.scopes = scopes;
+	}
 }

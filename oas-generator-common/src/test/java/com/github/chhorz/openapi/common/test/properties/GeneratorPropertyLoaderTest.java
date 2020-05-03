@@ -17,9 +17,7 @@
 package com.github.chhorz.openapi.common.test.properties;
 
 import com.github.chhorz.openapi.common.SpecificationViolationException;
-import com.github.chhorz.openapi.common.domain.ExternalDocumentation;
-import com.github.chhorz.openapi.common.domain.SecurityScheme;
-import com.github.chhorz.openapi.common.domain.SecuritySchemeApiKey;
+import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
@@ -281,6 +279,201 @@ class GeneratorPropertyLoaderTest {
 			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
 				.isInstanceOf(SpecificationViolationException.class)
 				.hasMessage("Security property 'openIdUrl' is not a valid URL");
+		}
+
+		@Nested
+		@DisplayName("OAuth2")
+		class OAuth2SecuritySchemesTest {
+
+			@Test
+			@DisplayName("Implicit")
+			void testOauth2Implicit() {
+				// given
+				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2Implicit.yml");
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+				// when
+				Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+				// then
+				assertThat(securitySchemesFromProperties)
+					.isNotNull()
+					.isPresent();
+
+				assertThat(securitySchemesFromProperties.get())
+					.isNotNull()
+					.isNotEmpty()
+					.hasSize(1)
+					.containsOnlyKeys("oauth_implicit")
+					.extractingByKey("oauth_implicit")
+					.isNotNull()
+					.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.oauth2)
+					.isInstanceOfSatisfying(SecuritySchemeOAuth2.class, oauth2 -> assertThat(oauth2.getFlows())
+						.hasAllNullFieldsOrPropertiesExcept("implicit")
+						.extracting(OAuthFlows::getImplicit)
+						.hasFieldOrPropertyWithValue("authorizationUrl", "https://www.openapis.org")
+						.hasFieldOrPropertyWithValue("refreshUrl", "https://openapis.org")
+						.hasFieldOrPropertyWithValue("scopes", singletonMap("write:test", "Lorem ipsum")));
+			}
+
+			@Test
+			@DisplayName("Implicit with invalid URL")
+			void testOauth2ImplicitWithInvalidUrl() {
+				// given
+				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2ImplicitInvalidUrl.yml");
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+
+				// when - then
+				assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
+					.isInstanceOf(SpecificationViolationException.class)
+					.hasMessage("Security property 'authorizationUrl' is not a valid URL");
+			}
+
+			@Test
+			@DisplayName("Authorization Code")
+			void testOauth2AuthorizationCode() {
+				// given
+				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2AuthorizationCode.yml");
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+				// when
+				Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+				// then
+				assertThat(securitySchemesFromProperties)
+					.isNotNull()
+					.isPresent();
+
+				assertThat(securitySchemesFromProperties.get())
+					.isNotNull()
+					.isNotEmpty()
+					.hasSize(1)
+					.containsOnlyKeys("oauth_auth_code")
+					.extractingByKey("oauth_auth_code")
+					.isNotNull()
+					.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.oauth2)
+					.isInstanceOfSatisfying(SecuritySchemeOAuth2.class, oauth2 -> assertThat(oauth2.getFlows())
+						.hasAllNullFieldsOrPropertiesExcept("authorizationCode")
+						.extracting(OAuthFlows::getAuthorizationCode)
+						.hasFieldOrPropertyWithValue("authorizationUrl", "https://www.openapis.org")
+						.hasFieldOrPropertyWithValue("refreshUrl", "https://openapis.org")
+						.hasFieldOrPropertyWithValue("tokenUrl", "https://openapis.org")
+						.hasFieldOrPropertyWithValue("scopes", singletonMap("write:test", "Lorem ipsum")));
+			}
+
+			@Test
+			@DisplayName("Authorization Code with invalid URL")
+			void testOauth2AuthorizationCodeWithInvalidUrl() {
+				// given
+				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2AuthorizationCodeInvalidUrl.yml");
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+
+				// when - then
+				assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
+					.isInstanceOf(SpecificationViolationException.class)
+					.hasMessage("Security property 'tokenUrl' is not a valid URL");
+			}
+
+			@Test
+			@DisplayName("Client Credentials")
+			void testOauth2ClientCredentials() {
+				// given
+				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2ClientCredentials.yml");
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+				// when
+				Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+				// then
+				assertThat(securitySchemesFromProperties)
+					.isNotNull()
+					.isPresent();
+
+				assertThat(securitySchemesFromProperties.get())
+					.isNotNull()
+					.isNotEmpty()
+					.hasSize(1)
+					.containsOnlyKeys("oauth_client_credentials")
+					.extractingByKey("oauth_client_credentials")
+					.isNotNull()
+					.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.oauth2)
+					.isInstanceOfSatisfying(SecuritySchemeOAuth2.class, oauth2 -> assertThat(oauth2.getFlows())
+						.hasAllNullFieldsOrPropertiesExcept("clientCredentials")
+						.extracting(OAuthFlows::getClientCredentials)
+						.hasFieldOrPropertyWithValue("refreshUrl", "https://openapis.org")
+						.hasFieldOrPropertyWithValue("tokenUrl", "https://openapis.org")
+						.extracting(OAuthFlow::getScopes)
+						.isInstanceOfSatisfying(Map.class, scopes -> {
+							assertThat(scopes)
+								.isNotNull()
+								.hasSize(2)
+								.containsEntry("write:test", "Lorem ipsum")
+								.containsEntry("read:test", "Another test");
+						}));
+			}
+
+			@Test
+			@DisplayName("Client Credentials with invalid URL")
+			void testOauth2ClientCredentialsWithInvalidUrl() {
+				// given
+				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2ClientCredentialsInvalidUrl.yml");
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+
+				// when - then
+				assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
+					.isInstanceOf(SpecificationViolationException.class)
+					.hasMessage("Security property 'tokenUrl' is not a valid URL");
+			}
+
+
+			@Test
+			@DisplayName("Password")
+			void testOauth2Password() {
+				// given
+				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2Password.yml");
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+				// when
+				Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+				// then
+				assertThat(securitySchemesFromProperties)
+					.isNotNull()
+					.isPresent();
+
+				assertThat(securitySchemesFromProperties.get())
+					.isNotNull()
+					.isNotEmpty()
+					.hasSize(1)
+					.containsOnlyKeys("oauth_password")
+					.extractingByKey("oauth_password")
+					.isNotNull()
+					.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.oauth2)
+					.isInstanceOfSatisfying(SecuritySchemeOAuth2.class, oauth2 -> assertThat(oauth2.getFlows())
+						.hasAllNullFieldsOrPropertiesExcept("password")
+						.extracting(OAuthFlows::getPassword)
+						.hasFieldOrPropertyWithValue("refreshUrl", "https://openapis.org")
+						.hasFieldOrPropertyWithValue("tokenUrl", "https://www.openapis.org")
+						.hasFieldOrPropertyWithValue("scopes", singletonMap("write:test", "Lorem ipsum")));
+			}
+
+			@Test
+			@DisplayName("Password with invalid URL")
+			void testOauth2PasswordWithInvalidUrl() {
+				// given
+				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2PasswordInvalidUrl.yml");
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+
+				// when - then
+				assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
+					.isInstanceOf(SpecificationViolationException.class)
+					.hasMessage("Security property 'tokenUrl' is not a valid URL");
+			}
+
 		}
 
 	}

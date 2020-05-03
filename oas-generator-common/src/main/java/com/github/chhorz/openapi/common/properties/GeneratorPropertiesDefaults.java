@@ -17,6 +17,7 @@
 package com.github.chhorz.openapi.common.properties;
 
 import com.github.chhorz.openapi.common.properties.domain.SecuritySchemeOAuthFlowProperties;
+import com.github.chhorz.openapi.common.properties.domain.SecuritySchemeOAuthFlowsProperties;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 
 import java.net.URL;
@@ -49,7 +50,13 @@ public final class GeneratorPropertiesDefaults {
 	public static final String SECURITY_SCHEME_NAME = null;
 	public static final String SECURITY_SCHEME_IN = null;
 	public static final String SECURITY_SCHEME_OPEN_ID_URL = null;
+	public static final SecuritySchemeOAuthFlowsProperties SECURITY_SCHEME_OAUTH_FLOWS = null;
 	public static final SecuritySchemeOAuthFlowProperties SECURITY_SCHEME_OAUTH_FLOW = null;
+
+	public static final String SECURITY_SCHEME_OAUTH_FLOW_AUTH_URL = null;
+	public static final String SECURITY_SCHEME_OAUTH_FLOW_TOKEN_URL = null;
+	public static final String SECURITY_SCHEME_OAUTH_FLOW_REFRESH_URL = null;
+	public static final Map<String, String> SECURITY_SCHEME_OAUTH_FLOW_SCOPES = null;
 
 	public static final String TAG_DESCRIPTION = null;
 

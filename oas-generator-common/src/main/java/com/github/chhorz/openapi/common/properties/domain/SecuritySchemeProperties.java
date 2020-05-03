@@ -27,7 +27,7 @@ public class SecuritySchemeProperties {
 	private String name;
 	private String in;
 	private String openIdConnectUrl;
-	private SecuritySchemeOAuthFlowProperties flows;
+	private SecuritySchemeOAuthFlowsProperties flows;
 
 	public SecuritySchemeProperties() {
 		type = GeneratorPropertiesDefaults.SECURITY_SCHEME_TYPE;
@@ -37,7 +37,7 @@ public class SecuritySchemeProperties {
 		name = GeneratorPropertiesDefaults.SECURITY_SCHEME_NAME;
 		in = GeneratorPropertiesDefaults.SECURITY_SCHEME_IN;
 		openIdConnectUrl = GeneratorPropertiesDefaults.SECURITY_SCHEME_OPEN_ID_URL;
-		flows = GeneratorPropertiesDefaults.SECURITY_SCHEME_OAUTH_FLOW;
+		flows = GeneratorPropertiesDefaults.SECURITY_SCHEME_OAUTH_FLOWS;
 	}
 
 	public String getType() {
@@ -96,11 +96,11 @@ public class SecuritySchemeProperties {
 		this.openIdConnectUrl = openIdConnectUrl;
 	}
 
-	public SecuritySchemeOAuthFlowProperties getFlows() {
+	public SecuritySchemeOAuthFlowsProperties getFlows() {
 		return flows;
 	}
 
-	public void setFlows(SecuritySchemeOAuthFlowProperties flows) {
+	public void setFlows(SecuritySchemeOAuthFlowsProperties flows) {
 		this.flows = flows;
 	}
 

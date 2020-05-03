@@ -238,16 +238,90 @@ public class GeneratorPropertyLoader {
 
 				map.put(entry.getKey(), scheme);
 			} else if (Type.oauth2.name().equalsIgnoreCase(property.getType())) {
-				// TODO add other security schemes
+				if (property.getFlows() == null) {
+					throw new SpecificationViolationException("Security property 'flows' must be present");
+				}
+
+				SecuritySchemeOAuthFlowProperties authorizationCode = property.getFlows().getAuthorizationCode();
+				if (authorizationCode != null) {
+					validateRequiredUrl(authorizationCode.getAuthorizationUrl(), "authorizationUrl");
+					validateRequiredUrl(authorizationCode.getTokenUrl(), "tokenUrl");
+					validateOptionalUrl(authorizationCode.getRefreshUrl(), "refreshUrl");
+					if (authorizationCode.getScopes() == null) {
+						throw new SpecificationViolationException("Security property 'scopes' must be present");
+					}
+
+					OAuthFlow flow = new OAuthFlow();
+					flow.setAuthorizationUrl(authorizationCode.getAuthorizationUrl());
+					flow.setTokenUrl(authorizationCode.getTokenUrl());
+					flow.setRefreshUrl(authorizationCode.getRefreshUrl());
+					flow.setScopes(authorizationCode.getScopes());
+
+					OAuthFlows flows = new OAuthFlows();
+					flows.setAuthorizationCode(flow);
+
+					map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
+				}
+
+				SecuritySchemeOAuthFlowProperties clientCredentials = property.getFlows().getClientCredentials();
+				if (clientCredentials != null) {
+					validateRequiredUrl(clientCredentials.getTokenUrl(), "tokenUrl");
+					validateOptionalUrl(clientCredentials.getRefreshUrl(), "refreshUrl");
+					if (clientCredentials.getScopes() == null) {
+						throw new SpecificationViolationException("Security property 'scopes' must be present");
+					}
+
+					OAuthFlow flow = new OAuthFlow();
+					flow.setTokenUrl(clientCredentials.getTokenUrl());
+					flow.setRefreshUrl(clientCredentials.getRefreshUrl());
+					flow.setScopes(clientCredentials.getScopes());
+
+					OAuthFlows flows = new OAuthFlows();
+					flows.setClientCredentials(flow);
+
+					map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
+				}
+
+				SecuritySchemeOAuthFlowProperties password = property.getFlows().getPassword();
+				if (password != null) {
+					validateRequiredUrl(password.getTokenUrl(), "tokenUrl");
+					validateOptionalUrl(password.getRefreshUrl(), "refreshUrl");
+					if (password.getScopes() == null) {
+						throw new SpecificationViolationException("Security property 'scopes' must be present");
+					}
+
+					OAuthFlow flow = new OAuthFlow();
+					flow.setTokenUrl(password.getTokenUrl());
+					flow.setRefreshUrl(password.getRefreshUrl());
+					flow.setScopes(password.getScopes());
+
+					OAuthFlows flows = new OAuthFlows();
+					flows.setPassword(flow);
+
+					map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
+				}
+
+				SecuritySchemeOAuthFlowProperties implicit = property.getFlows().getImplicit();
+				if (implicit != null) {
+					validateRequiredUrl(implicit.getAuthorizationUrl(), "authorizationUrl");
+					validateOptionalUrl(implicit.getRefreshUrl(), "refreshUrl");
+					if (implicit.getScopes() == null) {
+						throw new SpecificationViolationException("Security property 'scopes' must be present");
+					}
+
+					OAuthFlow flow = new OAuthFlow();
+					flow.setAuthorizationUrl(implicit.getAuthorizationUrl());
+					flow.setRefreshUrl(implicit.getRefreshUrl());
+					flow.setScopes(implicit.getScopes());
+
+					OAuthFlows flows = new OAuthFlows();
+					flows.setImplicit(flow);
+
+					map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
+				}
+
 			} else if (Type.openIdConnect.name().equalsIgnoreCase(property.getType())) {
-				if (property.getOpenIdConnectUrl() == null || property.getOpenIdConnectUrl().isEmpty()) {
-					throw new SpecificationViolationException("Security property 'openIdUrl' must be present");
-				}
-				try {
-					new URL(property.getOpenIdConnectUrl());
-				} catch (MalformedURLException e) {
-					throw new SpecificationViolationException("Security property 'openIdUrl' is not a valid URL");
-				}
+				validateRequiredUrl(property.getOpenIdConnectUrl(), "openIdUrl");
 
 				SecuritySchemeOpenIdConnect scheme = new SecuritySchemeOpenIdConnect();
 				scheme.setType(Type.openIdConnect);
@@ -258,6 +332,28 @@ public class GeneratorPropertyLoader {
 			}
 		}
 		return map.isEmpty() ? Optional.empty() : Optional.of(map);
+	}
+
+	private void validateRequiredUrl(String value, String property){
+		if (value == null || value.isEmpty()) {
+			throw new SpecificationViolationException("Security property '" + property + "' must be present");
+		} else {
+			try {
+				new URL(value);
+			} catch (MalformedURLException e) {
+				throw new SpecificationViolationException("Security property '" + property + "' is not a valid URL");
+			}
+		}
+	}
+
+	private void validateOptionalUrl(String value, String property){
+		if (value != null) {
+			try {
+				new URL(value);
+			} catch (MalformedURLException e) {
+				throw new SpecificationViolationException("Security property '" + property + "' is not a valid URL");
+			}
+		}
 	}
 
 	public String getDescriptionForTag(final String tag) {
