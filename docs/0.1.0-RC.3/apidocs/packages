@@ -1,0 +1,15 @@
+com.github.chhorz.openapi.common.annotation
+com.github.chhorz.openapi.common.domain
+com.github.chhorz.openapi.common.domain.meta
+com.github.chhorz.openapi.common.javadoc
+com.github.chhorz.openapi.common
+com.github.chhorz.openapi.common.properties.domain
+com.github.chhorz.openapi.common.properties
+com.github.chhorz.openapi.common.spi
+com.github.chhorz.openapi.common.util
+com.github.chhorz.openapi.common.util.jackson
+com.github.chhorz.openapi.spring
+com.github.chhorz.openapi.spring.util
+com.github.chhorz.openapi.jaxrs
+com.github.chhorz.openapi.schema
+com.github.chhorz.openapi.spi.asciidoctor
