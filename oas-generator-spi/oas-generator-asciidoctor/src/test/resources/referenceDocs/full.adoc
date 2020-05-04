@@ -246,7 +246,8 @@ m| <<components_schemas_ArticleResource>>
 
 == Tags
 _TAG_1_::
-[[TAG_1]] This is a description
+[[TAG_1]] pass:[This is a <b>description</b>]
++
 Lorem ipsum dolor sit amet. (icon:external-link[] link:https://en.wikipedia.org[_Link_])
 
 _TAG_2_::

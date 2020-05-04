@@ -119,7 +119,7 @@ class AsciidoctorPostProcessorTest {
 
 		Tag tag1 = new Tag();
 		tag1.setName("TAG_1");
-		tag1.setDescription("This is a description");
+		tag1.setDescription("This is a <b>description</b>");
 		tag1.setExternalDocs(externalDocs);
 
 		Tag tag2 = new Tag();

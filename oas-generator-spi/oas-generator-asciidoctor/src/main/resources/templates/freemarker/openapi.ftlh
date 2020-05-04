@@ -111,7 +111,7 @@ This schema is deprecated.
 <#list schema.properties as propertyName, property>
 | ${propertyName}
 m| <@asciidoc_schema property/>
-|<#if property.description??> pass:[<@clean property.description/>]</#if>
+|<#if property.description?? && property.description?has_content> pass:[<@clean property.description/>]</#if>
 
 </#list>
 |===
@@ -154,7 +154,7 @@ m| <@asciidoc_mediatype mediatype/>
 <#list openapi.components.securitySchemes as schemeName, scheme>
 | [[${schemeName}]] ${schemeName}
 | ${scheme.type}
-| pass:[<@clean scheme.description/>]
+|<#if scheme.description?? && scheme.description?has_content> pass:[<@clean scheme.description/>]</#if>
 
 </#list>
 |===

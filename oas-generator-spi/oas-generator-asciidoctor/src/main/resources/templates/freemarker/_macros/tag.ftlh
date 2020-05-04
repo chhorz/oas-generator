@@ -5,12 +5,13 @@
 -->
 <#macro tag tag>
 _${tag.name}_::
-<#if tag.description??>
-[[${tag.name}]] ${tag.description}
+<#if tag.description?? && tag.description?has_content>
+[[${tag.name}]] pass:[${tag.description}]
 <#else>
 [[${tag.name}]]
 </#if>
 <#if tag.externalDocs??>
++
 <@externalDocs tag.externalDocs/>
 </#if>
 
