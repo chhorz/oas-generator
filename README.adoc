@@ -19,7 +19,7 @@ Because the file is generated during compilation, the documentation is always up
 <dependency>
     <groupId>com.github.chhorz</groupId>
     <artifactId>oas-generator-{spring-web|jaxrs|schema|asciidoctor}</artifactId>
-    <version>0.1.0-RC.3</version>
+    <version>0.1.0</version>
 </dependency>
 ----
 . Create a configuration file `oas-generator.yml` (per default in _/src/main/resources_).
