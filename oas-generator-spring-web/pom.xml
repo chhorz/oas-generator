@@ -85,7 +85,7 @@
 		<dependency>
 			<groupId>org.springframework.hateoas</groupId>
 			<artifactId>spring-hateoas</artifactId>
-			<version>1.0.4.RELEASE</version>
+			<version>${spring-hateoas.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
