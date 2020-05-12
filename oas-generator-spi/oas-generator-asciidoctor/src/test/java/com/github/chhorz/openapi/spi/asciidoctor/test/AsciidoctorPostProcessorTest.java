@@ -256,6 +256,8 @@ class AsciidoctorPostProcessorTest {
 		getOrders.addTag("TAG_2");
 
 		PathItemObject orders = new PathItemObject();
+		orders.setSummary("Summary for /orders");
+		orders.setDescription("Some very long and boring description");
 		orders.setGet(getOrders);
 
 		PathItemObject articles = new PathItemObject();

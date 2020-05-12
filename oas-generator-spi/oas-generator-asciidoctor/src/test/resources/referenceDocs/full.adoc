@@ -9,6 +9,7 @@ John doe <john.doe@test.org>
 Lorem ipsum
 
 == Servers
+
 |===
 2+h|`www.github.com`
 |We love code.
@@ -29,6 +30,7 @@ a|
 == Paths
 
 === /articles
+
 [[ArticleController_getArticles]]
 ==== GET
 
@@ -132,11 +134,16 @@ m! pass:[application/json]
 
 
 === /orders
+
+Summary for /orders
+
+Some very long and boring description
+
 [[OrderController_getOrders]]
 ==== GET
+
 [WARNING]
 This operation is deprecated.
-
 
 [cols="1,1,1,1,2"]
 |===
@@ -155,11 +162,13 @@ h| Description
 |===
 
 
-
 == Components
+
 === Schemas
+
 [[components_schemas_ArticleResource]]
 ==== ArticleResource
+
 [WARNING]
 This schema is deprecated.
 
@@ -192,6 +201,7 @@ m| <<components_schemas_OrderResource>>
 
 [[components_schemas_OrderResource]]
 ==== OrderResource
+
 This is an order resource.
 [cols="1,2,3", options="header"]
 |===
@@ -218,8 +228,10 @@ m|
 
 
 === Request Bodies
+
 [[components_requestBodies_ArticleResource]]
 ==== ArticleResource
+
 *REQUIRED* Lorem ipsum
 
 [cols="1,2", options="header"]
@@ -234,6 +246,7 @@ m| <<components_schemas_ArticleResource>>
 
 
 === Security Schemes
+
 [cols="1,1,2", options="header"]
 |===
 | Scheme | Type | Description
@@ -245,6 +258,7 @@ m| <<components_schemas_ArticleResource>>
 |===
 
 == Tags
+
 _TAG_1_::
 [[TAG_1]] pass:[This is a <b>description</b>]
 +
@@ -255,10 +269,13 @@ _TAG_2_::
 
 
 == External documentation
+
 Lorem ipsum dolor sit amet. (icon:external-link[] link:https://en.wikipedia.org[_Link_])
 
 == Terms of Service
+
 Terms of Service ...
 
 == License
+
 The service is licensed under https://www.apache.org/licenses/LICENSE-2.0[Apache License, Version 2.0].

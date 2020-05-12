@@ -6,12 +6,12 @@
 <#macro pathTable path method operation>
 <#if operation.operationId??>[[<@clean_operationid operation.operationId/>]]</#if>
 <@section title=method level=4/>
+
 <#if operation.deprecated>
 [WARNING]
 This operation is deprecated.
 
 </#if>
-
 [cols="1,1,1,1,2"]
 |===
 ^h| ${method}

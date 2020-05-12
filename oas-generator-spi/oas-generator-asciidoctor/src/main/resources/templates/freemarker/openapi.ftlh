@@ -24,6 +24,7 @@ ${openapi.info.description}
 </#if>
 <#else>
 <@section title="OpenAPI Documentation" level=1/>
+
 <#if openapi.info.contact??>
 ${openapi.info.contact.name} (${openapi.info.contact.email})
 </#if>
@@ -39,6 +40,7 @@ ${openapi.info.description}
 <#if openapi.servers??>
 
 <@section title="Servers" level=2/>
+
 |===
 <#list openapi.servers as s>
 <@server s/>
@@ -57,7 +59,15 @@ ${openapi.info.description}
 <#list openapi.paths as path, pathItem>
 
 <@section title=path level=3/>
-<#if pathItem.description??>${pathItem.description}</#if><#t>
+
+<#if pathItem.summary??>
+${pathItem.summary}
+
+</#if>
+<#if pathItem.description??>
+${pathItem.description}
+
+</#if>
 <#if pathItem.get??>
 <@pathTable path "GET" pathItem.get/>
 </#if>
@@ -83,7 +93,6 @@ ${openapi.info.description}
 <@pathTable path "TRACE" pathItem.trace/>
 </#if>
 </#list>
-
 </#if>
 </#if>
 <#--
@@ -92,11 +101,14 @@ ${openapi.info.description}
 <#if openapi.components??>
 
 <@section title="Components" level=2/>
+
 <#if openapi.components.schemas??>
 <@section title="Schemas" level=3/>
+
 <#list openapi.components.schemas as schemaName, schema>
 [[components_schemas_${schemaName}]]
 <@section title=schemaName level=4/>
+
 <#if schema.deprecated>
 [WARNING]
 This schema is deprecated.
@@ -123,9 +135,11 @@ m| <@asciidoc_schema property/>
 <#if openapi.components.requestBodies??>
 
 <@section title="Request Bodies" level=3/>
+
 <#list openapi.components.requestBodies as requestBodyName, requestBody>
 [[components_requestBodies_${requestBodyName}]]
 <@section title=requestBodyName level=4/>
+
 <#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description??>${requestBody.description}</#if>
 
 <#if requestBody.content??>
@@ -147,6 +161,7 @@ m| <@asciidoc_mediatype mediatype/>
 <#if openapi.components.securitySchemes??>
 
 <@section title="Security Schemes" level=3/>
+
 [cols="1,1,2", options="header"]
 |===
 | Scheme | Type | Description
@@ -166,6 +181,7 @@ m| <@asciidoc_mediatype mediatype/>
 <#if openapi.tags??>
 
 <@section title="Tags" level=2/>
+
 <#list openapi.tags as t>
 <@tag t/>
 </#list>
@@ -176,6 +192,7 @@ m| <@asciidoc_mediatype mediatype/>
 <#if openapi.externalDocs??>
 
 <@section title="External documentation" level=2/>
+
 <@externalDocs openapi.externalDocs/>
 </#if>
 <#--
@@ -184,6 +201,7 @@ m| <@asciidoc_mediatype mediatype/>
 <#if openapi.info.termsOfService??>
 
 <@section title="Terms of Service" level=2/>
+
 ${openapi.info.termsOfService}
 </#if>
 <#--
@@ -192,6 +210,7 @@ ${openapi.info.termsOfService}
 <#if openapi.info.license??>
 
 <@section title="License" level=2/>
+
 <#if openapi.info.license.url??>
 The service is licensed under ${openapi.info.license.url}[${openapi.info.license.name}].
 <#else>

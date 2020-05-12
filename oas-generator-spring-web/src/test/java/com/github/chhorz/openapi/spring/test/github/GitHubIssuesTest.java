@@ -402,4 +402,171 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		validateSchemaForTestResource(documentContext);
 	}
 
+	@Test
+	@GithubIssue("#23")
+	void getGithubIssue023() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue023.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("summary", "")
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue023#testParamA")
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("security", emptyList());
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("default")
+			.extractingByKey("default")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "");
+		assertThat(operation.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull());
+//				.extracting(MediaType::getSchema)
+//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+		assertThat(operation.getParameterObjects())
+			.isNotNull()
+			.hasSize(2);
+		assertThat(operation.getParameterObjects().get(0))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "a")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		assertThat(operation.getParameterObjects().get(1))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "b")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		validateSchemaForTestResource(documentContext);
+	}
+
+	@Test
+	@GithubIssue("#23")
+	void getGithubIssue023_2() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue023.class, GitHubIssue023_2.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("summary", "Test method C.")
+			.hasFieldOrPropertyWithValue("description", "Test method C.")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue023#testParamA")
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("security", emptyList());
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("default")
+			.extractingByKey("default")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "a list of resources");
+		assertThat(operation.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull());
+//				.extracting(MediaType::getSchema)
+//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+		assertThat(operation.getParameterObjects())
+			.isNotNull()
+			.hasSize(3);
+		assertThat(operation.getParameterObjects().get(0))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "a")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		assertThat(operation.getParameterObjects().get(1))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "b")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		assertThat(operation.getParameterObjects().get(2))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "c")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "parameter c for method c")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		validateSchemaForTestResource(documentContext);
+	}
+
 }

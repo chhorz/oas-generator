@@ -22,6 +22,7 @@ import com.github.chhorz.openapi.common.domain.PathItemObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static java.lang.String.format;
 
@@ -34,8 +35,8 @@ public class PathItemUtils {
 			return pathItemOne;
 		} else {
 			PathItemObject mergedPathItemObject = new PathItemObject();
-			mergedPathItemObject.setSummary(format("%s\n\n%s", pathItemOne.getSummary(), pathItemTwo.getSummary()));
-			mergedPathItemObject.setDescription(format("%s\n\n%s", pathItemOne.getDescription(), pathItemTwo.getDescription()));
+			mergedPathItemObject.setSummary(mergeDocumentation(pathItemOne.getSummary(), pathItemTwo.getSummary()));
+			mergedPathItemObject.setDescription(mergeDocumentation(pathItemOne.getDescription(), pathItemTwo.getDescription()));
 
 			mergedPathItemObject.setGet(mergeOperations(pathItemOne.getGet(), pathItemTwo.getGet()));
 			mergedPathItemObject.setPut(mergeOperations(pathItemOne.getPut(), pathItemTwo.getPut()));
@@ -57,8 +58,8 @@ public class PathItemUtils {
 			return operationOne;
 		} else {
 			Operation mergedOperation = new Operation();
-			mergedOperation.setSummary(format("%s\n\n%s", operationOne.getSummary(), operationTwo.getSummary()));
-			mergedOperation.setDescription(format("%s\n\n%s", operationOne.getDescription(), operationTwo.getDescription()));
+			mergedOperation.setSummary(mergeDocumentation(operationOne.getSummary(), operationTwo.getSummary()));
+			mergedOperation.setDescription(mergeDocumentation(operationOne.getDescription(), operationTwo.getDescription()));
 
 			if (operationOne.getTags() != null) {
 				operationOne.getTags().forEach(mergedOperation::addTag);
@@ -93,6 +94,15 @@ public class PathItemUtils {
 			mergedOperation.setSecurity(mergedSecurity);
 
 			return mergedOperation;
+		}
+	}
+
+	private String mergeDocumentation(String documentationOne, String documentationTwo) {
+		Predicate<String> presence = s -> s!= null && !s.isEmpty();
+		if (presence.test(documentationOne) || presence.test(documentationTwo)) {
+			return format("%s\n\n%s", documentationOne, documentationTwo).trim();
+		} else {
+			return "";
 		}
 	}
 
