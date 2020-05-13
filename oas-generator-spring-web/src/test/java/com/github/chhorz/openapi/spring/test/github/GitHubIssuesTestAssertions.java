@@ -17,10 +17,7 @@
 package com.github.chhorz.openapi.spring.test.github;
 
 import com.github.chhorz.openapi.common.OpenAPIConstants;
-import com.github.chhorz.openapi.common.domain.Info;
-import com.github.chhorz.openapi.common.domain.Reference;
-import com.github.chhorz.openapi.common.domain.RequestBody;
-import com.github.chhorz.openapi.common.domain.Schema;
+import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import com.jayway.jsonpath.DocumentContext;
 
@@ -57,12 +54,16 @@ class GitHubIssuesTestAssertions {
 	 * @param documentContext the json document context
 	 */
 	public static void validateDefaultInfoObject(final DocumentContext documentContext){
+		validateDefaultInfoObject(documentContext, "Title", "Version");
+	}
+
+	public static void validateDefaultInfoObject(final DocumentContext documentContext, final String title, final String version){
 		Info info = documentContext.read("$.info", Info.class);
 
 		assertThat(info)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("title", "Title")
-			.hasFieldOrPropertyWithValue("version", "Version")
+			.hasFieldOrPropertyWithValue("title", title)
+			.hasFieldOrPropertyWithValue("version", version)
 			.hasFieldOrPropertyWithValue("xGeneratedBy", "oas-generator");
 
 		assertThat(info.getxGeneratedTs())
@@ -273,6 +274,21 @@ class GitHubIssuesTestAssertions {
 			.isNotNull()
 			.isEqualTo("#/components/schemas/Object");
 
+	}
+
+	/**
+	 * Validates the read_role security scheme
+	 *
+	 * @param documentContext the json document context
+	 */
+	public static void validateSecurityScheme(final DocumentContext documentContext) {
+		SecuritySchemeHttp securityScheme = documentContext.read("$.components.securitySchemes.read_role", SecuritySchemeHttp.class);
+
+		assertThat(securityScheme)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description","Basic LDAP read role.")
+			.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.http)
+			.hasFieldOrPropertyWithValue("scheme", "basic");
 	}
 
 	/**

@@ -147,6 +147,10 @@ public interface OpenAPIProcessor {
 					PreAuthorize preAuthorized = executableElement.getAnnotation(PreAuthorize.class);
 					map.entrySet().stream()
 						.filter(entry -> preAuthorized.value().toLowerCase().contains(entry.getKey().toLowerCase()))
+						.filter(entry -> securityInformation.stream()
+								.map(Map::keySet)
+								.flatMap(Set::stream)
+								.noneMatch(set -> set.contains(entry.getKey())))
 						.forEach(entry -> securityInformation.add(singletonMap(entry.getKey(), emptyList())));
 				}
 			}
@@ -156,6 +160,10 @@ public interface OpenAPIProcessor {
 					.filter(Objects::nonNull)
 					.map(SecurityTag::getSecurityRequirement)
 					.filter(map::containsKey)
+					.filter(securityRequirement -> securityInformation.stream()
+							.map(Map::keySet)
+							.flatMap(Set::stream)
+							.noneMatch(set -> set.contains(securityRequirement)))
 					.forEach(securityRequirement -> securityInformation.add(singletonMap(securityRequirement, emptyList())));
 			}
 		}
