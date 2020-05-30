@@ -314,6 +314,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
                     openApi.getComponents().putAllSchemas(schemaMap.entrySet()
                             .stream()
+							.filter(entry -> !schemaUtils.isAssignableFrom(entry.getKey(), Void.class))
                             .filter(entry -> !Type.ARRAY.equals(entry.getValue().getType()))
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
@@ -332,7 +333,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					operation.setSecurity(getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes(), javaDoc.getTags(SecurityTag.class)));
 
                     PathItemObject pathItemObject = new PathItemObject();
-//					PathItemObject pathItemObject = openApi.getPaths().getOrDefault(cleanedPath, new PathItemObject());
                     switch (requestMethod) {
                         case GET:
                             pathItemObject.setGet(operation);

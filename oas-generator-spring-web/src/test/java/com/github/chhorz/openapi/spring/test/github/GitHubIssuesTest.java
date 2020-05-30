@@ -21,6 +21,7 @@ import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor;
 import com.github.chhorz.openapi.spring.test.github.controller.*;
+import com.github.chhorz.openapi.spring.test.github.resources.ErrorResource;
 import com.github.chhorz.openapi.spring.test.github.resources.HateoasResource;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import com.jayway.jsonpath.DocumentContext;
@@ -349,9 +350,10 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 	@Test
 	@GithubIssue("#20")
+	@GithubIssue("#25")
 	void getGithubIssue020() {
 		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue020.class, Resource.class);
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue020.class, Resource.class, ErrorResource.class);
 
 		// create json-path context
 		DocumentContext documentContext = createJsonPathDocumentContext();
@@ -363,12 +365,56 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateDefaultInfoObject(documentContext);
 
+		Operation operationOne = documentContext.read("$.paths./github/issues.post", Operation.class);
+		assertThat(operationOne)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("summary", "Lorem ipsum")
+			.hasFieldOrPropertyWithValue("description", "Lorem ipsum")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue020#test")
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("security", emptyList());
+		assertThat(operationOne.getResponses())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("default", "204");
+		assertThat(operationOne.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull());
+		assertThat(operationOne.getResponses().get("204").getContent())
+			.isNull();
+		Operation operationTwo = documentContext.read("$.paths./github/issues/{id}.delete", Operation.class);
+		assertThat(operationTwo)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("summary", "Lorem ipsum")
+			.hasFieldOrPropertyWithValue("description", "Lorem ipsum")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue020#post")
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("security", emptyList());
+		assertThat(operationOne.getResponses())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("default", "204");
+		assertThat(operationOne.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull());
+		assertThat(operationOne.getResponses().get("204").getContent())
+			.isNull();
+
 		Components components = documentContext.read("$.components", Components.class);
 
 		assertThat(components.getSchemas())
-			.containsOnlyKeys("Resource");
+			.containsOnlyKeys("Resource", "ErrorResource");
 
 		validateSchemaForTestResource(documentContext);
+		validateSchemaForErrorResource(documentContext);
 		validateRequestBodyForTestResource(documentContext);
 	}
 

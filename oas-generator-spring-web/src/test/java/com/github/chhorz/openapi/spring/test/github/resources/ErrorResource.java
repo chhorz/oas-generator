@@ -14,39 +14,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.common.domain;
-
-import com.github.chhorz.openapi.common.domain.meta.Required;
+package com.github.chhorz.openapi.spring.test.github.resources;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#reference-object
- *
- * @author chhorz
- *
+ * an error resource for GitHub issue tests
  */
-public class Reference {
-
-	@Required
-	private String $ref;
-
-	public Reference() {
-	}
-
-	public Reference(final String $ref) {
-		this.$ref = $ref;
-	}
-
-	public void set$ref(String $ref) {
-		this.$ref = $ref;
-	}
-
-	public String get$ref() {
-		return $ref;
-	}
-
-	@Override
-	public String toString() {
-		return "Reference [$ref=" + $ref + "]";
-	}
-
+public class ErrorResource {
+	/**
+	 * error details
+	 */
+	public String value;
 }

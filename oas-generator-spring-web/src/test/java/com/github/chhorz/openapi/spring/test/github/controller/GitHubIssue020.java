@@ -17,12 +17,12 @@
 package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.spring.test.github.resources.ErrorResource;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("github")
 public class GitHubIssue020 {
@@ -39,6 +39,33 @@ public class GitHubIssue020 {
 	@PostMapping(path = "/issues", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<Void> test(@RequestBody Resource resource) {
 		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * Lorem ipsum
+	 *
+	 * @param id the resource id
+	 * @return nothing but a http status
+	 *
+	 * @response 204 Void No Content
+	 */
+	@GithubIssue("#25")
+	@DeleteMapping(path = "/issues/{id}")
+	public ResponseEntity<Void> post(@PathVariable String id) {
+		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * Lorem ipsum
+	 *
+	 * @return an error resource with additional information
+	 *
+	 * @response 500 ErrorResource additional error information
+	 */
+	@GithubIssue("#25")
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<ErrorResource> exceptionHandler() {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
 
 }
