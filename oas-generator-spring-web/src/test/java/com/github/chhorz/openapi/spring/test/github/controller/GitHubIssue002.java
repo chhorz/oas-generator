@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("github")
 public class GitHubIssue002 {
 
-	@GithubIssue("#2")
+	@GitHubIssue("#2")
 	@GetMapping("issues")
 	public ResponseEntity test(){
 		return ResponseEntity.ok().build();

@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +28,7 @@ import java.util.List;
 @RequestMapping("github")
 public class GitHubIssue023 {
 
-	@GithubIssue("#23")
+	@GitHubIssue("#23")
 	@GetMapping(path = "/issues", params = "a", produces = "*/*")
 	public ResponseEntity<List<Resource>> testParamA(@RequestParam String a) {
 		return ResponseEntity.ok().build();

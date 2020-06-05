@@ -26,8 +26,8 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
-@Repeatable(GithubIssues.class)
-public @interface GithubIssue {
+@Repeatable(GitHubIssues.class)
+public @interface GitHubIssue {
 
 	String value();
 

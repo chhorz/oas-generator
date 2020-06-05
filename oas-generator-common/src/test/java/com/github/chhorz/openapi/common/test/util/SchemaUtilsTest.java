@@ -22,7 +22,7 @@ import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.common.test.util.resources.Other;
 import com.github.chhorz.openapi.common.test.util.resources.TestClass;
 import com.github.chhorz.openapi.common.test.util.resources.TestEnum;
@@ -248,7 +248,7 @@ class SchemaUtilsTest {
 	}
 
 	@Test
-	@GithubIssue("#27")
+	@GitHubIssue("#27")
 	void dateTest(){
 		// given
 		TypeMirror dateType = elements.getTypeElement(Date.class.getCanonicalName()).asType();

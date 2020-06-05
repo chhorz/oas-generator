@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +33,7 @@ public class GitHubIssue008 {
 	 *
 	 * @return a list of tags
 	 */
-	@GithubIssue("#8")
+	@GitHubIssue("#8")
 	@GetMapping(path = "/issues")
 	public ResponseEntity<Resource> test() {
 		return ok(new Resource());

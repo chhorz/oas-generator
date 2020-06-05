@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.HateoasResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("github")
 public class GitHubIssue011 {
 
-	@GithubIssue("#11")
+	@GitHubIssue("#11")
 	@GetMapping(path = "/issues", produces = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<List<HateoasResource>> test() {
 		return ok(emptyList());

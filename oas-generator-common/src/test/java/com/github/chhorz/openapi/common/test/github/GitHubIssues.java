@@ -26,8 +26,8 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
-public @interface GithubIssues {
+public @interface GitHubIssues {
 
-	GithubIssue[] value();
+	GitHubIssue[] value();
 
 }

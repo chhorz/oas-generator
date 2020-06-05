@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,7 +31,7 @@ public class GitHubIssue024 {
 	/**
 	 * @security read_role
 	 */
-	@GithubIssue("#24")
+	@GitHubIssue("#24")
 	@PreAuthorize("hasRole(read_role)")
 	@GetMapping(path = "/issues")
 	public ResponseEntity<List<Resource>> test() {

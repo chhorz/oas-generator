@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ import java.util.List;
 @RequestMapping("github")
 public class GitHubIssue012 {
 
-	@GithubIssue("#12")
+	@GitHubIssue("#12")
 	@GetMapping(path = "/issues", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<List<Resource>> test(@RequestBody List<Resource> responses) {
 		return ResponseEntity.ok(responses);

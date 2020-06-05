@@ -20,7 +20,7 @@ import com.github.chhorz.openapi.common.SpecificationViolationException;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.common.test.properties.test.ProcessorAProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -57,7 +57,7 @@ class GeneratorPropertyLoaderTest {
 	}
 
 	@Test
-	@GithubIssue("#3")
+	@GitHubIssue("#3")
 	void testEmptyPostProcessorProperties() {
 		// given
 		Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/postProcessorEmptyTest.yml");
@@ -103,7 +103,7 @@ class GeneratorPropertyLoaderTest {
 	}
 
 	@Test
-	@GithubIssue("#9")
+	@GitHubIssue("#9")
 	void testTagWithoutExternalDocumentation() {
 		// given
 		String tagName = "tag_b";
@@ -125,7 +125,7 @@ class GeneratorPropertyLoaderTest {
 	}
 
 	@Nested
-	@GithubIssue("#19")
+	@GitHubIssue("#19")
 	@DisplayName("Security Schemes from Properties")
 	class SecuritySchemesTest {
 

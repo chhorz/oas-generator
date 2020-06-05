@@ -18,7 +18,7 @@ package com.github.chhorz.openapi.spring.test.github;
 
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor;
 import com.github.chhorz.openapi.spring.test.github.controller.*;
 import com.github.chhorz.openapi.spring.test.github.resources.ErrorResource;
@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GitHubIssuesTest extends AbstractProcessorTest {
 
 	@Test
-	@GithubIssue("#2")
+	@GitHubIssue("#2")
 	void getGithubIssue002() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue002.class);
@@ -84,7 +84,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#8")
+	@GitHubIssue("#8")
 	void getGithubIssue008() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator-withoutparser.yml"), GitHubIssue008.class, Resource.class);
@@ -135,7 +135,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#11")
+	@GitHubIssue("#11")
 	void getGithubIssue011() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue011.class, HateoasResource.class);
@@ -188,7 +188,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#12")
+	@GitHubIssue("#12")
 	void getGithubIssue012() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue012.class, Resource.class);
@@ -238,7 +238,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#15")
+	@GitHubIssue("#15")
 	void getGithubIssue015() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue015.class, Resource.class);
@@ -273,7 +273,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#18")
+	@GitHubIssue("#18")
 	void getGithubIssue018() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue018.class, Resource.class);
@@ -349,8 +349,8 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#20")
-	@GithubIssue("#25")
+	@GitHubIssue("#20")
+	@GitHubIssue("#25")
 	void getGithubIssue020() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue020.class, Resource.class, ErrorResource.class);
@@ -419,7 +419,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#22")
+	@GitHubIssue("#22")
 	void getGithubIssue022() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue022.class, Resource.class);
@@ -449,7 +449,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#23")
+	@GitHubIssue("#23")
 	void getGithubIssue023() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue023.class, Resource.class);
@@ -525,7 +525,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#23")
+	@GitHubIssue("#23")
 	void getGithubIssue023_2() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue023.class, GitHubIssue023_2.class, Resource.class);
@@ -616,7 +616,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#24")
+	@GitHubIssue("#24")
 	void getGithubIssue024() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator05.yml"), GitHubIssue024.class, Resource.class);
@@ -652,7 +652,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
-	@GithubIssue("#26")
+	@GitHubIssue("#26")
 	void getGithubIssue026() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue026.class, Resource.class);

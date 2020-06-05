@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,7 @@ public class GitHubIssue015 {
 	 * Beside the fact that the Optional type was intended as return type, the oas-generator
 	 * should not throw an exception.
 	 */
-	@GithubIssue("#15")
+	@GitHubIssue("#15")
 	@GetMapping(path = "/issues", produces = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<List<Resource>> test(@RequestParam Optional<String> filter) {
 		return ResponseEntity.noContent().build();

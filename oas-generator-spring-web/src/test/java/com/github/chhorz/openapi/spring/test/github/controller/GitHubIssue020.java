@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.ErrorResource;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class GitHubIssue020 {
 	 *
 	 * @response 204 Void No Content
 	 */
-	@GithubIssue("#20")
+	@GitHubIssue("#20")
 	@PostMapping(path = "/issues", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<Void> test(@RequestBody Resource resource) {
 		return ResponseEntity.noContent().build();
@@ -49,7 +49,7 @@ public class GitHubIssue020 {
 	 *
 	 * @response 204 Void No Content
 	 */
-	@GithubIssue("#25")
+	@GitHubIssue("#25")
 	@DeleteMapping(path = "/issues/{id}")
 	public ResponseEntity<Void> post(@PathVariable String id) {
 		return ResponseEntity.noContent().build();
@@ -62,7 +62,7 @@ public class GitHubIssue020 {
 	 *
 	 * @response 500 ErrorResource additional error information
 	 */
-	@GithubIssue("#25")
+	@GitHubIssue("#25")
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<ErrorResource> exceptionHandler() {
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

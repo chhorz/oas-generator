@@ -16,18 +16,15 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RequestMapping("github")
 public class GitHubIssue026 {
@@ -38,7 +35,7 @@ public class GitHubIssue026 {
 	 * @param resource the request body
 	 * @return http status code
 	 */
-	@GithubIssue("#26")
+	@GitHubIssue("#26")
 	@PostMapping(path = "/issues", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> test(@RequestBody @Valid Resource resource) {
 		return ResponseEntity.ok().build();

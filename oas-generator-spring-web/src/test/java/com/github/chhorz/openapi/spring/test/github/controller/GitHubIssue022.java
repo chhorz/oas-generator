@@ -17,7 +17,7 @@
 package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.annotation.OpenAPIExclusion;
-import com.github.chhorz.openapi.common.test.github.GithubIssue;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,7 +40,7 @@ public class GitHubIssue022 {
 		return ResponseEntity.ok().build();
 	}
 
-	@GithubIssue("#22")
+	@GitHubIssue("#22")
 	@OpenAPIExclusion
 	@PostMapping(path = "/issues", consumes = MediaType.APPLICATION_JSON_VALUE )
 	public ResponseEntity<Resource> post(@RequestBody Resource resource) {
