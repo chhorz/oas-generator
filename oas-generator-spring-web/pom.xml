@@ -88,6 +88,12 @@
 			<version>${spring-hateoas.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>${jakarta.validation-api.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

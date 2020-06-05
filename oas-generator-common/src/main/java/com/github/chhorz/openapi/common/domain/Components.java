@@ -18,7 +18,6 @@ package com.github.chhorz.openapi.common.domain;
 
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Function;
 
 import javax.lang.model.type.TypeMirror;
 
@@ -43,7 +42,7 @@ public class Components {
 	private Map<String, Callback> callbacks;
 
 	public static boolean isValidKey(final String key) {
-		return key.matches("^[a-zA-Z0-9\\.\\-_]+$");
+		return key.matches("^[a-zA-Z0-9.\\-_]+$");
 	}
 
 	public void putAllSchemas(final Map<TypeMirror, Schema> schemas) {
@@ -116,10 +115,15 @@ public class Components {
 
 	private String getKey(final TypeMirror typeMirror) {
 		String typeString = typeMirror.toString();
+		// type mirrors with annotation types like: (@javax.validation.Valid :: com.github.chhorz.openapi.spring.test.github.resources.Resource)
+		if (typeString.contains("::")) {
+			typeString = typeString.substring(typeString.indexOf("::") + 2, typeString.indexOf(')'));
+		}
+		// remove generic types
 		while (typeString.contains("<")) {
 			typeString = typeString.substring(typeString.indexOf('<') + 1, typeString.indexOf('>'));
 		}
-		return typeString.substring(typeString.lastIndexOf('.') + 1);
+		return typeString.substring(typeString.lastIndexOf('.') + 1).trim();
 	}
 
 }

@@ -24,10 +24,10 @@ import com.github.chhorz.openapi.common.domain.Reference;
 
 public class ReferenceUtils {
 
-	private static String REF_FORMAT = "#/components/%s/%s";
+	private static final String REF_FORMAT = "#/components/%s/%s";
 
-	private static String REQUEST_BODIES = "requestBodies";
-	private static String SCHEMAS = "schemas";
+	private static final String REQUEST_BODIES = "requestBodies";
+	private static final String SCHEMAS = "schemas";
 
 	public static Reference createSchemaReference(final TypeMirror typeMirror) {
 		Objects.requireNonNull(typeMirror, "TypeMirror must not be null.");
@@ -40,16 +40,16 @@ public class ReferenceUtils {
 	}
 
 	private static String shortName(final TypeMirror typeMirror) {
-		final String type = getType(typeMirror);
-		return type.substring(type.lastIndexOf('.') + 1);
-	}
-
-	private static String getType(final TypeMirror typeMirror) {
 		String typeString = typeMirror.toString();
+		// type mirrors with annotation types like: (@javax.validation.Valid :: com.github.chhorz.openapi.spring.test.github.resources.Resource)
+		if (typeString.contains("::")) {
+			typeString = typeString.substring(typeString.indexOf("::") + 2, typeString.indexOf(')'));
+		}
+		// remove generic types
 		while (typeString.contains("<")) {
 			typeString = typeString.substring(typeString.indexOf('<') + 1, typeString.indexOf('>'));
 		}
-		return typeString.substring(typeString.lastIndexOf('.') + 1);
+		return typeString.substring(typeString.lastIndexOf('.') + 1).trim();
 	}
 
 }

@@ -42,20 +42,20 @@ import java.util.function.Function;
 
 public class SchemaUtils {
 
-	private Elements elements;
-	private Types types;
+	private final Elements elements;
+	private final Types types;
 
-	private LoggingUtils log;
-	private TypeMirrorUtils typeMirrorUtils;
+	private final LoggingUtils log;
+	private final TypeMirrorUtils typeMirrorUtils;
 
-	private JavaDocParser parser;
+	private final JavaDocParser parser;
 
-	private TypeMirror object;
-	private TypeMirror enumeration;
+	private final TypeMirror object;
+	private final TypeMirror enumeration;
 
-	private PackageElement javaLangPackage;
-	private PackageElement javaMathPackage;
-	private PackageElement javaTimePackage;
+	private final PackageElement javaLangPackage;
+	private final PackageElement javaMathPackage;
+	private final PackageElement javaTimePackage;
 
 	public SchemaUtils(final Elements elements, final Types types, final LoggingUtils log) {
 		this.elements = elements;
@@ -96,12 +96,12 @@ public class SchemaUtils {
 		Map<TypeMirror, Schema> typeMirrorMap = new HashMap<>();
 
 		packageElement.getEnclosedElements()
-			.stream()
-			.map(Element::asType)
-			.map(this::mapTypeMirrorToSchema)
-			.flatMap(map -> map.entrySet().stream())
-			.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
-			.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
+				.stream()
+				.map(Element::asType)
+				.map(this::mapTypeMirrorToSchema)
+				.flatMap(map -> map.entrySet().stream())
+				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
+				.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
 
 		return typeMirrorMap;
 	}
@@ -119,10 +119,12 @@ public class SchemaUtils {
 		return mediaType;
 	}
 
-	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
-		if (typeMirror == null || typeMirror.getKind().equals(TypeKind.VOID)) {
+	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror parsedTypeMirror) {
+		if (parsedTypeMirror == null || parsedTypeMirror.getKind().equals(TypeKind.VOID)) {
 			return Collections.emptyMap();
 		}
+
+		TypeMirror typeMirror = removeTypeMirrorAnnotations(parsedTypeMirror);
 
 		Map<TypeMirror, Schema> schemaMap = new LinkedHashMap<>();
 
@@ -142,22 +144,22 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 				// schema.setDescription(propertyDoc.getDescription());
 			}
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (TypeKind.VOID.equals(typeMirror.getKind()) || isAssignableFrom(typeMirror, Void.class)) {
 			// TODO how to handle void type
 			schema.setDescription("Type is Void.");
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (TypeKind.TYPEVAR.equals(typeMirror.getKind())) {
 			// TODO check ... at the moment all typevars are ignored
 
 			schema.setType(Type.OBJECT);
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (isTypeOf(typeMirror, Object.class)) {
 			schema.setType(Type.OBJECT);
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (TypeKind.ARRAY.equals(typeMirror.getKind())) {
 			schema.setType(Type.ARRAY);
 
@@ -178,7 +180,7 @@ public class SchemaUtils {
 
 			schemaMap.putAll(propertySchemaMap);
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (isTypeInPackage(typeMirror, javaLangPackage)) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
@@ -189,7 +191,7 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 			}
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (isTypeInPackage(typeMirror, javaMathPackage)) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
@@ -197,7 +199,7 @@ public class SchemaUtils {
 			schema.setType(Type.NUMBER);
 			schema.setFormat(Format.DOUBLE);
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (isTypeInPackage(typeMirror, javaTimePackage)) {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
 			schema.setDescription(javaDoc.getDescription());
@@ -207,7 +209,7 @@ public class SchemaUtils {
 				schema.setType(typeAndFormat.getKey());
 				schema.setFormat(typeAndFormat.getValue());
 			}
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (isAssignableFrom(typeMirror, Optional.class)) {
 			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, Optional.class)[0];
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
@@ -226,7 +228,7 @@ public class SchemaUtils {
 
 			schemaMap.putAll(propertySchemaMap);
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (isAssignableFrom(typeMirror, List.class)) {
 			schema.setType(Type.ARRAY);
 
@@ -247,7 +249,7 @@ public class SchemaUtils {
 
 			schemaMap.putAll(propertySchemaMap);
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (isAssignableFrom(typeMirror, Set.class)) {
 			schema.setType(Type.ARRAY);
 
@@ -268,7 +270,7 @@ public class SchemaUtils {
 
 			schemaMap.putAll(propertySchemaMap);
 
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		} else if (isAssignableFrom(typeMirror, Map.class)) {
 			// TODO implement
 		} else {
@@ -280,16 +282,17 @@ public class SchemaUtils {
 			if (element.getKind().equals(ElementKind.ENUM)) {
 				schema.setType(Type.STRING);
 
-				element.getEnclosedElements().stream().filter(VariableElement.class::isInstance).forEach(vElement -> {
-					schema.addEnumValue(vElement.toString());
-				});
+				element.getEnclosedElements()
+					.stream()
+					.filter(VariableElement.class::isInstance)
+					.forEach(vElement -> schema.addEnumValue(vElement.toString()));
 
 			} else {
 				schema.setType(Type.OBJECT);
 
 				TypeMirror superType = element.asType();
 
-				while (!(superType instanceof NoType) && !isSameType(superType, object) && !isSameType(types.erasure(superType), enumeration)) {
+				while (!(superType instanceof NoType) && notTypeOf(superType, object) && notTypeOf(types.erasure(superType), enumeration)) {
 					TypeElement typeElement = elements.getTypeElement(types.erasure(superType).toString());
 
 					typeElement.getEnclosedElements()
@@ -336,10 +339,14 @@ public class SchemaUtils {
 				}
 
 			}
-			schemaMap.put(typeMirror, schema);
+			schemaMap.put(parsedTypeMirror, schema);
 		}
 
 		return schemaMap;
+	}
+
+	private TypeMirror removeTypeMirrorAnnotations(final TypeMirror typeMirror) {
+		return types.capture(typeMirror);
 	}
 
 	private boolean isValidAttribute(final Element element) {
@@ -360,8 +367,8 @@ public class SchemaUtils {
 		return types.asElement(typeMirror).getEnclosingElement().toString().equals(packageElement.toString());
 	}
 
-	private boolean isSameType(final TypeMirror type1, final TypeMirror type2) {
-		return types.isSameType(type1, type2) || type1.toString().equalsIgnoreCase(type2.toString());
+	private boolean notTypeOf(final TypeMirror type1, final TypeMirror type2) {
+		return !types.isSameType(type1, type2) && !type1.toString().equalsIgnoreCase(type2.toString());
 	}
 
 	private String getPropertyName(final Element element) {
@@ -447,29 +454,24 @@ public class SchemaUtils {
 		}
 
 		if (one.getProperties() != null) {
-			one.getProperties().entrySet().forEach(entry -> {
-				Function<Schema, Object> function = schema -> schema.getProperties().get(entry.getKey());
+			one.getProperties().forEach((key, value) -> {
+				Function<Schema, Object> function = schema -> schema.getProperties().get(key);
 				Object propertyOne = function.apply(one);
 				Object propertyTwo = function.apply(two);
 
 				if (notNullReference(propertyOne) && notNullReference(propertyTwo)) {
-					result.putProperty(entry.getKey(), (Reference) propertyOne);
+					result.putProperty(key, (Reference) propertyOne);
 				} else if (notNullSchema(propertyOne) && notNullSchema(propertyTwo)) {
-					result.putProperty(entry.getKey(), mergeSchemas((Schema) propertyOne, (Schema) propertyTwo));
+					result.putProperty(key, mergeSchemas((Schema) propertyOne, (Schema) propertyTwo));
 				} else if (notNullReference(propertyOne)) {
-					result.putProperty(entry.getKey(), (Reference) propertyOne);
+					result.putProperty(key, (Reference) propertyOne);
 				} else if (notNullSchema(propertyOne)) {
-					result.putProperty(entry.getKey(), (Schema) propertyOne);
+					result.putProperty(key, (Schema) propertyOne);
 				}
 			});
 		}
 
-		Object items = merge(one, two, Schema::getItems);
-		if (items instanceof Reference) {
-			result.setItems((Reference) items);
-		} else if (items instanceof Schema) {
-			result.setItems((Schema) items);
-		}
+		result.setItems(merge(one, two, Schema::getItems));
 
 		return result;
 	}

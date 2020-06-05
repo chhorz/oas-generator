@@ -651,4 +651,29 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		validateSecurityScheme(documentContext);
 	}
 
+	@Test
+	@GithubIssue("#26")
+	void getGithubIssue026() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue026.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.post", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue026#test");
+
+		validateSchemaForTestResource(documentContext);
+		validateRequestBodyForTestResource(documentContext);
+	}
+
 }
