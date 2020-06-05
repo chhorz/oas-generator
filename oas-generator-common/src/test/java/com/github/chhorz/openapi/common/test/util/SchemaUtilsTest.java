@@ -22,6 +22,7 @@ import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
+import com.github.chhorz.openapi.common.test.github.GithubIssue;
 import com.github.chhorz.openapi.common.test.util.resources.Other;
 import com.github.chhorz.openapi.common.test.util.resources.TestClass;
 import com.github.chhorz.openapi.common.test.util.resources.TestEnum;
@@ -244,6 +245,24 @@ class SchemaUtilsTest {
 			.extracting(map -> map.get(stringType))
 			.extracting("type", "format")
 			.contains(Type.STRING);
+	}
+
+	@Test
+	@GithubIssue("#27")
+	void dateTest(){
+		// given
+		TypeMirror dateType = elements.getTypeElement(Date.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(dateType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKeys(dateType)
+			.extracting(map -> map.get(dateType))
+			.extracting("type", "format")
+			.contains(Type.STRING, Format.DATE_TIME);
 	}
 
 }

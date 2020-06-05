@@ -208,6 +208,14 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 			}
 			schemaMap.put(typeMirror, schema);
+		} else if (isAssignableFrom(typeMirror, Date.class)) {
+			JavaDoc javaDoc = parser.parse(elements.getDocComment(types.asElement(typeMirror)));
+			schema.setDescription(javaDoc.getDescription());
+
+			schema.setType(Type.STRING);
+			schema.setFormat(Format.DATE_TIME);
+
+			schemaMap.put(typeMirror, schema);
 		} else if (isAssignableFrom(typeMirror, Optional.class)) {
 			TypeMirror type = typeMirrorUtils.removeEnclosingType(typeMirror, Optional.class)[0];
 			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
@@ -272,7 +280,7 @@ public class SchemaUtils {
 		} else if (isAssignableFrom(typeMirror, Map.class)) {
 			// TODO implement
 		} else {
-//			Element element = elements.getTypeElement(typeMirror.toString());
+			// Element element = elements.getTypeElement(typeMirror.toString()); (#26)
 			Element element = types.asElement(typeMirror);
 
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
