@@ -21,6 +21,11 @@ import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.FileUtils;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 
+import java.nio.file.Path;
+import java.util.List;
+
+import static java.util.Collections.singletonList;
+
 /**
  * A custom {@link OpenAPIPostProcessor} that writes the OpenAPI domain object to a local file.
  *
@@ -52,7 +57,31 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void execute(String content, PostProcessorType postProcessorType) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void execute(Path file, PostProcessorType postProcessorType) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int getPostProcessorOrder() {
 		return POST_PROCESSOR_ORDER;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<PostProcessorType> getPostProcessorType() {
+		return singletonList(PostProcessorType.DOMAIN_OBJECT);
 	}
 }

@@ -18,20 +18,30 @@ package com.github.chhorz.openapi.common.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.spi.FileWriterProvider;
+import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
+import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
+import com.github.chhorz.openapi.common.spi.PostProcessorType;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.stream.StreamSupport;
+
+import static com.github.chhorz.openapi.common.spi.PostProcessorType.*;
+import static java.util.ServiceLoader.load;
+import static java.util.stream.Collectors.toList;
 
 public class FileUtils {
 
@@ -42,6 +52,8 @@ public class FileUtils {
 	private final ObjectMapper objectMapper;
 	private final ObjectMapper yamlObjectMapper;
 
+	private final List<OpenAPIPostProcessor> openAPIPostProcessors;
+
 	public FileUtils(final ParserProperties properties) {
 		this.properties = properties;
 
@@ -51,6 +63,15 @@ public class FileUtils {
 		yamlObjectMapper = configureObjectMapper(new ObjectMapper(new YAMLFactory()
 				.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
 				.disable(YAMLGenerator.Feature.SPLIT_LINES)));
+
+		// instantiate post processors for string and file types
+		ServiceLoader<PostProcessorProvider> serviceLoader = load(PostProcessorProvider.class, getClass().getClassLoader());
+
+		openAPIPostProcessors = StreamSupport.stream(serviceLoader.spliterator(), false)
+			.filter(provider -> !(provider instanceof FileWriterProvider))
+			.map(provider -> provider.create(properties))
+			.filter(postProcessor -> !postProcessor.getPostProcessorType().contains(PostProcessorType.DOMAIN_OBJECT))
+			.collect(toList());
 	}
 
 	/**
@@ -61,21 +82,43 @@ public class FileUtils {
 	 */
 	public void writeToFile(final OpenAPI openAPI) {
 		if (properties.hasJsonOutputFormat()) {
-			File outputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".json");
-			try {
-				objectMapper.writeValue(outputFile, openAPI);
-			} catch (IOException e) {
-				log.error("Could not write .json file", e);
+			Path outputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".json");
+			if (outputFile != null) {
+				try {
+					String openApiJsonString = objectMapper.writeValueAsString(openAPI);
+					openAPIPostProcessors.stream()
+						.filter(postProcessor -> postProcessor.getPostProcessorType().contains(JSON_STRING))
+						.forEach(postProcessor -> postProcessor.execute(openApiJsonString, JSON_STRING));
+					Files.write(outputFile, openApiJsonString.getBytes());
+				} catch (IOException e) {
+					log.error("Could not write .json file", e);
+				}
+				openAPIPostProcessors.stream()
+					.filter(postProcessor -> postProcessor.getPostProcessorType().contains(JSON_FILE))
+					.forEach(postProcessor -> postProcessor.execute(outputFile, JSON_FILE));
+			} else {
+				log.error("JSON output file is null.");
 			}
 		} else {
 			log.debug("JSON output is disabled in property file");
 		}
 		if (properties.hasYamlOutputFormat()) {
-			File yamlOutputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".yaml");
-			try {
-				yamlObjectMapper.writeValue(yamlOutputFile, openAPI);
-			} catch (IOException e) {
-				log.error("Could not write .yaml file", e);
+			Path yamlOutputFile = createOutputFile(properties.getOutputDir(), properties.getOutputFile(), ".yaml");
+			if (yamlOutputFile != null) {
+				try {
+					String openApiYamlString = yamlObjectMapper.writeValueAsString(openAPI);
+					openAPIPostProcessors.stream()
+						.filter(postProcessor -> postProcessor.getPostProcessorType().contains(YAML_STRING))
+						.forEach(postProcessor -> postProcessor.execute(openApiYamlString, YAML_STRING));
+					Files.write(yamlOutputFile, openApiYamlString.getBytes());
+				} catch (IOException e) {
+					log.error("Could not write .yaml file", e);
+				}
+				openAPIPostProcessors.stream()
+					.filter(postProcessor -> postProcessor.getPostProcessorType().contains(YAML_FILE))
+					.forEach(postProcessor -> postProcessor.execute(yamlOutputFile, YAML_FILE));
+			} else {
+				log.error("YAML output file is null.");
 			}
 		} else {
 			log.debug("YAML output is disabled in property file");
@@ -96,20 +139,20 @@ public class FileUtils {
 		return Optional.empty();
 	}
 
-	private File createOutputFile(String outputDir, String outputFile, String fileFormat){
+	private Path createOutputFile(String outputDir, String outputFile, String fileFormat){
 		Path outputPath = Paths.get(outputDir, outputFile + fileFormat);
 		if (!Files.exists(outputPath)) {
 			try {
 				Files.createDirectories(outputPath.getParent());
 				Files.createFile(outputPath);
 
-				return outputPath.toFile();
+				return outputPath;
 			} catch (IOException e) {
 				log.error("Could not create file " + outputPath, e);
 				return null;
 			}
 		} else {
-			return outputPath.toFile();
+			return outputPath;
 		}
 	}
 

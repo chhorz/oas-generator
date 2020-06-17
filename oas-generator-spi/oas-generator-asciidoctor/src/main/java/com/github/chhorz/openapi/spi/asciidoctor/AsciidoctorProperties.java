@@ -21,6 +21,25 @@ import com.github.chhorz.openapi.common.properties.domain.AbstractPostProcessorP
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Java class representing the configuration properties for the Asciidoctor post processor.
+ * <p>
+ * Default configuration in YAML format:
+ * <pre>
+ * parser:
+ *   postProcessor:
+ *     asciidoctor:
+ *       logging: true
+ *       templateLocalizedLookup: false
+ *       templatePath: ./templates/freemarker
+ *       templateFile: openapi.ftlh
+ *       outputPath: ./target/openapi
+ *       outputFile: /openapi.adoc
+ *       standaloneFile: true
+ * </pre>
+ *
+ * @author chhorz
+ */
 public  class AsciidoctorProperties extends AbstractPostProcessorProperties {
 
 	private static final boolean DEFAULT_EXCEPTION_LOGGING = true;

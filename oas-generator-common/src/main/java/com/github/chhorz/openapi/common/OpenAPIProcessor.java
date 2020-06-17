@@ -30,6 +30,7 @@ import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
+import com.github.chhorz.openapi.common.spi.PostProcessorType;
 import com.github.chhorz.openapi.common.util.FileUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -46,6 +47,7 @@ import static com.github.chhorz.openapi.common.OpenAPIConstants.X_GENERATED_FIEL
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static java.util.Comparator.comparing;
+import static java.util.ServiceLoader.load;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -178,10 +180,11 @@ public interface OpenAPIProcessor {
 	 * @param openApi the generated OpenAPI domain object
 	 */
 	default void runPostProcessors(final ParserProperties parserProperties, final OpenAPI openApi) {
-		ServiceLoader<PostProcessorProvider> serviceLoader = ServiceLoader.load(PostProcessorProvider.class, getClass().getClassLoader());
+		ServiceLoader<PostProcessorProvider> serviceLoader = load(PostProcessorProvider.class, getClass().getClassLoader());
 
 		StreamSupport.stream(serviceLoader.spliterator(), false)
 				.map(provider -> provider.create(parserProperties))
+				.filter(postProcessor -> postProcessor.getPostProcessorType().contains(PostProcessorType.DOMAIN_OBJECT))
 				.sorted(comparing(OpenAPIPostProcessor::getPostProcessorOrder).reversed())
 				.forEach(openAPIPostProcessor -> openAPIPostProcessor.execute(openApi));
 	}

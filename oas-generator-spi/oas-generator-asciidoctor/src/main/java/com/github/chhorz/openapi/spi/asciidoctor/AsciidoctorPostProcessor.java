@@ -19,6 +19,7 @@ package com.github.chhorz.openapi.spi.asciidoctor;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
+import com.github.chhorz.openapi.common.spi.PostProcessorType;
 import com.github.chhorz.openapi.common.util.LoggingUtils;
 import freemarker.core.PlainTextOutputFormat;
 import freemarker.template.Configuration;
@@ -33,17 +34,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
+
+/**
+ * The Asciidoctor post processor that used the Freemarker template engine to
+ * convert the internal OpenAPI domain object into an Asciidoctor file.
+ *
+ * @author chhorz
+ */
 public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
 	private static final int POST_PROCESSOR_ORDER = 0;
 
-	private AsciidoctorProperties asciidoctorProperties;
-	private LoggingUtils log;
+	private final AsciidoctorProperties asciidoctorProperties;
+	private final LoggingUtils log;
 
-	private Configuration freemarkerConfiguration;
+	private final Configuration freemarkerConfiguration;
 
+	/**
+	 * Instantiation of the Asciidoctor post processor and configuration of
+	 * the Freemarker template engine.
+	 *
+	 * @param parserProperties	the complete parser properties
+	 */
 	public AsciidoctorPostProcessor(final ParserProperties parserProperties) {
 		this.asciidoctorProperties = parserProperties.getPostProcessor("asciidoctor", AsciidoctorProperties.class)
 			.orElse(new AsciidoctorProperties());
@@ -62,6 +78,9 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 		freemarkerConfiguration.setClassForTemplateLoading(AsciidoctorPostProcessor.class, "/");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void execute(final OpenAPI openApi) {
 		log.info("AsciidoctorPostProcessor | Start");
@@ -108,9 +127,35 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 		return templateVariables;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void execute(String content, PostProcessorType postProcessorType) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void execute(Path file, PostProcessorType postProcessorType) {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int getPostProcessorOrder() {
 		return POST_PROCESSOR_ORDER;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<PostProcessorType> getPostProcessorType() {
+		return singletonList(PostProcessorType.DOMAIN_OBJECT);
+	}
 }

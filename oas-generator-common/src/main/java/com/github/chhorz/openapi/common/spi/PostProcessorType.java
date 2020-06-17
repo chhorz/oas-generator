@@ -14,25 +14,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.spi.asciidoctor;
-
-import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
-import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
-import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
+package com.github.chhorz.openapi.common.spi;
 
 /**
- * {@link PostProcessorProvider} to instantiate the Asciidoctor post processor.
+ * Enumeration of post processor types. Each type will be called at a different step of the generation process.
  *
  * @author chhorz
  */
-public class AsciidoctorProvider implements PostProcessorProvider {
+public enum PostProcessorType {
 
 	/**
-	 * {@inheritDoc}
+	 * Processing of the internal domain object.
 	 */
-	@Override
-	public OpenAPIPostProcessor create(final ParserProperties parserProperties) {
-		return new AsciidoctorPostProcessor(parserProperties);
-	}
+	DOMAIN_OBJECT,
+
+	/**
+	 * Processing type for JSON content as string.
+	 */
+	JSON_STRING,
+
+	/**
+	 * Processing type for YAML content as string.
+	 */
+	YAML_STRING,
+
+	/**
+	 * Processing type for generated JSON file.
+	 */
+	JSON_FILE,
+
+	/**
+	 * Processing type for generated YAML file.
+	 */
+	YAML_FILE;
 
 }

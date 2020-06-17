@@ -416,7 +416,7 @@ In this map contributors can define their own properties for their post processo
 The *OAS Generator* provides a service provider interface (SPI) to include custom post processors.
 Currently, the following post processors (see module link:https://github.com/chhorz/oas-generator/tree/master/oas-generator-spi[_oas-generator-spi_]) are provided:
 
-- `FileWriterPostProcessor`
+- `FileWriterPostProcessor` (see _oas-generator-common_)
 - `AsciidoctorPostProcessor`
 
 If other post processors should be listed and added in the *OAS Generator* repo please open a Github issue.
@@ -427,11 +427,11 @@ In the following section all post processors from the `oas-generator-spi` module
 [[filewriter_postprocessor]]
 ==== FileWriterPostProcessor
 The `FileWriterPostProcessor` is used internally to write the OpenAPI domain model to the resulting output file.
-This Post-Processor is included within all *OAS Generator* modules and must not be included with adn additional dependency.
+This Post-Processor is included within all *OAS Generator* modules and must not be included with an additional dependency.
 
 [[asciidoctor_postprocessor]]
 ==== AsciidoctorPostProcessor
-This post processor converts the generated OpenAPI domain model into the asciidoctor format.
+This post processor converts the generated internal OpenAPI domain model into the asciidoctor format.
 
 [source,xml,subs="verbatim,attributes"]
 ----
@@ -443,7 +443,7 @@ This post processor converts the generated OpenAPI domain model into the asciido
 </dependency>
 ----
 
-After the creation during the compile phase, the `asciidoctor-maven-plugin` (link:https://asciidoctor.org/docs/asciidoctor-maven-plugin/[Link]) can be used to render the `.adoc` file to HTML, PDF or other formats
+After the creation during compilation phase, the `asciidoctor-maven-plugin` (link:https://asciidoctor.org/docs/asciidoctor-maven-plugin/[Link]) can be used to render the `.adoc` file to HTML, PDF or other formats
 
 [[asciidoctor.properties]]
 ===== Configuration properties
