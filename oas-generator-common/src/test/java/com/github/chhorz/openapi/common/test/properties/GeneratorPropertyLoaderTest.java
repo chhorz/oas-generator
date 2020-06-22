@@ -35,93 +35,172 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GeneratorPropertyLoaderTest {
 
-	@Test
-	void testPostProcessorProperties() {
-		// given
-		Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/postProcessorTest.yml");
-		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+	@Nested
+	@DisplayName("Info properties test")
+	class InfoPropertiesTest {
 
-		// when
-		ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
+		@Test
+		void testInfoProperties() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/info.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
 
-		// then
-		assertThat(parserProperties)
-			.isNotNull();
+			// when
+			Info info = generatorPropertyLoader.createInfoFromProperties();
 
-		assertThat(parserProperties.getPostProcessor("one", ProcessorAProperties.class))
-			.isNotNull()
-			.isNotEmpty()
-			.get()
-			.hasFieldOrPropertyWithValue("valueOne", "Test")
-			.hasFieldOrPropertyWithValue("valueTwo", 2);
+			// then
+			assertThat(info)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("title", "MyService")
+				.hasFieldOrPropertyWithValue("version", "1.2.3-SNAPSHOT")
+				.hasNoNullFieldsOrPropertiesExcept("description", "termsOfService", "xGeneratedBy", "xGeneratedTs");
+
+			assertThat(info.getContact())
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("name", "John Doe")
+				.hasFieldOrPropertyWithValue("url", "https://www.google.com")
+				.hasFieldOrPropertyWithValue("email", "john@doe.com");
+
+			assertThat(info.getLicense())
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("name", "Apache License, Version 2.0")
+				.hasFieldOrPropertyWithValue("url", "https://www.apache.org/licenses/LICENSE-2.0");
+		}
+
+		@Test
+		void testEmptyInfoProperties() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/infoEmpty.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when - then
+			assertThatThrownBy(generatorPropertyLoader::createInfoFromProperties)
+				.isInstanceOf(SpecificationViolationException.class)
+				.hasMessage("Missing 'Info' object.");
+		}
+
 	}
 
-	@Test
-	@GitHubIssue("#3")
-	void testEmptyPostProcessorProperties() {
-		// given
-		Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/postProcessorEmptyTest.yml");
-		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+	@Nested
+	@DisplayName("Test for post processor properties")
+	class PostProcessorPropertiesTest {
 
-		// when
-		ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
+		@Test
+		void testPostProcessorProperties() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/postProcessorTest.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
 
-		// then
-		assertThat(parserProperties)
-			.isNotNull();
+			// when
+			ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
 
-		Optional<ProcessorAProperties> optionalProcessorAProperties = parserProperties.getPostProcessor("one", ProcessorAProperties.class);
+			// then
+			assertThat(parserProperties)
+				.isNotNull();
 
-		assertThat(optionalProcessorAProperties)
-			.isNotNull()
-			.isPresent()
-			.get()
-			.hasFieldOrPropertyWithValue("valueTwo", 0);
+			assertThat(parserProperties.getPostProcessor("one", ProcessorAProperties.class))
+				.isNotNull()
+				.isNotEmpty()
+				.get()
+				.hasFieldOrPropertyWithValue("valueOne", "Test")
+				.hasFieldOrPropertyWithValue("valueTwo", 2);
+		}
+
+		@Test
+		@GitHubIssue("#3")
+		void testEmptyPostProcessorProperties() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/postProcessorEmptyTest.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
+
+			// then
+			assertThat(parserProperties)
+				.isNotNull();
+
+			Optional<ProcessorAProperties> optionalProcessorAProperties = parserProperties.getPostProcessor("one", ProcessorAProperties.class);
+
+			assertThat(optionalProcessorAProperties)
+				.isNotNull()
+				.isPresent()
+				.get()
+				.hasFieldOrPropertyWithValue("valueTwo", 0);
+		}
+
 	}
 
-	@Test
-	void testTagWithExternalDocumentation() {
-		// given
-		String tagName = "tag_a";
+	@Nested
+	@DisplayName("Tags from Properties")
+	class TagPropertiesTest {
 
-		Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagTest.yml");
-		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+		@Test
+		void testTagWithExternalDocumentation() {
+			// given
+			String tagName = "tag_a";
 
-		// when
-		String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
-		ExternalDocumentation externalDocumentationForTag = generatorPropertyLoader.getExternalDocumentationForTag(tagName);
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagTest.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
 
-		// then
-		assertThat(tagDescription)
-			.isNotNull()
-			.isEqualTo("Lorem ipsum");
+			// when
+			String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
+			ExternalDocumentation externalDocumentationForTag = generatorPropertyLoader.getExternalDocumentationForTag(tagName);
 
-		assertThat(externalDocumentationForTag)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("url", "https://www.google.com")
-			.hasAllNullFieldsOrPropertiesExcept("url");
-	}
+			// then
+			assertThat(tagDescription)
+				.isNotNull()
+				.isEqualTo("Lorem ipsum");
 
-	@Test
-	@GitHubIssue("#9")
-	void testTagWithoutExternalDocumentation() {
-		// given
-		String tagName = "tag_b";
+			assertThat(externalDocumentationForTag)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("url", "https://www.google.com")
+				.hasAllNullFieldsOrPropertiesExcept("url");
+		}
 
-		Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagTest.yml");
-		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+		@Test
+		@GitHubIssue("#9")
+		void testTagWithoutExternalDocumentation() {
+			// given
+			String tagName = "tag_b";
 
-		// when
-		String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
-		ExternalDocumentation externalDocumentationForTag = generatorPropertyLoader.getExternalDocumentationForTag(tagName);
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagTest.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
 
-		// then
-		assertThat(tagDescription)
-			.isNotNull()
-			.isEqualTo("Lorem ipsum");
+			// when
+			String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
+			ExternalDocumentation externalDocumentationForTag = generatorPropertyLoader.getExternalDocumentationForTag(tagName);
 
-		assertThat(externalDocumentationForTag)
-			.isNull();
+			// then
+			assertThat(tagDescription)
+				.isNotNull()
+				.isEqualTo("Lorem ipsum");
+
+			assertThat(externalDocumentationForTag)
+				.isNull();
+		}
+
+		@Test
+		@GitHubIssue("#31")
+		void testEmptyTag() {
+			// given
+			String tagName = "test";
+
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagEmptyTest.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
+			ExternalDocumentation externalDocumentationForTag = generatorPropertyLoader.getExternalDocumentationForTag(tagName);
+
+			// then
+			assertThat(tagDescription)
+				.isNull();
+
+			assertThat(externalDocumentationForTag)
+				.isNull();
+		}
+
 	}
 
 	@Nested
@@ -140,6 +219,22 @@ class GeneratorPropertyLoaderTest {
 			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
 				.isInstanceOf(SpecificationViolationException.class)
 				.hasMessage("Security type must be one of apiKey,http,oauth2,openIdConnect");
+		}
+
+		@Test
+		@DisplayName("Empty security object")
+		void testEmptySecurity() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityEmptyTest.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
+
+			// then
+			assertThat(securitySchemesFromProperties)
+				.isNotNull()
+				.isNotPresent();
 		}
 
 		@Test

@@ -89,6 +89,10 @@ public class GeneratorPropertyLoader {
 
 		String version = processorOptions.getOrDefault(OpenAPIConstants.OPTION_VERSION, null);
 
+		if (infoProperties == null) {
+			throw new SpecificationViolationException("Missing 'Info' object.");
+		}
+
 		if (infoProperties.getTitle() == null) {
 			throw new SpecificationViolationException("Missing 'title' property for 'Info' object.");
 		}
@@ -205,130 +209,133 @@ public class GeneratorPropertyLoader {
 
 	public Optional<Map<String, SecurityScheme>> createSecuritySchemesFromProperties() {
 		Map<String, SecurityScheme> map = new TreeMap<>();
-		for (Entry<String, SecuritySchemeProperties> entry : properties.getSecuritySchemes().entrySet()) {
-			SecuritySchemeProperties property = entry.getValue();
+		Map<String, SecuritySchemeProperties> securitySchemePropertiesMap = properties.getSecuritySchemes();
+		if (securitySchemePropertiesMap != null) {
+			for (Entry<String, SecuritySchemeProperties> entry : securitySchemePropertiesMap.entrySet()) {
+				SecuritySchemeProperties property = entry.getValue();
 
-			if (Stream.of(Type.values()).map(Type::name).noneMatch(type -> type.equals(property.getType()))) {
-				throw new SpecificationViolationException("Security type must be one of " + Stream.of(Type.values()).map(Type::name).collect(joining(",")));
-			}
-
-			if (Type.http.name().equalsIgnoreCase(property.getType())) {
-				SecuritySchemeHttp scheme = new SecuritySchemeHttp();
-				scheme.setType(Type.http);
-				scheme.setScheme(property.getScheme());
-				scheme.setDescription(property.getDescription());
-
-				if ("bearer".equalsIgnoreCase(property.getScheme())) {
-					scheme.setBearerFormat(property.getBearerFormat());
+				if (Stream.of(Type.values()).map(Type::name).noneMatch(type -> type.equals(property.getType()))) {
+					throw new SpecificationViolationException("Security type must be one of " + Stream.of(Type.values()).map(Type::name).collect(joining(",")));
 				}
 
-				map.put(entry.getKey(), scheme);
-			} else if (Type.apiKey.name().equalsIgnoreCase(property.getType())) {
-				if (Stream.of(In.values()).map(In::name).noneMatch(in -> in.equals(property.getIn()))) {
-					throw new SpecificationViolationException("Security property 'in' must be one of " + Stream.of(In.values()).map(In::name).collect(joining(",")));
-				} else if (property.getName() == null || property.getName().isEmpty()) {
-					throw new SpecificationViolationException("Security property 'name' must be present");
-				}
+				if (Type.http.name().equalsIgnoreCase(property.getType())) {
+					SecuritySchemeHttp scheme = new SecuritySchemeHttp();
+					scheme.setType(Type.http);
+					scheme.setScheme(property.getScheme());
+					scheme.setDescription(property.getDescription());
 
-				SecuritySchemeApiKey scheme = new SecuritySchemeApiKey();
-				scheme.setType(Type.apiKey);
-				scheme.setIn(In.of(property.getIn()));
-				scheme.setName(property.getName());
-				scheme.setDescription(property.getDescription());
-
-				map.put(entry.getKey(), scheme);
-			} else if (Type.oauth2.name().equalsIgnoreCase(property.getType())) {
-				if (property.getFlows() == null) {
-					throw new SpecificationViolationException("Security property 'flows' must be present");
-				}
-
-				SecuritySchemeOAuthFlowProperties authorizationCode = property.getFlows().getAuthorizationCode();
-				if (authorizationCode != null) {
-					validateRequiredUrl(authorizationCode.getAuthorizationUrl(), "authorizationUrl");
-					validateRequiredUrl(authorizationCode.getTokenUrl(), "tokenUrl");
-					validateOptionalUrl(authorizationCode.getRefreshUrl(), "refreshUrl");
-					if (authorizationCode.getScopes() == null) {
-						throw new SpecificationViolationException("Security property 'scopes' must be present");
+					if ("bearer".equalsIgnoreCase(property.getScheme())) {
+						scheme.setBearerFormat(property.getBearerFormat());
 					}
 
-					OAuthFlow flow = new OAuthFlow();
-					flow.setAuthorizationUrl(authorizationCode.getAuthorizationUrl());
-					flow.setTokenUrl(authorizationCode.getTokenUrl());
-					flow.setRefreshUrl(authorizationCode.getRefreshUrl());
-					flow.setScopes(authorizationCode.getScopes());
-
-					OAuthFlows flows = new OAuthFlows();
-					flows.setAuthorizationCode(flow);
-
-					map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
-				}
-
-				SecuritySchemeOAuthFlowProperties clientCredentials = property.getFlows().getClientCredentials();
-				if (clientCredentials != null) {
-					validateRequiredUrl(clientCredentials.getTokenUrl(), "tokenUrl");
-					validateOptionalUrl(clientCredentials.getRefreshUrl(), "refreshUrl");
-					if (clientCredentials.getScopes() == null) {
-						throw new SpecificationViolationException("Security property 'scopes' must be present");
+					map.put(entry.getKey(), scheme);
+				} else if (Type.apiKey.name().equalsIgnoreCase(property.getType())) {
+					if (Stream.of(In.values()).map(In::name).noneMatch(in -> in.equals(property.getIn()))) {
+						throw new SpecificationViolationException("Security property 'in' must be one of " + Stream.of(In.values()).map(In::name).collect(joining(",")));
+					} else if (property.getName() == null || property.getName().isEmpty()) {
+						throw new SpecificationViolationException("Security property 'name' must be present");
 					}
 
-					OAuthFlow flow = new OAuthFlow();
-					flow.setTokenUrl(clientCredentials.getTokenUrl());
-					flow.setRefreshUrl(clientCredentials.getRefreshUrl());
-					flow.setScopes(clientCredentials.getScopes());
+					SecuritySchemeApiKey scheme = new SecuritySchemeApiKey();
+					scheme.setType(Type.apiKey);
+					scheme.setIn(In.of(property.getIn()));
+					scheme.setName(property.getName());
+					scheme.setDescription(property.getDescription());
 
-					OAuthFlows flows = new OAuthFlows();
-					flows.setClientCredentials(flow);
-
-					map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
-				}
-
-				SecuritySchemeOAuthFlowProperties password = property.getFlows().getPassword();
-				if (password != null) {
-					validateRequiredUrl(password.getTokenUrl(), "tokenUrl");
-					validateOptionalUrl(password.getRefreshUrl(), "refreshUrl");
-					if (password.getScopes() == null) {
-						throw new SpecificationViolationException("Security property 'scopes' must be present");
+					map.put(entry.getKey(), scheme);
+				} else if (Type.oauth2.name().equalsIgnoreCase(property.getType())) {
+					if (property.getFlows() == null) {
+						throw new SpecificationViolationException("Security property 'flows' must be present");
 					}
 
-					OAuthFlow flow = new OAuthFlow();
-					flow.setTokenUrl(password.getTokenUrl());
-					flow.setRefreshUrl(password.getRefreshUrl());
-					flow.setScopes(password.getScopes());
+					SecuritySchemeOAuthFlowProperties authorizationCode = property.getFlows().getAuthorizationCode();
+					if (authorizationCode != null) {
+						validateRequiredUrl(authorizationCode.getAuthorizationUrl(), "authorizationUrl");
+						validateRequiredUrl(authorizationCode.getTokenUrl(), "tokenUrl");
+						validateOptionalUrl(authorizationCode.getRefreshUrl(), "refreshUrl");
+						if (authorizationCode.getScopes() == null) {
+							throw new SpecificationViolationException("Security property 'scopes' must be present");
+						}
 
-					OAuthFlows flows = new OAuthFlows();
-					flows.setPassword(flow);
+						OAuthFlow flow = new OAuthFlow();
+						flow.setAuthorizationUrl(authorizationCode.getAuthorizationUrl());
+						flow.setTokenUrl(authorizationCode.getTokenUrl());
+						flow.setRefreshUrl(authorizationCode.getRefreshUrl());
+						flow.setScopes(authorizationCode.getScopes());
 
-					map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
-				}
+						OAuthFlows flows = new OAuthFlows();
+						flows.setAuthorizationCode(flow);
 
-				SecuritySchemeOAuthFlowProperties implicit = property.getFlows().getImplicit();
-				if (implicit != null) {
-					validateRequiredUrl(implicit.getAuthorizationUrl(), "authorizationUrl");
-					validateOptionalUrl(implicit.getRefreshUrl(), "refreshUrl");
-					if (implicit.getScopes() == null) {
-						throw new SpecificationViolationException("Security property 'scopes' must be present");
+						map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
 					}
 
-					OAuthFlow flow = new OAuthFlow();
-					flow.setAuthorizationUrl(implicit.getAuthorizationUrl());
-					flow.setRefreshUrl(implicit.getRefreshUrl());
-					flow.setScopes(implicit.getScopes());
+					SecuritySchemeOAuthFlowProperties clientCredentials = property.getFlows().getClientCredentials();
+					if (clientCredentials != null) {
+						validateRequiredUrl(clientCredentials.getTokenUrl(), "tokenUrl");
+						validateOptionalUrl(clientCredentials.getRefreshUrl(), "refreshUrl");
+						if (clientCredentials.getScopes() == null) {
+							throw new SpecificationViolationException("Security property 'scopes' must be present");
+						}
 
-					OAuthFlows flows = new OAuthFlows();
-					flows.setImplicit(flow);
+						OAuthFlow flow = new OAuthFlow();
+						flow.setTokenUrl(clientCredentials.getTokenUrl());
+						flow.setRefreshUrl(clientCredentials.getRefreshUrl());
+						flow.setScopes(clientCredentials.getScopes());
 
-					map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
+						OAuthFlows flows = new OAuthFlows();
+						flows.setClientCredentials(flow);
+
+						map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
+					}
+
+					SecuritySchemeOAuthFlowProperties password = property.getFlows().getPassword();
+					if (password != null) {
+						validateRequiredUrl(password.getTokenUrl(), "tokenUrl");
+						validateOptionalUrl(password.getRefreshUrl(), "refreshUrl");
+						if (password.getScopes() == null) {
+							throw new SpecificationViolationException("Security property 'scopes' must be present");
+						}
+
+						OAuthFlow flow = new OAuthFlow();
+						flow.setTokenUrl(password.getTokenUrl());
+						flow.setRefreshUrl(password.getRefreshUrl());
+						flow.setScopes(password.getScopes());
+
+						OAuthFlows flows = new OAuthFlows();
+						flows.setPassword(flow);
+
+						map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
+					}
+
+					SecuritySchemeOAuthFlowProperties implicit = property.getFlows().getImplicit();
+					if (implicit != null) {
+						validateRequiredUrl(implicit.getAuthorizationUrl(), "authorizationUrl");
+						validateOptionalUrl(implicit.getRefreshUrl(), "refreshUrl");
+						if (implicit.getScopes() == null) {
+							throw new SpecificationViolationException("Security property 'scopes' must be present");
+						}
+
+						OAuthFlow flow = new OAuthFlow();
+						flow.setAuthorizationUrl(implicit.getAuthorizationUrl());
+						flow.setRefreshUrl(implicit.getRefreshUrl());
+						flow.setScopes(implicit.getScopes());
+
+						OAuthFlows flows = new OAuthFlows();
+						flows.setImplicit(flow);
+
+						map.put(entry.getKey(), new SecuritySchemeOAuth2(flows));
+					}
+
+				} else if (Type.openIdConnect.name().equalsIgnoreCase(property.getType())) {
+					validateRequiredUrl(property.getOpenIdConnectUrl(), "openIdUrl");
+
+					SecuritySchemeOpenIdConnect scheme = new SecuritySchemeOpenIdConnect();
+					scheme.setType(Type.openIdConnect);
+					scheme.setOpenIdConnectUrl(property.getOpenIdConnectUrl());
+					scheme.setDescription(property.getDescription());
+
+					map.put(entry.getKey(), scheme);
 				}
-
-			} else if (Type.openIdConnect.name().equalsIgnoreCase(property.getType())) {
-				validateRequiredUrl(property.getOpenIdConnectUrl(), "openIdUrl");
-
-				SecuritySchemeOpenIdConnect scheme = new SecuritySchemeOpenIdConnect();
-				scheme.setType(Type.openIdConnect);
-				scheme.setOpenIdConnectUrl(property.getOpenIdConnectUrl());
-				scheme.setDescription(property.getDescription());
-
-				map.put(entry.getKey(), scheme);
 			}
 		}
 		return map.isEmpty() ? Optional.empty() : Optional.of(map);
@@ -357,20 +364,35 @@ public class GeneratorPropertyLoader {
 	}
 
 	public String getDescriptionForTag(final String tag) {
-		TagProperties tagProperties = properties.getTags().getOrDefault(tag, null);
-		return tagProperties != null ? tagProperties.getDescription() : null;
-	}
-
-	public ExternalDocumentation getExternalDocumentationForTag(final String tag) {
-		TagProperties tagProperties = properties.getTags().getOrDefault(tag, null);
-		if (tagProperties != null) {
-			return createExternalDocumentation(tagProperties.getExternalDocs()).orElse(null);
+		Map<String, TagProperties> tagPropertiesMap = properties.getTags();
+		if (tagPropertiesMap != null) {
+			TagProperties tagProperties = tagPropertiesMap.getOrDefault(tag, null);
+			if (tagProperties != null) {
+				return tagProperties.getDescription();
+			}
 		}
 		return null;
 	}
 
+	public ExternalDocumentation getExternalDocumentationForTag(final String tag) {
+		Map<String, TagProperties> tagPropertiesMap = properties.getTags();
+		if (tagPropertiesMap != null) {
+			TagProperties tagProperties = tagPropertiesMap.getOrDefault(tag, null);
+			if (tagProperties != null) {
+				return createExternalDocumentation(tagProperties.getExternalDocs()).orElse(null);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the parser properties from the given configuration file or a new instance with default values
+	 * if the parser object is null.
+	 *
+	 * @return the parser properties
+	 */
 	public ParserProperties getParserProperties() {
-		return properties.getParser();
+		return properties.getParser() != null ? properties.getParser() : new ParserProperties();
 	}
 
 	private String resolveUrl(final URL url) {
