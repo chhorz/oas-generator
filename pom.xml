@@ -108,7 +108,7 @@
 		<!-- plugin versions -->
 		<asciidoctor-maven-plugin.version>1.5.8</asciidoctor-maven-plugin.version>
 		<license.maven.plugin.version>3.0</license.maven.plugin.version>
-		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven.gpg.plugin.version>1.5</maven.gpg.plugin.version>
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
 		<maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
