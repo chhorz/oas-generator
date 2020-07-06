@@ -393,7 +393,7 @@ parser:
   logLevel: DEBUG # DEBUG, INFO, ERROR
   outputDir: ./target/openapi # <1>
   outputFile: openapi # <1>
-  outputFormay: json,yaml
+  outputFormat: json,yaml
   schemaDir: ./target/openapi
   schemaFile: api-module/target/openapi/openapi-schema.json # <2>
   schemaPackages:
@@ -422,7 +422,7 @@ Currently, the following post processors (see module link:https://github.com/chh
 If other post processors should be listed and added in the *OAS Generator* repo please open a Github issue.
 
 === Post-Processor Documentation
-In the following section all post processors from the `oas-generator-spi` module are documented.
+In the following section documents all post processors from the `oas-generator-spi` module.
 
 [[filewriter_postprocessor]]
 ==== FileWriterPostProcessor
