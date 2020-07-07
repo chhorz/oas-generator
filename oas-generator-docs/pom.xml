@@ -40,8 +40,6 @@
 					<requires>
 						<require>asciidoctor-diagram</require>
 					</requires>
-					<sourceDirectory>src/main/asciidoc</sourceDirectory>
-					<backend>html</backend>
 					<embedAssets>true</embedAssets>
 					<attributes>
 						<project-version>${project.version}</project-version>
