@@ -117,8 +117,10 @@ public class PathItemUtils {
 	}
 
 	private String mergeDocumentation(String documentationOne, String documentationTwo) {
-		Predicate<String> presence = s -> s!= null && !s.isEmpty();
-		if (presence.test(documentationOne) || presence.test(documentationTwo)) {
+		Predicate<String> presence = s -> s != null && !s.isEmpty();
+		if (presence.test(documentationOne) && presence.test(documentationTwo) && documentationOne.equalsIgnoreCase(documentationTwo)) {
+			return documentationOne;
+		} else if (presence.test(documentationOne) || presence.test(documentationTwo)) {
 			return format("%s\n\n%s", documentationOne, documentationTwo).trim();
 		} else {
 			return "";

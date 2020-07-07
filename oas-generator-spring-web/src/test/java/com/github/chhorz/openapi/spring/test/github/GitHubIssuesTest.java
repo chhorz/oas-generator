@@ -295,7 +295,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("default")
 			.extractingByKey("default")
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("description", "a list of resources\n\na list of resources");
+			.hasFieldOrPropertyWithValue("description", "a list of resources");
 		assertThat(operation.getResponses().get("default").getContent())
 			.isNotNull()
 			.hasSize(1)
