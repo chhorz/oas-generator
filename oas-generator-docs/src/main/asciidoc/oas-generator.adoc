@@ -380,7 +380,7 @@ The version has to be replaced with an variable for the maven project version: `
 <2> YAML references can be used to remove redundant parts of the configuration.
 
 The content of the part above will be included in the resulting OpenAPI document as it is defined.
-It is static content that will not change often, so it should be defined as static data.
+It is static content not changing frequently, so it should be defined as static data.
 Only data that could not be retrieved from the source code and is required by the OpenAPI specification must be present in the shown file.
 
 Parser properties shown below customize the behavior of the *OAS Generator*:
@@ -394,8 +394,8 @@ parser:
   outputDir: ./target/openapi # <1>
   outputFile: openapi # <1>
   outputFormat: json,yaml
-  schemaDir: ./target/openapi
-  schemaFile: api-module/target/openapi/openapi-schema.json # <2>
+  schemaDir: ./api-module/target/openapi
+  schemaFile: openapi-schema # <2>
   schemaPackages:
     - com.github.chhorz.openapi.spring.test.controller.external # <2>
   postProcessor: # <3>
@@ -406,7 +406,7 @@ parser:
       key1: value1
 ----
 <1> Output path and filename of the generated OpenAPI specification file
-<2> Path to previously generate schema files - _(Optional)_
+<2> File name of previously generate schema files (`.json` suffix will be added automatically) - _(Optional)_
 <3> Key-Value maps for custom post processors, e.g. <<asciidoctor.properties,asciidoctor postprocessor>> -  _(Optional)_
 
 The `postProcessor` properties define a generic list of properties.
@@ -465,10 +465,10 @@ parser:
 ----
 <1> The path of the templates is based on `/src/main/resources`
 <2> Output base directory is the `/target/openapi` folder
-<3> A standalone file is generated with an asciidoctor document header and a section title on level 0.
+<3> A standalone file will be generated with an asciidoctor document header and section title on level 0.
 Files generated with `false` can easier integrated in other asciidoctor files.
 
-The conversion of the internal openapi domain object into a asciidoctor file is done via the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
+The conversion of the internal OpenAPI domain object into a asciidoctor file is done via the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
 Some of the configuration properties shown above are related to this engine.
 
 === Custom Post-Processors
