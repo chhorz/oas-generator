@@ -124,14 +124,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsKeys("read_role");
 
 		validateSchemaForTestResource(documentContext);
-
-		SecuritySchemeHttp securityScheme = documentContext.read("$.components.securitySchemes.read_role", SecuritySchemeHttp.class);
-
-		assertThat(securityScheme)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.http)
-			.hasFieldOrPropertyWithValue("description", "Basic LDAP read role.")
-			.hasFieldOrPropertyWithValue("scheme", "basic");
+		validateSecurityScheme(documentContext);
 	}
 
 	@Test
@@ -302,7 +295,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("default")
 			.extractingByKey("default")
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("description", "a list of resources");
+			.hasFieldOrPropertyWithValue("description", "a list of resources\n\na list of resources");
 		assertThat(operation.getResponses().get("default").getContent())
 			.isNotNull()
 			.hasSize(1)
@@ -674,6 +667,73 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateSchemaForTestResource(documentContext);
 		validateRequestBodyForTestResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#43")
+	void getGithubIssue043() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator05.yml"), GitHubIssue043.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue043#test1");
+
+		assertThat(operation.getParameterObjects())
+			.isNotNull()
+			.hasSize(1);
+		assertThat(operation.getParameterObjects().get(0))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "test")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.PATH)
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("default", "200");
+		assertThat(operation.getResponses().get("200").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("application/vnd.test.list+json")
+			.extractingByKey("application/vnd.test.list+json")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("$ref", "#/components/schemas/String"));
+		assertThat(operation.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("application/vnd.test.list+json", "application/vnd.test+json")
+			.extractingByKey("application/vnd.test+json")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull());
+//				.extracting(MediaType::getSchema)
+//				.isNotNull()
+//				.hasFieldOrPropertyWithValue("$ref", "#/components/schemas/String"));
+
+		validateSecurityScheme(documentContext);
 	}
 
 }

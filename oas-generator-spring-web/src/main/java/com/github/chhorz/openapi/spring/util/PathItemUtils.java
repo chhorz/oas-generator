@@ -18,6 +18,7 @@ package com.github.chhorz.openapi.spring.util;
 
 import com.github.chhorz.openapi.common.domain.Operation;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
+import com.github.chhorz.openapi.common.domain.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,9 @@ public class PathItemUtils {
 			mergedOperation.setOperationId(operationOne.getOperationId());
 
 			mergedOperation.addParameterObjects(operationOne.getParameterObjects());
-			mergedOperation.addParameterObjects(operationTwo.getParameterObjects());
+			operationTwo.getParameterObjects().stream()
+					.filter(parameter -> !mergedOperation.getParameterObjects().contains(parameter))
+					.forEach(mergedOperation::addParameterObject);
 
 			if (operationOne.getRequestBodyReference() != null) {
 				mergedOperation.setRequestBodyReference(operationOne.getRequestBodyReference());
@@ -80,7 +83,13 @@ public class PathItemUtils {
 			}
 
 			mergedOperation.setResponses(operationOne.getResponses());
-			operationTwo.getResponses().forEach(mergedOperation::putResponse);
+			operationTwo.getResponses().forEach((statuscode, response) -> {
+				if (mergedOperation.getResponses().containsKey(statuscode)) {
+					mergedOperation.putResponse(statuscode, mergeResponses(mergedOperation.getResponses().get(statuscode), response));
+				} else {
+					mergedOperation.putResponse(statuscode, response);
+				}
+			});
 
 			mergedOperation.setDeprecated(operationOne.getDeprecated() && operationTwo.getDeprecated());
 
@@ -89,12 +98,22 @@ public class PathItemUtils {
 				mergedSecurity.addAll(operationOne.getSecurity());
 			}
 			if (operationTwo.getSecurity() != null) {
-				mergedSecurity.addAll(operationTwo.getSecurity());
+				operationTwo.getSecurity().stream()
+					.filter(security -> !mergedSecurity.contains(security))
+					.forEach(mergedSecurity::add);
 			}
 			mergedOperation.setSecurity(mergedSecurity);
 
 			return mergedOperation;
 		}
+	}
+
+	private Response mergeResponses(Response responseOne, Response responseTwo) {
+		Response mergedResponse = new Response();
+		mergedResponse.setDescription(mergeDocumentation(responseOne.getDescription(), responseTwo.getDescription()));
+		responseOne.getContent().forEach(mergedResponse::putContent);
+		responseTwo.getContent().forEach(mergedResponse::putContent);
+		return mergedResponse;
 	}
 
 	private String mergeDocumentation(String documentationOne, String documentationTwo) {

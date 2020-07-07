@@ -19,6 +19,8 @@ package com.github.chhorz.openapi.common.domain;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
+import java.util.Objects;
+
 /**
  * https://spec.openapis.org/oas/v3.0.3#parameter-object
  *
@@ -112,6 +114,24 @@ public class Parameter {
 
 	public void setSchema(final Schema schema) {
 		this.schema = schema;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		Parameter parameter = (Parameter) o;
+		return Objects.equals(name, parameter.name) &&
+			in == parameter.in;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, in);
 	}
 
 }
