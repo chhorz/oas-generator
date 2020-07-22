@@ -1,9 +1,12 @@
 # Reference Documentations
 
-## Version 0.1.2
+## Version 0.2.0
 
 ### 0.2.0 <Badge text="Latest Snapshot" type="warn" vertical="top"/> 
 Reference Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.0-SNAPSHOT/oas-generator.html)_) · API Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.0-SNAPSHOT/apidocs/)_)
+
+### 0.2.0-RC.1 <Badge text="Release Candidate 1" type="error" vertical="top"/> 
+2020-07-22 · [GitHub](https://github.com/chhorz/oas-generator/releases/tag/v0.2.0.RC1) · Reference Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.0-RC.1/oas-generator.html)_) · API Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.0-RC.1/apidocs/)_)
 
 ## Version 0.1.1
 
