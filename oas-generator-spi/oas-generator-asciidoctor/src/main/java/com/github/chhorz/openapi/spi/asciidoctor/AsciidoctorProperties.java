@@ -26,12 +26,7 @@ import java.util.Map;
  * <p>
  * Default configuration in YAML format:
  * <pre>
- * parser:
- *   postProcessor:
- *     asciidoctor:
- *       logging: true
- *       templateLocalizedLookup: false
- *       templatePath: ./templates/freemarker
+ptio
  *       templateFile: openapi.ftlh
  *       outputPath: ./target/openapi
  *       outputFile: /openapi.adoc
@@ -44,7 +39,7 @@ public  class AsciidoctorProperties extends AbstractPostProcessorProperties {
 
 	private static final boolean DEFAULT_EXCEPTION_LOGGING = true;
 	private static final boolean DEFAULT_LOCALIZED_LOOKUP = false;
-	private static final String DEFAULT_TEMPLATE_PATH = "/templates/freemarker";
+	private static final String DEFAULT_TEMPLATE_PATH = "/freemarker";
 	private static final String DEFAULT_TEMPLATE_NAME = "openapi.ftlh";
 
 	private static final String DEFAULT_OUTPUT_PATH = "./target/openapi";

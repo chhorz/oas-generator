@@ -457,7 +457,7 @@ parser:
     asciidoctor:
       logging: true
       templateLocalizedLookup: false
-      templatePath: ./templates/freemarker # <1>
+      templatePath: /freemarker # <1>
       templateFile: openapi.ftlh
       outputPath: ./target/openapi # <2>
       outputFile: /openapi.adoc
@@ -468,8 +468,8 @@ parser:
 <3> A standalone file will be generated with an asciidoctor document header and section title on level 0.
 Files generated with `false` can easier integrated in other asciidoctor files.
 
-The conversion of the internal OpenAPI domain object into a asciidoctor file is done via the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
-Some of the configuration properties shown above are related to this engine.
+The conversion of the internal OpenAPI domain object into an asciidoctor file is done via the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
+Some configuration properties shown above are related to this engine.
 
 === Custom Post-Processors
 Providing your own post processor is very simple.

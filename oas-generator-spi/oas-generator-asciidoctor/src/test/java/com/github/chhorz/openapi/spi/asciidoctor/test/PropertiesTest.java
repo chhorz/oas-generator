@@ -49,7 +49,7 @@ class PropertiesTest {
 
 		assertThat(asciidoctorProperties.getStandaloneFile()).isFalse();
 		assertThat(asciidoctorProperties.getLocalizedLookup()).isFalse();
-		assertThat(asciidoctorProperties.getTemplatePath()).isEqualTo("./templates/freemarker");
+		assertThat(asciidoctorProperties.getTemplatePath()).isEqualTo("/freemarker");
 		assertThat(asciidoctorProperties.getTemplateFile()).isEqualTo("openapi.ftlh");
 		assertThat(asciidoctorProperties.getOutputPath()).isEqualTo("./target/openapi");
 		assertThat(asciidoctorProperties.getOutputFile()).isEqualTo("/openapi.adoc");

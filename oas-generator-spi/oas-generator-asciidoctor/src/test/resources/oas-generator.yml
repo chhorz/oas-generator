@@ -20,7 +20,7 @@ parser:
     asciidoctor:
       logging: true
       templateLocalizedLookup: false
-      templatePath: ./templates/freemarker
+      templatePath: /freemarker
       templateFile: openapi.ftlh
       outputPath: ./target/openapi
       outputFile: /openapi.adoc
