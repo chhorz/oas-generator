@@ -1,1 +1,0 @@
-/home/chorz/dev/java/jdk-11.0.5+10/bin/javadoc @options @packages
