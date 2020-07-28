@@ -100,7 +100,7 @@ public class FileUtilsTest {
 		FileUtils fileUtils = new FileUtils(properties);
 
 		// when
-		Optional<OpenAPI> optionalOpenAPI = fileUtils.readFromFile();
+		Optional<OpenAPI> optionalOpenAPI = fileUtils.readOpenAPIObjectFromFile();
 
 		// then
 		assertThat(optionalOpenAPI)
@@ -133,7 +133,40 @@ public class FileUtilsTest {
 		FileUtils fileUtils = new FileUtils(properties);
 
 		// when
-		Optional<OpenAPI> optionalOpenAPI = fileUtils.readFromFile();
+		Optional<OpenAPI> optionalOpenAPI = fileUtils.readOpenAPIObjectFromFile();
+
+		// then
+		assertThat(optionalOpenAPI)
+			.isNotNull()
+			.isPresent();
+
+		OpenAPI openAPI = optionalOpenAPI.get();
+
+		assertThat(openAPI)
+			.isNotNull()
+			.extracting(OpenAPI::getComponents)
+			.isNotNull();
+
+		assertThat(openAPI.getComponents().getSchemas())
+			.isNotNull()
+			.isNotEmpty()
+			.hasSize(2)
+			.containsKeys("Article", "Order");
+
+		assertThat(openAPI.getComponents().getSchemas().toString()).isEqualTo(schemaMap.toString());
+	}
+
+	@Test
+	void testReadWithFileSuffix() {
+		// given
+		ParserProperties properties = new ParserProperties();
+		properties.setSchemaDir("./src/test/resources");
+		properties.setSchemaFile("openapi-custom-schema.json");
+
+		FileUtils fileUtils = new FileUtils(properties);
+
+		// when
+		Optional<OpenAPI> optionalOpenAPI = fileUtils.readOpenAPIObjectFromFile();
 
 		// then
 		assertThat(optionalOpenAPI)
@@ -165,7 +198,7 @@ public class FileUtilsTest {
 		FileUtils fileUtils = new FileUtils(properties);
 
 		// when
-		Optional<OpenAPI> optionalOpenAPI = fileUtils.readFromFile();
+		Optional<OpenAPI> optionalOpenAPI = fileUtils.readOpenAPIObjectFromFile();
 
 		// then
 		assertThat(optionalOpenAPI)

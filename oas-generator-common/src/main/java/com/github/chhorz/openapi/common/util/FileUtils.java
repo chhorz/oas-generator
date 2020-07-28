@@ -125,9 +125,16 @@ public class FileUtils {
 		}
 	}
 
-	public Optional<OpenAPI> readFromFile() {
+	public Optional<OpenAPI> readOpenAPIObjectFromFile() {
 		if (properties.getSchemaFile() != null) {
-			File sourceFile = Paths.get(properties.getSchemaDir(), properties.getSchemaFile() + ".json").toFile();
+			final String sourceFileName;
+			if (properties.getSchemaFile().toLowerCase().endsWith(".json")){
+				sourceFileName = properties.getSchemaFile();
+			} else {
+				sourceFileName = properties.getSchemaFile() + ".json";
+			}
+
+			File sourceFile = Paths.get(properties.getSchemaDir(), sourceFileName).toFile();
 			if (sourceFile.exists()) {
 				try {
 					return Optional.ofNullable(objectMapper.readValue(sourceFile, OpenAPI.class));

@@ -199,7 +199,7 @@ public interface OpenAPIProcessor {
 	 */
 	default Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {
 		FileUtils fileUtils = new FileUtils(parserProperties);
-		return fileUtils.readFromFile();
+		return fileUtils.readOpenAPIObjectFromFile();
 	}
 
 }
