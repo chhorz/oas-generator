@@ -7,6 +7,10 @@ All of them have to implement two specific java interfaces that perform differen
 Currently the following post processors are included in this project.
 They can be found in the `oas-generator-spi` module.
 
+::: tip Hint
+If you have created your own post processor and want it listed here, please open a Github issue.
+:::
+
 ## AsciidoctorPostProcessor
 This post processor creates an AsciiDoctor file _(`.adoc`)_ from the OpenAPI domain model.
 After the creation the `asciidoctor-maven-plugin` needs to be added to render the generated file into the requested output format.
@@ -20,7 +24,3 @@ After the creation the `asciidoctor-maven-plugin` needs to be added to render th
 </dependency>
 ```
 The complete documentation can be found in the corresponding section of the reference documentation ([Link](https://chhorz.github.io/oas-generator/docs/oas-generator.html#_asciidoctorpostprocessor)).
-
-::: tip Hint
-If you have created your own post processor and want it listed here, please open a Github issue.
-:::
