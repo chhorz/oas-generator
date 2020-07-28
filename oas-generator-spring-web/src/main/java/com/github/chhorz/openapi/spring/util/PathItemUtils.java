@@ -109,11 +109,21 @@ public class PathItemUtils {
 	}
 
 	private Response mergeResponses(Response responseOne, Response responseTwo) {
-		Response mergedResponse = new Response();
-		mergedResponse.setDescription(mergeDocumentation(responseOne.getDescription(), responseTwo.getDescription()));
-		responseOne.getContent().forEach(mergedResponse::putContent);
-		responseTwo.getContent().forEach(mergedResponse::putContent);
-		return mergedResponse;
+		if (responseOne == null) {
+			return responseTwo;
+		} else if (responseTwo == null) {
+			return responseOne;
+		} else {
+			Response mergedResponse = new Response();
+			mergedResponse.setDescription(mergeDocumentation(responseOne.getDescription(), responseTwo.getDescription()));
+			if (responseOne.getContent() != null) {
+				responseOne.getContent().forEach(mergedResponse::putContent);
+			}
+			if (responseTwo.getContent() != null) {
+				responseTwo.getContent().forEach(mergedResponse::putContent);
+			}
+			return mergedResponse;
+		}
 	}
 
 	private String mergeDocumentation(String documentationOne, String documentationTwo) {

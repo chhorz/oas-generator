@@ -736,4 +736,55 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		validateSecurityScheme(documentContext);
 	}
 
+	@Test
+	@GitHubIssue("#52")
+	void getGithubIssue052() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue052.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue052#test1");
+
+		assertThat(operation.getParameterObjects())
+			.isNotNull()
+			.hasSize(1);
+		assertThat(operation.getParameterObjects().get(0))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "test")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.PATH)
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", false)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("description", ""));
+
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("default", "204");
+		assertThat(operation.getResponses().get("204"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the status code");
+		assertThat(operation.getResponses().get("default"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "");
+	}
+
 }
