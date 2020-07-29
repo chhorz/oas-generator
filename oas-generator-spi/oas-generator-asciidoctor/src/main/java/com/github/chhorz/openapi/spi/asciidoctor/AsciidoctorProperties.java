@@ -55,7 +55,7 @@ public  class AsciidoctorProperties extends AbstractPostProcessorProperties {
 	}
 
 	public boolean getExceptionLogging() {
-		return getBoolean("logging", DEFAULT_EXCEPTION_LOGGING);
+		return getBoolean("logTemplateExceptions", DEFAULT_EXCEPTION_LOGGING);
 	}
 
 	public boolean getLocalizedLookup() {

@@ -45,7 +45,7 @@ class PropertiesTest {
 		AsciidoctorProperties asciidoctorProperties = optionalAsciidoctorProperties.get();
 
 		assertThat(asciidoctorProperties.getPostProcessorProperties())
-			.containsOnlyKeys("standaloneFile", "templateLocalizedLookup", "templatePath", "templateFile", "outputPath", "outputFile","logging");
+			.containsOnlyKeys("standaloneFile", "templateLocalizedLookup", "templatePath", "templateFile", "outputPath", "outputFile","logTemplateExceptions");
 
 		assertThat(asciidoctorProperties.getStandaloneFile()).isFalse();
 		assertThat(asciidoctorProperties.getLocalizedLookup()).isFalse();
