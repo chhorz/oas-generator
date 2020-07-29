@@ -10,7 +10,7 @@ features:
 - title: Up-To-Date
   details: The API specification is always up-to-date because the file is generated during the build phase
 - title: Performant
-  details: No additional overhead while runtime. Everything is generated on build time.
+  details: No additional overhead while runtime. Generation occurs while build phase.
 footer: Apache License 2 Licensed | Copyright © 2018-2020 Christian Horz 
 ---
 

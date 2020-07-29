@@ -89,7 +89,7 @@ There is currently the <<asciidoctor_postprocessor,Asciidoctor Post-Processor>> 
 ....
 
 == Installation
-In the following section possible options are shown in which way the *OAS Generator* can be included in your project.
+In the following section shows possible options in which way the *OAS Generator* can be included in your project.
 
 [TIP]
 ====
@@ -103,22 +103,24 @@ Each kind of installation also works with the `oas-generator-jaxrs` or `oas-gene
 The simplest way to add the *OAS Generator* to your project is adding the following dependency:
 [source,xml,subs="verbatim,attributes"]
 ----
-<dependency>
-    <groupId>com.github.chhorz</groupId>
-    <artifactId>oas-generator-spring-web</artifactId>
-    <version>{revnumber}</version>
-    <scope>provided</scope> <!--1-->
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>com.github.chhorz</groupId>
+        <artifactId>oas-generator-spring-web</artifactId>
+        <version>{revnumber}</version>
+        <scope>provided</scope> <!--1-->
+    </dependency>
 
-<!-- Required if 'oas-generator-spring-web' or 'oas-generator-jaxrs' are of scope provided -->
-<dependency>
-    <groupId>org.yaml</groupId>
-    <artifactId>snakeyaml</artifactId> <!--2-->
-    <scope>compile</scope>
-</dependency>
+    <!-- Required if 'oas-generator-spring-web' or 'oas-generator-jaxrs' are of scope provided -->
+    <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId> <!--2-->
+        <scope>compile</scope>
+    </dependency>
+</dependencies>
 ----
 <1> The _scope_ `provided` is useful, if you want to exclude the *OAS Generator* dependencies during runtime.
-<2> This additional dependency is required for Spring-Boot applications because the `snakeyaml` dependency is declared of scope `runtime` within the spring boot starter dependency.
+<2> Spring-Boot applications require this additional dependency because the `snakeyaml` dependency is declared of scope `runtime` within the spring boot starter dependency.
 
 All dependencies contain additional information within the `META-INF` folder that define the dependency as annotation processor.
 
@@ -206,7 +208,6 @@ To specify the possible response status the `@response` javadoc tag could be use
 .Example Javadoc comment
 [source,java]
 ----
-
 /**
  * @response 200 SomeResource
  *                      the resource that will be returned
@@ -224,7 +225,6 @@ The content of the tag must match the name of a security requirement from the `o
 .Example Javadoc comment
 [source,java]
 ----
-
 /**
  * @security read_role
  */
@@ -254,8 +254,8 @@ This option passes for example the current project version to the generated spec
 Not all compiler options are available in all annotation processors.
 The following table explains the availability:
 
-.Available compiler options per module
-[cols="4"] 
+.Recognized compiler options per module
+[cols="2,1,1,1"]
 |===
 | Module
 | `propertiesPath`
@@ -306,7 +306,7 @@ info:
   title: MyService
   version: 1.2.3-SNAPSHOT #<1>
 ----
-<1> Can be removed if provided as <<compiler_options,compiler option>>
+<1> If the <<compiler_options,compiler option>> was used to pass the version the annotated line can be omitted.
 
 Full description of the possible values is shown below:
 
@@ -355,27 +355,23 @@ tags:
     externalDocs:
       url: https://www.google.com
 ----
-<1> The Version can be set fix within the configuration file.
-Otherwise the configuration file can be filtered by maven for example.
-The version has to be replaced with an variable for the maven project version: `@project.version@`.
+<1> The Version can be set to a constant value within the configuration file.
+Otherwise, the configuration file can be filtered by Maven for example.
+The version has to be replaced with a variable for the maven project version: `@project.version@`.
 +
 .Maven example for filtering
 [source,xml]
 ----
-<project>
-  ...
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-      ...
-    </resources>
+<build>
+  <resources>
+    <resource>
+      <directory>src/main/resources</directory>
+      <filtering>true</filtering>
+    </resource>
     ...
-  </build>
+  </resources>
   ...
-</project>
+</build>
 ----
 <2> YAML references can be used to remove redundant parts of the configuration.
 
@@ -405,12 +401,67 @@ parser:
     postProcessor2:
       key1: value1
 ----
-<1> Output path and filename of the generated OpenAPI specification file
-<2> File name of previously generate schema files (`.json` suffix will be added automatically) - _(Optional)_
-<3> Key-Value maps for custom post processors, e.g. <<asciidoctor.properties,asciidoctor postprocessor>> -  _(Optional)_
-
+<1> Output path and filename of the generated OpenAPI specification file.
+<2> File name of previously generate schema files (`.json` suffix will be added automatically) - _(Optional)_.
+<3> Key-Value maps for custom post processors, e.g. <<asciidoctor.properties,asciidoctor postprocessor>> -  _(Optional)_.
++
 The `postProcessor` properties define a generic list of properties.
 In this map contributors can define their own properties for their post processors using the provided spi.
+
+.Description of parser related properties
+[cols="1a,3a"]
+|===
+| Property | Description
+
+| `logLevel`
+| Defines the logging level for all *OAS Generator* log statements.
+
+Possible values: `DEBUG`, `INFO`, `ERROR`
+
+_Default: ``INFO``_
+
+| `outputDir`
+| File path of the generated output files.
+
+_Default: ``./target/openapi``_
+
+| `outputFile`
+| The file name of the generated files.
+The name will be used for each of the following ``outputFormat``s.
+
+_Default: ``openapi``_
+
+| `outputFormat`
+| Definition of the output formats (file types).
+
+Possible values are a comma-separated list of the following values: `json`, `yaml`, `yml`
+
+_Default: ``json,yaml``_
+
+| `schemaDir`
+| Path to the generated `openapi-schema` file that was generated from _oas-generator-schema_.
+
+_Default: ``./target/openapi``_
+
+| `schemaFile`
+| File name of the `openapi-schema` file that was generated from _oas-generator-schema_.
+The file suffix `.json` is optional and can be omitted.
+
+_Default: ``openapi-schema``_
+
+| `schemaPackages`
+| Additional packages of resources that should be parsed.
+Only relevant for _oas-generator-schema_.
+
+_Default: empty list_
+
+| `postProcessor`
+| Map of custom <<postprocessor_documentation,post-processor properties>>.
+Values are documented in the corresponding section of each post-processor.
+
+_Default: empty map_
+
+|===
 
 == Extensibility
 The *OAS Generator* provides a service provider interface (SPI) to include custom post processors.
@@ -421,6 +472,7 @@ Currently, the following post processors (see module link:https://github.com/chh
 
 If other post processors should be listed and added in the *OAS Generator* repo please open a Github issue.
 
+[[postprocessor_documentation]]
 === Post-Processor Documentation
 In the following section documents all post processors from the `oas-generator-spi` module.
 
@@ -455,7 +507,7 @@ All the following properties will be defined as key-value list in the <<configur
 parser:
   postProcessor:
     asciidoctor:
-      logging: true
+      logTemplateExceptions: true
       templateLocalizedLookup: false
       templatePath: /freemarker # <1>
       templateFile: openapi.ftlh
@@ -463,10 +515,54 @@ parser:
       outputFile: /openapi.adoc
       standaloneFile: true # <3>
 ----
-<1> The path of the templates is based on `/src/main/resources`
+<1> The path of the templates based on `/src/main/resources`
 <2> Output base directory is the `/target/openapi` folder
 <3> A standalone file will be generated with an asciidoctor document header and section title on level 0.
 Files generated with `false` can easier integrated in other asciidoctor files.
+
+.Description of asciidoctor post processor properties
+[cols="1a,3a"]
+|===
+| Property | Description
+
+| `logTemplateExceptions`
+| Apache FreeMarker link:https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html[configuration option] that will be passed.
+
+_Default: ``true``_
+
+| `templateLocalizedLookup`
+| Apache FreeMarker link:https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html[configuration option] that will be passed.
+
+_Default: ``false``_
+
+| `templatePath`
+| Template path within the classpath.
+For Maven within `/src/main/resources`.
+
+_Default: ``/freemarker``_
+
+| `templateFile`
+| File name of the initial template file.
+Other included templates or macros must be referenced within this file.
+
+_Default: ``openapi.ftlh``_
+
+| `outputPath`
+| File path of the generated output files.
+
+_Default: ``./target/openapi``_
+
+| `outputFile`
+| The file name of the generated file.
+
+_Default: ``openapi.adoc``_
+
+| `standaloneFile`
+| Flag if the resulting file is a standalone file (`true`) or should be included within another `.adoc` file (`false`).
+
+_Default: ``true``_
+
+|===
 
 The conversion of the internal OpenAPI domain object into an asciidoctor file is done via the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
 Some configuration properties shown above are related to this engine.
@@ -512,6 +608,7 @@ All custom property classes should extend the provided `AbstractPostProcessorPro
 == Specification Extensions
 The OpenAPI specification allows using additional properties within a specification file.
 These link:https://spec.openapis.org/oas/v3.0.3#specification-extensions[specification extensions] have to follow a specific naming convention.
+They must begin with the following prefix: `x-`.
 
 The *OAS Generator* adds the following properties to the `info` object:
 
