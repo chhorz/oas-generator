@@ -29,6 +29,8 @@ import static java.lang.String.format;
 
 public class PathItemUtils {
 
+	private static final Predicate<String> PRESENCE = s -> s != null && !s.isEmpty();
+
 	public PathItemObject mergePathItems(PathItemObject pathItemOne, PathItemObject pathItemTwo) {
 		if (pathItemOne == null) {
 			return pathItemTwo;
@@ -131,10 +133,11 @@ public class PathItemUtils {
 	}
 
 	private String mergeDocumentation(String documentationOne, String documentationTwo) {
-		Predicate<String> presence = s -> s != null && !s.isEmpty();
-		if (presence.test(documentationOne) && presence.test(documentationTwo) && documentationOne.equalsIgnoreCase(documentationTwo)) {
+		if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo) && documentationOne.equalsIgnoreCase(documentationTwo)) {
 			return documentationOne;
-		} else if (presence.test(documentationOne) || presence.test(documentationTwo)) {
+		} else if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo)) {
+			return format("%s\n<hr>\n%s", documentationOne, documentationTwo).trim();
+		} else if (PRESENCE.test(documentationOne)|| PRESENCE.test(documentationTwo)) {
 			return format("%s\n\n%s", documentationOne, documentationTwo).trim();
 		} else {
 			return "";
