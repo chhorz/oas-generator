@@ -28,6 +28,7 @@ import javax.validation.Valid;
 public class GitHubIssue043 {
 
 	/**
+	 * @category Test
 	 *
 	 * @security read_role
 	 *
@@ -44,6 +45,7 @@ public class GitHubIssue043 {
 	}
 
 	/**
+	 * @category Test
 	 *
 	 * @security read_role
 	 *

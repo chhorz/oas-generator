@@ -690,6 +690,11 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue043#test1");
 
+		assertThat(operation.getTags())
+			.isNotNull()
+			.hasSize(1)
+			.contains("Test");
+
 		assertThat(operation.getParameterObjects())
 			.isNotNull()
 			.hasSize(1);

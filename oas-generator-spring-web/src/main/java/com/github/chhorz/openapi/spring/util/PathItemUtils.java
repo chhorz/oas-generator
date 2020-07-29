@@ -63,10 +63,14 @@ public class PathItemUtils {
 			mergedOperation.setDescription(mergeDocumentation(operationOne.getDescription(), operationTwo.getDescription()));
 
 			if (operationOne.getTags() != null) {
-				operationOne.getTags().forEach(mergedOperation::addTag);
+				operationOne.getTags().stream()
+					.filter(tag -> mergedOperation.getTags() == null || !mergedOperation.getTags().contains(tag))
+					.forEach(mergedOperation::addTag);
 			}
 			if (operationTwo.getTags() != null) {
-				operationTwo.getTags().forEach(mergedOperation::addTag);
+				operationTwo.getTags().stream()
+					.filter(tag -> mergedOperation.getTags() == null || !mergedOperation.getTags().contains(tag))
+					.forEach(mergedOperation::addTag);
 			}
 
 			mergedOperation.setOperationId(operationOne.getOperationId());
