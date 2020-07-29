@@ -118,56 +118,59 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-		Set<? extends Element> exceptionHandler = roundEnv.getElementsAnnotatedWith(ExceptionHandler.class);
-		if (exceptionHandler != null && !exceptionHandler.isEmpty()) {
-			exceptionHandler.stream()
+    	if (parserProperties.getEnabled()) {
+			Set<? extends Element> exceptionHandler = roundEnv.getElementsAnnotatedWith(ExceptionHandler.class);
+			if (exceptionHandler != null && !exceptionHandler.isEmpty()) {
+				exceptionHandler.stream()
+					.filter(element -> element instanceof ExecutableElement)
+					.map(ExecutableElement.class::cast)
+					.peek(exElement -> log.info("Parsing exception handler: %s", exElement))
+					.map(ExecutableElement::getReturnType)
+					.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
+					.map(schemaUtils::mapTypeMirrorToSchema)
+					.forEach(openApi.getComponents()::putAllSchemas);
+
+				exceptionHanderReturntype = exceptionHandler.stream()
+					.filter(element -> element instanceof ExecutableElement)
+					.map(ExecutableElement.class::cast)
+					.map(ExecutableElement::getReturnType)
+					.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
+					.findFirst()
+					.orElse(null);
+			}
+
+			annotations.stream()
+				.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
 				.filter(element -> element instanceof ExecutableElement)
 				.map(ExecutableElement.class::cast)
-				.peek(exElement -> log.info("Parsing exception handler: %s", exElement))
-				.map(ExecutableElement::getReturnType)
-				.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
-				.map(schemaUtils::mapTypeMirrorToSchema)
-				.forEach(openApi.getComponents()::putAllSchemas);
+				.forEach(this::mapOperationMethod);
 
-			exceptionHanderReturntype = exceptionHandler.stream()
-				.filter(element -> element instanceof ExecutableElement)
-				.map(ExecutableElement.class::cast)
-                    .map(ExecutableElement::getReturnType)
-                    .map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
-                    .findFirst()
-                    .orElse(null);
-        }
+			Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
+			openApi.getComponents().putAllSchemas(schemaMap);
 
-        annotations.stream()
-                .flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
-                .filter(element -> element instanceof ExecutableElement)
-                .map(ExecutableElement.class::cast)
-                .forEach(this::mapOperationMethod);
+			if (parserProperties.getSchemaFile() != null) {
+				readOpenApiFile(parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
+			}
 
-        Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
-        openApi.getComponents().putAllSchemas(schemaMap);
+			TagUtils tagUtils = new TagUtils(propertyLoader);
+			List<String> tags = new ArrayList<>();
+			openApi.getPaths().values()
+				.stream()
+				.map(tagUtils::getAllTags)
+				.flatMap(Collection::stream)
+				.forEach(tags::add);
 
-        if (parserProperties.getSchemaFile() != null) {
-            readOpenApiFile(parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
-        }
+			tags.stream()
+				.distinct()
+				.map(tagUtils::createTag)
+				.forEach(openApi::addTag);
 
-        TagUtils tagUtils = new TagUtils(propertyLoader);
-        List<String> tags = new ArrayList<>();
-        openApi.getPaths().values()
-			.stream()
-			.map(tagUtils::getAllTags)
-			.flatMap(Collection::stream)
-			.forEach(tags::add);
-
-		tags.stream()
-			.distinct()
-			.map(tagUtils::createTag)
-			.forEach(openApi::addTag);
-
-		if (roundEnv.processingOver()) {
-			runPostProcessors(parserProperties, openApi);
+			if (roundEnv.processingOver()) {
+				runPostProcessors(parserProperties, openApi);
+			}
+		} else {
+			log.error("Execution disabled via properties");
 		}
-
 		return false;
 	}
 

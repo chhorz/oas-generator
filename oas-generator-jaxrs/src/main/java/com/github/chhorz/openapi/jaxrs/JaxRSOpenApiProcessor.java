@@ -99,37 +99,40 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-		annotations.stream()
-			.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
-			.filter(element -> element instanceof ExecutableElement)
-			.map(ExecutableElement.class::cast)
+		if (parserProperties.getEnabled()) {
+			annotations.stream()
+				.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
+				.filter(element -> element instanceof ExecutableElement)
+				.map(ExecutableElement.class::cast)
 				// .peek(e -> System.out.println(e))
 				.forEach(this::mapOperationMethod);
 
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
-		openApi.getComponents().putAllSchemas(schemaMap);
+			Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
+			openApi.getComponents().putAllSchemas(schemaMap);
 
-		if (parserProperties.getSchemaFile() != null) {
-			readOpenApiFile(parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
+			if (parserProperties.getSchemaFile() != null) {
+				readOpenApiFile(parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
+			}
+
+			TagUtils tagUtils = new TagUtils(propertyLoader);
+			List<String> tags = new ArrayList<>();
+			openApi.getPaths().values()
+				.stream()
+				.map(tagUtils::getAllTags)
+				.flatMap(Collection::stream)
+				.forEach(tags::add);
+
+			tags.stream()
+				.distinct()
+				.map(tagUtils::createTag)
+				.forEach(openApi::addTag);
+
+			if (roundEnv.processingOver()) {
+				runPostProcessors(parserProperties, openApi);
+			}
+		} else {
+			log.error("Execution disabled via properties");
 		}
-
-		TagUtils tagUtils = new TagUtils(propertyLoader);
-		List<String> tags = new ArrayList<>();
-		openApi.getPaths().values()
-			.stream()
-			.map(tagUtils::getAllTags)
-			.flatMap(Collection::stream)
-			.forEach(tags::add);
-
-		tags.stream()
-			.distinct()
-			.map(tagUtils::createTag)
-			.forEach(openApi::addTag);
-
-		if (roundEnv.processingOver()) {
-			runPostProcessors(parserProperties, openApi);
-		}
-
 		return false;
 	}
 

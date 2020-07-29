@@ -60,6 +60,7 @@ public final class GeneratorPropertiesDefaults {
 
 	public static final String TAG_DESCRIPTION = null;
 
+	public static final boolean PARSER_ENABLED = Boolean.TRUE;
 	public static final String PARSER_LOG_LEVEL = LoggingUtils.INFO;
 	public static final String PARSER_OUTPUT_DIR = "./target/openapi";
 	public static final String PARSER_OUTPUT_FILE = "openapi";

@@ -36,6 +36,43 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class GeneratorPropertyLoaderTest {
 
 	@Nested
+	@DisplayName("Parser enabled tests")
+	@GitHubIssue("#53")
+	class ParserEnabledTest {
+
+		@Test
+		void testParserDisabled() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/parserDisabled.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
+
+			// then
+			assertThat(parserProperties)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("enabled", false);
+		}
+
+		@Test
+		void testParserInvalidValue() {
+			// given
+			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/parserEnabledInvalid.yml");
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+
+			// when
+			ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
+
+			// then
+			assertThat(parserProperties)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("enabled", true); // default properties
+		}
+
+	}
+
+	@Nested
 	@DisplayName("Info properties test")
 	class InfoPropertiesTest {
 

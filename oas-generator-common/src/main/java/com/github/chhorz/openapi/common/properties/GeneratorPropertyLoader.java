@@ -80,7 +80,7 @@ public class GeneratorPropertyLoader {
 			log.info("Loaded properties (Path: %s)", resourceLocation.getPath());
 		} catch (Exception e) {
 			properties = new GeneratorProperties();
-			log.info("Using default properties");
+			log.error("An exception occurred. Using default properties!", e);
 		}
 	}
 

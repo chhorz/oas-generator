@@ -32,10 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class GitHubIssuesTestAssertions {
 
-	public static Map<String, String> createConfigMap(String configFile) {
-		return singletonMap(OpenAPIConstants.OPTION_PROPERTIES_PATH, configFile);
-	}
-
 	/**
 	 * Validates a reference value. Usage for {@link org.assertj.core.api.AbstractAssert#isInstanceOfSatisfying}.
 	 *

@@ -386,6 +386,7 @@ Parser properties shown below customize the behavior of the *OAS Generator*:
 ----
 # Parser specific configuration
 parser:
+  enabled: true
   logLevel: DEBUG # DEBUG, INFO, ERROR
   outputDir: ./target/openapi # <1>
   outputFile: openapi # <1>
@@ -412,6 +413,13 @@ In this map contributors can define their own properties for their post processo
 [cols="1a,3a"]
 |===
 | Property | Description
+
+| `enabled`
+| Property to enable and disable the *OAS Generator* execution and the generation of OpenAPI files.
+
+Possible values: `true`, `false`
+
+_Default: ``true``_
 
 | `logLevel`
 | Defines the logging level for all *OAS Generator* log statements.

@@ -27,6 +27,7 @@ import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import com.jayway.jsonpath.DocumentContext;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Paths;
 import java.util.Map;
 
 import static com.github.chhorz.openapi.spring.test.github.GitHubIssuesTestAssertions.*;
@@ -87,7 +88,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	@GitHubIssue("#8")
 	void getGithubIssue008() {
 		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator-withoutparser.yml"), GitHubIssue008.class, Resource.class);
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator-withoutparser.yml"), GitHubIssue008.class, Resource.class);
 
 		// create json-path context
 		DocumentContext documentContext = createJsonPathDocumentContext();
@@ -612,7 +613,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	@GitHubIssue("#24")
 	void getGithubIssue024() {
 		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator05.yml"), GitHubIssue024.class, Resource.class);
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator05.yml"), GitHubIssue024.class, Resource.class);
 
 		// create json-path context
 		DocumentContext documentContext = createJsonPathDocumentContext();
@@ -673,7 +674,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	@GitHubIssue("#43")
 	void getGithubIssue043() {
 		// run annotation processor
-		testCompilation(new SpringWebOpenApiProcessor(), createConfigMap("oas-generator05.yml"), GitHubIssue043.class);
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator05.yml"), GitHubIssue043.class);
 
 		// create json-path context
 		DocumentContext documentContext = createJsonPathDocumentContext();
@@ -790,6 +791,18 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(operation.getResponses().get("default"))
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("description", "");
+	}
+
+	@Test
+	@GitHubIssue("#53")
+	void testProcessorDisabled() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator-disabled.yml"), Resource.class);
+
+		// assertions
+		assertThat(Paths.get("target/openapi/openapi-schema-missing.json").toFile())
+			.isNotNull()
+			.doesNotExist();
 	}
 
 }

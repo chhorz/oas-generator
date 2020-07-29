@@ -15,11 +15,5 @@
 #  limitations under the License.
 #
 
-# Parser specific configuration
 parser:
-  logLevel: DEBUG
-  outputDir: ./target/openapi
-  outputFile: openapi-schema
-  outputFormat: json
-  schemaPackages:
-  - com.github.chhorz.openapi.spring.test.controller.external
+  enabled: abc

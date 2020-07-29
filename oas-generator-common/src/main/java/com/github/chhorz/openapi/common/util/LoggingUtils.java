@@ -75,4 +75,14 @@ public class LoggingUtils {
 		System.out.println(message);
 	}
 
+	private void log(final String format, final Exception exception) {
+		String message = new StringBuilder()
+			.append("[OpenAPI] ")
+			.append(component)
+			.append(format)
+			.toString();
+		System.out.println(message);
+		exception.printStackTrace();
+	}
+
 }

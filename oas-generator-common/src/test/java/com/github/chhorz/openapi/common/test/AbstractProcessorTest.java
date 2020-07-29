@@ -17,6 +17,7 @@
 package com.github.chhorz.openapi.common.test;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -24,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -63,7 +65,11 @@ public abstract class AbstractProcessorTest {
 	void initTest() throws Exception {
 		// configure the diagnostics collector.
 		collector = new DiagnosticCollector<>();
-		fileManager = javaCompiler.getStandardFileManager(collector, Locale.US, Charset.forName("UTF-8"));
+		fileManager = javaCompiler.getStandardFileManager(collector, Locale.US, StandardCharsets.UTF_8);
+	}
+
+	public Map<String, String> createConfigFileOption(String configFile) {
+		return singletonMap(OpenAPIConstants.OPTION_PROPERTIES_PATH, configFile);
 	}
 
 	public void testCompilation(final Processor processor, final Class<?>... classes) {

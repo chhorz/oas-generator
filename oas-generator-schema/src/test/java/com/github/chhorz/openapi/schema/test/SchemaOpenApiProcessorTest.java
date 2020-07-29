@@ -16,19 +16,64 @@
  */
 package com.github.chhorz.openapi.schema.test;
 
+import com.github.chhorz.openapi.common.domain.*;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.PathNotFoundException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
 import com.github.chhorz.openapi.schema.SchemaOpenApiProcessor;
 import com.github.chhorz.openapi.schema.test.schema.Resource;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Comparator;
 
-public class SchemaOpenApiProcessorTest extends AbstractProcessorTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+class SchemaOpenApiProcessorTest extends AbstractProcessorTest {
 
 	@Test
-	void testAnnotation() {
-		testCompilation(new SchemaOpenApiProcessor(), Collections.emptyMap(), Resource.class);
+	void testGeneratingSchemaFile() {
+		// run annotation processor
+		testCompilation(new SchemaOpenApiProcessor(), Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext("target/openapi/openapi-schema.json");
+
+		// assertions
+		Components components = documentContext.read("$.components", Components.class);
+
+		assertThat(components)
+			.isNotNull();
+
+		assertThat(components.getSchemas())
+			.isNotNull()
+			.hasSize(1)
+			.containsKey("Resource")
+			.extractingByKey("Resource")
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT)
+			.hasFieldOrPropertyWithValue("description", "");
+	}
+
+	@Test
+	@GitHubIssue("#53")
+	void testProcessorDisabled() {
+		// run annotation processor
+		testCompilation(new SchemaOpenApiProcessor(), createConfigFileOption("oas-generator-disabled.yml"), Resource.class);
+
+		// assertions
+		assertThat(Paths.get("target/openapi/openapi-schema-missing.json").toFile())
+			.isNotNull()
+			.doesNotExist();
 	}
 
 }

@@ -88,20 +88,23 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-		SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
-		for (TypeElement annotation : annotations) {
-			roundEnv.getElementsAnnotatedWith(annotation).forEach(element -> {
-				openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(element.asType()));
-			});
+		if (parserProperties.getEnabled()) {
+			SchemaUtils schemaUtils = new SchemaUtils(elements, types, log);
+			for (TypeElement annotation : annotations) {
+				roundEnv.getElementsAnnotatedWith(annotation).forEach(element -> {
+					openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(element.asType()));
+				});
+			}
+
+			Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
+			openApi.getComponents().putAllSchemas(schemaMap);
+
+			if (roundEnv.processingOver()) {
+				runPostProcessors(parserProperties, openApi);
+			}
+		} else {
+			log.error("Execution disabled via properties");
 		}
-
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
-		openApi.getComponents().putAllSchemas(schemaMap);
-
-		if (roundEnv.processingOver()) {
-			runPostProcessors(parserProperties, openApi);
-		}
-
 		return false;
 	}
 

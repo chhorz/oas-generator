@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 public class ParserProperties {
 
+	private boolean enabled;
 	private String logLevel;
 
 	private String outputDir;
@@ -40,6 +41,7 @@ public class ParserProperties {
 	private Map<String, LinkedHashMap> postProcessor;
 
 	public ParserProperties() {
+		enabled = GeneratorPropertiesDefaults.PARSER_ENABLED;
 		logLevel = GeneratorPropertiesDefaults.PARSER_LOG_LEVEL;
 		outputDir = GeneratorPropertiesDefaults.PARSER_OUTPUT_DIR;
 		outputFile = GeneratorPropertiesDefaults.PARSER_OUTPUT_FILE;
@@ -48,6 +50,14 @@ public class ParserProperties {
 		schemaFile = GeneratorPropertiesDefaults.PARSER_SCHEMA_FILE;
 		schemaPackages = GeneratorPropertiesDefaults.PARSER_SCHEMA_PACKAGES;
 		postProcessor = GeneratorPropertiesDefaults.PARSER_POST_PROCESSOR;
+	}
+
+	public boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public String getLogLevel() {
