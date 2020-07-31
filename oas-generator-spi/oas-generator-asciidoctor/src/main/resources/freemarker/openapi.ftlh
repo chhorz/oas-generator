@@ -64,8 +64,8 @@ ${openapi.info.description}
 ${pathItem.summary}
 
 </#if>
-<#if pathItem.description??>
-${pathItem.description}
+<#if pathItem.description?? && pathItem.description?has_content>
+pass:[<@clean pathItem.description/>]
 
 </#if>
 <#if pathItem.get??>
@@ -114,7 +114,7 @@ ${pathItem.description}
 This schema is deprecated.
 
 </#if>
-<#if schema.description??>${schema.description}</#if>
+<#if schema.description?? && schema.description?has_content> pass:[<@clean schema.description/>]</#if>
 <#if schema.properties??>
 [cols="1,2,3", options="header"]
 |===
@@ -140,7 +140,7 @@ m| <@asciidoc_schema property/>
 [[components_requestBodies_${requestBodyName}]]
 <@section title=requestBodyName level=4/>
 
-<#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description??>${requestBody.description}</#if>
+<#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description?? && requestBody.description?has_content>pass:[${requestBody.description}]</#if>
 
 <#if requestBody.content??>
 [cols="1,2", options="header"]

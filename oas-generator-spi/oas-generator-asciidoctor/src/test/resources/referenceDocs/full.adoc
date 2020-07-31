@@ -68,7 +68,7 @@ e| Status
 4+e| Response
 
 ^| default
-4+a| The response description
+4+a| pass:[The response description]
 
 [cols="1,2"]
 !===
@@ -114,7 +114,7 @@ e| Status
 4+e| Response
 
 ^| default
-4+a| The response description
+4+a| pass:[The response description]
 
 [cols="1,2"]
 !===
@@ -137,7 +137,7 @@ m! pass:[application/json]
 
 Summary for /orders
 
-Some very long and boring description
+pass:[Some very long and boring description]
 
 [[OrderController_getOrders]]
 ==== GET
@@ -172,7 +172,7 @@ h| Description
 [WARNING]
 This schema is deprecated.
 
-This is an article resource.
+pass:[This is an article resource.]
 [cols="1,2,3", options="header"]
 |===
 | Name | Type | Description
@@ -202,7 +202,7 @@ m| <<components_schemas_OrderResource>>
 [[components_schemas_OrderResource]]
 ==== OrderResource
 
-This is an order resource.
+pass:[This is an order resource.]
 [cols="1,2,3", options="header"]
 |===
 | Name | Type | Description
@@ -232,7 +232,7 @@ m|
 [[components_requestBodies_ArticleResource]]
 ==== ArticleResource
 
-*REQUIRED* Lorem ipsum
+*REQUIRED* pass:[Lorem ipsum]
 
 [cols="1,2", options="header"]
 |===
