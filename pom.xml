@@ -120,8 +120,8 @@
 	</properties>
 
 	<dependencyManagement>
-		<!-- common-doc-generator -->
 		<dependencies>
+			<!-- common-doc-generator -->
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
@@ -252,6 +252,7 @@
 							<exclude>mvnw.cmd</exclude>
 							<exclude>**/*.js</exclude>
 							<exclude>**/*.html</exclude>
+							<exclude>**/*.ftlh</exclude>
 						</excludes>
 					</configuration>
 					<executions>

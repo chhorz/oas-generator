@@ -36,10 +36,6 @@
 			<artifactId>oas-generator-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.github.chhorz</groupId>
-			<artifactId>javadoc-parser</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
