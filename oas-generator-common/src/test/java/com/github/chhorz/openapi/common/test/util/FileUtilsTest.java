@@ -97,7 +97,7 @@ public class FileUtilsTest {
 		ParserProperties properties = new ParserProperties();
 		properties.setSchemaDir("./src/test/resources");
 
-		FileUtils fileUtils = new FileUtils(properties);
+		FileUtils fileUtils = new FileUtils(null, properties);
 
 		// when
 		Optional<OpenAPI> optionalOpenAPI = fileUtils.readOpenAPIObjectFromFile();
@@ -130,7 +130,7 @@ public class FileUtilsTest {
 		properties.setSchemaDir("./src/test/resources");
 		properties.setSchemaFile("openapi-custom-schema");
 
-		FileUtils fileUtils = new FileUtils(properties);
+		FileUtils fileUtils = new FileUtils(null, properties);
 
 		// when
 		Optional<OpenAPI> optionalOpenAPI = fileUtils.readOpenAPIObjectFromFile();
@@ -163,7 +163,7 @@ public class FileUtilsTest {
 		properties.setSchemaDir("./src/test/resources");
 		properties.setSchemaFile("openapi-custom-schema.json");
 
-		FileUtils fileUtils = new FileUtils(properties);
+		FileUtils fileUtils = new FileUtils(null, properties);
 
 		// when
 		Optional<OpenAPI> optionalOpenAPI = fileUtils.readOpenAPIObjectFromFile();
@@ -195,7 +195,7 @@ public class FileUtilsTest {
 		ParserProperties properties = new ParserProperties();
 		properties.setSchemaFile("./src/test/resources/openapi-schema-unknown-file.json");
 
-		FileUtils fileUtils = new FileUtils(properties);
+		FileUtils fileUtils = new FileUtils(null, properties);
 
 		// when
 		Optional<OpenAPI> optionalOpenAPI = fileUtils.readOpenAPIObjectFromFile();

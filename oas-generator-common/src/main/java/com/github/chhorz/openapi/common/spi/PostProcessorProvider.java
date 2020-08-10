@@ -17,6 +17,7 @@
 package com.github.chhorz.openapi.common.spi;
 
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.util.LogUtils;
 
 /**
  * Instances of this interface will be used to create post processor instances.
@@ -28,9 +29,11 @@ public interface PostProcessorProvider {
 	/**
 	 * Creates a post processor instance with the given properties.
 	 *
+	 *
+	 * @param logUtils the oas-generator internal logging utils class
 	 * @param parserProperties the properties from the configuration file
 	 * @return an instance of the post processor
 	 */
-	OpenAPIPostProcessor create(ParserProperties parserProperties);
+	OpenAPIPostProcessor create(LogUtils logUtils, ParserProperties parserProperties);
 
 }

@@ -18,7 +18,7 @@ package com.github.chhorz.openapi.common.properties;
 
 import com.github.chhorz.openapi.common.properties.domain.SecuritySchemeOAuthFlowProperties;
 import com.github.chhorz.openapi.common.properties.domain.SecuritySchemeOAuthFlowsProperties;
-import com.github.chhorz.openapi.common.util.LoggingUtils;
+import com.github.chhorz.openapi.common.util.LogUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public final class GeneratorPropertiesDefaults {
 	public static final String TAG_DESCRIPTION = null;
 
 	public static final boolean PARSER_ENABLED = Boolean.TRUE;
-	public static final String PARSER_LOG_LEVEL = LoggingUtils.INFO;
+	public static final String PARSER_LOG_LEVEL = LogUtils.INFO;
 	public static final String PARSER_OUTPUT_DIR = "./target/openapi";
 	public static final String PARSER_OUTPUT_FILE = "openapi";
 	public static final String PARSER_OUTPUT_FORMAT = "json,yaml";

@@ -22,10 +22,11 @@ import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.SecurityScheme.Type;
 import com.github.chhorz.openapi.common.domain.SecuritySchemeApiKey.In;
 import com.github.chhorz.openapi.common.properties.domain.*;
-import com.github.chhorz.openapi.common.util.LoggingUtils;
+import com.github.chhorz.openapi.common.util.LogUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import javax.annotation.processing.Messager;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -45,19 +46,19 @@ import static java.util.stream.Collectors.toList;
  */
 public class GeneratorPropertyLoader {
 
-	private final LoggingUtils log;
+	private final LogUtils logUtils;
 
 	private final Map<String, String> processorOptions;
 
 	private GeneratorProperties properties;
 
-	public GeneratorPropertyLoader(final Map<String, String> processorOptions) {
+	public GeneratorPropertyLoader(final Messager messager, final Map<String, String> processorOptions) {
 		this.processorOptions = processorOptions;
 
 		final ParserProperties dummyProperties = new ParserProperties();
 		dummyProperties.setLogLevel("INFO");
 
-		this.log = new LoggingUtils(dummyProperties);
+		this.logUtils = new LogUtils(messager, dummyProperties);
 		loadProperties();
 	}
 
@@ -65,10 +66,10 @@ public class GeneratorPropertyLoader {
 
 		URL resourceLocation;
 		if (processorOptions.get("propertiesPath") == null) {
-			log.info("Using default properties location");
+			logUtils.logInfo("Using default properties location");
 			resourceLocation = GeneratorPropertyLoader.class.getClassLoader().getResource("oas-generator.yml");
 		} else {
-			log.info("Using custom properties location");
+			logUtils.logInfo("Using custom properties location");
 			resourceLocation = GeneratorPropertyLoader.class.getClassLoader()
 				.getResource(processorOptions.get("propertiesPath"));
 		}
@@ -77,10 +78,10 @@ public class GeneratorPropertyLoader {
 			Yaml yaml = new Yaml(new Constructor(GeneratorProperties.class));
 			properties = yaml.load(resourceLocation.openStream());
 
-			log.info("Loaded properties (Path: %s)", resourceLocation.getPath());
+			logUtils.logInfo("Loaded properties (Path: %s)", resourceLocation.getPath());
 		} catch (Exception e) {
 			properties = new GeneratorProperties();
-			log.error("An exception occurred. Using default properties!", e);
+			logUtils.logError("An exception occurred. Using default properties!", e);
 		}
 	}
 

@@ -44,7 +44,7 @@ class GeneratorPropertyLoaderTest {
 		void testParserDisabled() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/parserDisabled.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
@@ -59,7 +59,7 @@ class GeneratorPropertyLoaderTest {
 		void testParserInvalidValue() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/parserEnabledInvalid.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
@@ -80,7 +80,7 @@ class GeneratorPropertyLoaderTest {
 		void testInfoProperties() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/info.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			Info info = generatorPropertyLoader.createInfoFromProperties();
@@ -108,7 +108,7 @@ class GeneratorPropertyLoaderTest {
 		void testEmptyInfoProperties() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/infoEmpty.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when - then
 			assertThatThrownBy(generatorPropertyLoader::createInfoFromProperties)
@@ -126,7 +126,7 @@ class GeneratorPropertyLoaderTest {
 		void testPostProcessorProperties() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/postProcessorTest.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
@@ -148,7 +148,7 @@ class GeneratorPropertyLoaderTest {
 		void testEmptyPostProcessorProperties() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/postProcessorEmptyTest.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			ParserProperties parserProperties = generatorPropertyLoader.getParserProperties();
@@ -178,7 +178,7 @@ class GeneratorPropertyLoaderTest {
 			String tagName = "tag_a";
 
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagTest.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
@@ -202,7 +202,7 @@ class GeneratorPropertyLoaderTest {
 			String tagName = "tag_b";
 
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagTest.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
@@ -224,7 +224,7 @@ class GeneratorPropertyLoaderTest {
 			String tagName = "test";
 
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/tagEmptyTest.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			String tagDescription = generatorPropertyLoader.getDescriptionForTag(tagName);
@@ -250,7 +250,7 @@ class GeneratorPropertyLoaderTest {
 		void testInvalidSecurityType() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityInvalidType.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when - then
 			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
@@ -263,7 +263,7 @@ class GeneratorPropertyLoaderTest {
 		void testEmptySecurity() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityEmptyTest.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -279,7 +279,7 @@ class GeneratorPropertyLoaderTest {
 		void testHttpBasicSecurity() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityBasicHttp.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -307,7 +307,7 @@ class GeneratorPropertyLoaderTest {
 		void testApiKeySecurity() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityApiKey.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -336,7 +336,7 @@ class GeneratorPropertyLoaderTest {
 		void testApiKeySecurityWithInvalidInValue() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityApiKeyInvalidInValue.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when - then
 			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
@@ -349,7 +349,7 @@ class GeneratorPropertyLoaderTest {
 		void testHttpBearerSecurity() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityJwtBearer.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -378,7 +378,7 @@ class GeneratorPropertyLoaderTest {
 		void testOpenIdConnectSecurity() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOpenIdConnect.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when
 			Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -405,7 +405,7 @@ class GeneratorPropertyLoaderTest {
 		void testOpenIdConnectSecurityWithInvalidUrl() {
 			// given
 			Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOpenIdConnectInvalidUrl.yml");
-			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+			GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 			// when - then
 			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
@@ -422,7 +422,7 @@ class GeneratorPropertyLoaderTest {
 			void testOauth2Implicit() {
 				// given
 				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2Implicit.yml");
-				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 				// when
 				Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -453,7 +453,7 @@ class GeneratorPropertyLoaderTest {
 			void testOauth2ImplicitWithInvalidUrl() {
 				// given
 				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2ImplicitInvalidUrl.yml");
-				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 
 				// when - then
@@ -467,7 +467,7 @@ class GeneratorPropertyLoaderTest {
 			void testOauth2AuthorizationCode() {
 				// given
 				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2AuthorizationCode.yml");
-				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 				// when
 				Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -499,7 +499,7 @@ class GeneratorPropertyLoaderTest {
 			void testOauth2AuthorizationCodeWithInvalidUrl() {
 				// given
 				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2AuthorizationCodeInvalidUrl.yml");
-				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 
 				// when - then
@@ -513,7 +513,7 @@ class GeneratorPropertyLoaderTest {
 			void testOauth2ClientCredentials() {
 				// given
 				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2ClientCredentials.yml");
-				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 				// when
 				Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -551,7 +551,7 @@ class GeneratorPropertyLoaderTest {
 			void testOauth2ClientCredentialsWithInvalidUrl() {
 				// given
 				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2ClientCredentialsInvalidUrl.yml");
-				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 
 				// when - then
@@ -566,7 +566,7 @@ class GeneratorPropertyLoaderTest {
 			void testOauth2Password() {
 				// given
 				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2Password.yml");
-				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 				// when
 				Optional<Map<String, SecurityScheme>> securitySchemesFromProperties = generatorPropertyLoader.createSecuritySchemesFromProperties();
@@ -597,7 +597,7 @@ class GeneratorPropertyLoaderTest {
 			void testOauth2PasswordWithInvalidUrl() {
 				// given
 				Map<String, String> processorOptions = singletonMap("propertiesPath", "./properties/securityOauth2PasswordInvalidUrl.yml");
-				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(processorOptions);
+				GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, processorOptions);
 
 
 				// when - then

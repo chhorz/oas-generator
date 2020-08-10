@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
@@ -58,12 +59,11 @@ import static java.util.stream.Collectors.toSet;
 public class SpringWebOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
 
     private Elements elements;
-    private Types types;
 
-    private GeneratorPropertyLoader propertyLoader;
+	private GeneratorPropertyLoader propertyLoader;
     private ParserProperties parserProperties;
 
-    private LoggingUtils log;
+    private LogUtils logUtils;
     private SchemaUtils schemaUtils;
     private TypeMirrorUtils typeMirrorUtils;
     private ResponseUtils responseUtils;
@@ -77,16 +77,17 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
     @Override
     public synchronized void init(final ProcessingEnvironment processingEnv) {
         elements = processingEnv.getElementUtils();
-        types = processingEnv.getTypeUtils();
+		Types types = processingEnv.getTypeUtils();
+		Messager messager = processingEnv.getMessager();
 
         // initialize property loader
-        propertyLoader = new GeneratorPropertyLoader(processingEnv.getOptions());
+        propertyLoader = new GeneratorPropertyLoader(messager, processingEnv.getOptions());
         parserProperties = propertyLoader.getParserProperties();
 
-        log = new LoggingUtils(parserProperties);
-        schemaUtils = new SchemaUtils(elements, types, log);
+		logUtils = new LogUtils(messager, parserProperties);
+        schemaUtils = new SchemaUtils(elements, types, logUtils);
         typeMirrorUtils = new TypeMirrorUtils(elements, types);
-        responseUtils = new ResponseUtils(elements, types, log);
+        responseUtils = new ResponseUtils(elements, types, logUtils);
 
         javaDocParser = createJavadocParser();
 
@@ -124,7 +125,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				exceptionHandler.stream()
 					.filter(element -> element instanceof ExecutableElement)
 					.map(ExecutableElement.class::cast)
-					.peek(exElement -> log.info("Parsing exception handler: %s", exElement))
+					.peek(exElement -> logUtils.logInfo("Parsing exception handler: %s", exElement))
 					.map(ExecutableElement::getReturnType)
 					.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
 					.map(schemaUtils::mapTypeMirrorToSchema)
@@ -149,7 +150,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 			openApi.getComponents().putAllSchemas(schemaMap);
 
 			if (parserProperties.getSchemaFile() != null) {
-				readOpenApiFile(parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
+				readOpenApiFile(logUtils, parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
 			}
 
 			TagUtils tagUtils = new TagUtils(propertyLoader);
@@ -166,20 +167,20 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				.forEach(openApi::addTag);
 
 			if (roundEnv.processingOver()) {
-				runPostProcessors(parserProperties, openApi);
+				runPostProcessors(logUtils, parserProperties, openApi);
 			}
 		} else {
-			log.error("Execution disabled via properties");
+			logUtils.logError("Execution disabled via properties");
 		}
 		return false;
 	}
 
     private void mapOperationMethod(final ExecutableElement executableElement) {
     	if (exclude(executableElement)) {
-			log.info("Skipping method: %s (excluded with @OpenAPIExclusion)", getOperationId(executableElement));
+			logUtils.logInfo("Skipping method: %s (excluded with @OpenAPIExclusion)", getOperationId(executableElement));
 			return;
 		} else {
-			log.debug("Parsing method: %s", getOperationId(executableElement));
+			logUtils.logDebug("Parsing method: %s", getOperationId(executableElement));
 		}
 
         JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
@@ -200,13 +201,13 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
             }
 
             for (String path : urlPaths) {
-                log.info("Parsing path: %s", path);
+                logUtils.logInfo("Parsing path: %s", path);
                 String cleanedPath = path;
 
                 RequestMethod[] requestMethods = requestMapping.method();
 
                 if (requestMethods.length == 0) {
-                    log.error("No request method defined. operationId=%s", getOperationId(executableElement));
+                    logUtils.logError("No request method defined. operationId=%s", getOperationId(executableElement));
                 }
 
                 for (RequestMethod requestMethod : requestMethods) {

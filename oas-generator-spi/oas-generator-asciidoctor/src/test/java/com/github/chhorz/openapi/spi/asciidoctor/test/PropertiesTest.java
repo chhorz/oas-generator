@@ -31,7 +31,7 @@ class PropertiesTest {
 	@Test
 	void testPropertyLoading() {
 		// given
-		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(emptyMap());
+		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, emptyMap());
 
 		// when
 		Optional<AsciidoctorProperties> optionalAsciidoctorProperties = generatorPropertyLoader.getParserProperties()
@@ -59,7 +59,7 @@ class PropertiesTest {
 	@Test
 	void testEmptyPropertyLoading() {
 		// given
-		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(singletonMap("propertiesPath", "oas-generator-empty.yml"));
+		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, singletonMap("propertiesPath", "oas-generator-empty.yml"));
 
 		// when
 		Optional<AsciidoctorProperties> optionalAsciidoctorProperties = generatorPropertyLoader.getParserProperties()
@@ -77,7 +77,7 @@ class PropertiesTest {
 	@Test
 	void testNullPropertyLoading() {
 		// given
-		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(singletonMap("propertiesPath", "oas-generator-null.yml"));
+		GeneratorPropertyLoader generatorPropertyLoader = new GeneratorPropertyLoader(null, singletonMap("propertiesPath", "oas-generator-null.yml"));
 
 		// when
 		Optional<AsciidoctorProperties> optionalAsciidoctorProperties = generatorPropertyLoader.getParserProperties()

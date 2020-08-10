@@ -26,7 +26,7 @@ import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.common.test.util.resources.Other;
 import com.github.chhorz.openapi.common.test.util.resources.TestClass;
 import com.github.chhorz.openapi.common.test.util.resources.TestEnum;
-import com.github.chhorz.openapi.common.util.LoggingUtils;
+import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,12 +58,12 @@ class SchemaUtilsTest {
 	@BeforeEach
 	void setUpEach() {
 		ParserProperties parserProperties = new ParserProperties();
-		parserProperties.setLogLevel(LoggingUtils.DEBUG);
+		parserProperties.setLogLevel(LogUtils.DEBUG);
 
 		elements = extension.getElements();
 		types = extension.getTypes();
 
-		schemaUtils = new SchemaUtils(elements, types, new LoggingUtils(parserProperties));
+		schemaUtils = new SchemaUtils(elements, types, new LogUtils(null, parserProperties));
 	}
 
 	@Test

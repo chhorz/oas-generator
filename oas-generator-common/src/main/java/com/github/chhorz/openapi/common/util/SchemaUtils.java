@@ -45,7 +45,7 @@ public class SchemaUtils {
 	private final Elements elements;
 	private final Types types;
 
-	private final LoggingUtils log;
+	private final LogUtils log;
 	private final TypeMirrorUtils typeMirrorUtils;
 
 	private final JavaDocParser parser;
@@ -57,7 +57,7 @@ public class SchemaUtils {
 	private final PackageElement javaMathPackage;
 	private final PackageElement javaTimePackage;
 
-	public SchemaUtils(final Elements elements, final Types types, final LoggingUtils log) {
+	public SchemaUtils(final Elements elements, final Types types, final LogUtils log) {
 		this.elements = elements;
 		this.types = types;
 		this.log = log;
@@ -126,7 +126,7 @@ public class SchemaUtils {
 
 		Map<TypeMirror, Schema> schemaMap = new LinkedHashMap<>();
 
-		log.debug("Parsing type: %s", typeMirror.toString());
+		log.logDebug("Parsing type: %s", typeMirror.toString());
 
 		Schema schema = new Schema();
 
@@ -308,7 +308,7 @@ public class SchemaUtils {
 							.filter(this::isValidAttribute)
 							.forEach(vElement -> {
 
-								log.debug(String.format("Parsing attribute: %s", vElement.toString()));
+								log.logDebug(String.format("Parsing attribute: %s", vElement.toString()));
 
 								JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 

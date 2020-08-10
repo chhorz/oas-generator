@@ -24,7 +24,7 @@ import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
 import com.github.chhorz.openapi.common.test.util.resources.BaseClass;
-import com.github.chhorz.openapi.common.util.LoggingUtils;
+import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.common.util.ResponseUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -58,14 +58,14 @@ class ResponseUtilsTest {
 	@BeforeEach
 	void setUpEach() {
 		ParserProperties parserProperties = new ParserProperties();
-		parserProperties.setLogLevel(LoggingUtils.DEBUG);
+		parserProperties.setLogLevel(LogUtils.DEBUG);
 
-		LoggingUtils log = new LoggingUtils(parserProperties);
+		LogUtils logUtils = new LogUtils(extension.getMessager(), parserProperties);
 
 		this.elements = extension.getElements();
 		this.types = extension.getTypes();
 
-		responseUtils = new ResponseUtils(elements, types, log);
+		responseUtils = new ResponseUtils(elements, types, logUtils);
 	}
 
 	@Test

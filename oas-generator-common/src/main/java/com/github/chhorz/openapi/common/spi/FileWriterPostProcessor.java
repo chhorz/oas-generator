@@ -19,7 +19,7 @@ package com.github.chhorz.openapi.common.spi;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.FileUtils;
-import com.github.chhorz.openapi.common.util.LoggingUtils;
+import com.github.chhorz.openapi.common.util.LogUtils;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -36,11 +36,11 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 	private static final Integer POST_PROCESSOR_ORDER = Integer.MAX_VALUE;
 
 	private final FileUtils fileUtils;
-	private final LoggingUtils log;
+	private final LogUtils logUtils;
 
-	FileWriterPostProcessor(final ParserProperties parserProperties) {
-		log = new LoggingUtils(parserProperties);
-		fileUtils = new FileUtils(parserProperties);
+	FileWriterPostProcessor(final LogUtils logUtils, final ParserProperties parserProperties) {
+		this.logUtils = logUtils;
+		this.fileUtils = new FileUtils(logUtils, parserProperties);
 	}
 
 	/**
@@ -48,9 +48,9 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 	 */
 	@Override
 	public void execute(final OpenAPI openApi) {
-		log.info("FileWriterPostProcessor | Start");
+		logUtils.logInfo("FileWriterPostProcessor | Start");
 		fileUtils.writeToFile(openApi);
-		log.info("FileWriterPostProcessor | Finish");
+		logUtils.logInfo("FileWriterPostProcessor | Finish");
 	}
 
 	/**

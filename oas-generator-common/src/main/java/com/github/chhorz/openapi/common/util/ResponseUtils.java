@@ -34,14 +34,12 @@ public class ResponseUtils {
 
 	private static final Predicate<String> NOT_NULL_OR_EMPTY = s -> s != null && !s.isEmpty();
 
-	private SchemaUtils schemaUtils;
-	private TypeMirrorUtils typeMirrorUtils;
-	private LoggingUtils log;
+	private final SchemaUtils schemaUtils;
+	private final TypeMirrorUtils typeMirrorUtils;
 
-	public ResponseUtils(final Elements elements, Types types, LoggingUtils log) {
+	public ResponseUtils(final Elements elements, Types types, LogUtils log) {
 		this.schemaUtils = new SchemaUtils(elements, types, log);
 		this.typeMirrorUtils = new TypeMirrorUtils(elements, types);
-		this.log = log;
 	}
 
 	public Response fromTypeMirror(final TypeMirror typeMirror, final String[] produces, String description) {

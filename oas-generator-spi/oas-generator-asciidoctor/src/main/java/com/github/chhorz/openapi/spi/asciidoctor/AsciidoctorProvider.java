@@ -19,6 +19,7 @@ package com.github.chhorz.openapi.spi.asciidoctor;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
+import com.github.chhorz.openapi.common.util.LogUtils;
 
 /**
  * {@link PostProcessorProvider} to instantiate the Asciidoctor post processor.
@@ -31,8 +32,8 @@ public class AsciidoctorProvider implements PostProcessorProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public OpenAPIPostProcessor create(final ParserProperties parserProperties) {
-		return new AsciidoctorPostProcessor(parserProperties);
+	public OpenAPIPostProcessor create(final LogUtils logUtils, final ParserProperties parserProperties) {
+		return new AsciidoctorPostProcessor(logUtils, parserProperties);
 	}
 
 }

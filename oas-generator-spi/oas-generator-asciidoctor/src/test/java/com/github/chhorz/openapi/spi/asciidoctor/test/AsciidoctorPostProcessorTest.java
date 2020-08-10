@@ -18,6 +18,7 @@ package com.github.chhorz.openapi.spi.asciidoctor.test;
 
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorPostProcessor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,8 +37,12 @@ class AsciidoctorPostProcessorTest {
 
 	private AsciidoctorPostProcessor processor;
 
+	private static LogUtils logUtils;
+
 	@BeforeAll
 	static void createFolder() throws IOException {
+		logUtils = new LogUtils(null, new ParserProperties(), "[Asciidoctor]");
+
 		Files.createDirectories(Paths.get("target", "generated-test-docs"));
 	}
 
@@ -319,7 +324,7 @@ class AsciidoctorPostProcessorTest {
 		ParserProperties parserProperties = new ParserProperties();
 		parserProperties.setPostProcessor(Collections.singletonMap("asciidoctor", propertyMap));
 
-		return new AsciidoctorPostProcessor(parserProperties);
+		return new AsciidoctorPostProcessor(logUtils, parserProperties);
 	}
 
 }

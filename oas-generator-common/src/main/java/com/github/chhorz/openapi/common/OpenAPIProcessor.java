@@ -32,6 +32,7 @@ import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
 import com.github.chhorz.openapi.common.spi.PostProcessorType;
 import com.github.chhorz.openapi.common.util.FileUtils;
+import com.github.chhorz.openapi.common.util.LogUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -176,14 +177,15 @@ public interface OpenAPIProcessor {
 	/**
 	 * Runs all registered post processors from the service loader.
 	 *
+	 * @param logUtils the oas-generator internal logging utils class
 	 * @param parserProperties the configuration properties form the configuration file
 	 * @param openApi the generated OpenAPI domain object
 	 */
-	default void runPostProcessors(final ParserProperties parserProperties, final OpenAPI openApi) {
+	default void runPostProcessors(final LogUtils logUtils, final ParserProperties parserProperties, final OpenAPI openApi) {
 		ServiceLoader<PostProcessorProvider> serviceLoader = load(PostProcessorProvider.class, getClass().getClassLoader());
 
 		StreamSupport.stream(serviceLoader.spliterator(), false)
-				.map(provider -> provider.create(parserProperties))
+				.map(provider -> provider.create(logUtils, parserProperties))
 				.filter(postProcessor -> postProcessor.getPostProcessorType().contains(PostProcessorType.DOMAIN_OBJECT))
 				.sorted(comparing(OpenAPIPostProcessor::getPostProcessorOrder).reversed())
 				.forEach(openAPIPostProcessor -> openAPIPostProcessor.execute(openApi));
@@ -197,8 +199,8 @@ public interface OpenAPIProcessor {
 	 * @param parserProperties the loaded configuration properties
 	 * @return an OpenAPI domain object of the configured schema file from the properties
 	 */
-	default Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {
-		FileUtils fileUtils = new FileUtils(parserProperties);
+	default Optional<OpenAPI> readOpenApiFile(final LogUtils logUtils, final ParserProperties parserProperties) {
+		FileUtils fileUtils = new FileUtils(logUtils, parserProperties);
 		return fileUtils.readOpenAPIObjectFromFile();
 	}
 

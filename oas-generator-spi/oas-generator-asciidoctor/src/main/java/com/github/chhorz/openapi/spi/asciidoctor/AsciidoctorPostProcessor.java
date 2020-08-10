@@ -20,7 +20,7 @@ import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.spi.PostProcessorType;
-import com.github.chhorz.openapi.common.util.LoggingUtils;
+import com.github.chhorz.openapi.common.util.LogUtils;
 import freemarker.core.PlainTextOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -50,7 +50,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	private static final int POST_PROCESSOR_ORDER = 0;
 
 	private final AsciidoctorProperties asciidoctorProperties;
-	private final LoggingUtils log;
+	private final LogUtils logUtils;
 
 	private final Configuration freemarkerConfiguration;
 
@@ -58,13 +58,14 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	 * Instantiation of the Asciidoctor post processor and configuration of
 	 * the Freemarker template engine.
 	 *
-	 * @param parserProperties	the complete parser properties
+	 * @param logUtils the oas-generator internal logging utils class
+	 * @param parserProperties the complete parser properties
 	 */
-	public AsciidoctorPostProcessor(final ParserProperties parserProperties) {
+	public AsciidoctorPostProcessor(final LogUtils logUtils, final ParserProperties parserProperties) {
 		this.asciidoctorProperties = parserProperties.getPostProcessor("asciidoctor", AsciidoctorProperties.class)
 			.orElse(new AsciidoctorProperties());
 
-		log = new LoggingUtils(parserProperties, "[Asciidoctor]");
+		this.logUtils = logUtils.configureWithComponent("[Asciidoctor]");
 
 		final boolean logTemplateExceptions = asciidoctorProperties.getExceptionLogging();
 		final boolean localizedLookup = asciidoctorProperties.getLocalizedLookup();
@@ -83,7 +84,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	 */
 	@Override
 	public void execute(final OpenAPI openApi) {
-		log.info("AsciidoctorPostProcessor | Start");
+		logUtils.logInfo("AsciidoctorPostProcessor | Start");
 
 		final String templatePath = asciidoctorProperties.getTemplatePath();
 		final String templateFile = asciidoctorProperties.getTemplateFile();
@@ -95,7 +96,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
 			Path outputFilePath = Paths.get(outputPath, outputFile);
 			File asciidoctorfile = outputFilePath.toFile();
-			log.debug("AsciidoctorPostProcessor | Filepath: " + asciidoctorfile.getAbsolutePath());
+			logUtils.logDebug("AsciidoctorPostProcessor | Filepath: " + asciidoctorfile.getAbsolutePath());
 
 			if (!Files.exists(outputFilePath)){
 				try {
@@ -104,7 +105,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
 					asciidoctorfile = outputFilePath.toFile();
 				} catch (IOException e) {
-					log.error("Could not create output file", e);
+					logUtils.logError("Could not create output file", e);
 				}
 			}
 
@@ -112,12 +113,12 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 
 			template.process(prepareTemplateVariables(openApi), fileWriter);
 		} catch (IOException e) {
-			log.error(String.format("Could not load template=%s", templateFile), e);
+			logUtils.logError(String.format("Could not load template=%s", templateFile), e);
 		} catch (TemplateException e) {
-			log.error(String.format("Error while templating %s", templateFile), e);
+			logUtils.logError(String.format("Error while templating %s", templateFile), e);
 		}
 
-		log.info("AsciidoctorPostProcessor | Finish");
+		logUtils.logInfo("AsciidoctorPostProcessor | Finish");
 	}
 
 	private Map<String, Object> prepareTemplateVariables(final OpenAPI openAPI){

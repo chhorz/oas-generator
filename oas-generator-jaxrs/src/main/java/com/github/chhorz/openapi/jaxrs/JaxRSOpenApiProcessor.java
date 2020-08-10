@@ -31,6 +31,7 @@ import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.*;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
@@ -50,12 +51,11 @@ import static java.util.stream.Collectors.toSet;
 public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
 
 	private Elements elements;
-	private Types types;
 
 	private GeneratorPropertyLoader propertyLoader;
 	private ParserProperties parserProperties;
 
-	private LoggingUtils log;
+	private LogUtils logUtils;
 	private SchemaUtils schemaUtils;
 	private ResponseUtils responseUtils;
 
@@ -66,14 +66,15 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 	@Override
 	public synchronized void init(final ProcessingEnvironment processingEnv) {
 		elements = processingEnv.getElementUtils();
-		types = processingEnv.getTypeUtils();
+		Types types = processingEnv.getTypeUtils();
+		Messager messager = processingEnv.getMessager();
 
-		propertyLoader = new GeneratorPropertyLoader(processingEnv.getOptions());
+		propertyLoader = new GeneratorPropertyLoader(messager, processingEnv.getOptions());
 		parserProperties = propertyLoader.getParserProperties();
 
-		log = new LoggingUtils(parserProperties);
-		schemaUtils = new SchemaUtils(elements, types, log);
-		responseUtils = new ResponseUtils(elements, types, log);
+		logUtils = new LogUtils(messager, parserProperties);
+		schemaUtils = new SchemaUtils(elements, types, logUtils);
+		responseUtils = new ResponseUtils(elements, types, logUtils);
 
 		javaDocParser = createJavadocParser();
 
@@ -111,7 +112,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 			openApi.getComponents().putAllSchemas(schemaMap);
 
 			if (parserProperties.getSchemaFile() != null) {
-				readOpenApiFile(parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
+				readOpenApiFile(logUtils, parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
 			}
 
 			TagUtils tagUtils = new TagUtils(propertyLoader);
@@ -128,20 +129,20 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 				.forEach(openApi::addTag);
 
 			if (roundEnv.processingOver()) {
-				runPostProcessors(parserProperties, openApi);
+				runPostProcessors(logUtils, parserProperties, openApi);
 			}
 		} else {
-			log.error("Execution disabled via properties");
+			logUtils.logError("Execution disabled via properties");
 		}
 		return false;
 	}
 
 	private void mapOperationMethod(final ExecutableElement executableElement) {
 		if (exclude(executableElement)) {
-			log.info("Skipping method: %s (excluded with @OpenAPIExclusion)", getOperationId(executableElement));
+			logUtils.logInfo("Skipping method: %s (excluded with @OpenAPIExclusion)", getOperationId(executableElement));
 			return;
 		} else {
-			log.debug("Parsing method: %s", getOperationId(executableElement));
+			logUtils.logDebug("Parsing method: %s", getOperationId(executableElement));
 		}
 
 		JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));

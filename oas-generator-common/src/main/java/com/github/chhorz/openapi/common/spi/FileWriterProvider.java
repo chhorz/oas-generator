@@ -17,6 +17,7 @@
 package com.github.chhorz.openapi.common.spi;
 
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.util.LogUtils;
 
 /**
  * Creates a new {@link PostProcessorProvider} for the {@link FileWriterPostProcessor}.
@@ -29,8 +30,8 @@ public class FileWriterProvider implements PostProcessorProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public OpenAPIPostProcessor create(final ParserProperties parserProperties) {
-		return new FileWriterPostProcessor(parserProperties);
+	public OpenAPIPostProcessor create(final LogUtils logUtils, final ParserProperties parserProperties) {
+		return new FileWriterPostProcessor(logUtils, parserProperties);
 	}
 
 }
