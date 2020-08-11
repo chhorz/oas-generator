@@ -144,7 +144,7 @@ public class LogUtils {
 	}
 
 	private void log(final String format, final Exception exception, final Object... arguments) {
-		String message = format("%s %s", join(" ", OPENAPI_LOG_GROUP, componentLogGroup).trim(), format(format, arguments));
+		String message = format("%s %s (%s)", join(" ", OPENAPI_LOG_GROUP, componentLogGroup).trim(), format(format, arguments), exception.getMessage());
 
 		if (messager != null) {
 			messager.printMessage(Diagnostic.Kind.WARNING, message);

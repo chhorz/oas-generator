@@ -642,6 +642,24 @@ Only the method signature and the documentation comment (javadoc comment) are av
 If you choose a different return object or status code during runtime you have to document this information on a place that is available at compile time.
 Either the documentation comments or other annotations should be used in this place.
 
+== Known Issues
+
+=== Log Output
+Depending on the configuration of the `maven-compiler-plugin` no log messages may be shown.
+They can be easily enabled by setting the following property:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.8.1</version>
+    <configuration>
+        <showWarnings>true</showWarnings>
+    </configuration>
+</plugin>
+----
+
 == Snapshots
 Snapshots are available from the Sonatype OSS Snapshots repository.
 To configure the repository for your project to use the latest snapshot versions you have to add the following repository to your maven pom:

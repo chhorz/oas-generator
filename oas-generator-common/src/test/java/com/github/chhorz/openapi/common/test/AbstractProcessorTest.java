@@ -109,6 +109,7 @@ public abstract class AbstractProcessorTest {
 
 			// perform the verifications.
 			for (Diagnostic<? extends JavaFileObject> diagnostic : collector.getDiagnostics()) {
+				System.out.println(diagnostic.getMessage(Locale.getDefault()));
 				if (diagnostic.getKind() == Kind.MANDATORY_WARNING || diagnostic.getKind() == Kind.ERROR) {
 					fail("Failed with message: " + diagnostic.getMessage(null));
 				}
