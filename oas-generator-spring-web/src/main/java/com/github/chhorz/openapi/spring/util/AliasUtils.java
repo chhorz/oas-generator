@@ -32,9 +32,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-public class AliasUtils<T> {
+public class AliasUtils {
 
-	public String getValue(final T t, final Function<T, String> primary, final Function<T, String> secondary,
+	public <T> String getValue(final T t, final Function<T, String> primary, final Function<T, String> secondary,
 			final String defaultValue) {
 		if (primary.apply(t).isEmpty() && secondary.apply(t).isEmpty()) {
 			return defaultValue;

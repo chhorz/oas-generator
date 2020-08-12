@@ -23,14 +23,14 @@ import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.domain.*;
-import com.github.chhorz.openapi.common.domain.Parameter.In;
-import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.javadoc.SecurityTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.*;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
+import com.github.chhorz.openapi.spring.util.ParameterUtils;
 import com.github.chhorz.openapi.spring.util.PathItemUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
@@ -43,16 +43,14 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -67,6 +65,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
     private SchemaUtils schemaUtils;
     private TypeMirrorUtils typeMirrorUtils;
     private ResponseUtils responseUtils;
+    private AliasUtils aliasUtils;
+    private ParameterUtils parameterUtils;
 
     private JavaDocParser javaDocParser;
 
@@ -88,6 +88,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         schemaUtils = new SchemaUtils(elements, types, logUtils);
         typeMirrorUtils = new TypeMirrorUtils(elements, types);
         responseUtils = new ResponseUtils(elements, types, logUtils);
+        aliasUtils = new AliasUtils();
+		parameterUtils = new ParameterUtils(schemaUtils, aliasUtils);
 
         javaDocParser = createJavadocParser();
 
@@ -185,7 +187,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
         JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
 
-        AliasUtils<?> aliasUtils = new AliasUtils<>();
         RequestMapping methodMapping = aliasUtils.getMappingAnnotation(executableElement);
         RequestMapping classMapping = aliasUtils.getMappingAnnotation(executableElement.getEnclosingElement());
 
@@ -217,12 +218,12 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     operation.setOperationId(getOperationId(executableElement));
                     operation.setDeprecated(executableElement.getAnnotation(Deprecated.class) != null);
 
-                    List<ParamTag> tags = javaDoc.getTags(ParamTag.class);
+                    List<ParamTag> paramTags = javaDoc.getTags(ParamTag.class);
 
                     operation.addParameterObjects(executableElement.getParameters()
                             .stream()
                             .filter(variableElement -> variableElement.getAnnotation(PathVariable.class) != null)
-                            .map(v -> mapPathVariable(path, v, tags))
+                            .map(v -> parameterUtils.mapPathVariable(path, v, paramTags))
                             .collect(toList()));
 
                     List<String> removals = operation.getParameterObjects()
@@ -239,13 +240,13 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     operation.addParameterObjects(executableElement.getParameters()
                             .stream()
                             .filter(variableElement -> variableElement.getAnnotation(RequestParam.class) != null)
-                            .map(v -> mapRequestParam(v, tags))
+                            .map(v -> parameterUtils.mapRequestParam(v, paramTags))
                             .collect(toList()));
 
                     operation.addParameterObjects(executableElement.getParameters()
                             .stream()
                             .filter(variableElement -> variableElement.getAnnotation(RequestHeader.class) != null)
-                            .map(v -> mapRequestHeader(v, tags))
+                            .map(v -> parameterUtils.mapRequestHeader(v, paramTags))
                             .collect(toList()));
 
                     executableElement.getParameters()
@@ -278,6 +279,49 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 									operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
 					});
 
+                    if (isClassAvailable("org.springframework.data.domain.Pageable")) {
+						executableElement.getParameters()
+							.stream()
+							.filter(variableElement -> schemaUtils.isAssignableFrom(variableElement.asType(), Pageable.class))
+							.findAny()
+							.ifPresent(variableElement -> {
+								Schema primitiveIntSchema = new Schema();
+								primitiveIntSchema.setType(Schema.Type.INTEGER);
+								primitiveIntSchema.setFormat(Schema.Format.INT32);
+
+								Schema stringSchema = new Schema();
+								stringSchema.setType(Schema.Type.STRING);
+
+								// see PageableHandlerMethodArgumentResolverSupport.java
+								Parameter sizeParameter = new Parameter();
+								sizeParameter.setIn(Parameter.In.QUERY);
+								sizeParameter.setDescription("Requested page size");
+								sizeParameter.setName("size");
+								sizeParameter.setRequired(false);
+								sizeParameter.setDeprecated(false);
+								sizeParameter.setSchema(primitiveIntSchema);
+
+								Parameter pageParameter = new Parameter();
+								pageParameter.setIn(Parameter.In.QUERY);
+								pageParameter.setDescription("Requested page number");
+								pageParameter.setName("page");
+								pageParameter.setRequired(false);
+								pageParameter.setDeprecated(false);
+								pageParameter.setSchema(primitiveIntSchema);
+
+								// see SortHandlerMethodArgumentResolverSupport.java
+								Parameter sortParameter = new Parameter();
+								sortParameter.setIn(Parameter.In.QUERY);
+								sortParameter.setDescription("Requested sort attribute and order");
+								sortParameter.setName("sort");
+								sortParameter.setRequired(false);
+								sortParameter.setDeprecated(false);
+								sortParameter.setSchema(stringSchema);
+
+								operation.addParameterObjects(asList(sizeParameter, pageParameter, sortParameter));
+							});
+					}
+
                     String returnTag = "";
                     List<ReturnTag> returnTags = javaDoc.getTags(ReturnTag.class);
                     if (returnTags.size() == 1) {
@@ -296,7 +340,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     if (exceptionHanderReturntype != null && !responses.isEmpty()) {
                         // use return type of ExceptionHandler as default response
                         Schema exceptionSchema = exceptionSchemaMap.get(exceptionHanderReturntype);
-                        if (Type.OBJECT.equals(exceptionSchema.getType()) || Type.ENUM.equals(exceptionSchema.getType())) {
+                        if (Schema.Type.OBJECT.equals(exceptionSchema.getType()) || Schema.Type.ENUM.equals(exceptionSchema.getType())) {
                             operation.putDefaultResponse(responseUtils.fromTypeMirror(exceptionHanderReturntype, requestMapping.produces(), returnTag));
                         } else {
                             operation.putDefaultResponse(responseUtils.fromSchema(exceptionSchema, requestMapping.produces(), returnTag));
@@ -305,7 +349,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     } else {
                         Schema schema = schemaMap.get(returnType);
                         if (schema != null) {
-                            if (Type.OBJECT.equals(schema.getType()) || Type.ENUM.equals(schema.getType())) {
+                            if (Schema.Type.OBJECT.equals(schema.getType()) || Schema.Type.ENUM.equals(schema.getType())) {
                                 operation.putDefaultResponse(responseUtils.fromTypeMirror(returnType, requestMapping.produces(), returnTag));
                             } else {
                                 operation.putDefaultResponse(responseUtils.fromSchema(schema, requestMapping.produces(), returnTag));
@@ -317,7 +361,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     openApi.getComponents().putAllSchemas(schemaMap.entrySet()
                             .stream()
 							.filter(entry -> !schemaUtils.isAssignableFrom(entry.getKey(), Void.class))
-                            .filter(entry -> !Type.ARRAY.equals(entry.getValue().getType()))
+                            .filter(entry -> !Schema.Type.ARRAY.equals(entry.getValue().getType()))
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 
                     responses.forEach(operation::putResponse);
@@ -368,7 +412,6 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     if (openApi.getPaths().containsKey(cleanedPath)) {
 						PathItemUtils utils = new PathItemUtils();
 						openApi.putPathItemObject(cleanedPath, utils.mergePathItems(openApi.getPaths().get(cleanedPath), pathItemObject));
-                    	// TODO merge paths
 					} else {
 						openApi.putPathItemObject(cleanedPath, pathItemObject);
 					}
@@ -377,113 +420,19 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         }
     }
 
-    private Parameter mapPathVariable(final String path, final VariableElement variableElement,
-                                      final List<ParamTag> parameterDocs) {
-        PathVariable pathVariable = variableElement.getAnnotation(PathVariable.class);
-
-        AliasUtils<PathVariable> aliasUtils = new AliasUtils<>();
-        final String name = aliasUtils.getValue(pathVariable, PathVariable::name, PathVariable::value,
-                variableElement.getSimpleName().toString());
-
-        Optional<ParamTag> parameterDescription = parameterDocs.stream()
-                .filter(tag -> tag.getParamName().equalsIgnoreCase(name))
-                .findFirst();
-
-        Parameter parameter = new Parameter();
-        parameter.setAllowEmptyValue(Boolean.FALSE);
-        parameter.setDeprecated(variableElement.getAnnotation(Deprecated.class) != null);
-        parameter.setDescription(parameterDescription.isPresent() ? parameterDescription.get().getParamDescription() : "");
-        parameter.setIn(In.PATH);
-        parameter.setName(name);
-        parameter.setRequired(pathVariable.required());
-		if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
-			parameter.setRequired(false);
+	/**
+	 * Check if the given class is available on the classpath. This check is required for optional maven dependencies.
+	 *
+	 * @param className the full qualified class name
+	 * @return {@code true} if the class is available on the classpath
+	 */
+	private boolean isClassAvailable(final String className) {
+		try  {
+			Class.forName(className);
+			return true;
+		}  catch (ClassNotFoundException e) {
+			return false;
 		}
-
-        Map<TypeMirror, Schema> map = schemaUtils.mapTypeMirrorToSchema(variableElement.asType());
-        Schema schema = map.get(variableElement.asType());
-
-        getRegularExpression(path, name).ifPresent(schema::setPattern);
-
-        parameter.setSchema(schema);
-
-        return parameter;
-    }
-
-    private Parameter mapRequestParam(final VariableElement variableElement, final List<ParamTag> parameterDocs) {
-        RequestParam requestParam = variableElement.getAnnotation(RequestParam.class);
-
-        AliasUtils<RequestParam> aliasUtils = new AliasUtils<>();
-        final String name = aliasUtils.getValue(requestParam, RequestParam::name, RequestParam::value,
-                variableElement.getSimpleName().toString());
-
-        Optional<ParamTag> parameterDescription = parameterDocs.stream()
-                .filter(tag -> tag.getParamName().equalsIgnoreCase(name))
-                .findFirst();
-
-        Parameter parameter = new Parameter();
-        parameter.setAllowEmptyValue(!ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue()));
-        parameter.setDeprecated(variableElement.getAnnotation(Deprecated.class) != null);
-        parameter.setDescription(parameterDescription.isPresent() ? parameterDescription.get().getParamDescription() : "");
-        parameter.setIn(In.QUERY);
-        parameter.setName(name);
-        parameter.setRequired(requestParam.required());
-        if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
-        	parameter.setRequired(false);
-		}
-
-        Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
-                .get(variableElement.asType());
-        if (!ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue())) {
-            schema.setDefaultValue(requestParam.defaultValue());
-        }
-        parameter.setSchema(schema);
-
-        return parameter;
-    }
-
-    private Parameter mapRequestHeader(final VariableElement variableElement, final List<ParamTag> parameterDocs) {
-        RequestHeader requestHeader = variableElement.getAnnotation(RequestHeader.class);
-
-        AliasUtils<RequestHeader> aliasUtils = new AliasUtils<>();
-        final String name = aliasUtils.getValue(requestHeader, RequestHeader::name, RequestHeader::value,
-                variableElement.getSimpleName().toString());
-
-        Optional<ParamTag> parameterDescription = parameterDocs.stream()
-                .filter(tag -> tag.getParamName().equalsIgnoreCase(name))
-                .findFirst();
-
-        // TODO handle MultiValueMap
-
-        Parameter parameter = new Parameter();
-        parameter.setAllowEmptyValue(!ValueConstants.DEFAULT_NONE.equals(requestHeader.defaultValue()));
-        parameter.setDeprecated(variableElement.getAnnotation(Deprecated.class) != null);
-        parameter.setDescription(parameterDescription.isPresent() ? parameterDescription.get().getParamDescription() : "");
-        parameter.setIn(In.HEADER);
-        parameter.setName(name);
-        parameter.setRequired(requestHeader.required());
-		if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
-			parameter.setRequired(false);
-		}
-
-        Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
-                .get(variableElement.asType());
-        if (!ValueConstants.DEFAULT_NONE.equals(requestHeader.defaultValue())) {
-            schema.setDefaultValue(requestHeader.defaultValue());
-        }
-        parameter.setSchema(schema);
-
-        return parameter;
-    }
-
-    private Optional<String> getRegularExpression(final String path, final String pathVariable) {
-        Pattern pathVariablePattern = Pattern.compile(".*\\{" + pathVariable + ":([^{}]+)}.*");
-        Matcher pathVariableMatcher = pathVariablePattern.matcher(path);
-        if (pathVariableMatcher.matches()) {
-            return Optional.ofNullable(pathVariableMatcher.group(1));
-        } else {
-            return Optional.empty();
-        }
-    }
+	}
 
 }
