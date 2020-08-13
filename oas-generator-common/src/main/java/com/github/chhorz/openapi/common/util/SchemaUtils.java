@@ -29,6 +29,7 @@ import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 
 import javax.lang.model.element.*;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -161,11 +162,24 @@ public class SchemaUtils {
 		} else if (TypeKind.ARRAY.equals(typeMirror.getKind())) {
 			schema.setType(Type.ARRAY);
 
-			TypeMirror type = elements.getTypeElement(typeMirror.toString().replaceAll("\\[]", "")).asType();
-			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
+			TypeMirror componentType;
+			if (typeMirror instanceof ArrayType) {
+				componentType = ((ArrayType) typeMirror).getComponentType();
+			} else {
+				componentType = elements.getTypeElement(typeMirror.toString().replaceAll("\\[]", "")).asType();
+			}
+			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(componentType);
 
-			if (isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
+			if (componentType.getKind().isPrimitive()) {
+				SimpleEntry<Type, Format> typeAndFormat = getPrimitiveTypeAndFormat(componentType);
+				Schema typeSchema = new Schema();
+				if (typeAndFormat != null) {
+					typeSchema.setType(typeAndFormat.getKey());
+					typeSchema.setFormat(typeAndFormat.getValue());
+				}
+				schema.setItems(typeSchema);
+			} else if (isTypeInPackage(componentType, javaLangPackage)) {
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(componentType);
 				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
 					typeSchema.setType(typeAndFormat.getKey());
@@ -173,7 +187,7 @@ public class SchemaUtils {
 				}
 				schema.setItems(typeSchema);
 			} else {
-				schema.setItems(ReferenceUtils.createSchemaReference(type));
+				schema.setItems(ReferenceUtils.createSchemaReference(componentType));
 			}
 
 			schemaMap.putAll(propertySchemaMap);

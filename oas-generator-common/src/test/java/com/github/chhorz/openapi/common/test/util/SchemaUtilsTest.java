@@ -26,6 +26,7 @@ import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.common.test.util.resources.Other;
 import com.github.chhorz.openapi.common.test.util.resources.TestClass;
 import com.github.chhorz.openapi.common.test.util.resources.TestEnum;
+import com.github.chhorz.openapi.common.test.util.resources.TestPrimitiveTypes;
 import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +35,8 @@ import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -99,7 +102,7 @@ class SchemaUtilsTest {
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
-		assertThat(schemaMap).hasSize(4);
+		assertThat(schemaMap).hasSize(5);
 	}
 
 	@Test
@@ -111,11 +114,30 @@ class SchemaUtilsTest {
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(longType);
 
 		// then
-		assertThat(schemaMap).hasSize(1)
-				.containsKey(longType)
-				.extracting(map -> map.get(longType))
-				.extracting("type", "format")
-				.contains(Type.INTEGER, Format.INT64);
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKey(longType)
+			.extracting(map -> map.get(longType))
+			.extracting("type", "format")
+			.contains(Type.INTEGER, Format.INT64);
+	}
+
+	@Test
+	void primitiveArrayTest() {
+		// given
+		PrimitiveType charType = types.getPrimitiveType(TypeKind.CHAR);
+		ArrayType charArrayType = types.getArrayType(charType);
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(charArrayType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(2)
+			.containsKeys(charType, charArrayType)
+			.extracting(map -> map.get(charType))
+			.extracting("type")
+			.isEqualTo(Type.STRING);
 	}
 
 	@Test
@@ -128,10 +150,47 @@ class SchemaUtilsTest {
 
 		// then
 		assertThat(schemaMap).hasSize(1)
-				.containsKey(doubleType)
-				.extracting(map -> map.get(doubleType))
-				.extracting("type", "format")
-				.contains(Type.NUMBER, Format.DOUBLE);
+			.containsKey(doubleType)
+			.extracting(map -> map.get(doubleType))
+			.extracting("type", "format")
+			.contains(Type.NUMBER, Format.DOUBLE);
+	}
+
+	@Test
+	void objectArrayTypeTest() {
+		// given
+		TypeMirror doubleType = elements.getTypeElement(Double.class.getCanonicalName()).asType();
+		ArrayType doubleArrayType = types.getArrayType(doubleType);
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(doubleArrayType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(2)
+			.containsKeys(doubleType, doubleArrayType)
+			.extracting(map -> map.get(doubleType))
+			.extracting("type", "format")
+			.contains(Type.NUMBER, Format.DOUBLE);
+	}
+
+	@Test
+	void objectListTypeTest() {
+		// given
+		TypeMirror doubleType = elements.getTypeElement(Double.class.getCanonicalName()).asType();
+		TypeElement listTypeElement = elements.getTypeElement(List.class.getCanonicalName());
+		TypeMirror doubleListType = types.getDeclaredType(listTypeElement, doubleType);
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(doubleListType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(2)
+			.containsKeys(doubleType, doubleListType)
+			.extracting(map -> map.get(doubleType))
+			.extracting("type", "format")
+			.contains(Type.NUMBER, Format.DOUBLE);
 	}
 
 	@Test
@@ -143,11 +202,49 @@ class SchemaUtilsTest {
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(objectType);
 
 		// then
-		assertThat(schemaMap).hasSize(1)
+		assertThat(schemaMap)
+			.hasSize(1)
 			.containsKey(objectType)
 			.extracting(map -> map.get(objectType))
 			.extracting("type", "format")
 			.containsExactly(Type.OBJECT, null);
+	}
+
+	@Test
+	void customObjectWithPrimitiveTypesTest() {
+		// given
+		TypeMirror primitiveTypes = elements.getTypeElement(TestPrimitiveTypes.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(primitiveTypes);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKeys(primitiveTypes);
+
+		assertThat(schemaMap.get(primitiveTypes))
+			.extracting("type", "format", "deprecated")
+			.containsExactly(Type.OBJECT, null, false);
+
+		assertThat(schemaMap.get(primitiveTypes).getProperties())
+			.hasSize(2)
+			.containsKeys("i", "l");
+
+		assertThat(schemaMap.get(primitiveTypes).getProperties().values())
+			.extracting("type", "format")
+			.contains(tuple(Type.INTEGER, Format.INT32),
+				tuple(Type.ARRAY, null));
+
+		assertThat(schemaMap.get(primitiveTypes).getProperties().get("i"))
+			.isInstanceOfSatisfying(Schema.class,
+				schema -> assertThat(schema.getItems()).isNull());
+
+		assertThat(schemaMap.get(primitiveTypes).getProperties().get("l"))
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema.getItems())
+					.isInstanceOf(Schema.class)
+					.hasFieldOrPropertyWithValue("type", Type.INTEGER)
+					.hasFieldOrPropertyWithValue("format", Format.INT64));
 	}
 
 	@Test
@@ -158,8 +255,6 @@ class SchemaUtilsTest {
 
 		// when
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(test);
-
-		System.out.println(schemaMap);
 
 		// then
 		assertThat(schemaMap)
