@@ -27,6 +27,7 @@ import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
+import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.ArrayType;
@@ -40,13 +41,14 @@ import java.time.LocalDateTime;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class SchemaUtils {
 
 	private final Elements elements;
 	private final Types types;
 
-	private final LogUtils log;
+	private final LogUtils logUtils;
 	private final TypeMirrorUtils typeMirrorUtils;
 
 	private final JavaDocParser parser;
@@ -58,12 +60,18 @@ public class SchemaUtils {
 	private final PackageElement javaMathPackage;
 	private final PackageElement javaTimePackage;
 
+	private final List<TypeMirror> baseTypeMirrors;
+
 	public SchemaUtils(final Elements elements, final Types types, final LogUtils log) {
+		this(elements, types, log, Collections.emptyList());
+	}
+
+	public SchemaUtils(final Elements elements, final Types types, final LogUtils logUtils, final List<Class<?>> baseClasses) {
 		this.elements = elements;
 		this.types = types;
-		this.log = log;
+		this.logUtils = logUtils;
 
-		typeMirrorUtils = new TypeMirrorUtils(elements, types);
+		typeMirrorUtils = new TypeMirrorUtils(elements, types, logUtils);
 		parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.HTML).build();
 
 		object = elements.getTypeElement(Object.class.getCanonicalName()).asType();
@@ -72,6 +80,11 @@ public class SchemaUtils {
 		javaLangPackage = elements.getPackageElement("java.lang");
 		javaMathPackage = elements.getPackageElement("java.math");
 		javaTimePackage = elements.getPackageElement("java.time");
+
+		this.baseTypeMirrors = baseClasses.stream()
+			.map(clazz -> elements.getTypeElement(clazz.getCanonicalName()).asType())
+			.map(types::erasure)
+			.collect(Collectors.toList());
 	}
 
 	public Map<TypeMirror, Schema> parsePackages(final List<String> packages) {
@@ -121,13 +134,14 @@ public class SchemaUtils {
 	}
 
 	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
-		if (typeMirror == null || typeMirror.getKind().equals(TypeKind.VOID)) {
+		if (typeMirror == null || baseTypeMirrors.contains(typeMirror)
+			|| TypeKind.VOID.equals(typeMirror.getKind()) || isAssignableFrom(typeMirror, Void.class)) {
 			return Collections.emptyMap();
 		}
 
 		Map<TypeMirror, Schema> schemaMap = new LinkedHashMap<>();
 
-		log.logDebug("Parsing type: %s", typeMirror.toString());
+		logUtils.logDebug("Parsing type: %s", typeMirror.toString());
 
 		Schema schema = new Schema();
 
@@ -143,11 +157,6 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 				// schema.setDescription(propertyDoc.getDescription());
 			}
-			schemaMap.put(typeMirror, schema);
-		} else if (TypeKind.VOID.equals(typeMirror.getKind()) || isAssignableFrom(typeMirror, Void.class)) {
-			// TODO how to handle void type
-			schema.setDescription("Type is Void.");
-
 			schemaMap.put(typeMirror, schema);
 		} else if (TypeKind.TYPEVAR.equals(typeMirror.getKind())) {
 			// TODO check ... at the moment all typevars are ignored
@@ -322,7 +331,7 @@ public class SchemaUtils {
 							.filter(this::isValidAttribute)
 							.forEach(vElement -> {
 
-								log.logDebug(String.format("Parsing attribute: %s", vElement.toString()));
+								logUtils.logDebug(String.format("Parsing attribute: %s", vElement.toString()));
 
 								JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
@@ -361,6 +370,22 @@ public class SchemaUtils {
 
 			}
 			schemaMap.put(typeMirror, schema);
+		}
+
+		return schemaMap;
+	}
+
+	public Map<TypeMirror, Schema> createSchemasFromDocComment(final JavaDoc javaDoc) {
+		Map<TypeMirror, Schema> schemaMap = new LinkedHashMap<>();
+
+		if (javaDoc != null) {
+			List<ResponseTag> responseTags = javaDoc.getTags(ResponseTag.class);
+			return responseTags.stream()
+				.filter(tag -> tag.getResponseType() != null && !tag.getResponseType().isEmpty())
+				.map(responseTag -> typeMirrorUtils.createTypeMirrorFromString(responseTag.getResponseType()))
+				.map(this::mapTypeMirrorToSchema)
+				.flatMap(map -> map.entrySet().stream())
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		}
 
 		return schemaMap;

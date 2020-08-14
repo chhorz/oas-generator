@@ -72,16 +72,58 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("description", "");
 		assertThat(operation.getResponses().get("default").getContent())
+			.isNull();
+
+		Components components = documentContext.read("$.components", Components.class);
+
+		assertThat(components)
+			.isNotNull();
+		assertThat(components.getSchemas())
+			.isNotNull()
+			.isEmpty();
+	}
+
+	@Test
+	@GitHubIssue("#2")
+	void getGithubIssue002_2() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue002_2.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("summary", "")
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue002_2#test")
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("security", emptyList())
+			.hasFieldOrPropertyWithValue("parameterObjects", emptyList());
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("200")
+			.extractingByKey("200")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "Lorem ipsum");
+		assertThat(operation.getResponses().get("200").getContent())
 			.isNotNull()
 			.hasSize(1)
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
 				.isNotNull());
-//				.extracting(MediaType::getSchema)
-//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
 
-		validateSchemaForResponseEntity(documentContext);
+		validateSchemaForTestResource(documentContext);
 	}
 
 	@Test

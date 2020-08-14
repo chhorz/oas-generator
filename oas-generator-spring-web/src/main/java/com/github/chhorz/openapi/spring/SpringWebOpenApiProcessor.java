@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -85,10 +86,10 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         parserProperties = propertyLoader.getParserProperties();
 
 		logUtils = new LogUtils(messager, parserProperties);
-        schemaUtils = new SchemaUtils(elements, types, logUtils);
-        typeMirrorUtils = new TypeMirrorUtils(elements, types);
-        responseUtils = new ResponseUtils(elements, types, logUtils);
-        aliasUtils = new AliasUtils();
+		schemaUtils = new SchemaUtils(elements, types, logUtils, singletonList(ResponseEntity.class));
+		typeMirrorUtils = new TypeMirrorUtils(elements, types, logUtils);
+		responseUtils = new ResponseUtils(elements, types, logUtils);
+		aliasUtils = new AliasUtils();
 		parameterUtils = new ParameterUtils(schemaUtils, aliasUtils);
 
         javaDocParser = createJavadocParser();
@@ -335,6 +336,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
                     Map<TypeMirror, Schema> combinedMap = new HashMap<>(schemaMap);
                     combinedMap.putAll(exceptionSchemaMap);
+					combinedMap.putAll(schemaUtils.createSchemasFromDocComment(javaDoc));
                     Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces(), returnTag, combinedMap);
 
                     if (exceptionHanderReturntype != null && !responses.isEmpty()) {
@@ -358,7 +360,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                         }
                     }
 
-                    openApi.getComponents().putAllSchemas(schemaMap.entrySet()
+                    openApi.getComponents().putAllSchemas(combinedMap.entrySet()
                             .stream()
 							.filter(entry -> !schemaUtils.isAssignableFrom(entry.getKey(), Void.class))
                             .filter(entry -> !Schema.Type.ARRAY.equals(entry.getValue().getType()))

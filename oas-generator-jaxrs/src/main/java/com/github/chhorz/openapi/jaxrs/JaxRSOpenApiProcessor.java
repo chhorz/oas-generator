@@ -45,6 +45,7 @@ import javax.ws.rs.*;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -73,7 +74,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		parserProperties = propertyLoader.getParserProperties();
 
 		logUtils = new LogUtils(messager, parserProperties);
-		schemaUtils = new SchemaUtils(elements, types, logUtils);
+		schemaUtils = new SchemaUtils(elements, types, logUtils, singletonList(javax.xml.ws.Response.class));
 		responseUtils = new ResponseUtils(elements, types, logUtils);
 
 		javaDocParser = createJavadocParser();
@@ -228,6 +229,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 		TypeMirror returnType = executableElement.getReturnType();
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
+		schemaMap.putAll(schemaUtils.createSchemasFromDocComment(javaDoc));
 		Schema schema = schemaMap.get(returnType);
 
 		Produces produces = executableElement.getAnnotation(Produces.class);

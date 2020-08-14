@@ -16,23 +16,24 @@
  */
 package com.github.chhorz.openapi.common.util;
 
-import java.util.List;
-import java.util.Objects;
-
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.util.List;
 
 public class TypeMirrorUtils {
 
-	private Elements elements;
-	private Types types;
+	private final Elements elements;
+	private final Types types;
 
-	public TypeMirrorUtils(final Elements elements, final Types types) {
+	private final LogUtils logUtils;
+
+	public TypeMirrorUtils(final Elements elements, final Types types, final LogUtils logUtils) {
 		this.elements = elements;
 		this.types = types;
+		this.logUtils = logUtils;
 	}
 
 	public TypeMirror[] removeEnclosingType(final TypeMirror originalReturnType, final Class<?> removableClass) {
@@ -55,16 +56,25 @@ public class TypeMirrorUtils {
 		return elements.getTypeElement(clazz.getCanonicalName()).asType();
 	}
 
-	public TypeMirror createTypeMirrorFromString(final String typeString){
+	public TypeMirror createTypeMirrorFromString(final String typeString) {
 		TypeMirror typeMirror = null;
 
-		if(typeString.contains("<")){
-
+		if (typeString.contains("<")) {
+			// TODO handle types of List<String>
 		} else if (typeString.endsWith("[]")) {
-			TypeMirror baseType = elements.getTypeElement(typeString.substring(0, typeString.length()-2)).asType();
-			typeMirror = types.getArrayType(baseType);
+			TypeElement typeElement = elements.getTypeElement(typeString.substring(0, typeString.length() - 2));
+			if (typeElement == null) {
+				logUtils.logError("No class type found for %s", typeString);
+			} else {
+				typeMirror = types.getArrayType(typeElement.asType());
+			}
 		} else {
-			typeMirror = elements.getTypeElement(typeString).asType();
+			TypeElement typeElement = elements.getTypeElement(typeString);
+			if (typeElement == null) {
+				logUtils.logError("No class type found for %s", typeString);
+			} else {
+				typeMirror = typeElement.asType();
+			}
 		}
 
 		return typeMirror;

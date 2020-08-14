@@ -16,25 +16,25 @@
  */
 package com.github.chhorz.openapi.common.test.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
+import com.github.chhorz.openapi.common.test.util.resources.TestClass;
+import com.github.chhorz.openapi.common.util.LogUtils;
+import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
-import com.github.chhorz.openapi.common.test.util.resources.TestClass;
-import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnabledForJreRange(max = JRE.JAVA_8)
 public class TypeMirrorUtilsTest {
@@ -49,10 +49,13 @@ public class TypeMirrorUtilsTest {
 
 	@BeforeEach
 	void setUpEach() {
+		ParserProperties parserProperties = new ParserProperties();
+		parserProperties.setLogLevel("DEBUG");
+
 		elements = extension.getElements();
 		types = extension.getTypes();
 
-		typeMirrorUtils = new TypeMirrorUtils(elements, types);
+		typeMirrorUtils = new TypeMirrorUtils(elements, types, new LogUtils(null, parserProperties));
 	}
 
 	@Test

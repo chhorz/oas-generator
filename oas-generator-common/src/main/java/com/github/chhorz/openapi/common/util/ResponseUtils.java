@@ -37,9 +37,9 @@ public class ResponseUtils {
 	private final SchemaUtils schemaUtils;
 	private final TypeMirrorUtils typeMirrorUtils;
 
-	public ResponseUtils(final Elements elements, Types types, LogUtils log) {
-		this.schemaUtils = new SchemaUtils(elements, types, log);
-		this.typeMirrorUtils = new TypeMirrorUtils(elements, types);
+	public ResponseUtils(final Elements elements, Types types, LogUtils logUtils) {
+		this.schemaUtils = new SchemaUtils(elements, types, logUtils);
+		this.typeMirrorUtils = new TypeMirrorUtils(elements, types, logUtils);
 	}
 
 	public Response fromTypeMirror(final TypeMirror typeMirror, final String[] produces, String description) {
