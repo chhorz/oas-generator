@@ -20,6 +20,7 @@ import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.openapi.common.domain.Parameter;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
+import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,10 +37,12 @@ import java.util.regex.Pattern;
 public class ParameterUtils {
 	
 	private final SchemaUtils schemaUtils;
+	private final TypeMirrorUtils typeMirrorUtils;
 	private final AliasUtils aliasUtils;
 
-	public ParameterUtils(SchemaUtils schemaUtils, AliasUtils aliasUtils) {
+	public ParameterUtils(final SchemaUtils schemaUtils, final TypeMirrorUtils typeMirrorUtils, final AliasUtils aliasUtils) {
 		this.schemaUtils = schemaUtils;
+		this.typeMirrorUtils = typeMirrorUtils;
 		this.aliasUtils = aliasUtils;
 	}
 
@@ -61,7 +64,7 @@ public class ParameterUtils {
 		parameter.setIn(Parameter.In.PATH);
 		parameter.setName(name);
 		parameter.setRequired(pathVariable.required());
-		if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
+		if (typeMirrorUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
 			parameter.setRequired(false);
 		}
 
@@ -92,7 +95,7 @@ public class ParameterUtils {
 		parameter.setIn(Parameter.In.QUERY);
 		parameter.setName(name);
 		parameter.setRequired(requestParam.required());
-		if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
+		if (typeMirrorUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
 			parameter.setRequired(false);
 		}
 
@@ -125,7 +128,7 @@ public class ParameterUtils {
 		parameter.setIn(Parameter.In.HEADER);
 		parameter.setName(name);
 		parameter.setRequired(requestHeader.required());
-		if (schemaUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
+		if (typeMirrorUtils.isAssignableFrom(variableElement.asType(), Optional.class)) {
 			parameter.setRequired(false);
 		}
 

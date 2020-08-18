@@ -86,11 +86,11 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
         parserProperties = propertyLoader.getParserProperties();
 
 		logUtils = new LogUtils(messager, parserProperties);
-		schemaUtils = new SchemaUtils(elements, types, logUtils, singletonList(ResponseEntity.class));
+		schemaUtils = new SchemaUtils(elements, types, parserProperties, logUtils, singletonList(ResponseEntity.class));
 		typeMirrorUtils = new TypeMirrorUtils(elements, types, logUtils);
-		responseUtils = new ResponseUtils(elements, types, logUtils);
+		responseUtils = new ResponseUtils(elements, types, parserProperties, logUtils);
 		aliasUtils = new AliasUtils();
-		parameterUtils = new ParameterUtils(schemaUtils, aliasUtils);
+		parameterUtils = new ParameterUtils(schemaUtils, typeMirrorUtils, aliasUtils);
 
         javaDocParser = createJavadocParser();
 
@@ -283,7 +283,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     if (isClassAvailable("org.springframework.data.domain.Pageable")) {
 						executableElement.getParameters()
 							.stream()
-							.filter(variableElement -> schemaUtils.isAssignableFrom(variableElement.asType(), Pageable.class))
+							.filter(variableElement -> typeMirrorUtils.isAssignableFrom(variableElement.asType(), Pageable.class))
 							.findAny()
 							.ifPresent(variableElement -> {
 								Schema primitiveIntSchema = new Schema();
@@ -362,7 +362,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
                     openApi.getComponents().putAllSchemas(combinedMap.entrySet()
                             .stream()
-							.filter(entry -> !schemaUtils.isAssignableFrom(entry.getKey(), Void.class))
+							.filter(entry -> !typeMirrorUtils.isAssignableFrom(entry.getKey(), Void.class))
                             .filter(entry -> !Schema.Type.ARRAY.equals(entry.getValue().getType()))
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 

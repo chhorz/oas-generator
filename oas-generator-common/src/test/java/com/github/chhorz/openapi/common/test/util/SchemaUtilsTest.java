@@ -23,10 +23,7 @@ import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
-import com.github.chhorz.openapi.common.test.util.resources.Other;
-import com.github.chhorz.openapi.common.test.util.resources.TestClass;
-import com.github.chhorz.openapi.common.test.util.resources.TestEnum;
-import com.github.chhorz.openapi.common.test.util.resources.TestPrimitiveTypes;
+import com.github.chhorz.openapi.common.test.util.resources.*;
 import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,7 +63,7 @@ class SchemaUtilsTest {
 		elements = extension.getElements();
 		types = extension.getTypes();
 
-		schemaUtils = new SchemaUtils(elements, types, new LogUtils(null, parserProperties));
+		schemaUtils = new SchemaUtils(elements, types, parserProperties, new LogUtils(null, parserProperties));
 	}
 
 	@Test
@@ -102,7 +99,7 @@ class SchemaUtilsTest {
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
-		assertThat(schemaMap).hasSize(5);
+		assertThat(schemaMap).hasSize(6);
 	}
 
 	@Test
@@ -301,6 +298,32 @@ class SchemaUtilsTest {
 				.contains(tuple(Type.INTEGER, Format.INT32, false),
 						tuple(Type.STRING, Format.DATE, false),
 						tuple(Type.STRING, Format.DATE_TIME, true));
+	}
+
+	@Test
+	void interfaceTest() {
+		// given
+		TypeMirror interfaceTest = elements.getTypeElement(InterfaceTest.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(interfaceTest);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKeys(interfaceTest);
+
+		assertThat(schemaMap.get(interfaceTest))
+			.extracting("type", "format", "deprecated")
+			.containsExactly(Type.OBJECT, null, false);
+
+		assertThat(schemaMap.get(interfaceTest).getProperties())
+			.hasSize(1)
+			.containsKeys("value");
+
+		assertThat(schemaMap.get(interfaceTest).getProperties().values())
+			.extracting("type", "format")
+			.contains(tuple(Type.STRING, null));
 	}
 
 	@Test

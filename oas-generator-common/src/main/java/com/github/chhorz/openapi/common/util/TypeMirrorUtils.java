@@ -16,6 +16,8 @@
  */
 package com.github.chhorz.openapi.common.util;
 
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
@@ -34,6 +36,26 @@ public class TypeMirrorUtils {
 		this.elements = elements;
 		this.types = types;
 		this.logUtils = logUtils;
+	}
+
+	public boolean notTypeOf(final TypeMirror type1, final TypeMirror type2) {
+		return !types.isSameType(type1, type2) && !type1.toString().equalsIgnoreCase(type2.toString());
+	}
+
+	public boolean isTypeOf(final TypeMirror typeMirror, final Class<?> clazz) {
+		return types.isSameType(typeMirror, elements.getTypeElement(clazz.getCanonicalName()).asType());
+	}
+
+	public boolean isAssignableFrom(final TypeMirror typeMirror, final Class<?> clazz) {
+		return types.isAssignable(types.erasure(typeMirror), elements.getTypeElement(clazz.getCanonicalName()).asType());
+	}
+
+	public boolean isTypeInPackage(final TypeMirror typeMirror, final PackageElement packageElement) {
+		return types.asElement(typeMirror).getEnclosingElement().toString().equals(packageElement.toString());
+	}
+
+	public boolean isInterface(final TypeMirror typeMirror){
+		return ElementKind.INTERFACE.equals(types.asElement(typeMirror).getKind());
 	}
 
 	public TypeMirror[] removeEnclosingType(final TypeMirror originalReturnType, final Class<?> removableClass) {

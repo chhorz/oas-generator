@@ -2651,6 +2651,7 @@ Only data that could not be retrieved from the source code and is required by th
 parser:
   enabled: true
   logLevel: DEBUG # DEBUG, INFO, ERROR
+  includeGetters: true
   outputDir: ./target/openapi <i class="conum" data-value="1"></i><b>(1)</b>
   outputFile: openapi <i class="conum" data-value="1"></i><b>(1)</b>
   outputFormat: json,yaml
@@ -2725,6 +2726,20 @@ In this map contributors can define their own properties for their post processo
 </div>
 <div class="paragraph">
 <p><em>Default: <code>INFO</code></em></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>includeGetters</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Flag to include attributes according to their getter methods.</p>
+</div>
+<div class="paragraph">
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</div>
+<div class="paragraph">
+<p><em>Default: <code>true</code>_</em></p>
 </div></div></td>
 </tr>
 <tr>
@@ -3277,7 +3292,7 @@ To configure the repository for your project to use the latest snapshot versions
 <div id="footer">
 <div id="footer-text">
 Version 0.2.0-SNAPSHOT<br>
-Last updated 2020-08-11 10:29:05 +0200
+Last updated 2020-08-17 09:15:59 +0200
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/zenburn.min.css">

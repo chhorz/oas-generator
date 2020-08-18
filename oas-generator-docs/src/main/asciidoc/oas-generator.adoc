@@ -388,6 +388,7 @@ Parser properties shown below customize the behavior of the *OAS Generator*:
 parser:
   enabled: true
   logLevel: DEBUG # DEBUG, INFO, ERROR
+  includeGetters: true
   outputDir: ./target/openapi # <1>
   outputFile: openapi # <1>
   outputFormat: json,yaml
@@ -427,6 +428,13 @@ _Default: ``true``_
 Possible values: `DEBUG`, `INFO`, `ERROR`
 
 _Default: ``INFO``_
+
+| `includeGetters`
+| Flag to include attributes according to their getter methods.
+
+Possible values: `true`, `false`
+
+_Default: ``true``__
 
 | `outputDir`
 | File path of the generated output files.

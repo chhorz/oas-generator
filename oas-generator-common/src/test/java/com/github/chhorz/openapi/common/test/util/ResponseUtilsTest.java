@@ -65,7 +65,7 @@ class ResponseUtilsTest {
 		this.elements = extension.getElements();
 		this.types = extension.getTypes();
 
-		responseUtils = new ResponseUtils(elements, types, logUtils);
+		responseUtils = new ResponseUtils(elements, types, parserProperties, logUtils);
 	}
 
 	@Test

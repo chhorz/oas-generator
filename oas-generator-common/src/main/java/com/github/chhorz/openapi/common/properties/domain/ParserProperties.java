@@ -28,7 +28,10 @@ import java.util.stream.Stream;
 public class ParserProperties {
 
 	private boolean enabled;
+
 	private String logLevel;
+
+	private boolean includeGetters;
 
 	private String outputDir;
 	private String outputFile;
@@ -43,6 +46,7 @@ public class ParserProperties {
 	public ParserProperties() {
 		enabled = GeneratorPropertiesDefaults.PARSER_ENABLED;
 		logLevel = GeneratorPropertiesDefaults.PARSER_LOG_LEVEL;
+		includeGetters = GeneratorPropertiesDefaults.INCLUDE_GETTERS;
 		outputDir = GeneratorPropertiesDefaults.PARSER_OUTPUT_DIR;
 		outputFile = GeneratorPropertiesDefaults.PARSER_OUTPUT_FILE;
 		outputFormat = GeneratorPropertiesDefaults.PARSER_OUTPUT_FORMAT;
@@ -66,6 +70,14 @@ public class ParserProperties {
 
 	public void setLogLevel(final String logLevel) {
 		this.logLevel = logLevel;
+	}
+
+	public boolean getIncludeGetters() {
+		return includeGetters;
+	}
+
+	public void setIncludeGetters(boolean includeGetters) {
+		this.includeGetters = includeGetters;
 	}
 
 	public String getOutputDir() {

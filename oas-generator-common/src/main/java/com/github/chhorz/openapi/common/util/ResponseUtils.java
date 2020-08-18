@@ -21,6 +21,7 @@ import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
+import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -37,8 +38,8 @@ public class ResponseUtils {
 	private final SchemaUtils schemaUtils;
 	private final TypeMirrorUtils typeMirrorUtils;
 
-	public ResponseUtils(final Elements elements, Types types, LogUtils logUtils) {
-		this.schemaUtils = new SchemaUtils(elements, types, logUtils);
+	public ResponseUtils(final Elements elements, final Types types, final ParserProperties parserProperties, final LogUtils logUtils) {
+		this.schemaUtils = new SchemaUtils(elements, types, parserProperties, logUtils);
 		this.typeMirrorUtils = new TypeMirrorUtils(elements, types, logUtils);
 	}
 
@@ -46,7 +47,7 @@ public class ResponseUtils {
 		Response response = new Response();
 		response.setDescription(description != null ? description : "");
 
-		if (typeMirror != null && !schemaUtils.isAssignableFrom(typeMirror, Void.class)) {
+		if (typeMirror != null && !typeMirrorUtils.isAssignableFrom(typeMirror, Void.class)) {
 			MediaType mediaType = schemaUtils.createMediaType(typeMirror);
 
 			if (produces == null || produces.length == 0) {

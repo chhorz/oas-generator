@@ -62,6 +62,7 @@ public final class GeneratorPropertiesDefaults {
 
 	public static final boolean PARSER_ENABLED = Boolean.TRUE;
 	public static final String PARSER_LOG_LEVEL = LogUtils.INFO;
+	public static final boolean INCLUDE_GETTERS = Boolean.TRUE;
 	public static final String PARSER_OUTPUT_DIR = "./target/openapi";
 	public static final String PARSER_OUTPUT_FILE = "openapi";
 	public static final String PARSER_OUTPUT_FORMAT = "json,yaml";
