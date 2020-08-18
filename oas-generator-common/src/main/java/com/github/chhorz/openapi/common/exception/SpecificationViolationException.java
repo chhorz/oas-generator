@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.common;
+package com.github.chhorz.openapi.common.exception;
 
 /**
  * This exception will be thrown if the openapi specification will be violated at some point. There may be some reasons

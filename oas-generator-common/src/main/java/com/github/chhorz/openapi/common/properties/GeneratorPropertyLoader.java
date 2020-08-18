@@ -17,10 +17,10 @@
 package com.github.chhorz.openapi.common.properties;
 
 import com.github.chhorz.openapi.common.OpenAPIConstants;
-import com.github.chhorz.openapi.common.SpecificationViolationException;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.SecurityScheme.Type;
 import com.github.chhorz.openapi.common.domain.SecuritySchemeApiKey.In;
+import com.github.chhorz.openapi.common.exception.SpecificationViolationException;
 import com.github.chhorz.openapi.common.properties.domain.*;
 import com.github.chhorz.openapi.common.util.LogUtils;
 import org.yaml.snakeyaml.Yaml;

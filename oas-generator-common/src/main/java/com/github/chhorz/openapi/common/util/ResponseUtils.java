@@ -36,18 +36,18 @@ public class ResponseUtils {
 	private static final Predicate<String> NOT_NULL_OR_EMPTY = s -> s != null && !s.isEmpty();
 
 	private final SchemaUtils schemaUtils;
-	private final TypeMirrorUtils typeMirrorUtils;
+	private final ProcessingUtils processingUtils;
 
 	public ResponseUtils(final Elements elements, final Types types, final ParserProperties parserProperties, final LogUtils logUtils) {
 		this.schemaUtils = new SchemaUtils(elements, types, parserProperties, logUtils);
-		this.typeMirrorUtils = new TypeMirrorUtils(elements, types, logUtils);
+		this.processingUtils = new ProcessingUtils(elements, types, logUtils);
 	}
 
 	public Response fromTypeMirror(final TypeMirror typeMirror, final String[] produces, String description) {
 		Response response = new Response();
 		response.setDescription(description != null ? description : "");
 
-		if (typeMirror != null && !typeMirrorUtils.isAssignableFrom(typeMirror, Void.class)) {
+		if (typeMirror != null && !processingUtils.isAssignableTo(typeMirror, Void.class)) {
 			MediaType mediaType = schemaUtils.createMediaType(typeMirror);
 
 			if (produces == null || produces.length == 0) {
@@ -96,7 +96,7 @@ public class ResponseUtils {
 						final TypeMirror responseType;
 						if (responseTag.getResponseType().contains(".")) {
 							// assume we have a FQN of a java type
-							responseType = typeMirrorUtils.createTypeMirrorFromString(responseTag.getResponseType());
+							responseType = processingUtils.createTypeMirrorFromString(responseTag.getResponseType());
 						} else {
 							if (responseTag.getResponseType().contains("[]")) {
 								String simpleResponseType = responseTag.getResponseType().replace("[]", "");

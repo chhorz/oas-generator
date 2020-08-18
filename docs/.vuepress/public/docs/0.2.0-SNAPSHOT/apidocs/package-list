@@ -2,6 +2,7 @@ com.github.chhorz.openapi.common
 com.github.chhorz.openapi.common.annotation
 com.github.chhorz.openapi.common.domain
 com.github.chhorz.openapi.common.domain.meta
+com.github.chhorz.openapi.common.exception
 com.github.chhorz.openapi.common.javadoc
 com.github.chhorz.openapi.common.properties
 com.github.chhorz.openapi.common.properties.domain

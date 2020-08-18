@@ -16,7 +16,8 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
-import com.github.chhorz.openapi.common.SpecificationViolationException;
+import com.github.chhorz.openapi.common.exception.SpecificationViolationException;
+import com.github.chhorz.openapi.common.util.ProcessingUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 
 import javax.lang.model.type.TypeMirror;
@@ -114,17 +115,7 @@ public class Components {
 	}
 
 	private String getKey(final TypeMirror typeMirror) {
-		String typeString = typeMirror.toString();
-		// type mirrors with annotation types like: (@javax.validation.Valid :: com.github.chhorz.openapi.spring.test.github.resources.Resource)
-		if (typeString.contains("::")) {
-			typeString = typeString.substring(typeString.indexOf("::") + 2, typeString.indexOf(')'));
-		}
-		// remove generic types
-		while (typeString.contains("<")) {
-			typeString = typeString.substring(typeString.indexOf('<') + 1, typeString.lastIndexOf('>'));
-		}
-
-		final String key = typeString.substring(typeString.lastIndexOf('.') + 1).trim();
+		final String key = ProcessingUtils.getShortName(typeMirror);
 
 		if (!isValidKey(key)) {
 			throw new SpecificationViolationException("The current key '" + key + "' is not valid within component maps.");

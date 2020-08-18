@@ -18,6 +18,10 @@ package com.github.chhorz.openapi.common.domain;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
+import java.util.Objects;
+
+import static java.lang.String.format;
+
 /**
  * https://spec.openapis.org/oas/v3.0.3#reference-object
  *
@@ -25,6 +29,9 @@ import com.github.chhorz.openapi.common.domain.meta.Required;
  *
  */
 public class Reference {
+
+	private static final String SCHEMA_REFERENCE_FORMAT = "#/components/schemas/%s";
+	private static final String REQUEST_BODY_REFERENCE_FORMAT = "#/components/requestBodies/%s";
 
 	@Required
 	private String $ref;
@@ -34,6 +41,28 @@ public class Reference {
 
 	public Reference(final String $ref) {
 		this.$ref = $ref;
+	}
+
+	/**
+	 * Creates a new schema reference.
+	 *
+	 * @param referenceString the schema to create a reference for
+	 * @return the OpenAPI {@link Reference}
+	 */
+	public static Reference forSchema(final String referenceString) {
+		Objects.requireNonNull(referenceString, "Reference string must not be null.");
+		return new Reference(format(SCHEMA_REFERENCE_FORMAT, referenceString));
+	}
+
+	/**
+	 * Creates a new reference for a request body.
+	 *
+	 * @param referenceString the response body to create a reference for
+	 * @return the OpenAPI {@link Reference}
+	 */
+	public static Reference forRequestBody(final String referenceString) {
+		Objects.requireNonNull(referenceString, "Reference string must not be null.");
+		return new Reference(format(REQUEST_BODY_REFERENCE_FORMAT, referenceString));
 	}
 
 	public void set$ref(String $ref) {

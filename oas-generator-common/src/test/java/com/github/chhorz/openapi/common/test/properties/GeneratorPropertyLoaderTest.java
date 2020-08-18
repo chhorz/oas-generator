@@ -16,8 +16,8 @@
  */
 package com.github.chhorz.openapi.common.test.properties;
 
-import com.github.chhorz.openapi.common.SpecificationViolationException;
 import com.github.chhorz.openapi.common.domain.*;
+import com.github.chhorz.openapi.common.exception.SpecificationViolationException;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;

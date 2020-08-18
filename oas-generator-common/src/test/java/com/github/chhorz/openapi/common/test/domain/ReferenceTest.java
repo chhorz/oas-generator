@@ -14,50 +14,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.common.test.util;
+package com.github.chhorz.openapi.common.test.domain;
 
 import com.github.chhorz.openapi.common.domain.Reference;
-import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
-import com.github.chhorz.openapi.common.test.util.resources.ClassC;
-import com.github.chhorz.openapi.common.util.ReferenceUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledForJreRange;
-import org.junit.jupiter.api.condition.JRE;
-import org.junit.jupiter.api.extension.RegisterExtension;
-
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@EnabledForJreRange(max = JRE.JAVA_8)
-public class ReferenceUtilsTest {
-
-	@RegisterExtension
-	ProcessingUtilsExtension extension = new ProcessingUtilsExtension();
-
-	private Elements elements;
-
-	@BeforeEach
-	void setUpEach() {
-		elements = extension.getElements();
-	}
+public class ReferenceTest {
 
 	@Test
 	void nullSchema() {
-		assertThatThrownBy(() -> ReferenceUtils.createSchemaReference(null))
+		assertThatThrownBy(() -> Reference.forSchema(null))
 				.isInstanceOf(NullPointerException.class);
 	}
 
 	@Test
 	void validSchema() {
 		// given
-		TypeMirror doubleType = elements.getTypeElement(Double.class.getCanonicalName()).asType();
+		String doubleType = "Double";
 
 		// when
-		Reference reference = ReferenceUtils.createSchemaReference(doubleType);
+		Reference reference = Reference.forSchema(doubleType);
 
 		// then
 		assertThat(reference)
@@ -66,17 +45,17 @@ public class ReferenceUtilsTest {
 
 	@Test
 	void nullRequestBody() {
-		assertThatThrownBy(() -> ReferenceUtils.createRequestBodyReference(null))
+		assertThatThrownBy(() -> Reference.forRequestBody(null))
 				.isInstanceOf(NullPointerException.class);
 	}
 
 	@Test
 	void validRequestBody() {
 		// given
-		TypeMirror classCType = elements.getTypeElement(ClassC.class.getCanonicalName()).asType();
+		String classCType = "ClassC";
 
 		// when
-		Reference reference = ReferenceUtils.createRequestBodyReference(classCType);
+		Reference reference = Reference.forRequestBody(classCType);
 
 		// then
 		assertThat(reference)

@@ -20,7 +20,7 @@ import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
 import com.github.chhorz.openapi.common.test.util.resources.ClassC;
 import com.github.chhorz.openapi.common.util.LogUtils;
-import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
+import com.github.chhorz.openapi.common.util.ProcessingUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
@@ -37,7 +37,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnabledForJreRange(max = JRE.JAVA_8)
-public class TypeMirrorUtilsTest {
+public class ProcessingUtilsTest {
 
 	@RegisterExtension
 	ProcessingUtilsExtension extension = new ProcessingUtilsExtension();
@@ -45,7 +45,7 @@ public class TypeMirrorUtilsTest {
 	private static Elements elements;
 	private static Types types;
 
-	private TypeMirrorUtils typeMirrorUtils;
+	private ProcessingUtils processingUtils;
 
 	@BeforeEach
 	void setUpEach() {
@@ -55,7 +55,7 @@ public class TypeMirrorUtilsTest {
 		elements = extension.getElements();
 		types = extension.getTypes();
 
-		typeMirrorUtils = new TypeMirrorUtils(elements, types, new LogUtils(null, parserProperties));
+		processingUtils = new ProcessingUtils(elements, types, new LogUtils(null, parserProperties));
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class TypeMirrorUtilsTest {
 		TypeMirror typedList = types.getDeclaredType(elements.getTypeElement(List.class.getCanonicalName()), doubleType);
 
 		// when
-		TypeMirror[] typeArray = typeMirrorUtils.removeEnclosingType(typedList, List.class);
+		TypeMirror[] typeArray = processingUtils.removeEnclosingType(typedList, List.class);
 
 		// then
 		assertThat(typeArray)
@@ -80,7 +80,7 @@ public class TypeMirrorUtilsTest {
 		TypeMirror typedList = types.getDeclaredType(elements.getTypeElement(Set.class.getCanonicalName()), testType);
 
 		// when
-		TypeMirror[] typeArray = typeMirrorUtils.removeEnclosingType(typedList, Set.class);
+		TypeMirror[] typeArray = processingUtils.removeEnclosingType(typedList, Set.class);
 
 		// then
 		assertThat(typeArray)
@@ -94,7 +94,7 @@ public class TypeMirrorUtilsTest {
 		String input = "java.lang.String[]";
 
 		// when
-		TypeMirror typeMirror = typeMirrorUtils.createTypeMirrorFromString(input);
+		TypeMirror typeMirror = processingUtils.createTypeMirrorFromString(input);
 
 		// then
 		assertThat(typeMirror)

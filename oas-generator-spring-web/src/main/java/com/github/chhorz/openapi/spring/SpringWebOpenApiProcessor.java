@@ -64,7 +64,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
     private LogUtils logUtils;
     private SchemaUtils schemaUtils;
-    private TypeMirrorUtils typeMirrorUtils;
+    private ProcessingUtils processingUtils;
     private ResponseUtils responseUtils;
     private AliasUtils aliasUtils;
     private ParameterUtils parameterUtils;
@@ -87,10 +87,10 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
 		logUtils = new LogUtils(messager, parserProperties);
 		schemaUtils = new SchemaUtils(elements, types, parserProperties, logUtils, singletonList(ResponseEntity.class));
-		typeMirrorUtils = new TypeMirrorUtils(elements, types, logUtils);
+		processingUtils = new ProcessingUtils(elements, types, logUtils);
 		responseUtils = new ResponseUtils(elements, types, parserProperties, logUtils);
 		aliasUtils = new AliasUtils();
-		parameterUtils = new ParameterUtils(schemaUtils, typeMirrorUtils, aliasUtils);
+		parameterUtils = new ParameterUtils(schemaUtils, processingUtils, aliasUtils);
 
         javaDocParser = createJavadocParser();
 
@@ -130,7 +130,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					.map(ExecutableElement.class::cast)
 					.peek(exElement -> logUtils.logInfo("Parsing exception handler: %s", exElement))
 					.map(ExecutableElement::getReturnType)
-					.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
+					.map(type -> processingUtils.removeEnclosingType(type, ResponseEntity.class)[0])
 					.map(schemaUtils::mapTypeMirrorToSchema)
 					.forEach(openApi.getComponents()::putAllSchemas);
 
@@ -138,7 +138,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					.filter(element -> element instanceof ExecutableElement)
 					.map(ExecutableElement.class::cast)
 					.map(ExecutableElement::getReturnType)
-					.map(type -> typeMirrorUtils.removeEnclosingType(type, ResponseEntity.class)[0])
+					.map(type -> processingUtils.removeEnclosingType(type, ResponseEntity.class)[0])
 					.findFirst()
 					.orElse(null);
 			}
@@ -277,13 +277,13 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 									openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
 									openApi.getComponents().putRequestBody(requestBody.asType(), r);
 
-									operation.setRequestBodyReference(ReferenceUtils.createRequestBodyReference(requestBody.asType()));
+									operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
 					});
 
                     if (isClassAvailable("org.springframework.data.domain.Pageable")) {
 						executableElement.getParameters()
 							.stream()
-							.filter(variableElement -> typeMirrorUtils.isAssignableFrom(variableElement.asType(), Pageable.class))
+							.filter(variableElement -> processingUtils.isAssignableTo(variableElement.asType(), Pageable.class))
 							.findAny()
 							.ifPresent(variableElement -> {
 								Schema primitiveIntSchema = new Schema();
@@ -330,7 +330,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     }
 
                     // use return type of method as default response
-                    TypeMirror returnType = typeMirrorUtils.removeEnclosingType(executableElement.getReturnType(), ResponseEntity.class)[0];
+                    TypeMirror returnType = processingUtils.removeEnclosingType(executableElement.getReturnType(), ResponseEntity.class)[0];
                     Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
                     Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.mapTypeMirrorToSchema(exceptionHanderReturntype);
 
@@ -362,7 +362,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
                     openApi.getComponents().putAllSchemas(combinedMap.entrySet()
                             .stream()
-							.filter(entry -> !typeMirrorUtils.isAssignableFrom(entry.getKey(), Void.class))
+							.filter(entry -> !processingUtils.isAssignableTo(entry.getKey(), Void.class))
                             .filter(entry -> !Schema.Type.ARRAY.equals(entry.getValue().getType()))
                             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
 

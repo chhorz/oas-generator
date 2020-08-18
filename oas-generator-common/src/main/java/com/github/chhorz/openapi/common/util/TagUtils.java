@@ -16,10 +16,10 @@
  */
 package com.github.chhorz.openapi.common.util;
 
-import com.github.chhorz.openapi.common.SpecificationViolationException;
 import com.github.chhorz.openapi.common.domain.Operation;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.Tag;
+import com.github.chhorz.openapi.common.exception.SpecificationViolationException;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 
 import java.util.ArrayList;
@@ -29,14 +29,25 @@ import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Utility class for OpenAPI {@link Tag}s.
+ *
+ * @author chhorz
+ */
 public class TagUtils {
 
-	private GeneratorPropertyLoader propertyLoader;
+	private final GeneratorPropertyLoader propertyLoader;
 
 	public TagUtils(final GeneratorPropertyLoader propertyLoader) {
 		this.propertyLoader = propertyLoader;
 	}
 
+	/**
+	 * Method to aggregate all tags from a given {@link PathItemObject}.
+	 *
+	 * @param pathItemObject the requested path item
+	 * @return a list of tags
+	 */
 	public List<String> getAllTags(final PathItemObject pathItemObject) {
 		List<String> result = new ArrayList<>();
 
@@ -62,6 +73,13 @@ public class TagUtils {
 		return Collections.emptyList();
 	}
 
+	/**
+	 * Create a tag with a given name. Additional information like description and external docs
+	 * are added from the properties.
+	 *
+	 * @param tagName the name of the new tag
+	 * @return the OpenAPI {@link Tag}
+	 */
 	public Tag createTag(final String tagName) {
 		if (tagName == null) {
 			throw new SpecificationViolationException("Missing property 'name' for 'Tag' object");
