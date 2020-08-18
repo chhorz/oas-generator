@@ -375,6 +375,21 @@ public class SchemaUtils {
 
 				// handle getters
 				if (typeMirrorUtils.isInterface(typeMirror) && parserProperties.getIncludeGetters()) {
+					types.directSupertypes(typeMirror).stream()
+						.filter(directSupertype -> typeMirrorUtils.notTypeOf(directSupertype, object))
+						.map(this::mapTypeMirrorToSchema)
+						.flatMap(typeMirrorSchemaMap -> typeMirrorSchemaMap.values().stream())
+						.map(Schema::getProperties)
+						.filter(Objects::nonNull)
+						.flatMap(propertyMap -> propertyMap.entrySet().stream())
+						.forEach(entry -> {
+							if (entry.getValue() instanceof Schema) {
+								schema.putProperty(entry.getKey(), (Schema) entry.getValue());
+							} else if (entry.getValue() instanceof Reference) {
+								schema.putProperty(entry.getKey(), (Reference) entry.getValue());
+							}
+						});
+
 					element.getEnclosedElements()
 						.stream()
 						.filter(ExecutableElement.class::isInstance)

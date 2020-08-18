@@ -99,7 +99,7 @@ class SchemaUtilsTest {
 		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
-		assertThat(schemaMap).hasSize(6);
+		assertThat(schemaMap).hasSize(8);
 	}
 
 	@Test
@@ -210,34 +210,34 @@ class SchemaUtilsTest {
 	@Test
 	void customObjectWithPrimitiveTypesTest() {
 		// given
-		TypeMirror primitiveTypes = elements.getTypeElement(TestPrimitiveTypes.class.getCanonicalName()).asType();
+		TypeMirror classDType = elements.getTypeElement(ClassD.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(primitiveTypes);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(classDType);
 
 		// then
 		assertThat(schemaMap)
 			.hasSize(1)
-			.containsKeys(primitiveTypes);
+			.containsKeys(classDType);
 
-		assertThat(schemaMap.get(primitiveTypes))
+		assertThat(schemaMap.get(classDType))
 			.extracting("type", "format", "deprecated")
 			.containsExactly(Type.OBJECT, null, false);
 
-		assertThat(schemaMap.get(primitiveTypes).getProperties())
+		assertThat(schemaMap.get(classDType).getProperties())
 			.hasSize(2)
 			.containsKeys("i", "l");
 
-		assertThat(schemaMap.get(primitiveTypes).getProperties().values())
+		assertThat(schemaMap.get(classDType).getProperties().values())
 			.extracting("type", "format")
 			.contains(tuple(Type.INTEGER, Format.INT32),
 				tuple(Type.ARRAY, null));
 
-		assertThat(schemaMap.get(primitiveTypes).getProperties().get("i"))
+		assertThat(schemaMap.get(classDType).getProperties().get("i"))
 			.isInstanceOfSatisfying(Schema.class,
 				schema -> assertThat(schema.getItems()).isNull());
 
-		assertThat(schemaMap.get(primitiveTypes).getProperties().get("l"))
+		assertThat(schemaMap.get(classDType).getProperties().get("l"))
 			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema.getItems())
 					.isInstanceOf(Schema.class)
 					.hasFieldOrPropertyWithValue("type", Type.INTEGER)
@@ -247,102 +247,130 @@ class SchemaUtilsTest {
 	@Test
 	void customObjectTest() {
 		// given
-		TypeMirror test = elements.getTypeElement(TestClass.class.getCanonicalName()).asType();
-		TypeMirror other = elements.getTypeElement(Other.class.getCanonicalName()).asType();
+		TypeMirror classBType = elements.getTypeElement(ClassB.class.getCanonicalName()).asType();
+		TypeMirror classCType = elements.getTypeElement(ClassC.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(test);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(classCType);
 
 		// then
 		assertThat(schemaMap)
 				.hasSize(2)
-				.containsKeys(test, other);
+				.containsKeys(classBType, classCType);
 
-		assertThat(schemaMap.get(test))
-				.extracting("type", "format", "deprecated")
-				.containsExactly(Type.OBJECT, null, false);
+		assertThat(schemaMap.get(classBType))
+			.extracting("type", "format", "deprecated")
+			.containsExactly(Type.OBJECT, null, true);
 
-		assertThat(schemaMap.get(other))
-				.extracting("type", "format", "deprecated")
-				.containsExactly(Type.OBJECT, null, true);
+		assertThat(schemaMap.get(classBType).getProperties())
+			.hasSize(3)
+			.containsKeys("int", "date", "time");
 
-		assertThat(schemaMap.get(test).getProperties())
+		assertThat(schemaMap.get(classBType).getProperties().values())
+			.extracting("type", "format", "deprecated")
+			.contains(tuple(Type.INTEGER, Format.INT32, false),
+				tuple(Type.STRING, Format.DATE, false),
+				tuple(Type.STRING, Format.DATE_TIME, true));
+
+		assertThat(schemaMap.get(classCType))
+			.extracting("type", "format", "deprecated")
+			.containsExactly(Type.OBJECT, null, false);
+
+		assertThat(schemaMap.get(classCType).getProperties())
 				.hasSize(7)
 				.containsKeys("l", "b", "f", "doubleArray", "list", "set", "baseProperty");
 
-		assertThat(schemaMap.get(test).getProperties().values())
+		assertThat(schemaMap.get(classCType).getProperties().values())
 				.extracting("type", "format")
 				.contains(tuple(Type.INTEGER, Format.INT64),
 						tuple(Type.BOOLEAN, null),
 						tuple(Type.NUMBER, Format.FLOAT),
 						tuple(Type.ARRAY, null));
 
-		assertThat(schemaMap.get(test).getProperties().get("doubleArray"))
+		assertThat(schemaMap.get(classCType).getProperties().get("doubleArray"))
 				.isInstanceOfSatisfying(Schema.class,
 						schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
 
-		assertThat(schemaMap.get(test).getProperties().get("list"))
+		assertThat(schemaMap.get(classCType).getProperties().get("list"))
 				.isInstanceOfSatisfying(Schema.class,
 						schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
 
-		assertThat(schemaMap.get(test).getProperties().get("set"))
+		assertThat(schemaMap.get(classCType).getProperties().get("set"))
 				.isInstanceOfSatisfying(Schema.class,
 						schema -> assertThat(schema.getItems()).isInstanceOf(Reference.class));
-
-		assertThat(schemaMap.get(other).getProperties())
-				.hasSize(3)
-				.containsKeys("int", "date", "time");
-
-		assertThat(schemaMap.get(other).getProperties().values())
-				.extracting("type", "format", "deprecated")
-				.contains(tuple(Type.INTEGER, Format.INT32, false),
-						tuple(Type.STRING, Format.DATE, false),
-						tuple(Type.STRING, Format.DATE_TIME, true));
 	}
 
 	@Test
 	void interfaceTest() {
 		// given
-		TypeMirror interfaceTest = elements.getTypeElement(InterfaceTest.class.getCanonicalName()).asType();
+		TypeMirror interfaceAType = elements.getTypeElement(InterfaceA.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(interfaceTest);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(interfaceAType);
 
 		// then
 		assertThat(schemaMap)
 			.hasSize(1)
-			.containsKeys(interfaceTest);
+			.containsKeys(interfaceAType);
 
-		assertThat(schemaMap.get(interfaceTest))
+		assertThat(schemaMap.get(interfaceAType))
 			.extracting("type", "format", "deprecated")
 			.containsExactly(Type.OBJECT, null, false);
 
-		assertThat(schemaMap.get(interfaceTest).getProperties())
+		assertThat(schemaMap.get(interfaceAType).getProperties())
 			.hasSize(1)
 			.containsKeys("value");
 
-		assertThat(schemaMap.get(interfaceTest).getProperties().values())
+		assertThat(schemaMap.get(interfaceAType).getProperties().values())
 			.extracting("type", "format")
 			.contains(tuple(Type.STRING, null));
 	}
 
 	@Test
-	void enumTest() {
+	void interfaceExtendsTest() {
 		// given
-		TypeMirror test = elements.getTypeElement(TestEnum.class.getCanonicalName()).asType();
+		TypeMirror interfaceCType = elements.getTypeElement(InterfaceC.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(test);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(interfaceCType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKeys(interfaceCType);
+
+		assertThat(schemaMap.get(interfaceCType))
+			.extracting("type", "format", "deprecated")
+			.containsExactly(Type.OBJECT, null, false);
+
+		assertThat(schemaMap.get(interfaceCType).getProperties())
+			.hasSize(3)
+			.containsKeys("value", "other", "test");
+
+		assertThat(schemaMap.get(interfaceCType).getProperties().values())
+			.extracting("type", "format")
+			.contains(tuple(Type.STRING, null),
+				tuple(Type.INTEGER, Format.INT32),
+				tuple(Type.ARRAY, null));
+	}
+
+	@Test
+	void enumTest() {
+		// given
+		TypeMirror enumAType = elements.getTypeElement(EnumA.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(enumAType);
 
 		// then
 		assertThat(schemaMap)
 				.hasSize(1)
-				.containsKey(test)
-				.extracting(map -> map.get(test))
+				.containsKey(enumAType)
+				.extracting(map -> map.get(enumAType))
 				.extracting("type", "format")
 				.contains(Type.STRING);
 
-		assertThat(schemaMap.get(test).getEnumValues())
+		assertThat(schemaMap.get(enumAType).getEnumValues())
 				.hasSize(3)
 				.contains("A", "B", "XYZ");
 	}

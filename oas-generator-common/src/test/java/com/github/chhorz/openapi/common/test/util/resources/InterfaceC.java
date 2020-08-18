@@ -16,8 +16,8 @@
  */
 package com.github.chhorz.openapi.common.test.util.resources;
 
-public interface InterfaceTest {
+public interface InterfaceC extends InterfaceA, InterfaceB {
 
-	String getValue();
+	Integer getOther();
 
 }

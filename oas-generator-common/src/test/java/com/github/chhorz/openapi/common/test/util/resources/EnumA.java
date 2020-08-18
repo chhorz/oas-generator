@@ -16,17 +16,9 @@
  */
 package com.github.chhorz.openapi.common.test.util.resources;
 
-public class TestPrimitiveTypes {
 
-	public int i;
-	private long[] l;
-
-	public long[] getL() {
-		return l;
-	}
-
-	public void setL(long[] l) {
-		this.l = l;
-	}
-
+public enum EnumA {
+	A,
+	B,
+	XYZ;
 }

@@ -16,22 +16,21 @@
  */
 package com.github.chhorz.openapi.common.test.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-
+import com.github.chhorz.openapi.common.domain.Reference;
+import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
+import com.github.chhorz.openapi.common.test.util.resources.ClassC;
+import com.github.chhorz.openapi.common.util.ReferenceUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.chhorz.openapi.common.domain.Reference;
-import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
-import com.github.chhorz.openapi.common.test.util.resources.TestClass;
-import com.github.chhorz.openapi.common.util.ReferenceUtils;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Elements;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @EnabledForJreRange(max = JRE.JAVA_8)
 public class ReferenceUtilsTest {
@@ -74,13 +73,13 @@ public class ReferenceUtilsTest {
 	@Test
 	void validRequestBody() {
 		// given
-		TypeMirror testClassMirror = elements.getTypeElement(TestClass.class.getCanonicalName()).asType();
+		TypeMirror classCType = elements.getTypeElement(ClassC.class.getCanonicalName()).asType();
 
 		// when
-		Reference reference = ReferenceUtils.createRequestBodyReference(testClassMirror);
+		Reference reference = ReferenceUtils.createRequestBodyReference(classCType);
 
 		// then
 		assertThat(reference)
-				.hasFieldOrPropertyWithValue("$ref", "#/components/requestBodies/TestClass");
+				.hasFieldOrPropertyWithValue("$ref", "#/components/requestBodies/ClassC");
 	}
 }

@@ -23,7 +23,7 @@ import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
-import com.github.chhorz.openapi.common.test.util.resources.BaseClass;
+import com.github.chhorz.openapi.common.test.util.resources.ClassA;
 import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.common.util.ResponseUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,12 +71,12 @@ class ResponseUtilsTest {
 	@Test
 	void testMapTypeMirrorAsReference(){
 		// given
-		TypeMirror typeMirror = types.getArrayType(elements.getTypeElement(BaseClass.class.getCanonicalName()).asType());
+		TypeMirror classAType = types.getArrayType(elements.getTypeElement(ClassA.class.getCanonicalName()).asType());
 		String[] produces = new String[]{"application/json"};
 		String description = "";
 
 		// when
-		Response response = responseUtils.fromTypeMirror(typeMirror, produces, description);
+		Response response = responseUtils.fromTypeMirror(classAType, produces, description);
 
 		// then
 		assertThat(response)
@@ -99,12 +99,12 @@ class ResponseUtilsTest {
 	@Test
 	void testMapTypeMirrorAsSchemaWithReference(){
 		// given
-		TypeMirror typeMirror = elements.getTypeElement(BaseClass.class.getCanonicalName()).asType();
+		TypeMirror classAType = elements.getTypeElement(ClassA.class.getCanonicalName()).asType();
 		String[] produces = null;
 		String description = "";
 
 		// when
-		Response response = responseUtils.fromTypeMirror(typeMirror, produces, description);
+		Response response = responseUtils.fromTypeMirror(classAType, produces, description);
 
 		// then
 		assertThat(response)
@@ -121,7 +121,7 @@ class ResponseUtilsTest {
 
 		Reference reference = (Reference) schema;
 
-		assertThat(reference).hasFieldOrPropertyWithValue("$ref", "#/components/schemas/BaseClass");
+		assertThat(reference).hasFieldOrPropertyWithValue("$ref", "#/components/schemas/ClassA");
 	}
 
 	@Test
@@ -129,10 +129,10 @@ class ResponseUtilsTest {
 		// given
 		ResponseTag r1 = new ResponseTag();
 		r1.putValue("statusCode", "200");
-		r1.putValue("responseType", BaseClass.class.getCanonicalName());
+		r1.putValue("responseType", ClassA.class.getCanonicalName());
 		ResponseTag r2 = new ResponseTag();
 		r2.putValue("statusCode", "404");
-		r2.putValue("responseType", BaseClass.class.getCanonicalName());
+		r2.putValue("responseType", ClassA.class.getCanonicalName());
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1, r2));
 		String[] produces = new String[]{"application/json"};
@@ -212,11 +212,11 @@ class ResponseUtilsTest {
 		// given
 		ResponseTag r1 = new ResponseTag();
 		r1.putValue("statusCode", "200");
-		r1.putValue("responseType", BaseClass.class.getCanonicalName());
+		r1.putValue("responseType", ClassA.class.getCanonicalName());
 		r1.putValue("description", "The happy case.");
 		ResponseTag r2 = new ResponseTag();
 		r2.putValue("statusCode", "404");
-		r2.putValue("responseType", "BaseClass");
+		r2.putValue("responseType", "ClassA");
 		r2.putValue("description", "The sad case.");
 
 		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1, r2));
@@ -224,7 +224,7 @@ class ResponseUtilsTest {
 		String description = "";
 
 		Map<TypeMirror, Schema> typeMap = new HashMap<>();
-		typeMap.put(elements.getTypeElement(BaseClass.class.getCanonicalName()).asType(), null);
+		typeMap.put(elements.getTypeElement(ClassA.class.getCanonicalName()).asType(), null);
 
 		// when
 		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, typeMap);
@@ -240,14 +240,14 @@ class ResponseUtilsTest {
 				.containsOnlyKeys("*/*");
 		assertThat(responses.get("200").getContent().get("*/*").getSchema())
 				.isNotNull()
-				.hasToString("Reference [$ref=#/components/schemas/BaseClass]");
+				.hasToString("Reference [$ref=#/components/schemas/ClassA]");
 		assertThat(responses.get("404"))
 				.hasFieldOrPropertyWithValue("description", "The sad case.");
 		assertThat(responses.get("404").getContent())
 				.containsOnlyKeys("*/*");
 		assertThat(responses.get("404").getContent().get("*/*").getSchema())
 				.isNotNull()
-				.hasToString("Reference [$ref=#/components/schemas/BaseClass]");
+				.hasToString("Reference [$ref=#/components/schemas/ClassA]");
 	}
 
 	@Test
@@ -256,9 +256,9 @@ class ResponseUtilsTest {
 		// given
 		ResponseTag r1 = new ResponseTag();
 		r1.putValue("statusCode", "200");
-		r1.putValue("responseType", String.format("java.util.List<%s>", BaseClass.class.getCanonicalName()));
+		r1.putValue("responseType", String.format("java.util.List<%s>", ClassA.class.getCanonicalName()));
 
-		JavaDoc javaDoc = new JavaDoc("", "", Arrays.asList(r1));
+		JavaDoc javaDoc = new JavaDoc("", "", singletonList(r1));
 		String[] produces = new String[]{"application/json"};
 		String description = "";
 
@@ -279,7 +279,7 @@ class ResponseUtilsTest {
 		// given
 		ResponseTag r1 = new ResponseTag();
 		r1.putValue("statusCode", "200");
-		r1.putValue("responseType", String.format("%s[]", BaseClass.class.getCanonicalName()));
+		r1.putValue("responseType", String.format("%s[]", ClassA.class.getCanonicalName()));
 
 		JavaDoc javaDoc = new JavaDoc("", "", singletonList(r1));
 		String[] produces = new String[]{"application/json"};

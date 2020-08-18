@@ -16,9 +16,23 @@
  */
 package com.github.chhorz.openapi.common.test.util.resources;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class BaseClass {
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-	public long baseProperty;
+@Deprecated
+public class ClassB {
+
+	@JsonProperty("int")
+	public int i;
+
+	public LocalDate date;
+	@Deprecated
+	public LocalDateTime time;
+
+	@JsonIgnore
+	public EnumA enumeration;
 
 }

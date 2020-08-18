@@ -18,7 +18,7 @@ package com.github.chhorz.openapi.common.test.util;
 
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.extension.ProcessingUtilsExtension;
-import com.github.chhorz.openapi.common.test.util.resources.TestClass;
+import com.github.chhorz.openapi.common.test.util.resources.ClassC;
 import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.common.util.TypeMirrorUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +76,7 @@ public class TypeMirrorUtilsTest {
 	@Test
 	void testSet() {
 		// given
-		TypeMirror testType = elements.getTypeElement(TestClass.class.getCanonicalName()).asType();
+		TypeMirror testType = elements.getTypeElement(ClassC.class.getCanonicalName()).asType();
 		TypeMirror typedList = types.getDeclaredType(elements.getTypeElement(Set.class.getCanonicalName()), testType);
 
 		// when

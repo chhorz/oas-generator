@@ -98,7 +98,7 @@ public class ProcessingUtilsExtension implements BeforeEachCallback {
 
 		String[] files = new String[]{
 			"src/test/java/com/github/chhorz/openapi/common/test/extension/Dummy.java",
-			"src/test/java/com/github/chhorz/openapi/common/test/util/resources/TestClass.java"
+			"src/test/java/com/github/chhorz/openapi/common/test/util/resources/ClassC.java"
 		};
 
 		JavaCompiler.CompilationTask compilationTask = systemJavaCompiler.getTask(stdout, fileManager, collector, null, null,
