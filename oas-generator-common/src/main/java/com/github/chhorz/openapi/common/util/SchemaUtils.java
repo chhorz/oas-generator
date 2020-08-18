@@ -251,12 +251,10 @@ public class SchemaUtils {
 
 			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
-				Schema typeSchema = new Schema();
 				if (typeAndFormat != null) {
-					typeSchema.setType(typeAndFormat.getKey());
-					typeSchema.setFormat(typeAndFormat.getValue());
+					schema.setType(typeAndFormat.getKey());
+					schema.setFormat(typeAndFormat.getValue());
 				}
-				schema.setItems(typeSchema);
 			} else {
 				schema.setItems(Reference.forSchema(ProcessingUtils.getShortName(type)));
 			}

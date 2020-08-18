@@ -255,30 +255,35 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                             .filter(variableElement -> variableElement.getAnnotation(RequestBody.class) != null)
                             .findFirst()
                             .ifPresent(requestBody -> {
-									com.github.chhorz.openapi.common.domain.RequestBody r = new com.github.chhorz.openapi.common.domain.RequestBody();
+								com.github.chhorz.openapi.common.domain.RequestBody r = new com.github.chhorz.openapi.common.domain.RequestBody();
 
-									javaDoc.getTags(ParamTag.class)
-											.stream()
-											.filter(tag -> requestBody.toString().equals(tag.getParamName()))
-											.findFirst()
-											.ifPresent(parameter -> r.setDescription(parameter.getParamDescription()));
+								javaDoc.getTags(ParamTag.class)
+									.stream()
+									.filter(tag -> requestBody.toString().equals(tag.getParamName()))
+									.findFirst()
+									.ifPresent(parameter -> r.setDescription(parameter.getParamDescription()));
 
-									r.setRequired(Boolean.TRUE);
+								if (processingUtils.isAssignableTo(requestBody.asType(), Optional.class)) {
+									r.setRequired(false);
+								} else {
+									RequestBody requestBodyAnnotation = requestBody.getAnnotation(RequestBody.class);
+									r.setRequired(requestBodyAnnotation.required());
+								}
 
-									MediaType mediaType = schemaUtils.createMediaType(requestBody.asType());
-									if (requestMapping.consumes().length == 0) {
-										r.putContent("*/*", mediaType);
-									} else {
-										for (String consumes : requestMapping.consumes()) {
-											r.putContent(consumes, mediaType);
-										}
+								MediaType mediaType = schemaUtils.createMediaType(requestBody.asType());
+								if (requestMapping.consumes().length == 0) {
+									r.putContent("*/*", mediaType);
+								} else {
+									for (String consumes : requestMapping.consumes()) {
+										r.putContent(consumes, mediaType);
 									}
+								}
 
-									openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
-									openApi.getComponents().putRequestBody(requestBody.asType(), r);
+								openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
+								openApi.getComponents().putRequestBody(requestBody.asType(), r);
 
-									operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
-					});
+								operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
+							});
 
                     if (isClassAvailable("org.springframework.data.domain.Pageable")) {
 						executableElement.getParameters()

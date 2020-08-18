@@ -296,9 +296,42 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasSize(1);
 
 		assertThat(parameters[0])
+			.isNotNull()
 			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
 			.hasFieldOrPropertyWithValue("name", "filter")
 			.hasFieldOrPropertyWithValue("required", false);
+
+		assertThat(parameters[0].getSchema())
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+			.hasAllNullFieldsOrPropertiesExcept("deprecated", "type");
+
+		Components components = documentContext.read("$.components", Components.class);
+
+		assertThat(components.getSchemas())
+			.containsOnlyKeys("Resource");
+
+		validateSchemaForTestResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#15")
+	void getGithubIssue015_2() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue015_2.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		validateRequestBodyForTestResource(documentContext, false);
 
 		Components components = documentContext.read("$.components", Components.class);
 
@@ -451,7 +484,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateSchemaForTestResource(documentContext);
 		validateSchemaForErrorResource(documentContext);
-		validateRequestBodyForTestResource(documentContext);
+		validateRequestBodyForTestResource(documentContext, true);
 	}
 
 	@Test
@@ -709,7 +742,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue026#test");
 
 		validateSchemaForTestResource(documentContext);
-		validateRequestBodyForTestResource(documentContext);
+		validateRequestBodyForTestResource(documentContext, true);
 	}
 
 	@Test

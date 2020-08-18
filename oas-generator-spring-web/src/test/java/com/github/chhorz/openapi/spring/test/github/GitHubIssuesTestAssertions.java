@@ -16,7 +16,6 @@
  */
 package com.github.chhorz.openapi.spring.test.github;
 
-import com.github.chhorz.openapi.common.OpenAPIConstants;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import com.jayway.jsonpath.DocumentContext;
@@ -24,7 +23,6 @@ import com.jayway.jsonpath.DocumentContext;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -319,16 +317,15 @@ class GitHubIssuesTestAssertions {
 	 * Validates the given test resource.
 	 *
 	 * @param documentContext the json document context
-	 *
 	 * @see Resource
 	 */
-	public static void validateRequestBodyForTestResource(final DocumentContext documentContext) {
+	public static void validateRequestBodyForTestResource(final DocumentContext documentContext, final boolean required) {
 		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
 
 		assertThat(requestBody)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("required", true)
-			.hasFieldOrPropertyWithValue("description","the request body");
+			.hasFieldOrPropertyWithValue("required", required)
+			.hasFieldOrPropertyWithValue("description", "the request body");
 
 		assertThat(requestBody.getContent())
 			.isNotNull()
