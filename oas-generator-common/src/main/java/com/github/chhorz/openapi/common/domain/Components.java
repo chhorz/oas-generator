@@ -16,12 +16,12 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.Map;
-import java.util.TreeMap;
+import com.github.chhorz.openapi.common.SpecificationViolationException;
+import com.github.chhorz.openapi.common.util.SchemaUtils;
 
 import javax.lang.model.type.TypeMirror;
-
-import com.github.chhorz.openapi.common.util.SchemaUtils;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * https://spec.openapis.org/oas/v3.0.3#components-object
@@ -121,9 +121,16 @@ public class Components {
 		}
 		// remove generic types
 		while (typeString.contains("<")) {
-			typeString = typeString.substring(typeString.indexOf('<') + 1, typeString.indexOf('>'));
+			typeString = typeString.substring(typeString.indexOf('<') + 1, typeString.lastIndexOf('>'));
 		}
-		return typeString.substring(typeString.lastIndexOf('.') + 1).trim();
+
+		final String key = typeString.substring(typeString.lastIndexOf('.') + 1).trim();
+
+		if (!isValidKey(key)) {
+			throw new SpecificationViolationException("The current key '" + key + "' is not valid within component maps.");
+		}
+
+		return key;
 	}
 
 }
