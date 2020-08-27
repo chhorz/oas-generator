@@ -22,6 +22,7 @@ import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
+import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.javadoc.SecurityTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
@@ -100,12 +101,13 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
     @Override
     public Set<String> getSupportedAnnotationTypes() {
 		return Stream.of(RequestMapping.class,
-			GetMapping.class,
-			PostMapping.class,
-			PutMapping.class,
-			DeleteMapping.class,
-			PatchMapping.class,
-			ExceptionHandler.class)
+				GetMapping.class,
+				PostMapping.class,
+				PutMapping.class,
+				DeleteMapping.class,
+				PatchMapping.class,
+				ExceptionHandler.class,
+				OpenAPISchema.class)
 			.map(Class::getCanonicalName)
 			.collect(toSet());
 	}
@@ -141,6 +143,17 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					.map(type -> processingUtils.removeEnclosingType(type, ResponseEntity.class)[0])
 					.findFirst()
 					.orElse(null);
+			}
+
+			Set<? extends Element> openApiSchemaClasses = roundEnv.getElementsAnnotatedWith(OpenAPISchema.class);
+			if (openApiSchemaClasses != null && !openApiSchemaClasses.isEmpty()) {
+				openApiSchemaClasses.stream()
+					.filter(element -> element instanceof TypeElement)
+					.map(TypeElement.class::cast)
+					.peek(typeElement -> logUtils.logInfo("Parsing annotated type: %s", typeElement))
+					.map(Element::asType)
+					.map(schemaUtils::mapTypeMirrorToSchema)
+					.forEach(openApi.getComponents()::putAllSchemas);
 			}
 
 			annotations.stream()

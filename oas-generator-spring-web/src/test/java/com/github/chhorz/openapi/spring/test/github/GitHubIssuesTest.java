@@ -958,4 +958,42 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		validateSchemaForTestResource(documentContext);
 	}
 
+	@Test
+	@GitHubIssue("#67")
+	void getGithubIssue067() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue067.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		validateSchemaForTestResource(documentContext);
+
+		Schema schema = documentContext.read("$.components.schemas.OtherResource", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description","Another resource that should be included but in not used in API methods.")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		assertThat(schema.getProperties())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("value");
+
+		assertThat(schema.getProperties().get("value"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+			.hasFieldOrPropertyWithValue("description","some value");
+	}
+
 }

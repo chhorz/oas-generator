@@ -22,6 +22,7 @@ import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
+import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
@@ -35,6 +36,7 @@ import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -84,7 +86,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
-		return Stream.of(Path.class)
+		return Stream.of(Path.class, OpenAPISchema.class)
 			.map(Class::getCanonicalName)
 			.collect(toSet());
 	}
@@ -102,6 +104,17 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		if (parserProperties.getEnabled()) {
+			Set<? extends Element> openApiSchemaClasses = roundEnv.getElementsAnnotatedWith(OpenAPISchema.class);
+			if (openApiSchemaClasses != null && !openApiSchemaClasses.isEmpty()) {
+				openApiSchemaClasses.stream()
+					.filter(element -> element instanceof TypeElement)
+					.map(TypeElement.class::cast)
+					.peek(typeElement -> logUtils.logInfo("Parsing annotated type: %s", typeElement))
+					.map(Element::asType)
+					.map(schemaUtils::mapTypeMirrorToSchema)
+					.forEach(openApi.getComponents()::putAllSchemas);
+			}
+
 			annotations.stream()
 				.flatMap(annotation -> roundEnv.getElementsAnnotatedWith(annotation).stream())
 				.filter(element -> element instanceof ExecutableElement)
