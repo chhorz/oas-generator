@@ -89,11 +89,11 @@
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
 		<snakeyaml.version>1.26</snakeyaml.version>
 
-		<spring-data-commons.version>2.3.3.RELEASE</spring-data-commons.version>
-		<spring-security-core.version>5.3.4.RELEASE</spring-security-core.version>
-		<spring-web.version>5.2.8.RELEASE</spring-web.version>
+		<spring-data-commons.version>[2.0.0.RELEASE,)</spring-data-commons.version>
+		<spring-security-core.version>[4.0.0.RELEASE,)</spring-security-core.version>
+		<spring-web.version>[4.0.0.RELEASE,)</spring-web.version>
 
-		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
+		<javax.ws.rs-api.version>[2.0.0,)</javax.ws.rs-api.version>
 
 		<nohttp-checkstyle.version>0.0.5.RELEASE</nohttp-checkstyle.version>
 
