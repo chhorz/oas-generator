@@ -44,6 +44,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.github.chhorz.openapi.common.util.ComponentUtils.convertSchemaMap;
+
 public class SchemaUtils {
 
 	private static final String GET_PREFIX = "get";
@@ -93,11 +95,11 @@ public class SchemaUtils {
 			.collect(Collectors.toList());
 	}
 
-	public Map<TypeMirror, Schema> parsePackages(final List<String> packages) {
+	public Map<String, Schema> parsePackages(final List<String> packages) {
 		Map<TypeMirror, Schema> typeMirrorMap = new HashMap<>();
 
 		if (packages == null) {
-			return typeMirrorMap;
+			return new HashMap<>();
 		}
 
 		packages.stream()
@@ -109,7 +111,7 @@ public class SchemaUtils {
 				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
 				.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
 
-		return typeMirrorMap;
+		return convertSchemaMap(typeMirrorMap);
 	}
 
 	private Map<TypeMirror, Schema> parsePackage(final PackageElement packageElement) {
@@ -118,7 +120,7 @@ public class SchemaUtils {
 		packageElement.getEnclosedElements()
 				.stream()
 				.map(Element::asType)
-				.map(this::mapTypeMirrorToSchema)
+				.map(this::createTypeMirrorSchemaMap)
 				.flatMap(map -> map.entrySet().stream())
 				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
 				.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
@@ -127,7 +129,7 @@ public class SchemaUtils {
 	}
 
 	public MediaType createMediaType(final TypeMirror typeMirror) {
-		Schema schema = mapTypeMirrorToSchema(typeMirror).get(typeMirror);
+		Schema schema = createTypeMirrorSchemaMap(typeMirror).get(typeMirror);
 
 		MediaType mediaType = new MediaType();
 		if (Type.ARRAY.equals(schema.getType())) {
@@ -139,7 +141,15 @@ public class SchemaUtils {
 		return mediaType;
 	}
 
-	public Map<TypeMirror, Schema> mapTypeMirrorToSchema(final TypeMirror typeMirror) {
+	public Schema getSchemaForTypeMirror(final TypeMirror typeMirror){
+		return createTypeMirrorSchemaMap(typeMirror).get(typeMirror);
+	}
+
+	public Map<String, Schema> createStringSchemaMap(final TypeMirror typeMirror) {
+		return convertSchemaMap(createTypeMirrorSchemaMap(typeMirror));
+	}
+
+	public Map<TypeMirror, Schema> createTypeMirrorSchemaMap(final TypeMirror typeMirror) {
 		if (typeMirror == null || baseTypeMirrors.contains(typeMirror)
 			|| TypeKind.VOID.equals(typeMirror.getKind()) || processingUtils.isAssignableTo(typeMirror, Void.class)) {
 			return Collections.emptyMap();
@@ -183,7 +193,7 @@ public class SchemaUtils {
 			} else {
 				componentType = elements.getTypeElement(typeMirror.toString().replaceAll("\\[]", "")).asType();
 			}
-			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(componentType);
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(componentType);
 
 			if (componentType.getKind().isPrimitive()) {
 				SimpleEntry<Type, Format> typeAndFormat = getPrimitiveTypeAndFormat(componentType);
@@ -247,7 +257,7 @@ public class SchemaUtils {
 			schemaMap.put(typeMirror, schema);
 		} else if (processingUtils.isAssignableTo(typeMirror, Optional.class)) {
 			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, Optional.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type);
 
 			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
@@ -266,7 +276,7 @@ public class SchemaUtils {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, List.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type);
 
 			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
@@ -287,7 +297,7 @@ public class SchemaUtils {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, Set.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(type);
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type);
 
 			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
@@ -339,7 +349,7 @@ public class SchemaUtils {
 								JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
 								// lets do some recursion
-								Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(vElement.asType());
+								Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(vElement.asType());
 								// the schema is an object or enum -> we add it to the map
 								propertySchemaMap.entrySet()
 										.stream()
@@ -375,7 +385,7 @@ public class SchemaUtils {
 				if (processingUtils.isInterface(typeMirror) && parserProperties.getIncludeGetters()) {
 					types.directSupertypes(typeMirror).stream()
 						.filter(directSupertype -> processingUtils.doesTypeDiffer(directSupertype, object))
-						.map(this::mapTypeMirrorToSchema)
+						.map(this::createTypeMirrorSchemaMap)
 						.flatMap(typeMirrorSchemaMap -> typeMirrorSchemaMap.values().stream())
 						.map(Schema::getProperties)
 						.filter(Objects::nonNull)
@@ -405,7 +415,7 @@ public class SchemaUtils {
 							JavaDoc getterDoc = parser.parse(elements.getDocComment(executableElement));
 
 							// lets do some recursion
-							Map<TypeMirror, Schema> propertySchemaMap = mapTypeMirrorToSchema(executableElement.getReturnType());
+							Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(executableElement.getReturnType());
 							// the schema is an object or enum -> we add it to the map
 							propertySchemaMap.entrySet()
 								.stream()
@@ -450,7 +460,7 @@ public class SchemaUtils {
 			return responseTags.stream()
 				.filter(tag -> tag.getResponseType() != null && !tag.getResponseType().isEmpty())
 				.map(responseTag -> processingUtils.createTypeMirrorFromString(responseTag.getResponseType()))
-				.map(this::mapTypeMirrorToSchema)
+				.map(this::createTypeMirrorSchemaMap)
 				.flatMap(map -> map.entrySet().stream())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 		}

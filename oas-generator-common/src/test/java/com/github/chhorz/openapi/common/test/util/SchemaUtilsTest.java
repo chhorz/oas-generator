@@ -72,7 +72,7 @@ class SchemaUtilsTest {
 		List<String> packages = null;
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
+		Map<String, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
 		assertThat(schemaMap).isEmpty();
@@ -84,7 +84,7 @@ class SchemaUtilsTest {
 		List<String> packages = Collections.emptyList();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
+		Map<String, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
 		assertThat(schemaMap).isEmpty();
@@ -96,7 +96,7 @@ class SchemaUtilsTest {
 		List<String> packages = Collections.singletonList("com.github.chhorz.openapi.common.test.util.resources");
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(packages);
+		Map<String, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
 		assertThat(schemaMap).hasSize(8);
@@ -108,7 +108,7 @@ class SchemaUtilsTest {
 		PrimitiveType longType = types.getPrimitiveType(TypeKind.LONG);
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(longType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(longType);
 
 		// then
 		assertThat(schemaMap)
@@ -126,7 +126,7 @@ class SchemaUtilsTest {
 		ArrayType charArrayType = types.getArrayType(charType);
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(charArrayType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(charArrayType);
 
 		// then
 		assertThat(schemaMap)
@@ -143,7 +143,7 @@ class SchemaUtilsTest {
 		TypeMirror doubleType = elements.getTypeElement(Double.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(doubleType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(doubleType);
 
 		// then
 		assertThat(schemaMap).hasSize(1)
@@ -160,7 +160,7 @@ class SchemaUtilsTest {
 		ArrayType doubleArrayType = types.getArrayType(doubleType);
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(doubleArrayType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(doubleArrayType);
 
 		// then
 		assertThat(schemaMap)
@@ -179,7 +179,7 @@ class SchemaUtilsTest {
 		TypeMirror doubleListType = types.getDeclaredType(listTypeElement, doubleType);
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(doubleListType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(doubleListType);
 
 		// then
 		assertThat(schemaMap)
@@ -196,7 +196,7 @@ class SchemaUtilsTest {
 		TypeMirror objectType = elements.getTypeElement(Object.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(objectType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(objectType);
 
 		// then
 		assertThat(schemaMap)
@@ -213,7 +213,7 @@ class SchemaUtilsTest {
 		TypeMirror classDType = elements.getTypeElement(ClassD.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(classDType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classDType);
 
 		// then
 		assertThat(schemaMap)
@@ -251,7 +251,7 @@ class SchemaUtilsTest {
 		TypeMirror classCType = elements.getTypeElement(ClassC.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(classCType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classCType);
 
 		// then
 		assertThat(schemaMap)
@@ -306,7 +306,7 @@ class SchemaUtilsTest {
 		TypeMirror interfaceAType = elements.getTypeElement(InterfaceA.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(interfaceAType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(interfaceAType);
 
 		// then
 		assertThat(schemaMap)
@@ -332,7 +332,7 @@ class SchemaUtilsTest {
 		TypeMirror interfaceCType = elements.getTypeElement(InterfaceC.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(interfaceCType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(interfaceCType);
 
 		// then
 		assertThat(schemaMap)
@@ -360,7 +360,7 @@ class SchemaUtilsTest {
 		TypeMirror enumAType = elements.getTypeElement(EnumA.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(enumAType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(enumAType);
 
 		// then
 		assertThat(schemaMap)
@@ -382,7 +382,7 @@ class SchemaUtilsTest {
 		TypeMirror optionalType = types.getDeclaredType(elements.getTypeElement(Optional.class.getCanonicalName()), stringType);
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(optionalType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(optionalType);
 
 		// then
 		assertThat(schemaMap)
@@ -400,7 +400,7 @@ class SchemaUtilsTest {
 		TypeMirror dateType = elements.getTypeElement(Date.class.getCanonicalName()).asType();
 
 		// when
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(dateType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(dateType);
 
 		// then
 		assertThat(schemaMap)

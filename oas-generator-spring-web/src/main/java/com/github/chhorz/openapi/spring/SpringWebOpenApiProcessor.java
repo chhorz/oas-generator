@@ -51,6 +51,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.github.chhorz.openapi.common.util.ComponentUtils.convertSchemaMap;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -133,7 +134,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					.peek(exElement -> logUtils.logInfo("Parsing exception handler: %s", exElement))
 					.map(ExecutableElement::getReturnType)
 					.map(type -> processingUtils.removeEnclosingType(type, ResponseEntity.class)[0])
-					.map(schemaUtils::mapTypeMirrorToSchema)
+					.map(schemaUtils::createStringSchemaMap)
 					.forEach(openApi.getComponents()::putAllSchemas);
 
 				exceptionHanderReturntype = exceptionHandler.stream()
@@ -152,7 +153,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 					.map(TypeElement.class::cast)
 					.peek(typeElement -> logUtils.logInfo("Parsing annotated type: %s", typeElement))
 					.map(Element::asType)
-					.map(schemaUtils::mapTypeMirrorToSchema)
+					.map(schemaUtils::createStringSchemaMap)
 					.forEach(openApi.getComponents()::putAllSchemas);
 			}
 
@@ -162,8 +163,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				.map(ExecutableElement.class::cast)
 				.forEach(this::mapOperationMethod);
 
-			Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
-			openApi.getComponents().putAllSchemas(schemaMap);
+			openApi.getComponents().putAllSchemas(schemaUtils.parsePackages(parserProperties.getSchemaPackages()));
 
 			if (parserProperties.getSchemaFile() != null) {
 				readOpenApiFile(logUtils, parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
@@ -292,8 +292,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 									}
 								}
 
-								openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
-								openApi.getComponents().putRequestBody(requestBody.asType(), r);
+								openApi.getComponents().putAllSchemas(schemaUtils.createStringSchemaMap(requestBody.asType()));
+								openApi.getComponents().putRequestBody(ComponentUtils.getKey(requestBody.asType()), r);
 
 								operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
 							});
@@ -349,8 +349,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
                     // use return type of method as default response
                     TypeMirror returnType = processingUtils.removeEnclosingType(executableElement.getReturnType(), ResponseEntity.class)[0];
-                    Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
-                    Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.mapTypeMirrorToSchema(exceptionHanderReturntype);
+                    Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(returnType);
+                    Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.createTypeMirrorSchemaMap(exceptionHanderReturntype);
 
                     Map<TypeMirror, Schema> combinedMap = new HashMap<>(schemaMap);
                     combinedMap.putAll(exceptionSchemaMap);
@@ -378,11 +378,11 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                         }
                     }
 
-                    openApi.getComponents().putAllSchemas(combinedMap.entrySet()
+                    openApi.getComponents().putAllSchemas(convertSchemaMap(combinedMap.entrySet()
                             .stream()
 							.filter(entry -> !processingUtils.isAssignableTo(entry.getKey(), Void.class))
                             .filter(entry -> !Schema.Type.ARRAY.equals(entry.getValue().getType()))
-                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))));
 
                     responses.forEach(operation::putResponse);
 

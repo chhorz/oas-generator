@@ -21,7 +21,6 @@ import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.LogUtils;
@@ -33,10 +32,8 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -94,12 +91,11 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 			SchemaUtils schemaUtils = new SchemaUtils(elements, types, parserProperties, logUtils);
 			for (TypeElement annotation : annotations) {
 				roundEnv.getElementsAnnotatedWith(annotation).forEach(element -> {
-					openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(element.asType()));
+					openApi.getComponents().putAllSchemas(schemaUtils.createStringSchemaMap(element.asType()));
 				});
 			}
 
-			Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
-			openApi.getComponents().putAllSchemas(schemaMap);
+			openApi.getComponents().putAllSchemas(schemaUtils.parsePackages(parserProperties.getSchemaPackages()));
 
 			if (roundEnv.processingOver()) {
 				runPostProcessors(logUtils, parserProperties, openApi);

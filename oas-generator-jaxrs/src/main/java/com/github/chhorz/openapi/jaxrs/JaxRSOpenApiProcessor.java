@@ -47,6 +47,7 @@ import javax.ws.rs.*;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.github.chhorz.openapi.common.util.ComponentUtils.convertSchemaMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -111,7 +112,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 					.map(TypeElement.class::cast)
 					.peek(typeElement -> logUtils.logInfo("Parsing annotated type: %s", typeElement))
 					.map(Element::asType)
-					.map(schemaUtils::mapTypeMirrorToSchema)
+					.map(schemaUtils::createStringSchemaMap)
 					.forEach(openApi.getComponents()::putAllSchemas);
 			}
 
@@ -122,8 +123,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 				// .peek(e -> System.out.println(e))
 				.forEach(this::mapOperationMethod);
 
-			Map<TypeMirror, Schema> schemaMap = schemaUtils.parsePackages(parserProperties.getSchemaPackages());
-			openApi.getComponents().putAllSchemas(schemaMap);
+			openApi.getComponents().putAllSchemas(schemaUtils.parsePackages(parserProperties.getSchemaPackages()));
 
 			if (parserProperties.getSchemaFile() != null) {
 				readOpenApiFile(logUtils, parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
@@ -228,8 +228,8 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 				r.putContent("*/*", mediaType);
 			}
 
-			openApi.getComponents().putAllSchemas(schemaUtils.mapTypeMirrorToSchema(requestBody.asType()));
-			openApi.getComponents().putRequestBody(requestBody.asType(), r);
+			openApi.getComponents().putAllSchemas(schemaUtils.createStringSchemaMap(requestBody.asType()));
+			openApi.getComponents().putRequestBody(ComponentUtils.getKey(requestBody.asType()), r);
 
 			operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
 		}
@@ -241,7 +241,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		}
 
 		TypeMirror returnType = executableElement.getReturnType();
-		Map<TypeMirror, Schema> schemaMap = schemaUtils.mapTypeMirrorToSchema(returnType);
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(returnType);
 		schemaMap.putAll(schemaUtils.createSchemasFromDocComment(javaDoc));
 		Schema schema = schemaMap.get(returnType);
 
@@ -259,7 +259,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 			}
 		}
 
-		openApi.getComponents().putAllSchemas(schemaMap);
+		openApi.getComponents().putAllSchemas(convertSchemaMap(schemaMap));
 
 		javaDoc.getTags(CategoryTag.class).stream()
 				.map(CategoryTag::getCategoryName)
@@ -304,7 +304,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		parameter.setName(pathParam.value());
 		parameter.setRequired(Boolean.TRUE);
 
-		Map<TypeMirror, Schema> map = schemaUtils.mapTypeMirrorToSchema(variableElement.asType());
+		Map<TypeMirror, Schema> map = schemaUtils.createTypeMirrorSchemaMap(variableElement.asType());
 		Schema schema = map.get(variableElement.asType());
 
 		parameter.setSchema(schema);
@@ -327,7 +327,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		parameter.setName(queryParam.value());
 //		parameter.setRequired(variableElement.getAnnotation(DefaultValue.class) == null);
 
-		Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
+		Schema schema = schemaUtils.createTypeMirrorSchemaMap(variableElement.asType())
 				.get(variableElement.asType());
 
 		if (variableElement.getAnnotation(DefaultValue.class) != null) {
@@ -356,7 +356,7 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		parameter.setName(headerParam.value());
 //		parameter.setRequired(variableElement.getAnnotation(DefaultValue.class) == null);
 
-		Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
+		Schema schema = schemaUtils.createTypeMirrorSchemaMap(variableElement.asType())
 				.get(variableElement.asType());
 		if (variableElement.getAnnotation(DefaultValue.class) != null) {
 			DefaultValue defaultValue = variableElement.getAnnotation(DefaultValue.class);

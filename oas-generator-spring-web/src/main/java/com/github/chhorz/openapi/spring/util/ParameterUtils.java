@@ -27,9 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
 
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeMirror;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,8 +66,7 @@ public class ParameterUtils {
 			parameter.setRequired(false);
 		}
 
-		Map<TypeMirror, Schema> map = schemaUtils.mapTypeMirrorToSchema(variableElement.asType());
-		Schema schema = map.get(variableElement.asType());
+		Schema schema = schemaUtils.getSchemaForTypeMirror(variableElement.asType());
 
 		getRegularExpression(path, name).ifPresent(schema::setPattern);
 
@@ -99,8 +96,8 @@ public class ParameterUtils {
 			parameter.setRequired(false);
 		}
 
-		Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
-			.get(variableElement.asType());
+		Schema schema = schemaUtils.getSchemaForTypeMirror(variableElement.asType());
+
 		if (!ValueConstants.DEFAULT_NONE.equals(requestParam.defaultValue())) {
 			schema.setDefaultValue(requestParam.defaultValue());
 		}
@@ -132,8 +129,8 @@ public class ParameterUtils {
 			parameter.setRequired(false);
 		}
 
-		Schema schema = schemaUtils.mapTypeMirrorToSchema(variableElement.asType())
-			.get(variableElement.asType());
+		Schema schema = schemaUtils.getSchemaForTypeMirror(variableElement.asType());
+
 		if (!ValueConstants.DEFAULT_NONE.equals(requestHeader.defaultValue())) {
 			schema.setDefaultValue(requestHeader.defaultValue());
 		}

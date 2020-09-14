@@ -16,11 +16,8 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
-import com.github.chhorz.openapi.common.exception.SpecificationViolationException;
-import com.github.chhorz.openapi.common.util.ProcessingUtils;
 import com.github.chhorz.openapi.common.util.SchemaUtils;
 
-import javax.lang.model.type.TypeMirror;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -46,19 +43,17 @@ public class Components {
 		return key.matches("^[a-zA-Z0-9.\\-_]+$");
 	}
 
-	public void putAllSchemas(final Map<TypeMirror, Schema> schemas) {
+	public void putAllSchemas(final Map<String, Schema> schemas) {
 		if (this.schemas == null) {
 			this.schemas = new TreeMap<>();
 		}
-
-		schemas.forEach((typeMirror, schema) -> putSchema(getKey(typeMirror), schema));
+		schemas.forEach(this::putSchema);
 	}
 
 	public void putAllParsedSchemas(final Map<String, Schema> schemas) {
 		if (this.schemas == null) {
 			this.schemas = new TreeMap<>();
 		}
-
 		schemas.forEach(this::putSchema);
 	}
 
@@ -77,13 +72,6 @@ public class Components {
 		return schemas;
 	}
 
-	public void putRequestBody(final TypeMirror typeMirror, final RequestBody requestBody) {
-		if (requestBodies == null) {
-			requestBodies = new TreeMap<>();
-		}
-		requestBodies.put(getKey(typeMirror), requestBody);
-	}
-
 	public void putRequestBody(final String type, final RequestBody requestBody) {
 		if (requestBodies == null) {
 			requestBodies = new TreeMap<>();
@@ -93,13 +81,6 @@ public class Components {
 
 	public Map<String, RequestBody> getRequestBodies() {
 		return requestBodies;
-	}
-
-	public void putResponse(final TypeMirror typeMirror, final Response response) {
-		if (responses == null) {
-			responses = new TreeMap<>();
-		}
-		responses.put(getKey(typeMirror), response);
 	}
 
 	public Map<String, Response> getResponses() {
@@ -112,16 +93,6 @@ public class Components {
 
 	public void setSecuritySchemes(final Map<String, SecurityScheme> securitySchemes) {
 		this.securitySchemes = securitySchemes;
-	}
-
-	private String getKey(final TypeMirror typeMirror) {
-		final String key = ProcessingUtils.getShortName(typeMirror);
-
-		if (!isValidKey(key)) {
-			throw new SpecificationViolationException("The current key '" + key + "' is not valid within component maps.");
-		}
-
-		return key;
 	}
 
 }
