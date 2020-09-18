@@ -21,6 +21,13 @@ jobs:
       with:
         java-package: jdk
         java-version: ${{ matrix.java }}
+    - name: 'Cache local Maven repository'
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: 'Build with Maven'
       #run: mvn package --file pom.xml
       run: ./mvnw -V -B --no-transfer-progress install
@@ -33,6 +40,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
+      - name: 'Cache local Maven repository'
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: 'Test'
         run: ./mvnw -V -B --no-transfer-progress install
       - name: 'Publish Snapshots'
