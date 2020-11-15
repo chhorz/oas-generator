@@ -796,8 +796,8 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(operation.getResponses().get("200").getContent())
 			.isNotNull()
 			.hasSize(1)
-			.containsOnlyKeys("application/vnd.test.list+json")
-			.extractingByKey("application/vnd.test.list+json")
+			.containsOnlyKeys("application/vnd.test.v1+json")
+			.extractingByKey("application/vnd.test.v1+json")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
 				.isNotNull()
 				.extracting(MediaType::getSchema)
@@ -806,8 +806,8 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(operation.getResponses().get("default").getContent())
 			.isNotNull()
 			.hasSize(2)
-			.containsOnlyKeys("application/vnd.test.list+json", "application/vnd.test+json")
-			.extractingByKey("application/vnd.test+json")
+			.containsOnlyKeys("application/vnd.test.v1+json", "application/vnd.test.v2+json")
+			.extractingByKey("application/vnd.test.v1+json")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
 				.isNotNull());
 //				.extracting(MediaType::getSchema)
@@ -994,6 +994,68 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
 			.hasFieldOrPropertyWithValue("description","some value");
+	}
+
+	@Test
+	@GitHubIssue("#82")
+	void getGithubIssue082() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator05.yml"), GitHubIssue082.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue082#test1");
+
+		assertThat(operation.getTags())
+			.isNotNull()
+			.hasSize(1)
+			.contains("Test");
+
+		assertThat(operation.getParameterObjects())
+			.isNotNull()
+			.hasSize(0);
+
+		assertThat(operation.getRequestBodyReference())
+			.isNotNull()
+			.extracting(Reference::get$ref)
+			.isEqualTo("#/components/requestBodies/Resource");
+
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("default", "200");
+
+		validateSchemaForTestResource(documentContext);
+
+		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
+
+		assertThat(requestBody)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description","")
+			.hasFieldOrPropertyWithValue("required", true);
+
+		assertThat(requestBody.getContent())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("application/vnd.test.v1+json", "application/vnd.test.v2+json");
+
+//		assertThat(requestBody.getContent())
+//			.extractingByKey("application/vnd.test.v1+json")
+//			.extracting(MediaType::getSchema)
+//			.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/Resource"));
+
+		validateSecurityScheme(documentContext);
 	}
 
 }

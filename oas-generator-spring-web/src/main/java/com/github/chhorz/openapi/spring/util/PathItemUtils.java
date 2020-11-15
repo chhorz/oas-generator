@@ -137,7 +137,7 @@ public class PathItemUtils {
 			return documentationOne;
 		} else if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo)) {
 			return format("%s\n<hr>\n%s", documentationOne, documentationTwo).trim();
-		} else if (PRESENCE.test(documentationOne)|| PRESENCE.test(documentationTwo)) {
+		} else if (PRESENCE.test(documentationOne) || PRESENCE.test(documentationTwo)) {
 			return format("%s\n\n%s", documentationOne, documentationTwo).trim();
 		} else {
 			return "";

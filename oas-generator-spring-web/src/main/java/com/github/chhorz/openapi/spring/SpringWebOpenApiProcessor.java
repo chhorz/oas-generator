@@ -31,6 +31,7 @@ import com.github.chhorz.openapi.common.util.*;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
 import com.github.chhorz.openapi.spring.util.ParameterUtils;
 import com.github.chhorz.openapi.spring.util.PathItemUtils;
+import com.github.chhorz.openapi.spring.util.RequestBodyUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -293,7 +294,16 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 								}
 
 								openApi.getComponents().putAllSchemas(schemaUtils.createStringSchemaMap(requestBody.asType()));
-								openApi.getComponents().putRequestBody(ComponentUtils.getKey(requestBody.asType()), r);
+
+								String requestBodyKey = ComponentUtils.getKey(requestBody.asType());
+								if (openApi.getComponents().getRequestBodies() != null &&
+									openApi.getComponents().getRequestBodies().containsKey(requestBodyKey)) {
+									RequestBodyUtils requestBodyUtils = new RequestBodyUtils();
+									openApi.getComponents().putRequestBody(requestBodyKey,
+										requestBodyUtils.mergeRequestBodies(openApi.getComponents().getRequestBodies().get(requestBodyKey), r));
+								} else {
+									openApi.getComponents().putRequestBody(requestBodyKey, r);
+								}
 
 								operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
 							});

@@ -18,29 +18,29 @@ package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("github")
-public class GitHubIssue043 {
+public class GitHubIssue082 {
 
 	/**
 	 * @category Test
 	 *
 	 * @security read_role
 	 *
-	 * @response 200 java.lang.String the response
+	 * @response 200 java.lang.Void
 	 *
 	 * @param test
 	 * @return
 	 */
-	@GitHubIssue("#43")
-	@GetMapping(path = "/issues", produces = "application/vnd.test.v1+json")
+	@GitHubIssue("#82")
+	@GetMapping(path = "/issues", consumes = "application/vnd.test.v1+json")
 	@Deprecated
-	public ResponseEntity<String> test1(@PathVariable String test) {
+	public ResponseEntity<Void> test1(@RequestBody Resource test) {
 		return ResponseEntity.ok().build();
 	}
 
@@ -52,9 +52,9 @@ public class GitHubIssue043 {
 	 * @param test
 	 * @return
 	 */
-	@GitHubIssue("#43")
-	@GetMapping(path = "/issues", produces = "application/vnd.test.v2+json")
-	public ResponseEntity<String> test2(@PathVariable String test) {
+	@GitHubIssue("#82")
+	@GetMapping(path = "/issues", consumes = "application/vnd.test.v2+json")
+	public ResponseEntity<Void> test2(@RequestBody Resource test) {
 		return ResponseEntity.ok().build();
 	}
 
