@@ -16,21 +16,26 @@
  */
 package com.github.chhorz.openapi.spring.util;
 
-import com.github.chhorz.openapi.common.domain.RequestBody;
-
 import java.util.function.Predicate;
 
-public class RequestBodyUtils extends AbstractMergeUtils {
+import static java.lang.String.format;
+
+public abstract class AbstractMergeUtils {
 
 	private static final Predicate<String> PRESENCE = s -> s != null && !s.isEmpty();
 
-	public RequestBody mergeRequestBodies(RequestBody requestBodyOne, RequestBody requestBodyTwo) {
-		RequestBody mergedRequestBody = new RequestBody();
-		mergedRequestBody.setDescription(mergeDocumentation(requestBodyOne.getDescription(), requestBodyTwo.getDescription()));
-		mergedRequestBody.setRequired(requestBodyOne.getRequired() || requestBodyTwo.getRequired());
-		requestBodyOne.getContent().forEach(mergedRequestBody::putContent);
-		requestBodyTwo.getContent().forEach(mergedRequestBody::putContent);
-		return mergedRequestBody;
+	protected String mergeDocumentation(String documentationOne, String documentationTwo) {
+		if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo) && documentationOne.equalsIgnoreCase(documentationTwo)) {
+			return documentationOne;
+		} else if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo)) {
+			return format("%s\n<hr>\n%s", documentationOne, documentationTwo).trim();
+		} else if (PRESENCE.test(documentationOne) && !PRESENCE.test(documentationTwo)) {
+			return documentationOne;
+		} else if (!PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo)) {
+			return documentationTwo;
+		} else {
+			return null;
+		}
 	}
 
 }

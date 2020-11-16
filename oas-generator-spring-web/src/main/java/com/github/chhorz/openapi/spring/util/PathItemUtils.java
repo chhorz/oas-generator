@@ -23,13 +23,8 @@ import com.github.chhorz.openapi.common.domain.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
-import static java.lang.String.format;
-
-public class PathItemUtils {
-
-	private static final Predicate<String> PRESENCE = s -> s != null && !s.isEmpty();
+public class PathItemUtils extends AbstractMergeUtils {
 
 	public PathItemObject mergePathItems(PathItemObject pathItemOne, PathItemObject pathItemTwo) {
 		if (pathItemOne == null) {
@@ -129,18 +124,6 @@ public class PathItemUtils {
 				responseTwo.getContent().forEach(mergedResponse::putContent);
 			}
 			return mergedResponse;
-		}
-	}
-
-	private String mergeDocumentation(String documentationOne, String documentationTwo) {
-		if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo) && documentationOne.equalsIgnoreCase(documentationTwo)) {
-			return documentationOne;
-		} else if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo)) {
-			return format("%s\n<hr>\n%s", documentationOne, documentationTwo).trim();
-		} else if (PRESENCE.test(documentationOne) || PRESENCE.test(documentationTwo)) {
-			return format("%s\n\n%s", documentationOne, documentationTwo).trim();
-		} else {
-			return "";
 		}
 	}
 

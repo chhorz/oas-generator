@@ -536,8 +536,8 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("summary", "")
-			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("summary", null)
+			.hasFieldOrPropertyWithValue("description", null)
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue023#testParamA")
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("security", emptyList());
@@ -547,7 +547,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("default")
 			.extractingByKey("default")
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("description", "");
+			.hasFieldOrPropertyWithValue("description", null);
 		assertThat(operation.getResponses().get("default").getContent())
 			.isNotNull()
 			.hasSize(1)
@@ -1042,7 +1042,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		assertThat(requestBody)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("description","")
+			.hasFieldOrPropertyWithValue("description",null)
 			.hasFieldOrPropertyWithValue("required", true);
 
 		assertThat(requestBody.getContent())
