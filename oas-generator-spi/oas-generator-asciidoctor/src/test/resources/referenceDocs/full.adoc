@@ -70,7 +70,7 @@ e| Status
 ^| default
 4+a| pass:[The response description]
 
-[cols="1,2"]
+[cols="2,1"]
 !===
 e! MediaType
 e! Schema
@@ -116,7 +116,7 @@ e| Status
 ^| default
 4+a| pass:[The response description]
 
-[cols="1,2"]
+[cols="2,1"]
 !===
 e! MediaType
 e! Schema
@@ -234,7 +234,7 @@ m|
 
 *REQUIRED* pass:[Lorem ipsum]
 
-[cols="1,2", options="header"]
+[cols="2,1", options="header"]
 |===
 | Type | Schema
 

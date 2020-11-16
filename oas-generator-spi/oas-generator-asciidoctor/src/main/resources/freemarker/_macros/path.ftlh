@@ -68,7 +68,7 @@ e| Status
 4+a| <#if response.description?? && response.description?has_content>pass:[<@clean response.description/>]<#else>${response.description}</#if>
 <#if response.content??>
 
-[cols="1,2"]
+[cols="2,1"]
 !===
 e! MediaType
 e! Schema

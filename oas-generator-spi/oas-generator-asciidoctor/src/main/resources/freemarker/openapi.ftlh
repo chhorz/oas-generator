@@ -143,7 +143,7 @@ m| <@asciidoc_schema property/>
 <#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description?? && requestBody.description?has_content>pass:[${requestBody.description}]</#if>
 
 <#if requestBody.content??>
-[cols="1,2", options="header"]
+[cols="2,1", options="header"]
 |===
 | Type | Schema
 
