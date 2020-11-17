@@ -19,6 +19,7 @@ package com.github.chhorz.openapi.common;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
+import com.github.chhorz.javadoc.tags.Tag;
 import com.github.chhorz.openapi.common.annotation.OpenAPIExclusion;
 import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.Info;
@@ -26,6 +27,7 @@ import com.github.chhorz.openapi.common.domain.OpenAPI;
 import com.github.chhorz.openapi.common.domain.SecurityScheme;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.javadoc.SecurityTag;
+import com.github.chhorz.openapi.common.javadoc.TagTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
@@ -106,6 +108,7 @@ public interface OpenAPIProcessor {
 		return JavaDocParserBuilder.withBasicTags()
 				.withCustomTag(new ResponseTag())
 				.withCustomTag(new SecurityTag())
+				.withCustomTag(new TagTag())
 				.withOutputType(OutputType.MARKDOWN)
 				.build();
 	}

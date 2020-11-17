@@ -25,6 +25,7 @@ import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.javadoc.SecurityTag;
+import com.github.chhorz.openapi.common.javadoc.TagTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.*;
@@ -403,8 +404,11 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     }
 
                     javaDoc.getTags(CategoryTag.class).stream()
-                            .map(CategoryTag::getCategoryName)
-                            .forEach(operation::addTag);
+						.map(CategoryTag::getCategoryName)
+						.forEach(operation::addTag);
+                    javaDoc.getTags(TagTag.class).stream()
+						.map(TagTag::getTagName)
+						.forEach(operation::addTag);
 
 					operation.setSecurity(getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes(), javaDoc.getTags(SecurityTag.class)));
 

@@ -312,6 +312,11 @@
 								<placement>a</placement>
 								<head>OpenAPI security scheme:</head>
 							</tag>
+							<tag>
+								<name>tag</name>
+								<placement>a</placement>
+								<head>OpenAPI tag:</head>
+							</tag>
 						</tags>
 					</configuration>
 				</plugin>

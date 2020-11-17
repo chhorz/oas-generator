@@ -175,9 +175,9 @@ The description is the complete text from the beginning of the Javadoc comment t
 Additional the summary is, unless not marked with the `@summary` tag, the first sentence of the description.
 Other included tags are:
 
-* `@param` tag for a description of the method parameters and and so the API parameters
+* `@param` tag for a description of the method parameters and so the API parameters
 * `@return` for the semantic meaning of the response
-* `@category` to represent OpenAPI tags
+* [[category_tag]] `@category` to represent OpenAPI tags _(Eclipse recognizes the `@category` tag per default)_.
 
 === Custom javadoc tags
 To render the custom javadoc tags properly within the HTML javadoc api documentation, the following configuration of the `maven-javadoc-plugin` has to be done:
@@ -196,6 +196,11 @@ To render the custom javadoc tags properly within the HTML javadoc api documenta
             <name>security</name>
             <placement>a</placement>
             <head>OpenAPI security scheme:</head>
+        </tag>
+        <tag>
+            <name>tag</name>
+            <placement>a</placement>
+            <head>OpenAPI tag:</head>
         </tag>
     </tags>
 </configuration>
@@ -230,6 +235,17 @@ The content of the tag must match the name of a security requirement from the `o
  */
 ----
 
+==== Tag API methods
+This tag was introduced because the javadoc tag <<category_tag,`@category`>> is only used as standard tag within (at least older) Eclipse IDEs.
+The custom javadoc tag `@tag` was introduced to provide a familiar way to tag operations within doc comments.
+
+.Example Javadoc comment
+[source,java]
+----
+/**
+ * @tag tag_name
+ */
+----
 
 == Configuration
 The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
