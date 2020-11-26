@@ -55,11 +55,11 @@ There is currently the <<asciidoctor_postprocessor,Asciidoctor Post-Processor>> 
 .Diagram of internal module structure
 [ditaa,align=center]
 ....
-                                   +----------------------------+
-                                   |cGRE                        |
-                                +->+  OAS Generator Spring Web  |
-                                |  |                            |
-                                |  +----------------------------+
++----------------------------+     +----------------------------+
+|                            |     |cGRE                        |
+|     OAS Generator Docs     +  +->+  OAS Generator Spring Web  |
+|                            |  |  |                            |
++-----------------------+----+  |  +----------------------------+
                                 |
 +----------------------------+  |  +----------------------------+
 |                            |  |  |cGRE                        |
@@ -312,7 +312,7 @@ To configure the options above with the `maven-compile-plugin` the following con
 
 [[configuration-file]]
 === Configuration file
-The configuration file is split into two parts.
+The configuration file consists of two parts.
 Both parts are content of the same file (Default: _oas-generator.yml_ within the classpath).
 
 .Minimal `oas-generator.yml` configuration file
@@ -450,7 +450,7 @@ _Default: ``INFO``_
 
 Possible values: `true`, `false`
 
-_Default: ``true``__
+_Default: ``true``_
 
 | `outputDir`
 | File path of the generated output files.
