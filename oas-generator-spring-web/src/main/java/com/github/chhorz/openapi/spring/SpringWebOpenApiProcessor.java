@@ -299,7 +299,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 								String requestBodyKey = ComponentUtils.getKey(requestBody.asType());
 								if (openApi.getComponents().getRequestBodies() != null &&
 									openApi.getComponents().getRequestBodies().containsKey(requestBodyKey)) {
-									RequestBodyUtils requestBodyUtils = new RequestBodyUtils();
+									RequestBodyUtils requestBodyUtils = new RequestBodyUtils(logUtils);
 									openApi.getComponents().putRequestBody(requestBodyKey,
 										requestBodyUtils.mergeRequestBodies(openApi.getComponents().getRequestBodies().get(requestBodyKey), r));
 								} else {
@@ -397,7 +397,9 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 
                     responses.forEach(operation::putResponse);
 
+                    // according to the specification at least one response is required
                     if (operation.getResponses() == null || operation.getResponses().isEmpty()) {
+                    	logUtils.logError("No response status defined for operation: %s", operation.getOperationId());
                         Response response = new Response();
                         response.setDescription("");
                         operation.putDefaultResponse(response);
@@ -444,7 +446,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     }
 
                     if (openApi.getPaths().containsKey(cleanedPath)) {
-						PathItemUtils utils = new PathItemUtils();
+						PathItemUtils utils = new PathItemUtils(logUtils);
 						openApi.putPathItemObject(cleanedPath, utils.mergePathItems(openApi.getPaths().get(cleanedPath), pathItemObject));
 					} else {
 						openApi.putPathItemObject(cleanedPath, pathItemObject);

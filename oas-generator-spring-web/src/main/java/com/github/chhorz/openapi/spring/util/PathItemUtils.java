@@ -19,14 +19,37 @@ package com.github.chhorz.openapi.spring.util;
 import com.github.chhorz.openapi.common.domain.Operation;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
 import com.github.chhorz.openapi.common.domain.Response;
+import com.github.chhorz.openapi.common.util.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Utility class to merge OpenAPI {@link PathItemObject}.
+ *
+ * @author chhorz
+ */
 public class PathItemUtils extends AbstractMergeUtils {
 
+	/**
+	 * Creates a new instance of this utility class with the given logger.
+	 *
+	 * @param logUtils the given logger instance
+	 */
+	public PathItemUtils(LogUtils logUtils) {
+		super(logUtils);
+	}
+
+	/**
+	 * Merges the given {@link PathItemObject}s and all of their internal components.
+	 *
+	 * @param pathItemOne the first path item instance
+	 * @param pathItemTwo the second path item instance
+	 * @return a new instance with data from both path items
+	 */
 	public PathItemObject mergePathItems(PathItemObject pathItemOne, PathItemObject pathItemTwo) {
+		logUtils.logDebug("Merging path item");
 		if (pathItemOne == null) {
 			return pathItemTwo;
 		} else if (pathItemTwo == null) {
@@ -49,12 +72,14 @@ public class PathItemUtils extends AbstractMergeUtils {
 		}
 	}
 
-	public Operation mergeOperations(Operation operationOne, Operation operationTwo) {
+	private Operation mergeOperations(Operation operationOne, Operation operationTwo) {
 		if (operationOne == null) {
 			return operationTwo;
 		} else if (operationTwo == null) {
 			return operationOne;
 		} else {
+			logUtils.logInfo("Merging operation %s and %s", operationOne.getOperationId(), operationTwo.getOperationId());
+
 			Operation mergedOperation = new Operation();
 			mergedOperation.setSummary(mergeDocumentation(operationOne.getSummary(), operationTwo.getSummary()));
 			mergedOperation.setDescription(mergeDocumentation(operationOne.getDescription(), operationTwo.getDescription()));
@@ -110,13 +135,15 @@ public class PathItemUtils extends AbstractMergeUtils {
 	}
 
 	private Response mergeResponses(Response responseOne, Response responseTwo) {
+		logUtils.logDebug("Merging response");
 		if (responseOne == null) {
 			return responseTwo;
 		} else if (responseTwo == null) {
 			return responseOne;
 		} else {
 			Response mergedResponse = new Response();
-			mergedResponse.setDescription(mergeDocumentation(responseOne.getDescription(), responseTwo.getDescription()));
+			String mergeDocumentation = mergeDocumentation(responseOne.getDescription(), responseTwo.getDescription());
+			mergedResponse.setDescription(mergeDocumentation != null ? mergeDocumentation : "");
 			if (responseOne.getContent() != null) {
 				responseOne.getContent().forEach(mergedResponse::putContent);
 			}

@@ -16,14 +16,37 @@
  */
 package com.github.chhorz.openapi.spring.util;
 
+import com.github.chhorz.openapi.common.util.LogUtils;
+
 import java.util.function.Predicate;
 
 import static java.lang.String.format;
 
+/**
+ * Abstract class for merging OpenAPI domain objects.
+ *
+ * @author chhorz
+ */
 public abstract class AbstractMergeUtils {
 
+	/**
+	 * Predicate to check if a String is not null and has content
+	 */
 	private static final Predicate<String> PRESENCE = s -> s != null && !s.isEmpty();
 
+	protected final LogUtils logUtils;
+
+	public AbstractMergeUtils(LogUtils logUtils) {
+		this.logUtils = logUtils;
+	}
+
+	/**
+	 * Merges two documentation Strings
+	 *
+	 * @param documentationOne documentation one
+	 * @param documentationTwo documentation two
+	 * @return the combined documentation String.
+	 */
 	protected String mergeDocumentation(String documentationOne, String documentationTwo) {
 		if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo) && documentationOne.equalsIgnoreCase(documentationTwo)) {
 			return documentationOne;

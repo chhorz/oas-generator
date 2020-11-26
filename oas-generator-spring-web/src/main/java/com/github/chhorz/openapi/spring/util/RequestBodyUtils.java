@@ -17,14 +17,34 @@
 package com.github.chhorz.openapi.spring.util;
 
 import com.github.chhorz.openapi.common.domain.RequestBody;
+import com.github.chhorz.openapi.common.util.LogUtils;
 
-import java.util.function.Predicate;
-
+/**
+ * Utility class to merge request bodies.
+ *
+ * @author chhorz
+ */
 public class RequestBodyUtils extends AbstractMergeUtils {
 
-	private static final Predicate<String> PRESENCE = s -> s != null && !s.isEmpty();
+	/**
+	 * Creates a new instance with a given {@link LogUtils} instance.
+	 *
+	 * @param logUtils the current logger
+	 */
+	public RequestBodyUtils(LogUtils logUtils) {
+		super(logUtils);
+	}
 
+	/**
+	 * Creates a new {@link RequestBody} instance with combined values form both parameter.
+	 *
+	 * @param requestBodyOne the first request body
+	 * @param requestBodyTwo the second request body
+	 * @return the combined request body
+	 */
 	public RequestBody mergeRequestBodies(RequestBody requestBodyOne, RequestBody requestBodyTwo) {
+		logUtils.logDebug("Merging request bodies");
+
 		RequestBody mergedRequestBody = new RequestBody();
 		mergedRequestBody.setDescription(mergeDocumentation(requestBodyOne.getDescription(), requestBodyTwo.getDescription()));
 		mergedRequestBody.setRequired(requestBodyOne.getRequired() || requestBodyTwo.getRequired());
