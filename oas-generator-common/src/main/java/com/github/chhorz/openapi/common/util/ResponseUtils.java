@@ -17,19 +17,21 @@
 package com.github.chhorz.openapi.common.util;
 
 import com.github.chhorz.javadoc.JavaDoc;
+import com.github.chhorz.openapi.common.annotation.OpenAPI;
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 
+import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class ResponseUtils {
 
@@ -82,12 +84,13 @@ public class ResponseUtils {
 		return response;
 	}
 
-	public Map<String, Response> initializeFromJavadoc(final JavaDoc javaDoc, final String[] produces, final String description, Map<TypeMirror, Schema> schemaMap) {
+	public Map<String, Response> initializeFromJavadoc(final JavaDoc javaDoc, final OpenAPI openApi, final String[] produces,
+		final String description, Map<TypeMirror, Schema> schemaMap) {
 		Map<String, Response> responses = new TreeMap<>();
 
 		if (javaDoc != null) {
-			List<ResponseTag> responseTags = javaDoc.getTags(ResponseTag.class);
-			responseTags.stream()
+			javaDoc.getTags(ResponseTag.class)
+					.stream()
 					.filter(tag -> NOT_NULL_OR_EMPTY.test(tag.getStatusCode()))
 					.filter(tag -> NOT_NULL_OR_EMPTY.test(tag.getResponseType()))
 					.forEach(responseTag -> {
@@ -120,9 +123,24 @@ public class ResponseUtils {
 							}
 						}
 
-						Response response = fromTypeMirror(responseType, produces, responseDescription);
-						responses.put(responseTag.getStatusCode(), response);
+						responses.put(responseTag.getStatusCode(), fromTypeMirror(responseType, produces, responseDescription));
 					});
+		}
+
+		if (openApi != null) {
+			Stream.of(openApi.responses())
+				.forEach(responseAnnotation -> {
+					TypeMirror responseType = null;
+					try {
+						// the following line will throw an exception
+						responseAnnotation.schema();
+					} catch (MirroredTypeException exception) {
+						// handle the thrown exception and get type mirror from the thrown exception
+						responseType = exception.getTypeMirror();
+					}
+					Response response = fromTypeMirror(responseType, produces, responseAnnotation.description());
+					responses.put(responseAnnotation.status(), response);
+				});
 		}
 
 		return responses;

@@ -16,10 +16,11 @@
  */
 package com.github.chhorz.openapi.common;
 
+import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
-import com.github.chhorz.javadoc.tags.Tag;
+import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.openapi.common.annotation.OpenAPIExclusion;
 import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.Info;
@@ -47,6 +48,7 @@ import java.util.stream.StreamSupport;
 
 import static com.github.chhorz.openapi.common.OpenAPIConstants.OPEN_API_VERSION;
 import static com.github.chhorz.openapi.common.OpenAPIConstants.X_GENERATED_FIELD;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonMap;
 import static java.util.Comparator.comparing;
@@ -135,41 +137,80 @@ public interface OpenAPIProcessor {
 	}
 
 	/**
+	 * Creates a list of tags from the given input sources.
+	 *
+	 * @param javaDoc the Javadoc from the executable element
+	 * @param openApiAnnotation the {@link com.github.chhorz.openapi.common.annotation.OpenAPI} annotation from the executable element
+	 * @return a list of tags
+	 */
+	default List<String> getTags(final JavaDoc javaDoc, final com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation){
+		List<String> tags = new ArrayList<>();
+		javaDoc.getTags(CategoryTag.class).stream()
+			.map(CategoryTag::getCategoryName)
+			.forEach(tags::add);
+		javaDoc.getTags(TagTag.class).stream()
+			.map(TagTag::getTagName)
+			.forEach(tags::add);
+		if (openApiAnnotation != null) {
+			tags.addAll(asList(openApiAnnotation.tags()));
+		}
+		Collections.sort(tags);
+		return tags;
+	}
+
+	/**
 	 * Creates a map of security information for a give method.
 	 *
 	 * @param executableElement the current method
-	 * @param map the security schemes from the configuration file
-	 * @param securityTags the security tags from the javadoc comment
+	 * @param openAPI the openapi object with the current parsed data
+	 * @param javaDoc the javadoc comment from the current method
+	 * @param openApiAnnotation the annotation from the current method
 	 * @return map of security information
 	 */
-	default List<Map<String, List<String>>> getSecurityInformation(final ExecutableElement executableElement, final Map<String, SecurityScheme> map,
-																	   final List<SecurityTag> securityTags) {
+	default List<Map<String, List<String>>> getSecurityInformation(final ExecutableElement executableElement,
+		final OpenAPI openAPI, final JavaDoc javaDoc, final com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation) {
 		List<Map<String, List<String>>> securityInformation = new ArrayList<>();
 
-		if (map != null) {
+		Objects.requireNonNull(openAPI);
+		Objects.requireNonNull(openAPI.getComponents());
+		Map<String, SecurityScheme> securitySchemes = openAPI.getComponents().getSecuritySchemes();
+
+		if (securitySchemes != null) {
 			for (AnnotationMirror annotation : executableElement.getAnnotationMirrors()) {
 				if (annotation.getAnnotationType().toString().equalsIgnoreCase(
 					"org.springframework.security.access.prepost.PreAuthorize")) {
 					PreAuthorize preAuthorized = executableElement.getAnnotation(PreAuthorize.class);
-					map.entrySet().stream()
+					securitySchemes.entrySet().stream()
 						.filter(entry -> preAuthorized.value().toLowerCase().contains(entry.getKey().toLowerCase()))
 						.filter(entry -> securityInformation.stream()
-								.map(Map::keySet)
-								.flatMap(Set::stream)
-								.noneMatch(set -> set.contains(entry.getKey())))
+							.map(Map::keySet)
+							.flatMap(Set::stream)
+							.noneMatch(set -> set.contains(entry.getKey())))
 						.forEach(entry -> securityInformation.add(singletonMap(entry.getKey(), emptyList())));
 				}
 			}
 
-			if (securityTags != null) {
-				securityTags.stream()
+			if (javaDoc.getTags(SecurityTag.class) != null) {
+				javaDoc.getTags(SecurityTag.class)
+					.stream()
 					.filter(Objects::nonNull)
 					.map(SecurityTag::getSecurityRequirement)
-					.filter(map::containsKey)
+					.filter(securitySchemes::containsKey)
 					.filter(securityRequirement -> securityInformation.stream()
 							.map(Map::keySet)
 							.flatMap(Set::stream)
 							.noneMatch(set -> set.contains(securityRequirement)))
+					.forEach(securityRequirement -> securityInformation.add(singletonMap(securityRequirement, emptyList())));
+			}
+
+			if (openApiAnnotation != null) {
+				Stream.of(openApiAnnotation.securitySchemes())
+					.filter(Objects::nonNull)
+					.filter(securitySchemes::containsKey)
+					.filter(securityRequirement -> securityInformation.stream()
+						.map(Map::keySet)
+						.flatMap(Set::stream)
+						.noneMatch(set -> set.contains(securityRequirement)))
 					.forEach(securityRequirement -> securityInformation.add(singletonMap(securityRequirement, emptyList())));
 			}
 		}

@@ -152,6 +152,7 @@ Another way to include an annotation processor is the link:https://maven.apache.
 
 It is not possible to mix this way of annotation processor integration with the dependency based one.
 
+[[javadoc]]
 == Javadoc
 In this section we describe the default structure of the Javadoc comments.
 A common structure is required to get all data parsed correct.
@@ -246,6 +247,41 @@ The custom javadoc tag `@tag` was introduced to provide a familiar way to tag op
  * @tag tag_name
  */
 ----
+
+[[annotations]]
+== Annotations
+These annotations exist because the <<javadoc,Javadoc>> like documentation is not typesafe.
+Specially regarding the response type and structure of the complex `@response` tag.
+
+The following examples show the exact same documentation:
+[source,java]
+----
+/**
+ * @security read_role
+ *
+ * @response 200 Resource the response resource
+ * @response 404 java.lang.Void an empty body if nothing was found
+ *
+ * @tag test
+ * @category another_test
+ */
+public ResponseEntity<Resource> testJavadoc(@PathVariable Long id) {}
+
+@OpenAPI(
+    tags = {"test", "another_test"},
+    securitySchemes = "read_role",
+    responses = {
+        @OpenAPIResponse(status = "200", schema = Resource.class, description = "the response resource"),
+        @OpenAPIResponse(status = "404", schema = Void.class, description = "an empty body if nothing was found")
+    })
+public ResponseEntity<Resource> testAnnotation(@PathVariable Long id) {}
+----
+
+[WARNING]
+====
+The priority of the annotation style is higher than the Javadoc style.
+Both styles can be mixed, but the content from the annotations will override the values from the Javadoc comment.
+====
 
 == Configuration
 The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.

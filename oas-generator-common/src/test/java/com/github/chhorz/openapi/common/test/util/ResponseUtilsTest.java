@@ -17,6 +17,8 @@
 package com.github.chhorz.openapi.common.test.util;
 
 import com.github.chhorz.javadoc.JavaDoc;
+import com.github.chhorz.openapi.common.annotation.OpenAPI;
+import com.github.chhorz.openapi.common.annotation.OpenAPIResponse;
 import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.domain.Schema;
@@ -36,6 +38,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -138,8 +141,10 @@ class ResponseUtilsTest {
 		String[] produces = new String[]{"application/json"};
 		String description = "";
 
+		OpenAPI openAPI = createOpenAPI();
+
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openAPI, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -166,8 +171,10 @@ class ResponseUtilsTest {
 		String[] produces = new String[]{"application/json"};
 		String description = "";
 
+		OpenAPI openAPI = createOpenAPI();
+
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openAPI, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -182,8 +189,10 @@ class ResponseUtilsTest {
 		String[] produces = new String[]{"application/json"};
 		String description = "";
 
+		OpenAPI openAPI = createOpenAPI();
+
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openAPI, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -198,8 +207,10 @@ class ResponseUtilsTest {
 		String[] produces = null;
 		String description = null;
 
+		OpenAPI openAPI = createOpenAPI();
+
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openAPI, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -226,8 +237,10 @@ class ResponseUtilsTest {
 		Map<TypeMirror, Schema> typeMap = new HashMap<>();
 		typeMap.put(elements.getTypeElement(ClassA.class.getCanonicalName()).asType(), null);
 
+		OpenAPI openAPI = createOpenAPI();
+
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, typeMap);
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openAPI, produces, description, typeMap);
 
 		// then
 		assertThat(responses)
@@ -262,8 +275,10 @@ class ResponseUtilsTest {
 		String[] produces = new String[]{"application/json"};
 		String description = "";
 
+		OpenAPI openAPI = createOpenAPI();
+
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openAPI, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -285,8 +300,10 @@ class ResponseUtilsTest {
 		String[] produces = new String[]{"application/json"};
 		String description = "";
 
+		OpenAPI openAPI = createOpenAPI();
+
 		// when
-		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, produces, description, Collections.emptyMap());
+		Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openAPI, produces, description, Collections.emptyMap());
 
 		// then
 		assertThat(responses)
@@ -296,4 +313,29 @@ class ResponseUtilsTest {
 		assertThat(responses.get("200").getContent())
 				.containsOnlyKeys("application/json");
 	}
+
+	private OpenAPI createOpenAPI() {
+		return new OpenAPI() {
+			@Override
+			public Class<? extends Annotation> annotationType() {
+				return null;
+			}
+
+			@Override
+			public String[] tags() {
+				return new String[0];
+			}
+
+			@Override
+			public String[] securitySchemes() {
+				return new String[0];
+			}
+
+			@Override
+			public OpenAPIResponse[] responses() {
+				return new OpenAPIResponse[0];
+			}
+		};
+	}
+
 }

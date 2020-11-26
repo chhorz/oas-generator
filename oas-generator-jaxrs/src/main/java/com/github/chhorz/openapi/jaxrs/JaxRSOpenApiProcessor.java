@@ -18,7 +18,6 @@ package com.github.chhorz.openapi.jaxrs;
 
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
-import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
@@ -26,8 +25,6 @@ import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
-import com.github.chhorz.openapi.common.javadoc.SecurityTag;
-import com.github.chhorz.openapi.common.javadoc.TagTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.*;
@@ -161,6 +158,8 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 		}
 
 		JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
+		com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation = executableElement
+			.getAnnotation(com.github.chhorz.openapi.common.annotation.OpenAPI.class);
 
 		Path classPath = executableElement.getEnclosingElement().getAnnotation(Path.class);
 		Path methodPath = executableElement.getAnnotation(Path.class);
@@ -262,14 +261,8 @@ public class JaxRSOpenApiProcessor extends AbstractProcessor implements OpenAPIP
 
 		openApi.getComponents().putAllSchemas(convertSchemaMap(schemaMap));
 
-		javaDoc.getTags(CategoryTag.class).stream()
-			.map(CategoryTag::getCategoryName)
-			.forEach(operation::addTag);
-		javaDoc.getTags(TagTag.class).stream()
-			.map(TagTag::getTagName)
-			.forEach(operation::addTag);
-
-		operation.setSecurity(getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes(), javaDoc.getTags(SecurityTag.class)));
+		getTags(javaDoc, openApiAnnotation).forEach(operation::addTag);
+		operation.setSecurity(getSecurityInformation(executableElement, openApi, javaDoc, openApiAnnotation));
 
 		PathItemObject pathItemObject = openApi.getPaths().getOrDefault(path, new PathItemObject());
 		if (executableElement.getAnnotation(GET.class) != null) {

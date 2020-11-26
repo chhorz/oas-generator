@@ -18,14 +18,11 @@ package com.github.chhorz.openapi.spring;
 
 import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
-import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
-import com.github.chhorz.openapi.common.javadoc.SecurityTag;
-import com.github.chhorz.openapi.common.javadoc.TagTag;
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.*;
@@ -202,8 +199,10 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 		}
 
         JavaDoc javaDoc = javaDocParser.parse(elements.getDocComment(executableElement));
+		com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation = executableElement
+			.getAnnotation(com.github.chhorz.openapi.common.annotation.OpenAPI.class);
 
-        RequestMapping methodMapping = aliasUtils.getMappingAnnotation(executableElement);
+		RequestMapping methodMapping = aliasUtils.getMappingAnnotation(executableElement);
         RequestMapping classMapping = aliasUtils.getMappingAnnotation(executableElement.getEnclosingElement());
 
         RequestMapping requestMapping = aliasUtils.mergeClassAndMethodMappings(classMapping, methodMapping);
@@ -366,7 +365,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                     Map<TypeMirror, Schema> combinedMap = new HashMap<>(schemaMap);
                     combinedMap.putAll(exceptionSchemaMap);
 					combinedMap.putAll(schemaUtils.createSchemasFromDocComment(javaDoc));
-                    Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, requestMapping.produces(), returnTag, combinedMap);
+                    Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openApiAnnotation,
+						requestMapping.produces(), returnTag, combinedMap);
 
                     if (exceptionHanderReturntype != null && !responses.isEmpty()) {
                         // use return type of ExceptionHandler as default response
@@ -405,14 +405,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                         operation.putDefaultResponse(response);
                     }
 
-                    javaDoc.getTags(CategoryTag.class).stream()
-						.map(CategoryTag::getCategoryName)
-						.forEach(operation::addTag);
-                    javaDoc.getTags(TagTag.class).stream()
-						.map(TagTag::getTagName)
-						.forEach(operation::addTag);
-
-					operation.setSecurity(getSecurityInformation(executableElement, openApi.getComponents().getSecuritySchemes(), javaDoc.getTags(SecurityTag.class)));
+					getTags(javaDoc, openApiAnnotation).forEach(operation::addTag);
+					operation.setSecurity(getSecurityInformation(executableElement, openApi, javaDoc, openApiAnnotation));
 
                     PathItemObject pathItemObject = new PathItemObject();
                     switch (requestMethod) {
