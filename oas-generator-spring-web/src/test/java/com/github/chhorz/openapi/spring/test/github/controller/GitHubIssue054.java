@@ -21,37 +21,26 @@ import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 @RequestMapping("github")
-public class GitHubIssue018 {
+public class GitHubIssue054 {
 
 	/**
-	 * Test method A.
+	 * @response 200 Resource[] the status code
 	 *
-	 * @param a parameter a for method a
-	 * @return a list of resources
-	 *
-	 * @response 200 Resource[] success
+	 * @return
 	 */
-	@GitHubIssue("#18")
-	@GetMapping(path = "/issues", params = "a", produces = "*/*")
-	public ResponseEntity<List<Resource>> testParamA(@RequestParam String a) {
+	@GitHubIssue("#54")
+	@GetMapping(path = "/issues/one", produces = "application/vnd.test.v1+json")
+	public ResponseEntity<List<Resource>> test1() {
 		return ResponseEntity.ok().build();
 	}
 
-	/**
-	 * Test method B.
-	 *
-	 * @param b parameter b for method b
-	 * @return a list of resources
-	 *
-	 * @response 200 Resource[] success
-	 */
-	@GetMapping(path = "/issues", params = "b", produces = "*/*")
-	public ResponseEntity<List<Resource>> testParamB(@RequestParam String b) {
+	@GitHubIssue("#54")
+	@GetMapping(path = "/issues/two", produces = "application/vnd.test.v2+json")
+	public ResponseEntity<List<Resource>> test2() {
 		return ResponseEntity.ok().build();
 	}
 

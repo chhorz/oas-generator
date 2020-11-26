@@ -368,11 +368,11 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(operation.getResponses())
 			.isNotNull()
 			.hasSize(1)
-			.containsOnlyKeys("default")
-			.extractingByKey("default")
+			.containsOnlyKeys("200")
+			.extractingByKey("200")
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("description", "a list of resources");
-		assertThat(operation.getResponses().get("default").getContent())
+			.hasFieldOrPropertyWithValue("description", "success");
+		assertThat(operation.getResponses().get("200").getContent())
 			.isNotNull()
 			.hasSize(1)
 			.containsOnlyKeys("*/*")
@@ -547,7 +547,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("default")
 			.extractingByKey("default")
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("description", null);
+			.hasFieldOrPropertyWithValue("description", "");
 		assertThat(operation.getResponses().get("default").getContent())
 			.isNotNull()
 			.hasSize(1)
@@ -805,9 +805,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 				.hasFieldOrPropertyWithValue("$ref", "#/components/schemas/String"));
 		assertThat(operation.getResponses().get("default").getContent())
 			.isNotNull()
-			.hasSize(2)
-			.containsOnlyKeys("application/vnd.test.v1+json", "application/vnd.test.v2+json")
-			.extractingByKey("application/vnd.test.v1+json")
+			.hasSize(1)
+			.containsOnlyKeys("application/vnd.test.v2+json")
+			.extractingByKey("application/vnd.test.v2+json")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
 				.isNotNull());
 //				.extracting(MediaType::getSchema)
@@ -866,6 +866,51 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(operation.getResponses().get("default"))
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("description", "");
+	}
+
+	@Test
+	@GitHubIssue("#54")
+	void getGithubIssue054() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue054.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues/one.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue054#test1");
+
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("200");
+		assertThat(operation.getResponses().get("200"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the status code");
+
+		Operation operationTwo = documentContext.read("$.paths./github/issues/two.get", Operation.class);
+		assertThat(operationTwo)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue054#test2");
+
+		assertThat(operationTwo.getResponses())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("default");
+		assertThat(operationTwo.getResponses().get("default"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "");
+
+		validateSchemaForTestResource(documentContext);
 	}
 
 	@Test

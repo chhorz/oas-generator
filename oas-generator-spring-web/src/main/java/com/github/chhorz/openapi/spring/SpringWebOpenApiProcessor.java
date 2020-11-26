@@ -379,7 +379,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
                         }
                     } else {
                         Schema schema = schemaMap.get(returnType);
-                        if (schema != null) {
+						if (schema != null && responses.isEmpty()) {
                             if (Schema.Type.OBJECT.equals(schema.getType()) || Schema.Type.ENUM.equals(schema.getType())) {
                                 operation.putDefaultResponse(responseUtils.fromTypeMirror(returnType, requestMapping.produces(), returnTag));
                             } else {
