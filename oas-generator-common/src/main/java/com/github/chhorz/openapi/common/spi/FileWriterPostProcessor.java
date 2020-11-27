@@ -21,7 +21,6 @@ import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.FileUtils;
 import com.github.chhorz.openapi.common.util.LogUtils;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -51,22 +50,6 @@ public class FileWriterPostProcessor implements OpenAPIPostProcessor {
 		logUtils.logInfo("FileWriterPostProcessor | Start");
 		fileUtils.writeToFile(openApi);
 		logUtils.logInfo("FileWriterPostProcessor | Finish");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(String content, PostProcessorType postProcessorType) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Path file, PostProcessorType postProcessorType) {
-		throw new UnsupportedOperationException();
 	}
 
 	/**

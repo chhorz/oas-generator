@@ -22,44 +22,51 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * This interface declares the actual post processing method. If only one or two
- * execute methods should be supported, the others should throw an {@link UnsupportedOperationException}.
+ * This interface declares the actual post processing method. All post processing
+ * methods that should be supported must override the default implementation within
+ * this interface.
  *
  * @author chhorz
  */
 public interface OpenAPIPostProcessor {
 
 	/**
-	 * The actual post processing call. If this method for the internal domain
-	 * model should not be supported from the custom post processor, the processor
-	 * should throw an {@link UnsupportedOperationException}.
+	 * This method must be overridden for the actual post processing call. Otherwise
+	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @param openApi the parsed {@link OpenAPI} for which the post processing
 	 *                should be done
 	 */
-	void execute(OpenAPI openApi);
+	default void execute(OpenAPI openApi) {
+		throw new UnsupportedOperationException(
+			"PostProcessor of type "+ PostProcessorType.DOMAIN_OBJECT +" is defined but method not overridden");
+	}
 
 	/**
-	 * The actual post processing call. If this method for the generated OpenAPI
-	 * content should not be supported from the custom post processor, the processor
-	 * should throw an {@link UnsupportedOperationException}.
+	 * This method must be overridden for the actual post processing call. Otherwise
+	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @param content 			the written file content as JSON or YAML format
 	 * @param postProcessorType the post processor type that can be used
 	 *							to distinguish calls for JSON and YAML
 	 */
-	void execute(String content, PostProcessorType postProcessorType);
+	default void execute(String content, PostProcessorType postProcessorType) {
+		throw new UnsupportedOperationException(
+			"PostProcessor of type '" + postProcessorType + "' is defined but method not overridden");
+	}
 
 	/**
-	 * The actual post processing call. If this method for the generated file
-	 * should not be supported from the custom post processor, the processor
-	 * should throw an {@link UnsupportedOperationException}.
+	 * This method must be overridden for the actual post processing call. Otherwise
+	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @param file 				the generated json or yaml file
 	 * @param postProcessorType the post processor type that can be used
 	 *							to distinguish calls for JSON and YAML
 	 */
-	void execute(Path file, PostProcessorType postProcessorType);
+	default void execute(Path file, PostProcessorType postProcessorType) {
+		throw new UnsupportedOperationException(
+			"PostProcessor of type '" + postProcessorType + "' is defined but method not overridden");
+	}
 
 	/**
 	 * Returns the value for the order in which the post processor should be

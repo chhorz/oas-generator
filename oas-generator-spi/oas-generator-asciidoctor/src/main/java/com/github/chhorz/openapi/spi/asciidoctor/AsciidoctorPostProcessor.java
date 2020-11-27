@@ -132,22 +132,6 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void execute(String content, PostProcessorType postProcessorType) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void execute(Path file, PostProcessorType postProcessorType) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public int getPostProcessorOrder() {
 		return POST_PROCESSOR_ORDER;
 	}
