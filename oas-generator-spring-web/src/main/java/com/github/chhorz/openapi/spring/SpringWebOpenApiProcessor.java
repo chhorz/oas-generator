@@ -17,15 +17,14 @@
 package com.github.chhorz.openapi.spring;
 
 import com.github.chhorz.javadoc.JavaDoc;
-import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
-import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
-import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
-import com.github.chhorz.openapi.common.util.*;
+import com.github.chhorz.openapi.common.util.ComponentUtils;
+import com.github.chhorz.openapi.common.util.ProcessingUtils;
+import com.github.chhorz.openapi.common.util.TagUtils;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
 import com.github.chhorz.openapi.spring.util.ParameterUtils;
 import com.github.chhorz.openapi.spring.util.PathItemUtils;
@@ -35,17 +34,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
+import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,52 +49,26 @@ import static com.github.chhorz.openapi.common.util.ComponentUtils.convertSchema
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
-public class SpringWebOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
+public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 
-    private Elements elements;
-
-	private GeneratorPropertyLoader propertyLoader;
-    private ParserProperties parserProperties;
-
-    private LogUtils logUtils;
-    private SchemaUtils schemaUtils;
-    private ProcessingUtils processingUtils;
-    private ResponseUtils responseUtils;
     private AliasUtils aliasUtils;
     private ParameterUtils parameterUtils;
-
-    private JavaDocParser javaDocParser;
-
-    private OpenAPI openApi;
 
     private TypeMirror exceptionHanderReturntype = null;
 
     @Override
     public synchronized void init(final ProcessingEnvironment processingEnv) {
-        elements = processingEnv.getElementUtils();
-		Types types = processingEnv.getTypeUtils();
-		Messager messager = processingEnv.getMessager();
+    	init(processingEnv, singletonList(ResponseEntity.class));
 
-        // initialize property loader
-        propertyLoader = new GeneratorPropertyLoader(messager, processingEnv.getOptions());
-        parserProperties = propertyLoader.getParserProperties();
-
-		logUtils = new LogUtils(messager, parserProperties);
-		schemaUtils = new SchemaUtils(elements, types, parserProperties, logUtils, singletonList(ResponseEntity.class));
-		processingUtils = new ProcessingUtils(elements, types, logUtils);
-		responseUtils = new ResponseUtils(elements, types, parserProperties, logUtils);
 		aliasUtils = new AliasUtils();
 		parameterUtils = new ParameterUtils(schemaUtils, processingUtils, aliasUtils);
-
-        javaDocParser = createJavadocParser();
 
         openApi = initializeFromProperties(propertyLoader);
     }
 
     @Override
-    public Set<String> getSupportedAnnotationTypes() {
+    public Stream<Class<? extends Annotation>> getSupportedAnnotationClasses() {
 		return Stream.of(RequestMapping.class,
 				GetMapping.class,
 				PostMapping.class,
@@ -107,19 +76,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				DeleteMapping.class,
 				PatchMapping.class,
 				ExceptionHandler.class,
-				OpenAPISchema.class)
-			.map(Class::getCanonicalName)
-			.collect(toSet());
-	}
-
-	@Override
-	public SourceVersion getSupportedSourceVersion() {
-		return SourceVersion.latest();
-	}
-
-	@Override
-	public Set<String> getSupportedOptions() {
-		return getOasGeneratorOptions();
+				OpenAPISchema.class);
 	}
 
 	@Override
@@ -165,7 +122,8 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 			openApi.getComponents().putAllSchemas(schemaUtils.parsePackages(parserProperties.getSchemaPackages()));
 
 			if (parserProperties.getSchemaFile() != null) {
-				readOpenApiFile(logUtils, parserProperties).ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
+				readOpenApiFile(parserProperties)
+					.ifPresent(schemaFile -> openApi.getComponents().putAllParsedSchemas(schemaFile.getComponents().getSchemas()));
 			}
 
 			TagUtils tagUtils = new TagUtils(propertyLoader);
@@ -182,7 +140,7 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
 				.forEach(openApi::addTag);
 
 			if (roundEnv.processingOver()) {
-				runPostProcessors(logUtils, parserProperties, openApi);
+				runPostProcessors(parserProperties, openApi);
 			}
 		} else {
 			logUtils.logError("Execution disabled via properties");
@@ -449,20 +407,5 @@ public class SpringWebOpenApiProcessor extends AbstractProcessor implements Open
             }
         }
     }
-
-	/**
-	 * Check if the given class is available on the classpath. This check is required for optional maven dependencies.
-	 *
-	 * @param className the full qualified class name
-	 * @return {@code true} if the class is available on the classpath
-	 */
-	private boolean isClassAvailable(final String className) {
-		try  {
-			Class.forName(className);
-			return true;
-		}  catch (ClassNotFoundException e) {
-			return false;
-		}
-	}
 
 }

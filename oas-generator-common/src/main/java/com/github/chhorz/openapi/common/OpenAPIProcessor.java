@@ -34,12 +34,18 @@ import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.spi.OpenAPIPostProcessor;
 import com.github.chhorz.openapi.common.spi.PostProcessorProvider;
 import com.github.chhorz.openapi.common.spi.PostProcessorType;
-import com.github.chhorz.openapi.common.util.FileUtils;
-import com.github.chhorz.openapi.common.util.LogUtils;
+import com.github.chhorz.openapi.common.util.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
+import java.lang.annotation.Annotation;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -56,22 +62,86 @@ import static java.util.ServiceLoader.load;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * Interface to provide some common functionality for all OpenAPI annotation processors.
+ * Abstract annotation processor to provide some common functionality for all specific OpenAPI annotation processors.
  *
  * @author chhorz
  */
-public interface OpenAPIProcessor {
+public abstract class OpenAPIProcessor extends AbstractProcessor {
+
+	protected Elements elements;
+
+	protected GeneratorPropertyLoader propertyLoader;
+	protected ParserProperties parserProperties;
+
+	protected LogUtils logUtils;
+	protected SchemaUtils schemaUtils;
+	protected ProcessingUtils processingUtils;
+	protected ResponseUtils responseUtils;
+
+	protected JavaDocParser javaDocParser;
+
+	protected OpenAPI openApi;
 
 	/**
-	 * Returns a set of all annotation processor options that will be recognized by the implementators of this interface.
+	 *
+	 *
+	 * @see AbstractProcessor#init(ProcessingEnvironment)
+	 */
+	protected void init(ProcessingEnvironment processingEnv, final List<Class<?>> baseClasses) {
+		elements = processingEnv.getElementUtils();
+		Types types = processingEnv.getTypeUtils();
+		Messager messager = processingEnv.getMessager();
+
+		// initialize property loader
+		propertyLoader = new GeneratorPropertyLoader(messager, processingEnv.getOptions());
+		parserProperties = propertyLoader.getParserProperties();
+
+		logUtils = new LogUtils(messager, parserProperties);
+		schemaUtils = new SchemaUtils(elements, types, parserProperties, logUtils, baseClasses);
+		processingUtils = new ProcessingUtils(elements, types, logUtils);
+		responseUtils = new ResponseUtils(elements, types, parserProperties, logUtils);
+
+		javaDocParser = createJavadocParser();
+
+		openApi = initializeFromProperties(propertyLoader);
+	}
+
+	/**
+	 * Create a stream of all supported annotation classes
+	 *
+	 * @return stream of class elements.
+	 */
+	protected abstract Stream<Class<? extends Annotation>> getSupportedAnnotationClasses();
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<String> getSupportedAnnotationTypes() {
+		return getSupportedAnnotationClasses()
+			.map(Class::getCanonicalName)
+			.collect(toSet());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SourceVersion getSupportedSourceVersion() {
+		return SourceVersion.latest();
+	}
+
+	/**
+	 * Returns a set of all annotation processor options that will be recognized by the implementations of this interface.
 	 *
 	 * @return a set of annotation processor compiler options
 	 */
-	default Set<String> getOasGeneratorOptions() {
+	@Override
+	public Set<String> getSupportedOptions() {
 		return Stream.of(
-			OpenAPIConstants.OPTION_PROPERTIES_PATH,
-			OpenAPIConstants.OPTION_SCHEMA_FILE_PATH,
-			OpenAPIConstants.OPTION_VERSION)
+				OpenAPIConstants.OPTION_PROPERTIES_PATH,
+				OpenAPIConstants.OPTION_SCHEMA_FILE_PATH,
+				OpenAPIConstants.OPTION_VERSION)
 			.collect(toSet());
 	}
 
@@ -81,7 +151,7 @@ public interface OpenAPIProcessor {
 	 * @param propertyLoader the property loader that loads the properties from the configuration file
 	 * @return a new instance of an OpenAPI domain object
 	 */
-	default OpenAPI initializeFromProperties(final GeneratorPropertyLoader propertyLoader) {
+	protected OpenAPI initializeFromProperties(final GeneratorPropertyLoader propertyLoader) {
 		OpenAPI openApi = new OpenAPI();
 		openApi.setOpenapi(OPEN_API_VERSION);
 
@@ -106,7 +176,7 @@ public interface OpenAPIProcessor {
 	 *
 	 * @return a new instance of the JavaDocParser
 	 */
-	default JavaDocParser createJavadocParser() {
+	protected JavaDocParser createJavadocParser() {
 		return JavaDocParserBuilder.withBasicTags()
 				.withCustomTag(new ResponseTag())
 				.withCustomTag(new SecurityTag())
@@ -121,7 +191,7 @@ public interface OpenAPIProcessor {
 	 * @param executableElement the executable executableElement that defines a specific method
 	 * @return the OpenAPI operation id (should be unique)
 	 */
-	default String getOperationId(final ExecutableElement executableElement){
+	protected String getOperationId(final ExecutableElement executableElement){
 		return String.format("%s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement.getSimpleName());
 	}
 
@@ -131,7 +201,7 @@ public interface OpenAPIProcessor {
 	 * @param executableElement the executable executableElement that defines a specific method
 	 * @return a flag if the given method should be excluded
 	 */
-	default boolean exclude(final ExecutableElement executableElement) {
+	protected boolean exclude(final ExecutableElement executableElement) {
 		return executableElement.getEnclosingElement().getAnnotation(OpenAPIExclusion.class) != null ||
 			executableElement.getAnnotation(OpenAPIExclusion.class) != null;
 	}
@@ -143,7 +213,7 @@ public interface OpenAPIProcessor {
 	 * @param openApiAnnotation the {@link com.github.chhorz.openapi.common.annotation.OpenAPI} annotation from the executable element
 	 * @return a list of tags
 	 */
-	default List<String> getTags(final JavaDoc javaDoc, final com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation){
+	protected List<String> getTags(final JavaDoc javaDoc, final com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation){
 		List<String> tags = new ArrayList<>();
 		javaDoc.getTags(CategoryTag.class).stream()
 			.map(CategoryTag::getCategoryName)
@@ -167,7 +237,7 @@ public interface OpenAPIProcessor {
 	 * @param openApiAnnotation the annotation from the current method
 	 * @return map of security information
 	 */
-	default List<Map<String, List<String>>> getSecurityInformation(final ExecutableElement executableElement,
+	protected List<Map<String, List<String>>> getSecurityInformation(final ExecutableElement executableElement,
 		final OpenAPI openAPI, final JavaDoc javaDoc, final com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation) {
 		List<Map<String, List<String>>> securityInformation = new ArrayList<>();
 
@@ -221,11 +291,10 @@ public interface OpenAPIProcessor {
 	/**
 	 * Runs all registered post processors from the service loader.
 	 *
-	 * @param logUtils the oas-generator internal logging utils class
 	 * @param parserProperties the configuration properties form the configuration file
 	 * @param openApi the generated OpenAPI domain object
 	 */
-	default void runPostProcessors(final LogUtils logUtils, final ParserProperties parserProperties, final OpenAPI openApi) {
+	protected void runPostProcessors(final ParserProperties parserProperties, final OpenAPI openApi) {
 		ServiceLoader<PostProcessorProvider> serviceLoader = load(PostProcessorProvider.class, getClass().getClassLoader());
 
 		StreamSupport.stream(serviceLoader.spliterator(), false)
@@ -243,9 +312,24 @@ public interface OpenAPIProcessor {
 	 * @param parserProperties the loaded configuration properties
 	 * @return an OpenAPI domain object of the configured schema file from the properties
 	 */
-	default Optional<OpenAPI> readOpenApiFile(final LogUtils logUtils, final ParserProperties parserProperties) {
+	protected Optional<OpenAPI> readOpenApiFile(final ParserProperties parserProperties) {
 		FileUtils fileUtils = new FileUtils(logUtils, parserProperties);
 		return fileUtils.readOpenAPIObjectFromFile();
+	}
+
+	/**
+	 * Check if the given class is available on the classpath. This check is required for optional maven dependencies.
+	 *
+	 * @param className the full qualified class name
+	 * @return {@code true} if the class is available on the classpath
+	 */
+	protected boolean isClassAvailable(final String className) {
+		try  {
+			Class.forName(className);
+			return true;
+		}  catch (ClassNotFoundException e) {
+			return false;
+		}
 	}
 
 }

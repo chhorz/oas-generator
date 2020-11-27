@@ -21,65 +21,34 @@ import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.Components;
 import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
-import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
-import com.github.chhorz.openapi.common.util.LogUtils;
-import com.github.chhorz.openapi.common.util.SchemaUtils;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
+import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 
-public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPIProcessor {
-
-	private Elements elements;
-	private Types types;
-
-	private ParserProperties parserProperties;
-
-	private LogUtils logUtils;
-
-	private OpenAPI openApi;
+public class SchemaOpenApiProcessor extends OpenAPIProcessor {
 
 	@Override
 	public synchronized void init(final ProcessingEnvironment processingEnv) {
-		elements = processingEnv.getElementUtils();
-		types = processingEnv.getTypeUtils();
-		Messager messager = processingEnv.getMessager();
-
-		// initialize property loader
-		GeneratorPropertyLoader propertyLoader = new GeneratorPropertyLoader(messager, processingEnv.getOptions());
-		parserProperties = propertyLoader.getParserProperties();
-
-		logUtils = new LogUtils(messager, parserProperties);
+		init(processingEnv, emptyList());
 
 		openApi = new OpenAPI();
 		openApi.setComponents(new Components());
 	}
 
 	@Override
-	public Set<String> getSupportedAnnotationTypes() {
-		return Stream.of(OpenAPISchema.class)
-			.map(Class::getCanonicalName)
-			.collect(toSet());
+	public Stream<Class<? extends Annotation>> getSupportedAnnotationClasses() {
+		return Stream.of(OpenAPISchema.class);
 	}
 
 	@Override
-	public SourceVersion getSupportedSourceVersion() {
-		return SourceVersion.latest();
-	}
-
-	@Override
-	public Set<String> getOasGeneratorOptions() {
+	public Set<String> getSupportedOptions() {
 		return Stream.of(
 			OpenAPIConstants.OPTION_PROPERTIES_PATH)
 			.collect(toSet());
@@ -88,7 +57,6 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		if (parserProperties.getEnabled()) {
-			SchemaUtils schemaUtils = new SchemaUtils(elements, types, parserProperties, logUtils);
 			for (TypeElement annotation : annotations) {
 				roundEnv.getElementsAnnotatedWith(annotation).forEach(element -> {
 					openApi.getComponents().putAllSchemas(schemaUtils.createStringSchemaMap(element.asType()));
@@ -98,7 +66,7 @@ public class SchemaOpenApiProcessor extends AbstractProcessor implements OpenAPI
 			openApi.getComponents().putAllSchemas(schemaUtils.parsePackages(parserProperties.getSchemaPackages()));
 
 			if (roundEnv.processingOver()) {
-				runPostProcessors(logUtils, parserProperties, openApi);
+				runPostProcessors(parserProperties, openApi);
 			}
 		} else {
 			logUtils.logError("Execution disabled via properties");
