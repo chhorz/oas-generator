@@ -250,38 +250,60 @@ The custom javadoc tag `@tag` was introduced to provide a familiar way to tag op
 
 [[annotations]]
 == Annotations
+
+=== Document API methods
 These annotations exist because the <<javadoc,Javadoc>> like documentation is not typesafe.
 Specially regarding the response type and structure of the complex `@response` tag.
 
 The following examples show the exact same documentation:
 [source,java]
 ----
-/**
- * @security read_role
- *
- * @response 200 Resource the response resource
- * @response 404 java.lang.Void an empty body if nothing was found
- *
- * @tag test
- * @category another_test
- */
-public ResponseEntity<Resource> testJavadoc(@PathVariable Long id) {}
+public class TestController {
 
-@OpenAPI(
-    tags = {"test", "another_test"},
-    securitySchemes = "read_role",
-    responses = {
-        @OpenAPIResponse(status = "200", schema = Resource.class, description = "the response resource"),
-        @OpenAPIResponse(status = "404", schema = Void.class, description = "an empty body if nothing was found")
-    })
-public ResponseEntity<Resource> testAnnotation(@PathVariable Long id) {}
+    /**
+     * @security read_role
+     *
+     * @response 200 Resource the response resource
+     * @response 404 java.lang.Void an empty body if nothing was found
+     *
+     * @tag test
+     * @category another_test <1>
+     */
+    public ResponseEntity<Resource> testJavadoc(@PathVariable Long id) {}
+
+    @OpenAPI(
+        tags = {"test", "another_test"},
+        securitySchemes = "read_role",
+        responses = {
+            @OpenAPIResponse(status = "200", schema = Resource.class, description = "the response resource"),
+            @OpenAPIResponse(status = "404", schema = Void.class, description = "an empty body if nothing was found")
+        })
+    public ResponseEntity<Resource> testAnnotation(@PathVariable Long id) {}
+
+}
 ----
+<1> The usage of `@tag` is equivalent to `@category`
 
 [WARNING]
 ====
 The priority of the annotation style is higher than the Javadoc style.
 Both styles can be mixed, but the content from the annotations will override the values from the Javadoc comment.
 ====
+
+=== Exclude API operations
+To hide internal operations from the generated OpenAPI file, these methods can be annotated with `OpenAPIExclusion`.
+This annotation works on class and method level.
+
+[source,java]
+----
+public class TestController {
+
+	@OpenAPIExclusion
+	@PostMapping
+	public ResponseEntity<Resource> update(@RequestBody Resource resource) {}
+
+}
+----
 
 == Configuration
 The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
