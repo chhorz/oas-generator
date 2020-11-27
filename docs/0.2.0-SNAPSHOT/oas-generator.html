@@ -2140,7 +2140,12 @@ p {
 </li>
 </ul>
 </li>
-<li><a href="#annotations">4. Annotations</a></li>
+<li><a href="#annotations">4. Annotations</a>
+<ul class="sectlevel2">
+<li><a href="#_document_api_methods">4.1. Document API methods</a></li>
+<li><a href="#_exclude_api_operations">4.2. Exclude API operations</a></li>
+</ul>
+</li>
 <li><a href="#_configuration">5. Configuration</a>
 <ul class="sectlevel2">
 <li><a href="#compiler_options">5.1. Compiler options</a>
@@ -2468,6 +2473,8 @@ The custom javadoc tag <code>@tag</code> was introduced to provide a familiar wa
 <div class="sect1">
 <h2 id="annotations"><a class="anchor" href="#annotations"></a><a class="link" href="#annotations">4. Annotations</a></h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_document_api_methods"><a class="anchor" href="#_document_api_methods"></a><a class="link" href="#_document_api_methods">4.1. Document API methods</a></h3>
 <div class="paragraph">
 <p>These annotations exist because the <a href="#javadoc">Javadoc</a> like documentation is not typesafe.
 Specially regarding the response type and structure of the complex <code>@response</code> tag.</p>
@@ -2477,26 +2484,38 @@ Specially regarding the response type and structure of the complex <code>@respon
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">/**
- * @security read_role
- *
- * @response 200 Resource the response resource
- * @response 404 java.lang.Void an empty body if nothing was found
- *
- * @tag test
- * @category another_test
- */
-public ResponseEntity&lt;Resource&gt; testJavadoc(@PathVariable Long id) {}
+<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">public class TestController {
 
-@OpenAPI(
-    tags = {"test", "another_test"},
-    securitySchemes = "read_role",
-    responses = {
-        @OpenAPIResponse(status = "200", schema = Resource.class, description = "the response resource"),
-        @OpenAPIResponse(status = "404", schema = Void.class, description = "an empty body if nothing was found")
-    })
-public ResponseEntity&lt;Resource&gt; testAnnotation(@PathVariable Long id) {}</code></pre>
+    /**
+     * @security read_role
+     *
+     * @response 200 Resource the response resource
+     * @response 404 java.lang.Void an empty body if nothing was found
+     *
+     * @tag test
+     * @category another_test <i class="conum" data-value="1"></i><b>(1)</b>
+     */
+    public ResponseEntity&lt;Resource&gt; testJavadoc(@PathVariable Long id) {}
+
+    @OpenAPI(
+        tags = {"test", "another_test"},
+        securitySchemes = "read_role",
+        responses = {
+            @OpenAPIResponse(status = "200", schema = Resource.class, description = "the response resource"),
+            @OpenAPIResponse(status = "404", schema = Void.class, description = "an empty body if nothing was found")
+        })
+    public ResponseEntity&lt;Resource&gt; testAnnotation(@PathVariable Long id) {}
+
+}</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The usage of <code>@tag</code> is equivalent to <code>@category</code></td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -2512,6 +2531,25 @@ Both styles can be mixed, but the content from the annotations will override the
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exclude_api_operations"><a class="anchor" href="#_exclude_api_operations"></a><a class="link" href="#_exclude_api_operations">4.2. Exclude API operations</a></h3>
+<div class="paragraph">
+<p>To hide internal operations from the generated OpenAPI file, these methods can be annotated with <code>OpenAPIExclusion</code>.
+This annotation works on class and method level.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code data-lang="java" class="language-java hljs">public class TestController {
+
+	@OpenAPIExclusion
+	@PostMapping
+	public ResponseEntity&lt;Resource&gt; update(@RequestBody Resource resource) {}
+
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3173,44 +3211,51 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * This interface declares the actual post processing method. If only one or two
- * execute methods should be supported, the others should throw an {@link UnsupportedOperationException}.
+ * This interface declares the actual post processing method. All post processing
+ * methods that should be supported must override the default implementation within
+ * this interface.
  *
  * @author chhorz
  */
 public interface OpenAPIPostProcessor {
 
 	/**
-	 * The actual post processing call. If this method for the internal domain
-	 * model should not be supported from the custom post processor, the processor
-	 * should throw an {@link UnsupportedOperationException}.
+	 * This method must be overridden for the actual post processing call. Otherwise
+	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @param openApi the parsed {@link OpenAPI} for which the post processing
 	 *                should be done
 	 */
-	void execute(OpenAPI openApi);
+	default void execute(OpenAPI openApi) {
+		throw new UnsupportedOperationException(
+			"PostProcessor of type "+ PostProcessorType.DOMAIN_OBJECT +" is defined but method not overridden");
+	}
 
 	/**
-	 * The actual post processing call. If this method for the generated OpenAPI
-	 * content should not be supported from the custom post processor, the processor
-	 * should throw an {@link UnsupportedOperationException}.
+	 * This method must be overridden for the actual post processing call. Otherwise
+	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @param content 			the written file content as JSON or YAML format
 	 * @param postProcessorType the post processor type that can be used
 	 *							to distinguish calls for JSON and YAML
 	 */
-	void execute(String content, PostProcessorType postProcessorType);
+	default void execute(String content, PostProcessorType postProcessorType) {
+		throw new UnsupportedOperationException(
+			"PostProcessor of type '" + postProcessorType + "' is defined but method not overridden");
+	}
 
 	/**
-	 * The actual post processing call. If this method for the generated file
-	 * should not be supported from the custom post processor, the processor
-	 * should throw an {@link UnsupportedOperationException}.
+	 * This method must be overridden for the actual post processing call. Otherwise
+	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @param file 				the generated json or yaml file
 	 * @param postProcessorType the post processor type that can be used
 	 *							to distinguish calls for JSON and YAML
 	 */
-	void execute(Path file, PostProcessorType postProcessorType);
+	default void execute(Path file, PostProcessorType postProcessorType) {
+		throw new UnsupportedOperationException(
+			"PostProcessor of type '" + postProcessorType + "' is defined but method not overridden");
+	}
 
 	/**
 	 * Returns the value for the order in which the post processor should be
@@ -3364,7 +3409,7 @@ To configure the repository for your project to use the latest snapshot versions
 <div id="footer">
 <div id="footer-text">
 Version 0.2.0-SNAPSHOT<br>
-Last updated 2020-11-26 16:39:30 +0100
+Last updated 2020-11-27 09:41:40 +0100
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/zenburn.min.css">
