@@ -85,7 +85,7 @@
 
 		<!-- dependency versions -->
 		<asciidoctorj-diagram.version>2.0.5</asciidoctorj-diagram.version>
-		<jackson.version>2.11.3</jackson.version>
+		<jackson.version>2.12.0</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
 		<snakeyaml.version>1.27</snakeyaml.version>
 
