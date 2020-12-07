@@ -90,7 +90,7 @@
 		<snakeyaml.version>1.27</snakeyaml.version>
 
 		<spring-data-commons.version>2.4.1</spring-data-commons.version>
-		<spring-security-core.version>5.4.1</spring-security-core.version>
+		<spring-security-core.version>5.4.2</spring-security-core.version>
 		<spring-web.version>5.3.1</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
