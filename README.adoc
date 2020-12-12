@@ -2,8 +2,8 @@
 :author: Christian Horz
 :icons: font
 
-
 image:https://github.com/chhorz/oas-generator/workflows/Java%20CI/badge.svg?branch=master["Java CI",link=https://github.com/chhorz/oas-generator/actions?query=workflow%3A%22Java+CI%22]
+image:https://maven-badges.herokuapp.com/maven-central/com.github.chhorz/oas-generator/badge.svg["Maven Central",link=https://maven-badges.herokuapp.com/maven-central/com.github.chhorz/oas-generator]
 
 == About
 The *OAS Generator* is a java annotation processor that generates an OpenAPI specification file from the java annotations within the source code.
@@ -19,7 +19,7 @@ Because the file is generated during compilation, the documentation is always up
 <dependency>
     <groupId>com.github.chhorz</groupId>
     <artifactId>oas-generator-{spring-web|jaxrs|schema|asciidoctor}</artifactId>
-    <version>0.1.1</version>
+    <version>0.2.0</version>
 </dependency>
 ----
 . Create a configuration file `oas-generator.yml` (per default in _/src/main/resources_).
