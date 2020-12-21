@@ -222,7 +222,7 @@ m| enum (STANDARD, RETURN)
 |
 
 | value
-m|
+m| string
 | pass:[Lorem ipsum]
 
 |===

@@ -181,6 +181,7 @@ class AsciidoctorPostProcessorTest {
 		orderTypeSchema.addEnumValue("RETURN");
 
 		Schema valueSchema = new Schema();
+		valueSchema.setType(Schema.Type.STRING);
 		valueSchema.setDescription("Lorem ipsum");
 
 		Schema orderSchema = new Schema();

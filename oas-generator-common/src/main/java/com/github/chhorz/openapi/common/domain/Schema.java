@@ -16,15 +16,16 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.github.chhorz.openapi.common.domain.meta.Required;
+import com.github.chhorz.openapi.common.util.jackson.SchemaPropertyDeserializer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.github.chhorz.openapi.common.util.jackson.SchemaPropertyDeserializer;
 
 /**
  * https://spec.openapis.org/oas/v3.0.3#schema-object
@@ -35,7 +36,7 @@ import com.github.chhorz.openapi.common.util.jackson.SchemaPropertyDeserializer;
 public class Schema {
 
 	// private Boolean nullable = FALSE;
-	// private Descriminator discriminator;
+	// private Discriminator discriminator;
 	// private Boolean readOnly = FALSE;
 	// private Boolean writeOnly = FALSE;
 	// private Xml xml;
@@ -44,6 +45,7 @@ public class Schema {
 
 	private Boolean deprecated = false;
 
+	@Required
 	private Type type;
 	private Format format;
 	private String description;
