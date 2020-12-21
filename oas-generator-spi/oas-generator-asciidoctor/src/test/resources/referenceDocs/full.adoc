@@ -173,6 +173,7 @@ h| Description
 This schema is deprecated.
 
 pass:[This is an article resource.]
+
 [cols="1,2,3", options="header"]
 |===
 | Name | Type | Description
@@ -203,6 +204,7 @@ m| <<components_schemas_OrderResource>>
 ==== OrderResource
 
 pass:[This is an order resource.]
+
 [cols="1,2,3", options="header"]
 |===
 | Name | Type | Description

@@ -114,7 +114,8 @@ pass:[<@clean pathItem.description/>]
 This schema is deprecated.
 
 </#if>
-<#if schema.description?? && schema.description?has_content> pass:[<@clean schema.description/>]</#if>
+<#if schema.description?? && schema.description?has_content>pass:[<@clean schema.description/>]</#if>
+
 <#if schema.properties??>
 [cols="1,2,3", options="header"]
 |===

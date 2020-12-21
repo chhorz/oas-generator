@@ -65,7 +65,7 @@ e| Status
 
 <#list operation.responses as status, response>
 ^| ${status}
-4+a| <#if response.description?? && response.description?has_content>pass:[<@clean response.description/>]<#else>${response.description}</#if>
+4+a|<#if response.description?? && response.description?has_content> pass:[<@clean response.description/>]<#else>${response.description}</#if>
 <#if response.content??>
 
 [cols="2,1"]
