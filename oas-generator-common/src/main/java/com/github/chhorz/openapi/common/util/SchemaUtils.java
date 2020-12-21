@@ -22,6 +22,7 @@ import com.github.chhorz.javadoc.JavaDoc;
 import com.github.chhorz.javadoc.JavaDocParser;
 import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
+import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
@@ -37,6 +38,11 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.AbstractMap.SimpleEntry;
@@ -369,6 +375,18 @@ public class SchemaUtils {
 														Reference.forSchema(ProcessingUtils.getShortName(vElement.asType())));
 											} else {
 												Schema propertySchema = entry.getValue();
+
+												if (OpenAPIProcessor.isClassAvailable("javax.validation.constraints.Min")) {
+													getValidationValue(vElement, NotNull.class, notNull -> true)
+														.ifPresent(notNull -> schema.addRequired(propertyName));
+													getValidationValue(vElement, Min.class, Min::value)
+														.ifPresent(propertySchema::setMinimum);
+													getValidationValue(vElement, Max.class, Max::value)
+														.ifPresent(propertySchema::setMaximum);
+													getValidationValue(vElement, Pattern.class, Pattern::regexp)
+														.ifPresent(propertySchema::setPattern);
+												}
+
 												propertySchema.setDescription(propertyDoc.getDescription());
 												if (vElement.getAnnotation(Deprecated.class) != null) {
 													propertySchema.setDeprecated(true);
@@ -503,6 +521,15 @@ public class SchemaUtils {
 		}
 	}
 
+	private <A extends Annotation,V> Optional<V> getValidationValue(final Element element, final Class<A> clazz, final Function<A,V> valueProvider) {
+		A annotation = element.getAnnotation(clazz);
+		if (annotation != null) {
+			return Optional.ofNullable(valueProvider.apply(annotation));
+		} else {
+			return Optional.empty();
+		}
+	}
+
 	private SimpleEntry<Type, Format> getPrimitiveTypeAndFormat(final TypeMirror typeMirror) {
 		switch (typeMirror.getKind()) {
 			case BOOLEAN:
@@ -557,12 +584,18 @@ public class SchemaUtils {
 	public static Schema mergeSchemas(final Schema one, final Schema two) {
 		Schema result = new Schema();
 
+		if (one.getRequired() != null || two.getRequired() != null) {
+			merge(one, two, Schema::getRequired).forEach(result::addRequired);
+		}
+		result.setMinimum(merge(one, two, Schema::getMinimum));
+		result.setMaximum(merge(one, two, Schema::getMaximum));
+		result.setPattern(mergeString(one, two, Schema::getPattern));
+
 		result.setDeprecated(one.getDeprecated() || two.getDeprecated());
 		result.setFormat(merge(one, two, Schema::getFormat));
 		result.setType(merge(one, two, Schema::getType));
 		result.setDescription(mergeString(one, two, Schema::getDescription));
 		result.setDefaultValue(merge(one, two, Schema::getDefaultValue));
-		result.setPattern(mergeString(one, two, Schema::getPattern));
 
 		if (one.getEnumValues() != null || two.getEnumValues() != null) {
 			merge(one, two, Schema::getEnumValues).forEach(result::addEnumValue);

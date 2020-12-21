@@ -22,10 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 import com.github.chhorz.openapi.common.util.jackson.SchemaPropertyDeserializer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * https://spec.openapis.org/oas/v3.0.3#schema-object
@@ -35,13 +32,10 @@ import java.util.TreeMap;
  */
 public class Schema {
 
-	// private Boolean nullable = FALSE;
-	// private Discriminator discriminator;
-	// private Boolean readOnly = FALSE;
-	// private Boolean writeOnly = FALSE;
-	// private Xml xml;
-	// private ExternalDocumentation externalDocs;
-	// private Object example;
+	private List<String> required;
+	private Long maximum;
+	private Long minimum;
+	private String pattern;
 
 	private Boolean deprecated = false;
 
@@ -54,54 +48,41 @@ public class Schema {
 
 	@JsonProperty("default")
 	private Object defaultValue;
-	private String pattern;
 
 	@JsonProperty("enum")
 	private List<String> enumValues;
 
 	private Object items;
 
-	public enum Type {
-		ARRAY("array"),
-		BOOLEAN("boolean"),
-		ENUM("enum"),
-		INTEGER("integer"),
-		NUMBER("number"),
-		OBJECT("object"),
-		STRING("string");
-
-		private String openApiValue;
-
-		Type(final String openApiValue) {
-			this.openApiValue = openApiValue;
-		}
-
-		@JsonValue
-		public String getOpenApiValue() {
-			return openApiValue;
-		}
-
+	public List<String> getRequired() {
+		return required;
 	}
 
-	public enum Format {
-		BYTE("bype"),
-		DATE("date"),
-		DATE_TIME("date-time"),
-		DOUBLE("double"),
-		FLOAT("float"),
-		INT32("int32"),
-		INT64("int64");
-
-		private String openApiValue;
-
-		Format(final String openApiValue) {
-			this.openApiValue = openApiValue;
+	public void addRequired(String required) {
+		if (this.required == null) {
+			this.required = new ArrayList<>();
 		}
+		this.required.add(required);
+	}
 
-		@JsonValue
-		public String getOpenApiValue() {
-			return openApiValue;
-		}
+	public Long getMaximum() {
+		return maximum;
+	}
+
+	public void setMaximum(Long maximum) {
+		this.maximum = maximum;
+	}
+
+	public Long getMinimum() {
+		return minimum;
+	}
+
+	public void setMinimum(Long minimum) {
+		this.minimum = minimum;
+	}
+
+	public void setEnumValues(List<String> enumValues) {
+		this.enumValues = enumValues;
 	}
 
 	public Boolean getDeprecated() {
@@ -191,9 +172,63 @@ public class Schema {
 
 	@Override
 	public String toString() {
-		return String.format(
-				"Schema [deprecated=%s, type=%s, format=%s, description=%s, properties=%s, defaultValue=%s, pattern=%s, enumValues=%s, items=%s]",
-				deprecated, type, format, description, properties, defaultValue, pattern, enumValues, items);
+		return new StringJoiner(", ", Schema.class.getSimpleName() + "[", "]")
+			.add("required=" + required)
+			.add("maximum=" + maximum)
+			.add("minimum=" + minimum)
+			.add("pattern='" + pattern + "'")
+			.add("deprecated=" + deprecated)
+			.add("type=" + type)
+			.add("format=" + format)
+			.add("description='" + description + "'")
+			.add("properties=" + properties)
+			.add("defaultValue=" + defaultValue)
+			.add("enumValues=" + enumValues)
+			.add("items=" + items)
+			.toString();
+	}
+
+	public enum Type {
+		ARRAY("array"),
+		BOOLEAN("boolean"),
+		ENUM("enum"),
+		INTEGER("integer"),
+		NUMBER("number"),
+		OBJECT("object"),
+		STRING("string");
+
+		private final String openApiValue;
+
+		Type(final String openApiValue) {
+			this.openApiValue = openApiValue;
+		}
+
+		@JsonValue
+		public String getOpenApiValue() {
+			return openApiValue;
+		}
+
+	}
+
+	public enum Format {
+		BYTE("bype"),
+		DATE("date"),
+		DATE_TIME("date-time"),
+		DOUBLE("double"),
+		FLOAT("float"),
+		INT32("int32"),
+		INT64("int64");
+
+		private final String openApiValue;
+
+		Format(final String openApiValue) {
+			this.openApiValue = openApiValue;
+		}
+
+		@JsonValue
+		public String getOpenApiValue() {
+			return openApiValue;
+		}
 	}
 
 }

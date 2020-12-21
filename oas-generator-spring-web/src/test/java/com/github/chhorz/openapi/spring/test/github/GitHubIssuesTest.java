@@ -24,6 +24,7 @@ import com.github.chhorz.openapi.spring.test.github.controller.*;
 import com.github.chhorz.openapi.spring.test.github.resources.ErrorResource;
 import com.github.chhorz.openapi.spring.test.github.resources.HateoasResource;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
+import com.github.chhorz.openapi.spring.test.github.resources.ValidResource;
 import com.jayway.jsonpath.DocumentContext;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +33,7 @@ import java.util.Map;
 
 import static com.github.chhorz.openapi.spring.test.github.GitHubIssuesTestAssertions.*;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -488,6 +490,44 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 	}
 
 	@Test
+	@GitHubIssue("#21")
+	void getGithubIssue021() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue021.class, ValidResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Components components = documentContext.read("$.components", Components.class);
+
+		assertThat(components.getSchemas())
+			.containsOnlyKeys("ValidResource");
+
+		assertThat(components.getSchemas().get("ValidResource"))
+			.hasFieldOrPropertyWithValue("required", singletonList("value"));
+
+		assertThat(components.getSchemas().get("ValidResource").getProperties())
+			.containsKeys("value", "minimum");
+
+		assertThat(components.getSchemas().get("ValidResource").getProperties().get("value"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("pattern", "\\s+");
+
+		assertThat(components.getSchemas().get("ValidResource").getProperties().get("minimum"))
+			.isNotNull()
+			.isInstanceOfSatisfying(Schema.class, schema ->
+				assertThat(schema)
+					.hasFieldOrPropertyWithValue("minimum", 0L));
+	}
+
+	@Test
 	@GitHubIssue("#22")
 	void getGithubIssue022() {
 		// run annotation processor
@@ -713,7 +753,6 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasSize(1)
 			.containsOnlyKeys("read_role");
-
 
 
 		validateSchemaForTestResource(documentContext);
@@ -1060,7 +1099,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(schema)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("description","Another resource that should be included but in not used in API methods.")
+			.hasFieldOrPropertyWithValue("description", "Another resource that should be included but in not used in API methods.")
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 
 		assertThat(schema.getProperties())
@@ -1072,7 +1111,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
-			.hasFieldOrPropertyWithValue("description","some value");
+			.hasFieldOrPropertyWithValue("description", "some value");
 	}
 
 	@Test
@@ -1121,7 +1160,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		assertThat(requestBody)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("description",null)
+			.hasFieldOrPropertyWithValue("description", null)
 			.hasFieldOrPropertyWithValue("required", true);
 
 		assertThat(requestBody.getContent())

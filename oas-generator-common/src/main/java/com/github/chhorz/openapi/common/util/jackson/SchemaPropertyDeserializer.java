@@ -16,11 +16,6 @@
  */
 package com.github.chhorz.openapi.common.util.jackson;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Stream;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -31,6 +26,11 @@ import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
 import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Stream;
 
 public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Object>> {
 
@@ -45,7 +45,7 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 	private static final long serialVersionUID = -7441283374884415436L;
 
 	@Override
-	public Map<String, Object> deserialize(final JsonParser jp, final DeserializationContext ctxt)
+	public Map<String, Object> deserialize(final JsonParser jp, final DeserializationContext deserializationContext)
 			throws IOException, JsonProcessingException {
 		JsonNode node = jp.getCodec().readTree(jp);
 
@@ -57,11 +57,13 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 				propertyMap.put(fieldName, new Reference(childNode.get("$ref").asText()));
 			} else {
 				Schema schema = new Schema();
-				schema.setDeprecated(childNode.has("deprecated") ? childNode.get("deprecated").asBoolean() : false);
+				schema.setDeprecated(childNode.has("deprecated") && childNode.get("deprecated").asBoolean());
 				schema.setType(deserializeType(Type.values(), childNode.get("type")));
 				schema.setFormat(deserializeFormat(Format.values(), childNode.get("format")));
 				schema.setDescription(childNode.get("description").asText());
 				schema.setPattern(childNode.has("pattern") ? childNode.get("pattern").asText() : null);
+				schema.setMinimum(childNode.has("minimum") ? childNode.get("minimum").asLong() : null);
+				schema.setMaximum(childNode.has("maximum") ? childNode.get("maximum").asLong() : null);
 				if (childNode.has("items")) {
 					JsonNode itemsNode = childNode.get("items");
 					if (itemsNode.has("$ref")) {
@@ -76,7 +78,7 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 				}
 
 				if (childNode.has("enum")) {
-					ArrayNode arrayNode = (ArrayNode) childNode.withArray("enum");
+					ArrayNode arrayNode = childNode.withArray("enum");
 					arrayNode.forEach(arrayValue -> schema.addEnumValue(arrayValue.asText()));
 				}
 

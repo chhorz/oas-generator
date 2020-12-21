@@ -323,7 +323,7 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 	 * @param className the full qualified class name
 	 * @return {@code true} if the class is available on the classpath
 	 */
-	protected boolean isClassAvailable(final String className) {
+	public static boolean isClassAvailable(final String className) {
 		try  {
 			Class.forName(className);
 			return true;

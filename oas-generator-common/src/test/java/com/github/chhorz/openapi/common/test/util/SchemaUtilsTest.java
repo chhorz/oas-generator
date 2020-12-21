@@ -41,6 +41,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.util.*;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
@@ -93,13 +94,13 @@ class SchemaUtilsTest {
 	@Test
 	void parsePackages() {
 		// given
-		List<String> packages = Collections.singletonList("com.github.chhorz.openapi.common.test.util.resources");
+		List<String> packages = singletonList("com.github.chhorz.openapi.common.test.util.resources");
 
 		// when
 		Map<String, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
-		assertThat(schemaMap).hasSize(8);
+		assertThat(schemaMap).hasSize(9);
 	}
 
 	@Test
@@ -298,6 +299,40 @@ class SchemaUtilsTest {
 		assertThat(schemaMap.get(classCType).getProperties().get("set"))
 				.isInstanceOfSatisfying(Schema.class,
 						schema -> assertThat(schema.getItems()).isInstanceOf(Reference.class));
+	}
+
+	@Test
+	@GitHubIssue("#21")
+	void validationTest(){
+		// given
+		TypeMirror classEType = elements.getTypeElement(ClassE.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classEType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKeys(classEType);
+
+		assertThat(schemaMap.get(classEType))
+			.hasFieldOrPropertyWithValue("required", singletonList("required"))
+			.extracting("type", "format", "deprecated")
+			.containsExactly(Type.OBJECT, null, false);
+
+		assertThat(schemaMap.get(classEType).getProperties())
+			.isNotNull()
+			.hasSize(4)
+			.containsKeys("min", "max", "pattern", "required");
+
+		assertThat(schemaMap.get(classEType).getProperties().values())
+			.isNotNull()
+			.hasSize(4)
+			.extracting("maximum", "minimum", "pattern")
+			.contains(tuple(10L, null, null), // maximum
+				tuple(null, 0L, null), // minimum
+				tuple(null, null, "\\d+"), // pattern
+				tuple(null, null, null)); // required
 	}
 
 	@Test
