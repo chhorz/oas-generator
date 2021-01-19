@@ -174,30 +174,39 @@ This schema is deprecated.
 
 pass:[This is an article resource.]
 
-[cols="1,2,3", options="header"]
+[cols="1,2,3", options="header,footer"]
 |===
 | Name | Type | Description
 
 | categories
 m| string[]
-| pass:[All categories assigned to the given article.]
+a| pass:[All categories assigned to the given article.]
 
-| ean
+| *ean*
 m| integer (int64)
-|
+a| pass:[Some long value between 0 and 100.]
+
+* **Minimum:** 0
+* **Maximum:** 100
+
 
 | name
 m| string
-| pass:[The name of the selected article.]
+a| pass:[The name of the selected article.]
 
-| number
+| *number*
 m| integer (int64)
-|
+a| pass:[Some long value between 0 and 100.]
+
+* **Minimum:** 0
+* **Maximum:** 100
+
 
 | order
 m| <<components_schemas_OrderResource>>
-|
+a|
 
+3+| _**Bold** property names mark required fields._
 |===
 
 [[components_schemas_OrderResource]]
@@ -211,19 +220,28 @@ pass:[This is an order resource.]
 
 | articles
 m| <<components_schemas_ArticleResource,ArticleResource[]>>
-| pass:[All ordered articles.]
+a| pass:[All ordered articles.]
 
 | number
 m| integer (int64)
-|
+a| pass:[Some long value between 0 and 100.]
+
+* **Minimum:** 0
+* **Maximum:** 100
+
 
 | type
 m| enum (STANDARD, RETURN)
-|
+a|
 
 | value
 m| string
-| pass:[Lorem ipsum]
+a| pass:[Lorem ipsum]
+
+
+
+* **Pattern:** \d{2}-\d{3}
+
 
 |===
 

@@ -153,6 +153,9 @@ class AsciidoctorPostProcessorTest {
 		stringSchema.setDescription("The name of the selected article.");
 
 		Schema longSchema = new Schema();
+		longSchema.setDescription("Some long value between 0 and 100.");
+		longSchema.setMinimum(0L);
+		longSchema.setMaximum(100L);
 		longSchema.setType(Schema.Type.INTEGER);
 		longSchema.setFormat(Schema.Format.INT64);
 
@@ -162,6 +165,8 @@ class AsciidoctorPostProcessorTest {
 		stringsSchema.setItems(stringSchema);
 
 		Schema articleSchema = new Schema();
+		articleSchema.addRequired("number");
+		articleSchema.addRequired("ean");
 		articleSchema.setDescription("This is an article resource.");
 		articleSchema.setDeprecated(true);
 		articleSchema.putProperty("number", longSchema);
@@ -181,6 +186,7 @@ class AsciidoctorPostProcessorTest {
 		orderTypeSchema.addEnumValue("RETURN");
 
 		Schema valueSchema = new Schema();
+		valueSchema.setPattern("\\d{2}-\\d{3}");
 		valueSchema.setType(Schema.Type.STRING);
 		valueSchema.setDescription("Lorem ipsum");
 

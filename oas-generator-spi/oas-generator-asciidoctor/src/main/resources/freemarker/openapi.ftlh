@@ -1,4 +1,5 @@
 <#ftl auto_esc=false>
+<#include "_macros/components.ftlh"/>
 <#include "_macros/externalDocs.ftlh"/>
 <#include "_macros/path.ftlh"/>
 <#include "_macros/server.ftlh"/>
@@ -102,79 +103,7 @@ pass:[<@clean pathItem.description/>]
 
 <@section title="Components" level=2/>
 
-<#if openapi.components.schemas??>
-<@section title="Schemas" level=3/>
-
-<#list openapi.components.schemas as schemaName, schema>
-[[components_schemas_${schemaName}]]
-<@section title=schemaName level=4/>
-
-<#if schema.deprecated>
-[WARNING]
-This schema is deprecated.
-
-</#if>
-<#if schema.description?? && schema.description?has_content>pass:[<@clean schema.description/>]</#if>
-
-<#if schema.properties??>
-[cols="1,2,3", options="header"]
-|===
-| Name | Type | Description
-
-<#list schema.properties as propertyName, property>
-| ${propertyName}
-m| <@asciidoc_schema property/>
-|<#if property.description?? && property.description?has_content> pass:[<@clean property.description/>]</#if>
-
-</#list>
-|===
-
-</#if>
-</#list>
-
-</#if>
-<#if openapi.components.requestBodies??>
-
-<@section title="Request Bodies" level=3/>
-
-<#list openapi.components.requestBodies as requestBodyName, requestBody>
-[[components_requestBodies_${requestBodyName}]]
-<@section title=requestBodyName level=4/>
-
-<#if requestBody.required>*REQUIRED*</#if> <#if requestBody.description?? && requestBody.description?has_content>pass:[${requestBody.description}]</#if>
-
-<#if requestBody.content??>
-[cols="2,1", options="header"]
-|===
-| Type | Schema
-
-<#list requestBody.content as type, mediatype>
-| ${type}
-m| <@asciidoc_mediatype mediatype/>
-
-</#list>
-|===
-
-</#if>
-</#list>
-
-</#if>
-<#if openapi.components.securitySchemes??>
-
-<@section title="Security Schemes" level=3/>
-
-[cols="1,1,2", options="header"]
-|===
-| Scheme | Type | Description
-
-<#list openapi.components.securitySchemes as schemeName, scheme>
-| [[${schemeName}]] ${schemeName}
-| ${scheme.type}
-|<#if scheme.description?? && scheme.description?has_content> pass:[<@clean scheme.description/>]</#if>
-
-</#list>
-|===
-</#if>
+<@components openapi.components/>
 </#if>
 <#--
     Tags
