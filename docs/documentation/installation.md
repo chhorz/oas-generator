@@ -2,10 +2,11 @@
 
 Java annotation processing is a concept from the Java language.
 There are multiple ways to integrate the **OAS Generator** into your project.
+The complete installation guide can be found in the [reference documentation](https://chhorz.github.io/oas-generator/docs/latest/oas-generator.html#_installation).
 
 ::: tip Hint
 The following examples use the `oas-generator-spring-web`.
-Each kind of installation also works with the `oas-generator-jaxrs` or `oas-generator-schema` module.
+The installation of the `oas-generator-jaxrs` or `oas-generator-schema` module follows the same steps.
 :::
 
 ## Apache Maven

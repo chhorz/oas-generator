@@ -23,4 +23,4 @@ After the creation the `asciidoctor-maven-plugin` needs to be added to render th
     <scope>provided</scope>
 </dependency>
 ```
-The complete documentation can be found in the corresponding section of the reference documentation ([Link](https://chhorz.github.io/oas-generator/docs/oas-generator.html#_asciidoctorpostprocessor)).
+The complete documentation can be found in the corresponding section of the reference documentation ([Link](https://chhorz.github.io/oas-generator/docs/latest/oas-generator.html#_asciidoctorpostprocessor)).
