@@ -9,7 +9,7 @@
 :sectlinks:
 :sectanchors:
 :source-highlighter: highlightjs
-:highlightjs-theme: zenburn
+:highlightjs-theme: github
 :common-java: ../../../../oas-generator-common/src/main/java
 
 == About
@@ -691,6 +691,11 @@ include::{common-java}/com/github/chhorz/openapi/common/spi/OpenAPIPostProcessor
 ----
 com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider
 ----
++
+[NOTE]
+====
+Otherwise, the library link:https://github.com/google/auto[Google Auto] could be used to create this file during the build process.
+====
 
 . If the post processor uses custom properties these should be placed below the parser properties as shown for the <<asciidoctor.properties, Asciidoctor Post Processor>>.
 All custom property classes should extend the provided `AbstractPostProcessorProperties` class.
@@ -713,6 +718,9 @@ The *OAS Generator* adds the following properties to the `info` object:
 ----
 
 These properties should act as hint, that the current file was generated automatically and ideally should not be changed manually.
+
+The number of specification extensions was kept low intentionally.
+The OpenAPI specification offers wide tooling support, and those extensions will not be supported by those tools.
 
 == Limitations
 
