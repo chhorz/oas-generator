@@ -39,6 +39,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static java.util.Collections.singletonList;
@@ -442,6 +443,24 @@ class SchemaUtilsTest {
 			.hasSize(1)
 			.containsKeys(dateType)
 			.extracting(map -> map.get(dateType))
+			.extracting("type", "format")
+			.contains(Type.STRING, Format.DATE_TIME);
+	}
+
+	@Test
+	@GitHubIssue("#101")
+	void zonedDateTimeTest(){
+		// given
+		TypeMirror zonedDateTimeType = elements.getTypeElement(ZonedDateTime.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(zonedDateTimeType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKeys(zonedDateTimeType)
+			.extracting(map -> map.get(zonedDateTimeType))
 			.extracting("type", "format")
 			.contains(Type.STRING, Format.DATE_TIME);
 	}

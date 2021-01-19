@@ -45,6 +45,8 @@ import javax.validation.constraints.Pattern;
 import java.lang.annotation.Annotation;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 import java.util.function.Function;
@@ -574,7 +576,9 @@ public class SchemaUtils {
 
 		if (processingUtils.isSameType(typeMirror, LocalDate.class)) {
 			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE);
-		} else if (processingUtils.isSameType(typeMirror, LocalDateTime.class)) {
+		} else if (processingUtils.isSameType(typeMirror, LocalDateTime.class)
+			|| processingUtils.isSameType(typeMirror, ZonedDateTime.class)
+			|| processingUtils.isSameType(typeMirror, OffsetDateTime.class)) {
 			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE_TIME);
 		}
 
