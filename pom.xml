@@ -1,7 +1,6 @@
 <!--
 
-
-       Copyright 2018-2020 the original author or authors.
+       Copyright 2018-2021 the original author or authors.
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -241,37 +240,6 @@
 					</executions>
 				</plugin>
 				<plugin>
-					<groupId>com.mycila</groupId>
-					<artifactId>license-maven-plugin</artifactId>
-					<version>${license.maven.plugin.version}</version>
-					<configuration>
-						<header>${basedir}/../LICENSE.txt</header>
-						<strictCheck>true</strictCheck>
-						<excludes>
-							<exclude>**/*.adoc</exclude>
-							<exclude>docs/.vuepress/**</exclude>
-							<exclude>node_modules/**</exclude>
-							<exclude>**/LICENSE.txt</exclude>
-							<exclude>build/**</exclude>
-							<exclude>.github/**</exclude>
-							<exclude>.mvn/**</exclude>
-							<exclude>.gitattributes</exclude>
-							<exclude>.gitignore</exclude>
-							<exclude>mvnw.cmd</exclude>
-							<exclude>**/*.js</exclude>
-							<exclude>**/*.html</exclude>
-							<exclude>**/*.ftlh</exclude>
-						</excludes>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>check</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven-compiler-plugin.version}</version>
@@ -353,13 +321,6 @@
 		</pluginManagement>
 
 		<plugins>
-			<plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<configuration>
-					<header>LICENSE.txt</header>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

@@ -564,7 +564,7 @@ If other post processors should be listed and added in the *OAS Generator* repo 
 
 [[postprocessor_documentation]]
 === Post-Processor Documentation
-In the following section documents all post processors from the `oas-generator-spi` module.
+In the following section documents all provide post processors from the `oas-generator-spi` module.
 
 [[filewriter_postprocessor]]
 ==== FileWriterPostProcessor
@@ -573,7 +573,8 @@ This Post-Processor is included within all *OAS Generator* modules and must not 
 
 [[asciidoctor_postprocessor]]
 ==== AsciidoctorPostProcessor
-This post processor converts the generated internal OpenAPI domain model into the asciidoctor format.
+This post processor converts the generated internal OpenAPI domain model into the Asciidoctor format.
+The generation is done with the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
 
 [source,xml,subs="verbatim,attributes"]
 ----
@@ -585,7 +586,7 @@ This post processor converts the generated internal OpenAPI domain model into th
 </dependency>
 ----
 
-After the creation during compilation phase, the `asciidoctor-maven-plugin` (link:https://asciidoctor.org/docs/asciidoctor-maven-plugin/[Link]) can be used to render the `.adoc` file to HTML, PDF or other formats
+After the creation during compilation phase, the `asciidoctor-maven-plugin` (link:https://asciidoctor.org/docs/asciidoctor-maven-plugin/[Link]) can be used to render the `.adoc` file to HTML, PDF or other formats.
 
 [[asciidoctor.properties]]
 ===== Configuration properties
@@ -608,7 +609,7 @@ parser:
 <1> The path of the templates based on `/src/main/resources`
 <2> Output base directory is the `/target/openapi` folder
 <3> A standalone file will be generated with an asciidoctor document header and section title on level 0.
-Files generated with `false` can easier integrated in other asciidoctor files.
+Files generated with `false` can easier integrated in other asciidoctor files and start with a section title on level 1.
 
 .Description of asciidoctor post processor properties
 [cols="1a,3a"]
@@ -616,12 +617,12 @@ Files generated with `false` can easier integrated in other asciidoctor files.
 | Property | Description
 
 | `logTemplateExceptions`
-| Apache FreeMarker link:https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html[configuration option] that will be passed.
+| Apache FreeMarker link:https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html[configuration option] that will be passed to the template engine.
 
 _Default: ``true``_
 
 | `templateLocalizedLookup`
-| Apache FreeMarker link:https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html[configuration option] that will be passed.
+| Apache FreeMarker link:https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html[configuration option] that will be passed to the template engine.
 
 _Default: ``false``_
 
@@ -665,13 +666,15 @@ You just have to follow these steps:
 +
 [source,java]
 ----
-include::{common-java}/com/github/chhorz/openapi/common/spi/PostProcessorProvider.java[]
+include::{common-java}/com/github/chhorz/openapi/common/spi/PostProcessorProvider.java[tags=documentation]
 ----
-. Implement the `OpenAPIPostProcessor` interface with the actual execution method
+. Implement the `OpenAPIPostProcessor` interface with the execution method you want to override.
+The methods for post processor type and order also needs to be implemented.
+These methods can be used to define the order in which all post processors are executed and define the type of objects the post processor should handle.
 +
 [source,java]
 ----
-include::{common-java}/com/github/chhorz/openapi/common/spi/OpenAPIPostProcessor.java[]
+include::{common-java}/com/github/chhorz/openapi/common/spi/OpenAPIPostProcessor.java[tags=documentation]
 ----
 . Create a file named `com.github.chhorz.openapi.common.spi.PostProcessorProvider` at `src/main/resources/META-INF/services` containing the fully qualified name of the class from step 1
 +

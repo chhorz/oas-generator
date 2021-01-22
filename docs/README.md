@@ -22,5 +22,5 @@ The configuration and documentation of a complete REST API lasts some time.
 
 The **OAS Generator** is a java annotation processor working on annotations used to define a REST API in a Java application (Spring-Web or JaxRS).
 All information that is required will be red using static code analysis and related Javadoc comments.
-For more details have a look on the [reference documentation](/documentation/reference).
+For more details have a look on the [reference documentation](/documentation/reference/).
 
