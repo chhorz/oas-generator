@@ -16,11 +16,13 @@ jobs:
     steps:
     - name: 'Checkout repository'
       uses: actions/checkout@v2
+
     - name: 'Set up JDK'
       uses: actions/setup-java@v1
       with:
         java-package: jdk
         java-version: ${{ matrix.java }}
+
     - name: 'Cache local Maven repository'
       uses: actions/cache@v2
       with:
@@ -28,18 +30,22 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
+
     - name: 'Build with Maven'
-      #run: mvn package --file pom.xml
       run: ./mvnw -V -B --no-transfer-progress install
-  build:
+
+  publish-snapshot:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v2
+
       - name: 'Set up JDK 8'
         uses: actions/setup-java@v1
         with:
           java-version: 8
+
       - name: 'Cache local Maven repository'
         uses: actions/cache@v2
         with:
@@ -47,8 +53,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: 'Test'
-        run: ./mvnw -V -B --no-transfer-progress install
-      - name: 'Publish Snapshots'
+
+      - name: 'Publish Snapshot'
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'chhorz/oas-generator'
-        run: ./mvnw -s build/settings.xml -P build-extras -DskipTests=true deploy
+        run: ./mvnw -V -B -s build/settings.xml -P build-extras -DskipTests=true deploy
