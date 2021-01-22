@@ -23,7 +23,7 @@ Additional the JavaDoc comments from the given methods or resource objects will 
 public class OrderController {
 
     /**
-    * Get an order with an {@code id}.
+     * Get an order with an {@code id}.
      *
      * @category order
      *
@@ -46,47 +46,12 @@ public class OrderController {
 
 === Project Structure
 The project itself consists of multiple maven modules.
-A _oas-generator-common_ module that contains the internal OpenAPI domain model and core functionality that is used in multiple modules.
-The _oas-generator-spring-web_, _oas-generator-jaxrs_ and _oas-generator-schema_ are dedicated modules for a REST API implementation.
+An _oas-generator-common_ module that contains the internal OpenAPI domain model and core functionality that is used in multiple modules.
+The _oas-generator-spring-web_ and _oas-generator-jaxrs_ are dedicated modules for a REST API implementation.
+If the resources are provided in an external API package an specific module is provided: _oas-generator-schema_.
 
 An additional _SPI_ module covers the extensibility of the OAS Generator.
 There is currently the <<asciidoctor_postprocessor,Asciidoctor Post-Processor>> that generates an Asciidoctor file from the generated OpenAPI file.
-
-.Diagram of internal module structure
-[ditaa,align=center]
-....
-+----------------------------+     +----------------------------+
-|                            |     |cGRE                        |
-|     OAS Generator Docs     +  +->+  OAS Generator Spring Web  |
-|                            |  |  |                            |
-+-----------------------+----+  |  +----------------------------+
-                                |
-+----------------------------+  |  +----------------------------+
-|                            |  |  |cGRE                        |
-|    OAS Generator Common    +--+->+    OAS Generator Jax RS    |
-|                            |  |  |                            |
-+-----------------------+----+  |  +----------------------------+
-                        |       |
-                        |       |  +----------------------------+
-                        |       |  |cGRE                        |
-                        |       +->+    OAS Generator Schema    |
-                        |          |                            |
-                        |          +----------------------------+
-                        |
-+-----------------------|---------------------------------------------+
-: OAS Generator SPI     |                                             |
-|                       |                                             |
-|                  +----+-----------------------------+               |
-|                  |                                  |               |
-|                  v                                  v               |
-|  +----------------------------+     +----------------------------+  |
-|  |cGRE                        |     |                            |  |
-|  |  OAS Generator AsciiDoctor |     |            ...             |  |
-|  |                            |     |                            |  |
-|  +----------------------------+     +----------------------------+  |
-|                                                                     |
-+---------------------------------------------------------------------+
-....
 
 == Installation
 In the following section shows possible options in which way the *OAS Generator* can be included in your project.
@@ -94,7 +59,7 @@ In the following section shows possible options in which way the *OAS Generator*
 [TIP]
 ====
 The following examples use the `oas-generator-spring-web`.
-Each kind of installation also works with the `oas-generator-jaxrs` or `oas-generator-schema` module.
+Each kind of installation also works with the `oas-generator-jaxrs` or `oas-generator-schema` module in the same way.
 ====
 
 === Apache Maven
@@ -121,11 +86,18 @@ The simplest way to add the *OAS Generator* to your project is adding the follow
 ----
 <1> The _scope_ `provided` is useful, if you want to exclude the *OAS Generator* dependencies during runtime.
 <2> Spring-Boot applications require this additional dependency because the `snakeyaml` dependency is declared of scope `runtime` within the spring boot starter dependency.
+It needs to be available on `compile` time for the *OAS Generator*.
 
 All dependencies contain additional information within the `META-INF` folder that define the dependency as annotation processor.
 
 ==== Maven compiler plugin
 Another way to include an annotation processor is the link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html[maven-compiler-plugin]:
+
+[WARNING]
+====
+It is not possible to mix this way of annotation processor integration with the dependency based one.
+====
+
 [source%nowrap,xml,subs="verbatim,attributes"]
 ----
 <plugin>
@@ -150,12 +122,16 @@ Another way to include an annotation processor is the link:https://maven.apache.
 <1> Plugin documentation: link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessorPaths[annotationProcessorPaths]
 <2> Plugin documentation: link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessors[annotationProcessors]
 
-It is not possible to mix this way of annotation processor integration with the dependency based one.
+=== Gradle
+_Might be added soon._
+
+=== Others
+_Might be added soon._
 
 [[javadoc]]
 == Javadoc
 In this section we describe the default structure of the Javadoc comments.
-A common structure is required to get all data parsed correct.
+A common structure is *required to get all data parsed correctly*.
 This is necessary because Javadoc comments in general are unstructured comments and can be formatted in different ways.
 
 This project uses the link:https://github.com/chhorz/javadoc-parser[Javadoc Parser] project to load all information from the Javadoc comments as structured data.
@@ -181,7 +157,7 @@ Other included tags are:
 * [[category_tag]] `@category` to represent OpenAPI tags _(Eclipse recognizes the `@category` tag per default)_.
 
 === Custom javadoc tags
-To render the custom javadoc tags properly within the HTML javadoc api documentation, the following configuration of the `maven-javadoc-plugin` has to be done:
+To render the custom javadoc tags properly within the HTML javadoc api documentation, the following configuration of the `maven-javadoc-plugin` has to be added:
 
 .Configuration of `maven-javadoc-plugin`
 [source,xml]
@@ -222,6 +198,21 @@ To specify the possible response status the `@response` javadoc tag could be use
  */
 ----
 
+The `@response` tag has the following structure:
+
+[source,java]
+----
+/**
+ *@response <http-status> <schema> <description> <1>
+ */
+----
+<1> Each part is described in detail:
+`<http-status>`:: HTTP status code
+`<schema>`:: Simple name of the resource if the resource itself is available as schema.
+Otherwise a FQDN could be used (for example `java.lang.Void`).
+`<description>`:: Description of the status code and schema
+
+
 ==== Security schemes
 The *OAS Generator* reads information about the required security schemes form some _spring-security_ annotations (e.g. `@PreAuthorize`).
 If none of these annotations is present on the API method, the security scheme can also be defined in the javadoc comment:
@@ -254,6 +245,7 @@ The custom javadoc tag `@tag` was introduced to provide a familiar way to tag op
 === Document API methods
 These annotations exist because the <<javadoc,Javadoc>> like documentation is not typesafe.
 Specially regarding the response type and structure of the complex `@response` tag.
+Another advantage ist that this annotation based documentation works while refactoring of schema class names.
 
 The following examples show the exact same documentation:
 [source,java]
@@ -348,8 +340,8 @@ The following table explains the availability:
 
 | _oas-generator-schema_
 | icon:check[role="green"]
-| icon:minus[role="red"]
-| icon:minus[role="red"]
+|
+|
 |===
 
 ==== Maven Compiler Plugin
