@@ -88,7 +88,7 @@
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
 		<snakeyaml.version>1.27</snakeyaml.version>
 		<spring-security-core.version>5.4.2</spring-security-core.version>
-		<validation-api.version>2.0.1.Final</validation-api.version>
+		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
 
 		<spring-data-commons.version>2.4.3</spring-data-commons.version>
 		<spring-web.version>5.3.3</spring-web.version>
@@ -103,7 +103,6 @@
 		<jsonassert.version>1.5.0</jsonassert.version>
 		<json-path.version>2.5.0</json-path.version>
 
-		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
 		<spring-hateoas.version>1.2.3</spring-hateoas.version>
 
 		<!-- plugin versions -->
@@ -151,9 +150,9 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>javax.validation</groupId>
-				<artifactId>validation-api</artifactId>
-				<version>${validation-api.version}</version>
+				<groupId>jakarta.validation</groupId>
+				<artifactId>jakarta.validation-api</artifactId>
+				<version>${jakarta.validation-api.version}</version>
 				<optional>true</optional>
 			</dependency>
 
