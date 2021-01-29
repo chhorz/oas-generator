@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2021 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import com.jayway.jsonpath.DocumentContext;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -34,12 +35,32 @@ class GitHubIssuesTestAssertions {
 	 * Validates a reference value. Usage for {@link org.assertj.core.api.AbstractAssert#isInstanceOfSatisfying}.
 	 *
 	 * @param expectedReference the expected reference value
+	 *
 	 * @return the consumer that could be used
 	 */
-	public static Consumer<Reference> refCheck(String expectedReference){
-		return map -> assertThat(map)
+	public static Consumer<Reference> refCheck(String expectedReference) {
+		return reference -> assertThat(reference)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("$ref", expectedReference);
+	}
+
+	/**
+	 * Validates a reference value. Usage for {@link org.assertj.core.api.AbstractAssert#isInstanceOfSatisfying}.
+	 *
+	 * @param expectedReference the expected reference value
+	 *
+	 * @return the consumer for {@code LinkedHashMap}
+	 *
+	 * @see #refCheck
+	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public static Consumer<LinkedHashMap> refCheckForMap(String expectedReference) {
+		return map -> assertThat(map)
+			.isNotNull()
+			.isNotEmpty()
+			.containsOnlyKeys("$ref")
+			.extractingByKey("$ref")
+			.isEqualTo(expectedReference);
 	}
 
 	/**
@@ -47,11 +68,18 @@ class GitHubIssuesTestAssertions {
 	 *
 	 * @param documentContext the json document context
 	 */
-	public static void validateDefaultInfoObject(final DocumentContext documentContext){
+	public static void validateDefaultInfoObject(final DocumentContext documentContext) {
 		validateDefaultInfoObject(documentContext, "Title", "Version");
 	}
 
-	public static void validateDefaultInfoObject(final DocumentContext documentContext, final String title, final String version){
+	/**
+	 * Validates the default info object.
+	 *
+	 * @param documentContext the json document context
+	 * @param title           the requested title
+	 * @param version         the requested version
+	 */
+	public static void validateDefaultInfoObject(final DocumentContext documentContext, final String title, final String version) {
 		Info info = documentContext.read("$.info", Info.class);
 
 		assertThat(info)
@@ -63,6 +91,66 @@ class GitHubIssuesTestAssertions {
 		assertThat(info.getxGeneratedTs())
 			.isNotNull()
 			.isNotEmpty();
+	}
+
+	/**
+	 * Validate request operation parameter objects for {@link org.springframework.data.domain.Pageable}.
+	 *
+	 * @param documentContext the json document context
+	 */
+	public static void validatePageableRequestParameter(final DocumentContext documentContext) {
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+
+		assertThat(operation)
+			.isNotNull();
+		assertThat(operation.getParameterObjects())
+			.isNotNull()
+			.hasSize(3);
+		assertThat(operation.getParameterObjects().get(0))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "size")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "Requested page size")
+			.hasFieldOrPropertyWithValue("required", false)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", null)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
+				.hasFieldOrPropertyWithValue("format", Schema.Format.INT32)
+				.hasFieldOrPropertyWithValue("description", null));
+		assertThat(operation.getParameterObjects().get(1))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "page")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "Requested page number")
+			.hasFieldOrPropertyWithValue("required", false)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", null)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
+				.hasFieldOrPropertyWithValue("format", Schema.Format.INT32)
+				.hasFieldOrPropertyWithValue("description", null));
+		assertThat(operation.getParameterObjects().get(2))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("name", "sort")
+			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
+			.hasFieldOrPropertyWithValue("description", "Requested sort attribute and order")
+			.hasFieldOrPropertyWithValue("required", false)
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("allowEmptyValue", null)
+			.extracting(Parameter::getSchema)
+			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+				.hasFieldOrPropertyWithValue("format", null)
+				.hasFieldOrPropertyWithValue("description", null));
 	}
 
 	/**
@@ -78,7 +166,7 @@ class GitHubIssuesTestAssertions {
 		assertThat(schema)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("description","a test resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("description", "a test resource for GitHub issue tests")
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 
 		assertThat(schema.getProperties())
@@ -90,7 +178,7 @@ class GitHubIssuesTestAssertions {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
-			.hasFieldOrPropertyWithValue("description","some test value");
+			.hasFieldOrPropertyWithValue("description", "some test value");
 	}
 
 	/**
@@ -106,7 +194,7 @@ class GitHubIssuesTestAssertions {
 		assertThat(schema)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("description","an error resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("description", "an error resource for GitHub issue tests")
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 
 		assertThat(schema.getProperties())
@@ -118,7 +206,7 @@ class GitHubIssuesTestAssertions {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
-			.hasFieldOrPropertyWithValue("description","error details");
+			.hasFieldOrPropertyWithValue("description", "error details");
 	}
 
 	/**
@@ -140,7 +228,7 @@ class GitHubIssuesTestAssertions {
 		assertThat(schema)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("description","a test resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("description", "a test resource for GitHub issue tests")
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 
 		assertThat(schema.getProperties())
@@ -152,13 +240,13 @@ class GitHubIssuesTestAssertions {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
-			.hasFieldOrPropertyWithValue("description","some test value");
+			.hasFieldOrPropertyWithValue("description", "some test value");
 
 		assertThat(schema.getProperties().get("links"))
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("type", Schema.Type.ARRAY)
-			.hasFieldOrPropertyWithValue("description","")
+			.hasFieldOrPropertyWithValue("description", "")
 			.isInstanceOfSatisfying(Schema.class, propertySchema -> assertThat(propertySchema)
 				.isNotNull()
 				.extracting(Schema::getItems)
@@ -170,7 +258,7 @@ class GitHubIssuesTestAssertions {
 		assertThat(linkSchema)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("description","")
+			.hasFieldOrPropertyWithValue("description", "")
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 
 		assertThat(linkSchema.getProperties())
@@ -255,7 +343,7 @@ class GitHubIssuesTestAssertions {
 		assertThat(documentContext.read("$.components.schemas.HttpHeaders", Schema.class))
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("description","")
+			.hasFieldOrPropertyWithValue("description", "")
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 
 		// Object
@@ -276,7 +364,7 @@ class GitHubIssuesTestAssertions {
 		assertThat(responseEntity)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("description","")
+			.hasFieldOrPropertyWithValue("description", "")
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 
 		assertThat(responseEntity.getProperties())
@@ -308,7 +396,7 @@ class GitHubIssuesTestAssertions {
 
 		assertThat(securityScheme)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("description","Basic LDAP read role.")
+			.hasFieldOrPropertyWithValue("description", "Basic LDAP read role.")
 			.hasFieldOrPropertyWithValue("type", SecurityScheme.Type.http)
 			.hasFieldOrPropertyWithValue("scheme", "basic");
 	}
@@ -317,6 +405,7 @@ class GitHubIssuesTestAssertions {
 	 * Validates the given test resource.
 	 *
 	 * @param documentContext the json document context
+	 *
 	 * @see Resource
 	 */
 	public static void validateRequestBodyForTestResource(final DocumentContext documentContext, final boolean required) {

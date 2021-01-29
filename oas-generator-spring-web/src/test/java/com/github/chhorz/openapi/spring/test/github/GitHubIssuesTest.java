@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2021 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import com.jayway.jsonpath.DocumentContext;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.github.chhorz.openapi.spring.test.github.GitHubIssuesTestAssertions.*;
@@ -1019,54 +1020,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue061#test");
 
-		assertThat(operation.getParameterObjects())
-			.isNotNull()
-			.hasSize(3);
-		assertThat(operation.getParameterObjects().get(0))
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("name", "size")
-			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
-			.hasFieldOrPropertyWithValue("description", "Requested page size")
-			.hasFieldOrPropertyWithValue("required", false)
-			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("allowEmptyValue", null)
-			.extracting(Parameter::getSchema)
-			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
-				.isNotNull()
-				.hasFieldOrPropertyWithValue("deprecated", false)
-				.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
-				.hasFieldOrPropertyWithValue("format", Schema.Format.INT32)
-				.hasFieldOrPropertyWithValue("description", null));
-		assertThat(operation.getParameterObjects().get(1))
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("name", "page")
-			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
-			.hasFieldOrPropertyWithValue("description", "Requested page number")
-			.hasFieldOrPropertyWithValue("required", false)
-			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("allowEmptyValue", null)
-			.extracting(Parameter::getSchema)
-			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
-				.isNotNull()
-				.hasFieldOrPropertyWithValue("deprecated", false)
-				.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
-				.hasFieldOrPropertyWithValue("format", Schema.Format.INT32)
-				.hasFieldOrPropertyWithValue("description", null));
-		assertThat(operation.getParameterObjects().get(2))
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("name", "sort")
-			.hasFieldOrPropertyWithValue("in", Parameter.In.QUERY)
-			.hasFieldOrPropertyWithValue("description", "Requested sort attribute and order")
-			.hasFieldOrPropertyWithValue("required", false)
-			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("allowEmptyValue", null)
-			.extracting(Parameter::getSchema)
-			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema)
-				.isNotNull()
-				.hasFieldOrPropertyWithValue("deprecated", false)
-				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
-				.hasFieldOrPropertyWithValue("format", null)
-				.hasFieldOrPropertyWithValue("description", null));
+		validatePageableRequestParameter(documentContext);
 
 		assertThat(operation.getResponses())
 			.isNotNull()
@@ -1074,6 +1028,45 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("default");
 
 		validateSchemaForTestResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#61")
+	void getGithubIssue061_2() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue061_2.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue061_2#test");
+
+		assertThat(operation.getResponses())
+			.containsOnlyKeys("default")
+			.extractingByKey("default")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "");
+		assertThat(operation.getResponses().get("default").getContent())
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType ->  assertThat(mediaType)
+					.isNotNull()
+					.extracting(MediaType::getSchema)
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")));
+
+		validatePageableRequestParameter(documentContext);
+
+		// TODO assert component schema part
 	}
 
 	@Test
