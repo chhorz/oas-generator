@@ -164,6 +164,7 @@ h| Description
 
 == Components
 
+
 === Schemas
 
 [[components_schemas_ArticleResource]]
@@ -246,7 +247,6 @@ a| pass:[Lorem ipsum]
 |===
 
 
-
 === Request Bodies
 
 [[components_requestBodies_ArticleResource]]
@@ -262,7 +262,6 @@ a| pass:[Lorem ipsum]
 m| <<components_schemas_ArticleResource>>
 
 |===
-
 
 
 === Security Schemes

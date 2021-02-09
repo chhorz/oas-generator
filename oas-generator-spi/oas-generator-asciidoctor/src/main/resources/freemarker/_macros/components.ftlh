@@ -5,9 +5,15 @@
 
 -->
 <#macro components components>
+<#if components.schemas??>
 <@schemas components.schemas/>
+</#if>
+<#if components.requestBodies??>
 <@requestBodies components.requestBodies/>
+</#if>
+<#if components.securitySchemes??>
 <@securitySchemes components.securitySchemes/>
+</#if>
 </#macro>
 <#--
 
@@ -15,7 +21,7 @@
 
 -->
 <#macro schemas schemas>
-<#if schemas??>
+
 <@section title="Schemas" level=3/>
 
 <#list schemas as schemaName, schema>
@@ -51,8 +57,6 @@ a|<#if property.description?? && property.description?has_content> pass:[<@clean
 
 </#if>
 </#list>
-
-</#if>
 </#macro>
 <#--
 
@@ -60,7 +64,6 @@ a|<#if property.description?? && property.description?has_content> pass:[<@clean
 
 -->
 <#macro requestBodies requestBodies>
-<#if requestBodies??>
 
 <@section title="Request Bodies" level=3/>
 
@@ -84,8 +87,6 @@ m| <@asciidoc_mediatype mediatype/>
 
 </#if>
 </#list>
-
-</#if>
 </#macro>
 <#--
 
@@ -93,7 +94,6 @@ m| <@asciidoc_mediatype mediatype/>
 
 -->
 <#macro securitySchemes securitySchemes>
-<#if securitySchemes??>
 
 <@section title="Security Schemes" level=3/>
 
@@ -108,5 +108,4 @@ m| <@asciidoc_mediatype mediatype/>
 
 </#list>
 |===
-</#if>
 </#macro>

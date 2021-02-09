@@ -18,6 +18,7 @@ package com.github.chhorz.openapi.spi.asciidoctor.test;
 
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorPostProcessor;
 import org.junit.jupiter.api.BeforeAll;
@@ -91,6 +92,46 @@ class AsciidoctorPostProcessorTest {
 		// then
 		Path outputPath = Paths.get("target", "generated-test-docs", "minimal", "openapi.adoc");
 		Path referencePath = new File("src/test/resources/referenceDocs/minimal.adoc").toPath();
+
+		assertThat(outputPath).exists();
+		assertThat(referencePath).exists();
+
+		compareFiles(referencePath, outputPath);
+	}
+
+	@Test
+	@GitHubIssue("#107")
+	void testEmptySecuritySchemesAsciidoctorPostProcessor() {
+		// given
+		Info info = new Info();
+		info.setTitle("Test Service");
+		info.setVersion("1.2.3-SNAPSHOT");
+
+		Schema stringSchema = new Schema();
+		stringSchema.setType(Schema.Type.STRING);
+		stringSchema.setFormat(null);
+		stringSchema.setDescription("The name of the selected article.");
+
+		RequestBody requestBody = new RequestBody();
+		requestBody.setRequired(true);
+
+		Components components = new Components();
+		components.putRequestBody("String", requestBody);
+		components.putAllSchemas(Collections.singletonMap("String", stringSchema));
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+		openApi.setComponents(components);
+
+		processor = createAsciidoctorPostProcessor("/security");
+
+		// when
+		processor.execute(openApi);
+
+		// then
+		Path outputPath = Paths.get("target", "generated-test-docs", "security", "openapi.adoc");
+		Path referencePath = new File("src/test/resources/referenceDocs/security.adoc").toPath();
 
 		assertThat(outputPath).exists();
 		assertThat(referencePath).exists();
