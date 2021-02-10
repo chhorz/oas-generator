@@ -1,0 +1,337 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://chhorz.github.io/oas-generator/schema/oas-generator.schema.json",
+  "title": "OAS-Generator",
+  "description": "Properties of this object are mapped directly to the OpenAPI object or used to configure the oas-generator itself",
+  "type": "object",
+  "properties": {
+    "info": {
+      "description": "Properties of this object are mapped directly to the OpenAPI info object",
+      "type": "object",
+      "properties": {
+        "title": {
+          "description": "The title of the API",
+          "type": "string"
+        },
+        "description": {
+          "description": "Short description of the API",
+          "type": "string"
+        },
+        "termsOfService": {
+          "description": "URL to link the Terms of Service",
+          "type": "string"
+        },
+        "contact": {
+          "description": "Properties of this object are mapped directly to the OpenAPI contact object",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "Some contact name of a person or organisation",
+              "type": "string"
+            },
+            "url": {
+              "description": "A contact URL",
+              "type": "string"
+            },
+            "email": {
+              "description": "A contact email address",
+              "type": "string"
+            }
+          }
+        },
+        "license": {
+          "description": "Properties of this object are mapped directly to the OpenAPI license object",
+          "type": "object",
+          "properties": {
+            "name": {
+              "description": "License name",
+              "type": "string"
+            },
+            "url": {
+              "description": "URL to the used license",
+              "type": "string"
+            }
+          }
+        },
+        "version": {
+          "description": "The version of the API",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "version"
+      ]
+    },
+    "servers": {
+      "description": "List of servers that are included in the resulting OpenAPI specification",
+      "type": "array",
+      "items": {
+        "description": "Properties of this object elements are mapped directly to the OpenAPI server object",
+        "type": "object",
+        "properties": {
+          "url": {
+            "description": "The URL of the target host (may contain server variables)",
+            "type": "string"
+          },
+          "description": {
+            "description": "Short description of the server",
+            "type": "string"
+          },
+          "variables": {
+            "description": "Map of variable names to their descriptive object",
+            "type": "object",
+            "patternProperties": {
+              ".+": {
+                "$ref": "#/definitions/serverVariable"
+              }
+            }
+          }
+        },
+        "required": [
+          "url"
+        ]
+      }
+    },
+    "externalDocs": {
+      "$ref": "#/definitions/externalDocs"
+    },
+    "tags": {
+      "description": "Properties of this object are mapped directly to the OpenAPI tag object - keys are used as tag name",
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "$ref": "#/definitions/tag"
+        }
+      }
+    },
+    "securitySchemes": {
+      "description": "Map of security scheme names to their corresponding OpenAPI object",
+      "type": "object",
+      "patternProperties": {
+        ".+": {
+          "$ref": "#/definitions/securityScheme"
+        }
+      }
+    },
+    "parser": {
+      "description": "OAS-Generator specific properties that customize the execution behaviour",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "description": "Property to enable and disable the OAS Generator execution",
+          "type": "boolean",
+          "default": true
+        },
+        "logLevel": {
+          "description": "Defines the logging level for all OAS Generator log statements",
+          "type": "string",
+          "enum": [
+            "DEBUG",
+            "INFO",
+            "ERROR"
+          ],
+          "default": "INFO"
+        },
+        "includeGetters": {
+          "description": "Flag to include attributes according to their getter methods",
+          "type": "boolean",
+          "default": true
+        },
+        "outputDir": {
+          "description": "File path of the generated output files",
+          "type": "string",
+          "default": "./target/openapi"
+        },
+        "outputFile": {
+          "description": "The file name of the generated files",
+          "type": "string",
+          "default": "openapi"
+        },
+        "outputFormat": {
+          "description": "Comma separated list of json, yaml or yml",
+          "type": "string",
+          "default": "json,yaml"
+        },
+        "schemaDir": {
+          "description": "Path to the generated openapi-schema file that was generated from oas-generator-schema",
+          "type": "string",
+          "default": "./target/openapi"
+        },
+        "schemaFile": {
+          "description": "File name of the openapi-schema file that was generated from oas-generator-schema",
+          "type": "string",
+          "default": "openapi-schema"
+        },
+        "schemaPackages": {
+          "description": "Additional packages of resources that should be parsed",
+          "type": "array",
+          "items": {
+            "description": "Java package name",
+            "type": "string"
+          },
+          "default": []
+        },
+        "postProcessor": {
+
+        }
+      }
+    }
+  },
+  "required": [
+    "info"
+  ],
+  "definitions": {
+    "externalDocs": {
+      "description": "Properties of this object are mapped directly to the OpenAPI external documentation object",
+      "type": "object",
+      "properties": {
+        "url": {
+          "description": "URL of the external documentation",
+          "type": "string"
+        },
+        "description": {
+          "description": "Some short description of the external documentation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    "serverVariable": {
+      "description": "Representation of an OpenAPI server variable object",
+      "type": "object",
+      "properties": {
+        "enumValues": {
+          "description": "List of possible values for the server variable",
+          "type": "array",
+          "items": {
+            "description": "Possible value for the server variable",
+            "type": "string"
+          }
+        },
+        "defaultValue": {
+          "description": "The default value of the variable",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description of the variable",
+          "type": "string"
+        }
+      },
+      "required": [
+        "defaultValue"
+      ]
+    },
+    "tag": {
+      "description": "Properties of this object are mapped directly to the OpenAPI external documentation object",
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Description of the tag",
+          "type": "string"
+        },
+        "externalDocs": {
+          "$ref": "#/definitions/externalDocs"
+        }
+      }
+    },
+    "securityScheme": {
+      "description": "Properties of this object are mapped directly to the OpenAPI security scheme object",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Type of the security scheme",
+          "type": "string",
+          "enum": [
+            "apiKey",
+            "http",
+            "oauth2",
+            "openIdConnect"
+          ]
+        },
+        "description": {
+          "description": "Short description of the security scheme",
+          "type": "string"
+        },
+        "scheme": {
+          "description": "HTTP authorization scheme (http://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml)",
+          "type": "string"
+        },
+        "bearerFormat": {
+          "description": "A hint to the client to identify how the bearer token is formatted",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the header, query or cookie parameter",
+          "type": "string"
+        },
+        "in": {
+          "description": "The location of the api key",
+          "type": "string",
+          "enum": [
+            "query",
+            "header",
+            "cookie"
+          ]
+        },
+        "openIdConnectUrl": {
+          "description": "OpenId Connect URL to discover OAuth2 configuration values",
+          "type": "string"
+        },
+        "flows": {
+          "description": "Configuration of different OAuth flows",
+          "type": "object",
+          "properties": {
+            "implicit": {
+              "description": "Configuration for the implicit flow",
+              "$ref": "#/definitions/oAuthFlow"
+            },
+            "password": {
+              "description": "Configuration for the password flow",
+              "$ref": "#/definitions/oAuthFlow"
+            },
+            "clientCredentials": {
+              "description": "Configuration for the client credentials flow",
+              "$ref": "#/definitions/oAuthFlow"
+            },
+            "authorizationCode": {
+              "description": "Configuration for the authorization code flow",
+              "$ref": "#/definitions/oAuthFlow"
+            }
+          }
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "oAuthFlow": {
+      "description": "Object that contains the various OAuth URLs",
+      "type": "object",
+      "properties": {
+        "authorizationUrl": {
+          "description": "The authorization URL",
+          "type": "string"
+        },
+        "tokenUrl": {
+          "description": "The token URL",
+          "type": "string"
+        },
+        "refreshUrl": {
+          "description": "The refresh URL",
+          "type": "string"
+        },
+        "scopes": {
+          "description": "Map of scope name to a short description",
+          "patternProperties": {
+            ".+": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
