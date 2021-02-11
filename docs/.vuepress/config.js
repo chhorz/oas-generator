@@ -10,7 +10,7 @@ module.exports = {
         items: [
           { text: 'Installation', link: '/documentation/installation' },
           { text: 'Reference', link: '/documentation/reference' },
-          { text: 'Extensibility', link: '/documentation/extensibility' }
+          { text: 'Extensibility', link: '/documentation/extensibility' },
         ]
       },
       { text: 'Github', link: 'https://github.com/chhorz/oas-generator' }
@@ -19,7 +19,7 @@ module.exports = {
       '/documentation/': [
         ['installation', 'Installation'],
         ['reference', 'Reference'],
-        ['extensibility', 'Extensibility']
+        ['extensibility', 'Extensibility'],
       ],
       // fallback
       '/': [
