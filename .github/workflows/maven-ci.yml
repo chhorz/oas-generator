@@ -9,6 +9,7 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    name: 'Build and test'
     strategy:
       matrix:
         # test against LTS version:
@@ -37,6 +38,7 @@ jobs:
   publish-snapshot:
     needs: test
     runs-on: ubuntu-latest
+    name: 'Publish snapshot'
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v2
@@ -54,6 +56,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: 'Publish Snapshot'
+      - name: 'Publish snapshot'
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'chhorz/oas-generator'
         run: ./mvnw -V -B -s build/settings.xml -P build-extras -DskipTests=true deploy

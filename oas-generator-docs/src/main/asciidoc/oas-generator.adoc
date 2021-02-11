@@ -8,6 +8,7 @@
 :sectnums:
 :sectlinks:
 :sectanchors:
+:imagesdir: images
 :source-highlighter: highlightjs
 :highlightjs-theme: github
 :common-java: ../../../../oas-generator-common/src/main/java
@@ -375,6 +376,39 @@ Values are documented in the corresponding section of each post-processor.
 _Default: empty map_
 
 |===
+
+=== JSON Schema
+The *OAS Generator* provides an JSON Schema to simplify the writing of the configuration file.
+
+The JSON schema is available at the following URL:
+
+* https://chhorz.github.io/oas-generator/schema/oas-generator.schema.json
+
+The following sections will show you how to enable the JSON schema support in some IDEs.
+
+==== IntelliJ IDEA
+1. Open the Settings window and search for "JSON Schema Mappings".
+2. Click the icon:plus[] icon to add a custom JSON Schema Mapping
+3. Select *Version 7* and add the *URL* listed above.
+4. Add mappings to the _File path pattern_, for example `oas-generator.yml`.
+You can add as many path mappings as you like.
+
+image::json-schema_intellij.png[]
+
+==== VS Code
+To use the JSON Schema within Visual Studio Code the link:https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml[YAML (Red Hat)] extension must be installed.
+Then the mapping of the schema URL to the file names must be added to the `settings.json`:
+
+[source,json]
+.settings.json
+----
+{
+  "yaml.schemas": {
+    "https://chhorz.github.io/oas-generator/schema/oas-generator.schema.json": ["oas-generator.yml"]
+  }
+}
+----
+
 
 
 [[javadoc]]
