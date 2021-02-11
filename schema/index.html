@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Schema | OAS Generator</title>
+    <meta name="generator" content="VuePress 1.8.0">
+    
+    <meta name="description" content="This annotation processor generates an OpenAPI Specification based on static code analysis.">
+    
+    <link rel="preload" href="/oas-generator/assets/css/0.styles.a67656e4.css" as="style"><link rel="preload" href="/oas-generator/assets/js/app.5f7a5ff6.js" as="script"><link rel="preload" href="/oas-generator/assets/js/2.e7481025.js" as="script"><link rel="preload" href="/oas-generator/assets/js/12.7dc18d66.js" as="script"><link rel="prefetch" href="/oas-generator/assets/js/10.14551874.js"><link rel="prefetch" href="/oas-generator/assets/js/11.f467ca36.js"><link rel="prefetch" href="/oas-generator/assets/js/3.1cc01215.js"><link rel="prefetch" href="/oas-generator/assets/js/4.865692a8.js"><link rel="prefetch" href="/oas-generator/assets/js/5.81254301.js"><link rel="prefetch" href="/oas-generator/assets/js/6.6e8c67be.js"><link rel="prefetch" href="/oas-generator/assets/js/7.476ba23c.js"><link rel="prefetch" href="/oas-generator/assets/js/8.2f599197.js"><link rel="prefetch" href="/oas-generator/assets/js/9.f14846fb.js">
+    <link rel="stylesheet" href="/oas-generator/assets/css/0.styles.a67656e4.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/oas-generator/" class="home-link router-link-active"><!----> <span class="site-name">OAS Generator</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/oas-generator/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Documentation" class="dropdown-title"><span class="title">Documentation</span> <span class="arrow down"></span></button> <button type="button" aria-label="Documentation" class="mobile-dropdown-title"><span class="title">Documentation</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/oas-generator/documentation/installation.html" class="nav-link">
+  Installation
+</a></li><li class="dropdown-item"><!----> <a href="/oas-generator/documentation/reference.html" class="nav-link">
+  Reference
+</a></li><li class="dropdown-item"><!----> <a href="/oas-generator/documentation/extensibility.html" class="nav-link">
+  Extensibility
+</a></li></ul></div></div><div class="nav-item"><a href="https://github.com/chhorz/oas-generator" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/oas-generator/" class="nav-link">
+  Home
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><button type="button" aria-label="Documentation" class="dropdown-title"><span class="title">Documentation</span> <span class="arrow down"></span></button> <button type="button" aria-label="Documentation" class="mobile-dropdown-title"><span class="title">Documentation</span> <span class="arrow right"></span></button> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="/oas-generator/documentation/installation.html" class="nav-link">
+  Installation
+</a></li><li class="dropdown-item"><!----> <a href="/oas-generator/documentation/reference.html" class="nav-link">
+  Reference
+</a></li><li class="dropdown-item"><!----> <a href="/oas-generator/documentation/extensibility.html" class="nav-link">
+  Extensibility
+</a></li></ul></div></div><div class="nav-item"><a href="https://github.com/chhorz/oas-generator" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><a href="/oas-generator/" aria-current="page" class="sidebar-link">Home</a></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="schema"><a href="#schema" class="header-anchor">#</a> Schema</h1> <p>The complete <em>JSON Schema</em> can be found <a href="https://chhorz.github.io/oas-generator/schema/oas-generator.schema.json" target="_blank" rel="noopener noreferrer">here<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>.</p> <p>Content of the file is also included below:</p> <details class="custom-block details"><summary>Show JSON Schema</summary> <div class="language-json extra-class"><pre class="language-json"><code><span class="token punctuation">{</span>
+  <span class="token property">&quot;$schema&quot;</span><span class="token operator">:</span> <span class="token string">&quot;http://json-schema.org/draft-07/schema#&quot;</span><span class="token punctuation">,</span>
+  <span class="token property">&quot;$id&quot;</span><span class="token operator">:</span> <span class="token string">&quot;https://chhorz.github.io/oas-generator/schema/oas-generator.schema.json&quot;</span><span class="token punctuation">,</span>
+  <span class="token property">&quot;title&quot;</span><span class="token operator">:</span> <span class="token string">&quot;OAS-Generator&quot;</span><span class="token punctuation">,</span>
+  <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object are mapped directly to the OpenAPI object or used to configure the oas-generator itself&quot;</span><span class="token punctuation">,</span>
+  <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+  <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">&quot;info&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object are mapped directly to the OpenAPI info object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;title&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The title of the API&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Short description of the API&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;termsOfService&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;URL to link the Terms of Service&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;contact&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object are mapped directly to the OpenAPI contact object&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Some contact name of a person or organisation&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;url&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;A contact URL&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;email&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;A contact email address&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;license&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object are mapped directly to the OpenAPI license object&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;License name&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;url&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;URL to the used license&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;version&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The version of the API&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;required&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">&quot;title&quot;</span><span class="token punctuation">,</span>
+        <span class="token string">&quot;version&quot;</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;servers&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;List of servers that are included in the resulting OpenAPI specification&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;array&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;items&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object elements are mapped directly to the OpenAPI server object&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;url&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The URL of the target host (may contain server variables)&quot;</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Short description of the server&quot;</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;variables&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Map of variable names to their descriptive object&quot;</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;patternProperties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;.+&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/serverVariable&quot;</span>
+              <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;required&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+          <span class="token string">&quot;url&quot;</span>
+        <span class="token punctuation">]</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;externalDocs&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/externalDocs&quot;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;tags&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object are mapped directly to the OpenAPI tag object - keys are used as tag name&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;patternProperties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;.+&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/tag&quot;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;securitySchemes&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Map of security scheme names to their corresponding OpenAPI object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;patternProperties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;.+&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/securityScheme&quot;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;parser&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;OAS-Generator specific properties that customize the execution behaviour&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;enabled&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Property to enable and disable the OAS Generator execution&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;boolean&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;logLevel&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Defines the logging level for all OAS Generator log statements&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;enum&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+            <span class="token string">&quot;DEBUG&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;INFO&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;ERROR&quot;</span>
+          <span class="token punctuation">]</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;INFO&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;includeGetters&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Flag to include attributes according to their getter methods&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;boolean&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;outputDir&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;File path of the generated output files&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;./target/openapi&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;outputFile&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The file name of the generated files&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;openapi&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;outputFormat&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Comma separated list of json, yaml or yml&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;json,yaml&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;schemaDir&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Path to the generated openapi-schema file that was generated from oas-generator-schema&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;./target/openapi&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;schemaFile&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;File name of the openapi-schema file that was generated from oas-generator-schema&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;openapi-schema&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;schemaPackages&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Additional packages of resources that should be parsed&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;array&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;items&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Java package name&quot;</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;postProcessor&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">&quot;required&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token string">&quot;info&quot;</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">&quot;definitions&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">&quot;externalDocs&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object are mapped directly to the OpenAPI external documentation object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;url&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;URL of the external documentation&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Some short description of the external documentation&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;required&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">&quot;url&quot;</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;serverVariable&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Representation of an OpenAPI server variable object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;enumValues&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;List of possible values for the server variable&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;array&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;items&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Possible value for the server variable&quot;</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;defaultValue&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The default value of the variable&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Description of the variable&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;required&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">&quot;defaultValue&quot;</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;tag&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object are mapped directly to the OpenAPI external documentation object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Description of the tag&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;externalDocs&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/externalDocs&quot;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;securityScheme&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Properties of this object are mapped directly to the OpenAPI security scheme object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Type of the security scheme&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;enum&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+            <span class="token string">&quot;apiKey&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;http&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;oauth2&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;openIdConnect&quot;</span>
+          <span class="token punctuation">]</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Short description of the security scheme&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;scheme&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;HTTP authorization scheme (http://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml)&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;bearerFormat&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;A hint to the client to identify how the bearer token is formatted&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Name of the header, query or cookie parameter&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;in&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The location of the api key&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;enum&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+            <span class="token string">&quot;query&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;header&quot;</span><span class="token punctuation">,</span>
+            <span class="token string">&quot;cookie&quot;</span>
+          <span class="token punctuation">]</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;openIdConnectUrl&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;OpenId Connect URL to discover OAuth2 configuration values&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;flows&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Configuration of different OAuth flows&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;implicit&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Configuration for the implicit flow&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/oAuthFlow&quot;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;password&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Configuration for the password flow&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/oAuthFlow&quot;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;clientCredentials&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Configuration for the client credentials flow&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/oAuthFlow&quot;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;authorizationCode&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Configuration for the authorization code flow&quot;</span><span class="token punctuation">,</span>
+              <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/oAuthFlow&quot;</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;required&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token string">&quot;type&quot;</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;oAuthFlow&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Object that contains the various OAuth URLs&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;authorizationUrl&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The authorization URL&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;tokenUrl&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The token URL&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;refreshUrl&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The refresh URL&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;scopes&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Map of scope name to a short description&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;patternProperties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;.+&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div></details></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/oas-generator/assets/js/app.5f7a5ff6.js" defer></script><script src="/oas-generator/assets/js/2.e7481025.js" defer></script><script src="/oas-generator/assets/js/12.7dc18d66.js" defer></script>
+  </body>
+</html>
