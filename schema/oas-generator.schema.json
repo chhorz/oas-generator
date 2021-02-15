@@ -173,6 +173,13 @@
           "default": []
         },
         "postProcessor": {
+          "description": "Property map for all post processors",
+          "type": "object",
+          "properties": {
+            "asciidoctor": {
+              "$ref": "#/definitions/asciidoctorPostProcessor"
+            }
+          }
 
         }
       }
@@ -330,6 +337,47 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "asciidoctorPostProcessor": {
+      "description": "Custom properties for the asciidoctor post processor",
+      "type": "object",
+      "properties": {
+        "logTemplateExceptions": {
+          "description": "Apache FreeMarker configuration option that will be passed to the template engine",
+          "type": "boolean",
+          "default": true
+        },
+        "templateLocalizedLookup": {
+          "description": "Apache FreeMarker configuration option that will be passed to the template engine",
+          "type": "boolean",
+          "default": false
+        },
+        "templatePath": {
+          "description": "Template path within the classpath",
+          "type": "string",
+          "default": "/freemarker"
+        },
+        "templateFile": {
+          "description": "File name of the initial template file",
+          "type": "string",
+          "default": "openapi.ftlh"
+        },
+        "outputPath": {
+          "description": "File path of the generated output files",
+          "type": "string",
+          "default": "./target/openapi"
+        },
+        "outputFile": {
+          "description": "The file name of the generated file",
+          "type": "string",
+          "default": "openapi.adoc"
+        },
+        "standaloneFile": {
+          "description": "Flag if the resulting file is a standalone file or is included within another file",
+          "type": "boolean",
+          "default": true
         }
       }
     }

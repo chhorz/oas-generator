@@ -8,7 +8,7 @@
     
     <meta name="description" content="This annotation processor generates an OpenAPI Specification based on static code analysis.">
     
-    <link rel="preload" href="/oas-generator/assets/css/0.styles.a67656e4.css" as="style"><link rel="preload" href="/oas-generator/assets/js/app.5f7a5ff6.js" as="script"><link rel="preload" href="/oas-generator/assets/js/2.e7481025.js" as="script"><link rel="preload" href="/oas-generator/assets/js/12.7dc18d66.js" as="script"><link rel="prefetch" href="/oas-generator/assets/js/10.14551874.js"><link rel="prefetch" href="/oas-generator/assets/js/11.f467ca36.js"><link rel="prefetch" href="/oas-generator/assets/js/3.1cc01215.js"><link rel="prefetch" href="/oas-generator/assets/js/4.865692a8.js"><link rel="prefetch" href="/oas-generator/assets/js/5.81254301.js"><link rel="prefetch" href="/oas-generator/assets/js/6.6e8c67be.js"><link rel="prefetch" href="/oas-generator/assets/js/7.476ba23c.js"><link rel="prefetch" href="/oas-generator/assets/js/8.2f599197.js"><link rel="prefetch" href="/oas-generator/assets/js/9.f14846fb.js">
+    <link rel="preload" href="/oas-generator/assets/css/0.styles.a67656e4.css" as="style"><link rel="preload" href="/oas-generator/assets/js/app.f21e4271.js" as="script"><link rel="preload" href="/oas-generator/assets/js/2.e7481025.js" as="script"><link rel="preload" href="/oas-generator/assets/js/12.021a54b4.js" as="script"><link rel="prefetch" href="/oas-generator/assets/js/10.14551874.js"><link rel="prefetch" href="/oas-generator/assets/js/11.f467ca36.js"><link rel="prefetch" href="/oas-generator/assets/js/3.1cc01215.js"><link rel="prefetch" href="/oas-generator/assets/js/4.865692a8.js"><link rel="prefetch" href="/oas-generator/assets/js/5.81254301.js"><link rel="prefetch" href="/oas-generator/assets/js/6.6e8c67be.js"><link rel="prefetch" href="/oas-generator/assets/js/7.476ba23c.js"><link rel="prefetch" href="/oas-generator/assets/js/8.2f599197.js"><link rel="prefetch" href="/oas-generator/assets/js/9.f14846fb.js">
     <link rel="stylesheet" href="/oas-generator/assets/css/0.styles.a67656e4.css">
   </head>
   <body>
@@ -207,6 +207,13 @@
           <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
         <span class="token punctuation">}</span><span class="token punctuation">,</span>
         <span class="token property">&quot;postProcessor&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Property map for all post processors&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+            <span class="token property">&quot;asciidoctor&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+              <span class="token property">&quot;$ref&quot;</span><span class="token operator">:</span> <span class="token string">&quot;#/definitions/asciidoctorPostProcessor&quot;</span>
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
 
         <span class="token punctuation">}</span>
       <span class="token punctuation">}</span>
@@ -366,10 +373,51 @@
           <span class="token punctuation">}</span>
         <span class="token punctuation">}</span>
       <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;asciidoctorPostProcessor&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Custom properties for the asciidoctor post processor&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;object&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;properties&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token property">&quot;logTemplateExceptions&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Apache FreeMarker configuration option that will be passed to the template engine&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;boolean&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;templateLocalizedLookup&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Apache FreeMarker configuration option that will be passed to the template engine&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;boolean&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;templatePath&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Template path within the classpath&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;/freemarker&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;templateFile&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;File name of the initial template file&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;openapi.ftlh&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;outputPath&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;File path of the generated output files&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;./target/openapi&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;outputFile&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;The file name of the generated file&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;string&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token string">&quot;openapi.adoc&quot;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;standaloneFile&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token property">&quot;description&quot;</span><span class="token operator">:</span> <span class="token string">&quot;Flag if the resulting file is a standalone file or is included within another file&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;type&quot;</span><span class="token operator">:</span> <span class="token string">&quot;boolean&quot;</span><span class="token punctuation">,</span>
+          <span class="token property">&quot;default&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre></div></details></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
-    <script src="/oas-generator/assets/js/app.5f7a5ff6.js" defer></script><script src="/oas-generator/assets/js/2.e7481025.js" defer></script><script src="/oas-generator/assets/js/12.7dc18d66.js" defer></script>
+    <script src="/oas-generator/assets/js/app.f21e4271.js" defer></script><script src="/oas-generator/assets/js/2.e7481025.js" defer></script><script src="/oas-generator/assets/js/12.021a54b4.js" defer></script>
   </body>
 </html>
