@@ -275,6 +275,7 @@
 					</executions>
 					<configuration>
 						<failOnError>false</failOnError>
+						<locale>en</locale>
 						<tags>
 							<tag>
 								<name>response</name>
