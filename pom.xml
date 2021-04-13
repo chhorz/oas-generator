@@ -95,7 +95,7 @@
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
-		<nohttp-checkstyle.version>0.0.5.RELEASE</nohttp-checkstyle.version>
+		<nohttp-checkstyle.version>0.0.6.RELEASE</nohttp-checkstyle.version>
 
 		<!-- test dependency versions -->
 		<assertj-core.version>3.19.0</assertj-core.version>
