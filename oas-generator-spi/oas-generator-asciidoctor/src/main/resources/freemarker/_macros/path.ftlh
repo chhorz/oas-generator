@@ -19,7 +19,7 @@ This operation is deprecated.
 
 <#if operation.tags??>
 h| Tags
-4+| <#list operation.tags as tag>icon:tag[] <<${tag},${tag}>><#sep>, </#list>
+4+| <#list operation.tags as tag><#if attributeIcons?? && attributeIcons?matches("font")>icon:tag[] </#if><<${tag},${tag}>><#sep>, </#list>
 
 </#if>
 <#if operation.summary??>
@@ -92,7 +92,7 @@ m! pass:[${mediaType}]
 <#if operation.security??>
 .${operation.security?size}+h| Security
 <#list operation.security as security>
-4+| <#list security?keys as secKey>icon:lock[] <<${secKey},_${secKey}_>><#sep>, </#list>
+4+| <#list security?keys as secKey><#if attributeIcons?? && attributeIcons?matches("font")>icon:lock[] </#if><<${secKey},_${secKey}_>><#sep>, </#list>
 
 </#list>
 

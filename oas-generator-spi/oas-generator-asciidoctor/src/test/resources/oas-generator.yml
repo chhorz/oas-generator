@@ -25,3 +25,5 @@ parser:
       outputPath: ./target/openapi
       outputFile: /openapi.adoc
       standaloneFile: false
+      attributes:
+        icons: font

@@ -721,11 +721,14 @@ parser:
       outputPath: ./target/openapi # <2>
       outputFile: /openapi.adoc
       standaloneFile: true # <3>
+      attributes:
+        icons: font # <4>
 ----
 <1> The path of the templates based on `/src/main/resources`
 <2> Output base directory is the `/target/openapi` folder
 <3> A standalone file will be generated with an asciidoctor document header and section title on level 0.
 Files generated with `false` can easier integrated in other asciidoctor files and start with a section title on level 1.
+<4> Icons can be set to `image` or `font` as described in the Asciidoctor documentation.
 
 .Description of asciidoctor post processor properties
 [cols="1a,3a"]
@@ -768,6 +771,9 @@ _Default: ``openapi.adoc``_
 | Flag if the resulting file is a standalone file (`true`) or should be included within another `.adoc` file (`false`).
 
 _Default: ``true``_
+
+| `attributes`
+| Custom map for Asciidoctor attributes.
 
 |===
 

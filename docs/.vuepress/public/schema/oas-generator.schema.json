@@ -378,6 +378,21 @@
           "description": "Flag if the resulting file is a standalone file or is included within another file",
           "type": "boolean",
           "default": true
+        },
+        "attributes": {
+          "description": "Map of asciidoctor attributes that are passed to the generated document",
+          "type": "object",
+          "properties": {
+            "icons": {
+              "description": "Chooses images or font icons instead of text for admonitions.",
+              "type": "string",
+              "enum": [
+                "font",
+                "image"
+              ],
+              "default": "image"
+            }
+          }
         }
       }
     }

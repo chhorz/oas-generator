@@ -140,7 +140,10 @@ class GeneratorPropertyLoaderTest {
 				.isNotEmpty()
 				.get()
 				.hasFieldOrPropertyWithValue("valueOne", "Test")
-				.hasFieldOrPropertyWithValue("valueTwo", 2);
+				.hasFieldOrPropertyWithValue("valueTwo", 2)
+				.extracting(ProcessorAProperties::getCustomProperties)
+				.hasFieldOrPropertyWithValue("test", "xyz");
+
 		}
 
 		@Test
@@ -163,7 +166,9 @@ class GeneratorPropertyLoaderTest {
 				.isNotNull()
 				.isPresent()
 				.get()
-				.hasFieldOrPropertyWithValue("valueTwo", 0);
+				.hasFieldOrPropertyWithValue("valueTwo", 0)
+				.extracting(ProcessorAProperties::getCustomProperties)
+				.hasFieldOrPropertyWithValue("test", "abc");
 		}
 
 	}

@@ -20,6 +20,7 @@ import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.common.util.LogUtils;
+import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorAttributes;
 import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorPostProcessor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ class AsciidoctorPostProcessorTest {
 		openApi.setOpenapi("3.0.3");
 		openApi.setInfo(info);
 
-		processor = createAsciidoctorPostProcessor("/embedded", false);
+		processor = createAsciidoctorPostProcessor("/embedded", false, "image");
 
 		// when
 		processor.execute(openApi);
@@ -328,7 +329,7 @@ class AsciidoctorPostProcessorTest {
 		openApi.putPathItemObject("/articles", articles);
 		openApi.setComponents(components);
 
-		processor = createAsciidoctorPostProcessor("/full");
+		processor = createAsciidoctorPostProcessor("/full", true, "font");
 
 		// when
 		processor.execute(openApi);
@@ -349,11 +350,11 @@ class AsciidoctorPostProcessorTest {
 			List<String> outputLines = Files.readAllLines(output);
 
 			if (referenceLines.size() != outputLines.size()) {
-				fail("The reference and ouput file must have the same line count.");
+				fail("The reference and output file must have the same line count.");
 			}
 
-			referenceLines.forEach(line -> {
-				assertThat(line.trim()).isEqualTo(outputLines.get(referenceLines.indexOf(line)).trim());
+			outputLines.forEach(line -> {
+				assertThat(line.trim()).isEqualTo(referenceLines.get(outputLines.indexOf(line)).trim());
 			});
 		} catch (IOException e) {
 			fail("Either reference or output file has no lines.");
@@ -361,13 +362,17 @@ class AsciidoctorPostProcessorTest {
 	}
 
 	private AsciidoctorPostProcessor createAsciidoctorPostProcessor(String folder) {
-		return createAsciidoctorPostProcessor(folder, true);
+		return createAsciidoctorPostProcessor(folder, true, "image");
 	}
 
-	private AsciidoctorPostProcessor createAsciidoctorPostProcessor(String folder, boolean standalone) {
+	private AsciidoctorPostProcessor createAsciidoctorPostProcessor(String folder, boolean standalone, String icons) {
+		LinkedHashMap<String, Object> attributesPropertyMap = new LinkedHashMap<>();
+		attributesPropertyMap.put("icons", icons);
+
 		LinkedHashMap<String, Object> propertyMap = new LinkedHashMap<>();
 		propertyMap.put("outputPath", "target/generated-test-docs" + folder);
 		propertyMap.put("standaloneFile", String.valueOf(standalone));
+		propertyMap.put("attributes", attributesPropertyMap);
 
 		ParserProperties parserProperties = new ParserProperties();
 		parserProperties.setPostProcessor(Collections.singletonMap("asciidoctor", propertyMap));

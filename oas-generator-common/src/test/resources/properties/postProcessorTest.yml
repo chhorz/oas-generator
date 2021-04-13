@@ -20,3 +20,5 @@ parser:
     one:
       valueOne: "Test"
       valueTwo: 2
+      custom:
+        test: xyz

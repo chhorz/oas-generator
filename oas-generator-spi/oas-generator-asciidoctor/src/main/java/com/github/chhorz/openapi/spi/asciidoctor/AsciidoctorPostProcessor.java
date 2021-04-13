@@ -125,6 +125,7 @@ public class AsciidoctorPostProcessor implements OpenAPIPostProcessor {
 		Map<String, Object> templateVariables = new HashMap<>();
 		templateVariables.put("openapi", openAPI);
 		templateVariables.put("standalone", asciidoctorProperties.getStandaloneFile());
+		templateVariables.put("attribute_icons", asciidoctorProperties.getAsciidoctorAttributes().getIcons());
 		return templateVariables;
 	}
 

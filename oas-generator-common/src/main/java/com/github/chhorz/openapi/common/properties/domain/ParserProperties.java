@@ -154,8 +154,8 @@ public class ParserProperties {
 				return Optional.of(clazz.getConstructor(Map.class).newInstance(yamlProperties));
 			} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
 				try {
-					return Optional.ofNullable(clazz.newInstance());
-				} catch (InstantiationException | IllegalAccessException ex) {
+					return Optional.of(clazz.getDeclaredConstructor().newInstance());
+				} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
 					ex.printStackTrace();
 				}
 			}

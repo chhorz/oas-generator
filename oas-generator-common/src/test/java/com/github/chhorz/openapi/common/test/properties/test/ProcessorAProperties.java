@@ -24,12 +24,14 @@ public class ProcessorAProperties extends AbstractPostProcessorProperties {
 
 	private String valueOne;
 	private Integer valueTwo;
+	private CustomProperties customProperties;
 
 	public ProcessorAProperties(Map<String, Object> yamlProperties) {
 		super(yamlProperties);
 
 		valueOne = getString("valueOne", "DEFAULT");
 		valueTwo = getInteger("valueTwo", 0);
+		customProperties = getObject("custom", CustomProperties.class).orElse(new CustomProperties());
 	}
 
 	public String getValueOne() {
@@ -38,6 +40,10 @@ public class ProcessorAProperties extends AbstractPostProcessorProperties {
 
 	public Integer getValueTwo() {
 		return valueTwo;
+	}
+
+	public CustomProperties getCustomProperties() {
+		return customProperties;
 	}
 
 }

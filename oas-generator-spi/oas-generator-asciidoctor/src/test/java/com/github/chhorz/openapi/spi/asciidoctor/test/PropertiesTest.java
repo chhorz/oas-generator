@@ -17,6 +17,7 @@
 package com.github.chhorz.openapi.spi.asciidoctor.test;
 
 import com.github.chhorz.openapi.common.properties.GeneratorPropertyLoader;
+import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorAttributes;
 import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProperties;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +46,14 @@ class PropertiesTest {
 		AsciidoctorProperties asciidoctorProperties = optionalAsciidoctorProperties.get();
 
 		assertThat(asciidoctorProperties.getPostProcessorProperties())
-			.containsOnlyKeys("standaloneFile", "templateLocalizedLookup", "templatePath", "templateFile", "outputPath", "outputFile","logTemplateExceptions");
+			.containsOnlyKeys("standaloneFile",
+				"templateLocalizedLookup",
+				"templatePath",
+				"templateFile",
+				"outputPath",
+				"outputFile",
+				"logTemplateExceptions",
+				"attributes");
 
 		assertThat(asciidoctorProperties.getStandaloneFile()).isFalse();
 		assertThat(asciidoctorProperties.getLocalizedLookup()).isFalse();
@@ -54,6 +62,11 @@ class PropertiesTest {
 		assertThat(asciidoctorProperties.getOutputPath()).isEqualTo("./target/openapi");
 		assertThat(asciidoctorProperties.getOutputFile()).isEqualTo("/openapi.adoc");
 		assertThat(asciidoctorProperties.getExceptionLogging()).isTrue();
+
+		assertThat(asciidoctorProperties.getAsciidoctorAttributes())
+			.isNotNull()
+			.extracting(AsciidoctorAttributes::getIcons)
+			.isEqualTo("font");
 	}
 
 	@Test

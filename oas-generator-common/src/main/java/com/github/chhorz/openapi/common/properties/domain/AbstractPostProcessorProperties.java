@@ -16,8 +16,11 @@
  */
 package com.github.chhorz.openapi.common.properties.domain;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Collections.emptyMap;
 
@@ -89,6 +92,29 @@ public abstract class AbstractPostProcessorProperties {
 		} else {
 			return defaultValue;
 		}
+	}
+
+	/**
+	 * Get a object value for the given key.
+	 *
+	 * @param key the property key (not null)
+	 * @param clazz the class of the custom object
+	 * @return an optional containing the given value
+	 */
+	protected <T> Optional<T> getObject(final String key, Class<T> clazz) {
+		Objects.requireNonNull(key, "Key must not be empty.");
+		LinkedHashMap property = (LinkedHashMap) postProcessorProperties.get(key);
+
+		try {
+			return Optional.of(clazz.getConstructor(Map.class).newInstance(property));
+		} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+			try {
+				return Optional.of(clazz.getDeclaredConstructor().newInstance());
+			} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return Optional.empty();
 	}
 
 }
