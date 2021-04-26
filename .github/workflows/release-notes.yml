@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Select Milestone Data
         id: select_milestone_data
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4.0.2
         with:
           script: |
             const tag_name = context.payload.ref.replace('refs/tags/v', '')
@@ -51,7 +51,7 @@ jobs:
     steps:
       - name: Load Bug List
         id: bug_list
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4.0.2
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -86,7 +86,7 @@ jobs:
     steps:
       - name: Load Feature List
         id: feature_list
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4.0.2
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -121,7 +121,7 @@ jobs:
     steps:
       - name: Load Improvement List
         id: improvement_list
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4.0.2
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -157,7 +157,7 @@ jobs:
     steps:
       - name: Create GitHub Release
         id: create_github_release
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4.0.2
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -204,7 +204,7 @@ jobs:
     steps:
       - name: Close Milestone
         id: close_milestone
-        uses: actions/github-script@v3
+        uses: actions/github-script@v4.0.2
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
