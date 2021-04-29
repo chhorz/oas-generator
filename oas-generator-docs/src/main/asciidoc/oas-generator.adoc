@@ -49,7 +49,7 @@ public class OrderController {
 The project itself consists of multiple maven modules.
 An _oas-generator-common_ module that contains the internal OpenAPI domain model and core functionality that is used in multiple modules.
 The _oas-generator-spring-web_ and _oas-generator-jaxrs_ are dedicated modules for a REST API implementation.
-If the resources are provided in an external API package an specific module is provided: _oas-generator-schema_.
+If the resources are provided in an external API package a specific module is provided: _oas-generator-schema_.
 
 An additional _SPI_ module covers the extensibility of the OAS Generator.
 There is currently the <<asciidoctor_postprocessor,Asciidoctor Post-Processor>> that generates an Asciidoctor file from the generated OpenAPI file.
@@ -204,7 +204,7 @@ info:
   title: MyService
   version: 1.2.3-SNAPSHOT #<1>
 ----
-<1> If the <<compiler_options,compiler option>> was used to pass the version the annotated line can be omitted.
+<1> If the <<compiler_options,compiler option>> was used to pass the version, the annotated line can be omitted.
 
 Full description of the possible values is shown below:
 
@@ -314,7 +314,7 @@ In this map contributors can define their own properties for their post processo
 | Property | Description
 
 | `enabled`
-| Property to enable and disable the *OAS Generator* execution and the generation of OpenAPI files.
+| Property to enable and disable the *OAS Generator* execution and generation of OpenAPI files.
 
 Possible values: `true`, `false`
 
@@ -435,7 +435,7 @@ The description is the complete text from the beginning of the Javadoc comment t
 Additional the summary is, unless not marked with the `@summary` tag, the first sentence of the description.
 Other included tags are:
 
-* `@param` tag for a description of the method parameters and so the API parameters
+* `@param` tags for a description of the method parameters and so the API parameters
 * `@return` for the semantic meaning of the response
 * [[category_tag]] `@category` to represent OpenAPI tags _(Eclipse recognizes the `@category` tag per default)_.
 
@@ -492,7 +492,7 @@ The `@response` tag has the following structure:
 <1> Each part is described in detail:
 `<http-status>`:: HTTP status code
 `<schema>`:: Simple name of the resource if the resource itself is available as schema.
-Otherwise a FQDN could be used (for example `java.lang.Void`).
+Otherwise, a FQDN could be used (for example `java.lang.Void`).
 `<description>`:: Description of the status code and schema
 
 
@@ -585,7 +585,7 @@ public class TestController {
 For a subset of the javax validation api annotations the *OAS Generator* provides a mapping to the OpenAPI specification.
 The dependency `javax.validation:validation-api` is provided as an optional dependency.
 An implementation, such as `hibernate-validator` (link:https://search.maven.org/search?q=g:org.hibernate.validator%20AND%20a:hibernate-validator*[Maven Central]), is required for runtime but not for the generation of the OpenAPI specification file.
-Die *OAS Generator* makes no difference wich of the following validation api depdencyies is used:
+Die *OAS Generator* makes no difference which of the following validation api dependencies is used:
 
 [source,xml]
 ----
@@ -676,7 +676,7 @@ Currently, the following post processors (see module link:https://github.com/chh
 - `FileWriterPostProcessor` (see _oas-generator-common_)
 - `AsciidoctorPostProcessor`
 
-If other post processors should be listed and added in the *OAS Generator* repo please open a Github issue.
+If other post processors should be listed and added in the *OAS Generator* repo please open a GitHub issue.
 
 [[postprocessor_documentation]]
 === Post-Processor Documentation
@@ -774,6 +774,15 @@ _Default: ``true``_
 
 | `attributes`
 | Custom map for Asciidoctor attributes.
+
+[cols="1a,3a"]
+!===
+! Attribute ! Description
+
+! `icons`
+! Use icons as `image` _(default)_ or `font`.
+
+!===
 
 |===
 

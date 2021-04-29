@@ -28,7 +28,7 @@ An example can be found in the https://chhorz.github.io/oas-generator/documentat
 
 == Documentation
 
-The https://chhorz.github.io/oas-generator/[documentation] can be found on the separate Github Page.
+The https://chhorz.github.io/oas-generator/[documentation] can be found on the separate GitHub Page.
 The page also includes the https://chhorz.github.io/oas-generator/documentation/reference.html[reference documentation] for all versions.
 
 
