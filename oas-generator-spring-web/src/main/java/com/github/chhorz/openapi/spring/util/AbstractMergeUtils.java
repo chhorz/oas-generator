@@ -41,21 +41,42 @@ public abstract class AbstractMergeUtils {
 	}
 
 	/**
-	 * Merges two documentation Strings
+	 * Merges two description strings
 	 *
-	 * @param documentationOne documentation one
-	 * @param documentationTwo documentation two
-	 * @return the combined documentation String.
+	 * @param descriptionOne description one
+	 * @param descriptionTwo description two
+	 * @return the combined description String.
 	 */
-	protected String mergeDocumentation(String documentationOne, String documentationTwo) {
-		if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo) && documentationOne.equalsIgnoreCase(documentationTwo)) {
-			return documentationOne;
-		} else if (PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo)) {
-			return format("%s\n<hr>\n%s", documentationOne, documentationTwo).trim();
-		} else if (PRESENCE.test(documentationOne) && !PRESENCE.test(documentationTwo)) {
-			return documentationOne;
-		} else if (!PRESENCE.test(documentationOne) && PRESENCE.test(documentationTwo)) {
-			return documentationTwo;
+	protected String mergeDescription(String descriptionOne, String descriptionTwo) {
+		if (PRESENCE.test(descriptionOne) && PRESENCE.test(descriptionTwo) && descriptionOne.equalsIgnoreCase(descriptionTwo)) {
+			return descriptionOne;
+		} else if (PRESENCE.test(descriptionOne) && PRESENCE.test(descriptionTwo)) {
+			return format("%s\n<hr></hr>\n%s", descriptionOne, descriptionTwo).trim();
+		} else if (PRESENCE.test(descriptionOne) && !PRESENCE.test(descriptionTwo)) {
+			return descriptionOne;
+		} else if (!PRESENCE.test(descriptionOne) && PRESENCE.test(descriptionTwo)) {
+			return descriptionTwo;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Merges two summary strings
+	 *
+	 * @param summaryOne summary one
+	 * @param summaryTwo summary two
+	 * @return the combined summary String.
+	 */
+	protected String mergeSummary(String summaryOne, String summaryTwo) {
+		if (PRESENCE.test(summaryOne) && PRESENCE.test(summaryTwo) && summaryOne.equalsIgnoreCase(summaryTwo)) {
+			return summaryOne;
+		} else if (PRESENCE.test(summaryOne) && PRESENCE.test(summaryTwo)) {
+			return "Merged data - please see description.";
+		} else if (PRESENCE.test(summaryOne) && !PRESENCE.test(summaryTwo)) {
+			return summaryOne;
+		} else if (!PRESENCE.test(summaryOne) && PRESENCE.test(summaryTwo)) {
+			return summaryTwo;
 		} else {
 			return null;
 		}

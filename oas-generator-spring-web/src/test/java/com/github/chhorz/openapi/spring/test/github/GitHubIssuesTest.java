@@ -363,8 +363,8 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("summary", "Test method A.\n<hr>\nTest method B.")
-			.hasFieldOrPropertyWithValue("description", "Test method A.\n<hr>\nTest method B.")
+			.hasFieldOrPropertyWithValue("summary", "Merged data - please see description.")
+			.hasFieldOrPropertyWithValue("description", "Test method A.\n<hr></hr>\nTest method B.")
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue018#testParamA")
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("security", emptyList());

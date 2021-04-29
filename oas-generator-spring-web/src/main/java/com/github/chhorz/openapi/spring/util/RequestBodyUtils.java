@@ -46,7 +46,7 @@ public class RequestBodyUtils extends AbstractMergeUtils {
 		logUtils.logDebug("Merging request bodies");
 
 		RequestBody mergedRequestBody = new RequestBody();
-		mergedRequestBody.setDescription(mergeDocumentation(requestBodyOne.getDescription(), requestBodyTwo.getDescription()));
+		mergedRequestBody.setDescription(mergeDescription(requestBodyOne.getDescription(), requestBodyTwo.getDescription()));
 		mergedRequestBody.setRequired(requestBodyOne.getRequired() || requestBodyTwo.getRequired());
 		requestBodyOne.getContent().forEach(mergedRequestBody::putContent);
 		requestBodyTwo.getContent().forEach(mergedRequestBody::putContent);

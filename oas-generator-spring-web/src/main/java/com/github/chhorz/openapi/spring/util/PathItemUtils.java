@@ -56,8 +56,8 @@ public class PathItemUtils extends AbstractMergeUtils {
 			return pathItemOne;
 		} else {
 			PathItemObject mergedPathItemObject = new PathItemObject();
-			mergedPathItemObject.setSummary(mergeDocumentation(pathItemOne.getSummary(), pathItemTwo.getSummary()));
-			mergedPathItemObject.setDescription(mergeDocumentation(pathItemOne.getDescription(), pathItemTwo.getDescription()));
+			mergedPathItemObject.setSummary(mergeSummary(pathItemOne.getSummary(), pathItemTwo.getSummary()));
+			mergedPathItemObject.setDescription(mergeDescription(pathItemOne.getDescription(), pathItemTwo.getDescription()));
 
 			mergedPathItemObject.setGet(mergeOperations(pathItemOne.getGet(), pathItemTwo.getGet()));
 			mergedPathItemObject.setPut(mergeOperations(pathItemOne.getPut(), pathItemTwo.getPut()));
@@ -81,8 +81,8 @@ public class PathItemUtils extends AbstractMergeUtils {
 			logUtils.logInfo("Merging operation %s and %s", operationOne.getOperationId(), operationTwo.getOperationId());
 
 			Operation mergedOperation = new Operation();
-			mergedOperation.setSummary(mergeDocumentation(operationOne.getSummary(), operationTwo.getSummary()));
-			mergedOperation.setDescription(mergeDocumentation(operationOne.getDescription(), operationTwo.getDescription()));
+			mergedOperation.setSummary(mergeSummary(operationOne.getSummary(), operationTwo.getSummary()));
+			mergedOperation.setDescription(mergeDescription(operationOne.getDescription(), operationTwo.getDescription()));
 
 			if (operationOne.getTags() != null) {
 				operationOne.getTags().stream()
@@ -142,7 +142,7 @@ public class PathItemUtils extends AbstractMergeUtils {
 			return responseOne;
 		} else {
 			Response mergedResponse = new Response();
-			String mergeDocumentation = mergeDocumentation(responseOne.getDescription(), responseTwo.getDescription());
+			String mergeDocumentation = mergeDescription(responseOne.getDescription(), responseTwo.getDescription());
 			mergedResponse.setDescription(mergeDocumentation != null ? mergeDocumentation : "");
 			if (responseOne.getContent() != null) {
 				responseOne.getContent().forEach(mergedResponse::putContent);
