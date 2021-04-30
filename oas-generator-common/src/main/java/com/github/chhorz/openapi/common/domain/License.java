@@ -19,7 +19,7 @@ package com.github.chhorz.openapi.common.domain;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#license-object
+ * https://spec.openapis.org/oas/v3.1.0#license-object
  *
  * @author chhorz
  *
@@ -28,6 +28,7 @@ public class License {
 
 	@Required
 	private String name;
+	private String identifier;
 	private String url;
 
 	public String getName() {
@@ -36,6 +37,14 @@ public class License {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
 	public String getUrl() {

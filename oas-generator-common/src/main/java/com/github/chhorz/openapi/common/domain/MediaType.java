@@ -16,12 +16,12 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
 /**
- * https://spec.openapis.org/oas/v3.0.3#media-type-object
+ * https://spec.openapis.org/oas/v3.1.0#media-type-object
  *
  * @author chhorz
  *
@@ -29,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class MediaType {
 
 	private Object schema;
+	@Deprecated
 	private Object example;
 	@JsonProperty("examples")
 	private Map<String, Example> exampleObjects;

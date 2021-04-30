@@ -16,6 +16,7 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 import java.util.Objects;
@@ -23,7 +24,7 @@ import java.util.Objects;
 import static java.lang.String.format;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#reference-object
+ * https://spec.openapis.org/oas/v3.1.0#reference-object
  *
  * @author chhorz
  *
@@ -35,6 +36,9 @@ public class Reference {
 
 	@Required
 	private String $ref;
+	private String summary;
+	@Markdown
+	private String description;
 
 	public Reference() {
 	}
@@ -63,10 +67,6 @@ public class Reference {
 	public static Reference forRequestBody(final String referenceString) {
 		Objects.requireNonNull(referenceString, "Reference string must not be null.");
 		return new Reference(format(REQUEST_BODY_REFERENCE_FORMAT, referenceString));
-	}
-
-	public void set$ref(String $ref) {
-		this.$ref = $ref;
 	}
 
 	public String get$ref() {

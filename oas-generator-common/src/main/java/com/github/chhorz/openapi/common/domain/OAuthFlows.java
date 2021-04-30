@@ -17,7 +17,7 @@
 package com.github.chhorz.openapi.common.domain;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#oauth-flows-object
+ * https://spec.openapis.org/oas/v3.1.0#oauth-flows-object
  *
  * @author chhorz
  *

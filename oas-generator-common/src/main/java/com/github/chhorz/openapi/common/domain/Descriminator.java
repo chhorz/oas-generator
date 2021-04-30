@@ -16,12 +16,12 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.Map;
-
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
+import java.util.Map;
+
 /**
- * https://spec.openapis.org/oas/v3.0.3#discriminator-object
+ * https://spec.openapis.org/oas/v3.1.0#discriminator-object
  *
  * @author chhorz
  *

@@ -16,17 +16,12 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
+import java.util.*;
+
 /**
- * https://spec.openapis.org/oas/v3.0.3#openapi-object
+ * https://spec.openapis.org/oas/v3.1.0#openapi-object
  *
  * @author chhorz
  *
@@ -37,9 +32,11 @@ public class OpenAPI {
 	private String openapi;
 	@Required
 	private Info info;
+	private String jsonSchemaDialect;
 	private List<Server> servers;
 	@Required
-	private Map<String, PathItemObject> paths = new TreeMap<>();
+	private final Map<String, PathItemObject> paths = new TreeMap<>();
+	private Map<String, Object> webhooks;
 	private Components components;
 	private List<SecurityRequirement> security;
 	private List<Tag> tags;

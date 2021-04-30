@@ -14,36 +14,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.common.domain;
+package com.github.chhorz.openapi.common.domain.meta;
 
-import com.github.chhorz.openapi.common.domain.meta.Required;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * https://spec.openapis.org/oas/v3.1.0#basic-authentication-sample
+ * Indicates that the annotated attribute may be documented using markdown for rich text representation.
  *
  * @author chhorz
  *
  */
-public class SecuritySchemeHttp extends SecurityScheme {
-
-	@Required
-	private String scheme;
-	private String bearerFormat;
-
-	public String getScheme() {
-		return scheme;
-	}
-
-	public void setScheme(final String scheme) {
-		this.scheme = scheme;
-	}
-
-	public String getBearerFormat() {
-		return bearerFormat;
-	}
-
-	public void setBearerFormat(final String bearerFormat) {
-		this.bearerFormat = bearerFormat;
-	}
+@Documented
+@Retention(RetentionPolicy.SOURCE)
+public @interface Markdown {
 
 }

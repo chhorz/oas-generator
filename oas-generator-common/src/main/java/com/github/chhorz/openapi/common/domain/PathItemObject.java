@@ -16,12 +16,13 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
+
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
- * https://spec.openapis.org/oas/v3.0.3#path-item-object
+ * https://spec.openapis.org/oas/v3.1.0#path-item-object
  *
  * @author chhorz
  *
@@ -30,6 +31,7 @@ public class PathItemObject {
 
 	private String $ref;
 	private String summary;
+	@Markdown
 	private String description;
 	private Operation get;
 	private Operation put;

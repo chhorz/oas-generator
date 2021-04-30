@@ -16,14 +16,15 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
+import com.github.chhorz.openapi.common.domain.meta.Required;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
-import com.github.chhorz.openapi.common.domain.meta.Required;
-
 /**
- * https://spec.openapis.org/oas/v3.0.3#server-object
+ * https://spec.openapis.org/oas/v3.1.0#server-object
  *
  * @author chhorz
  *
@@ -32,6 +33,7 @@ public class Server {
 
 	@Required
 	private String url;
+	@Markdown
 	private String description;
 	private Map<String, ServerVariableObject> variables;
 

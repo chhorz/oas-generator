@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#components-object
+ * https://spec.openapis.org/oas/v3.1.0#components-object
  *
  * @author chhorz
  *
@@ -38,6 +38,7 @@ public class Components {
 	private Map<String, SecurityScheme> securitySchemes;
 	private Map<String, Link> links;
 	private Map<String, Callback> callbacks;
+	private Map<String, PathItemObject> pathItems;
 
 	public static boolean isValidKey(final String key) {
 		return key.matches("^[a-zA-Z0-9.\\-_]+$");

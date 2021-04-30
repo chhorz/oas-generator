@@ -16,12 +16,12 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
 /**
- * https://spec.openapis.org/oas/v3.0.3#link-object
+ * https://spec.openapis.org/oas/v3.1.0#link-object
  *
  * @author chhorz
  *

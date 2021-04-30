@@ -21,7 +21,7 @@ import com.github.chhorz.openapi.common.domain.meta.Required;
 import java.util.stream.Stream;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#api-key-sample
+ * https://spec.openapis.org/oas/v3.1.0#api-key-sample
  *
  * @author chhorz
  *

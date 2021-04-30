@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * Indicates that the annotated attribute is a OpenAPI specification extension.
  * <p>
- * Additional information: https://spec.openapis.org/oas/v3.0.3#specification-extensions
+ * Additional information: https://spec.openapis.org/oas/v3.1.0#specification-extensions
  *
  * @author chhorz
  *

@@ -17,12 +17,13 @@
 package com.github.chhorz.openapi.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 import java.util.Objects;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#parameter-object
+ * https://spec.openapis.org/oas/v3.1.0#parameter-object
  *
  * @author chhorz
  *
@@ -34,6 +35,7 @@ public class Parameter {
 	private String name;
 	@Required
 	private In in;
+	@Markdown
 	private String description;
 	private Boolean required = Boolean.FALSE;
 	private Boolean deprecated;

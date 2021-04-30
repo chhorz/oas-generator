@@ -836,7 +836,7 @@ All custom property classes should extend the provided `AbstractPostProcessorPro
 
 == Specification Extensions
 The OpenAPI specification allows using additional properties within a specification file.
-These link:https://spec.openapis.org/oas/v3.0.3#specification-extensions[specification extensions] have to follow a specific naming convention.
+These link:https://spec.openapis.org/oas/v3.1.0#specification-extensions[specification extensions] have to follow a specific naming convention.
 They must begin with the following prefix: `x-`.
 
 The *OAS Generator* adds the following properties to the `info` object:

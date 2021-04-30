@@ -17,6 +17,7 @@
 package com.github.chhorz.openapi.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#operation-object
+ * https://spec.openapis.org/oas/v3.1.0#operation-object
  *
  * @author chhorz
  *
@@ -33,6 +34,7 @@ public class Operation {
 
 	private List<String> tags;
 	private String summary;
+	@Markdown
 	private String description;
 	private ExternalDocumentation externalDocs;
 	private String operationId;
@@ -45,7 +47,7 @@ public class Operation {
 	@JsonProperty("requestBody")
 	private Reference requestBodyReference;
 	/*
-	 * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#responses-object
+	 * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md#responses-object
 	 */
 	private Map<String, Response> responses;
 	@JsonProperty("callbacks")

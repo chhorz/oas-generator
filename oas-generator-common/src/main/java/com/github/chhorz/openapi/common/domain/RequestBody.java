@@ -16,13 +16,13 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.github.chhorz.openapi.common.domain.meta.Required;
+
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.github.chhorz.openapi.common.domain.meta.Required;
-
 /**
- * https://spec.openapis.org/oas/v3.0.3#request-body-object
+ * https://spec.openapis.org/oas/v3.1.0#request-body-object
  *
  * @author chhorz
  *

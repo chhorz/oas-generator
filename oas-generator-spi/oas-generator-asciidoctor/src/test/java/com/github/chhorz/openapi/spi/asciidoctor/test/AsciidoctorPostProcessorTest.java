@@ -20,7 +20,6 @@ import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.common.util.LogUtils;
-import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorAttributes;
 import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorPostProcessor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -56,7 +55,7 @@ class AsciidoctorPostProcessorTest {
 		info.setVersion("1.2.3-SNAPSHOT");
 
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.3");
+		openApi.setOpenapi("3.1.0");
 		openApi.setInfo(info);
 
 		processor = createAsciidoctorPostProcessor("/embedded", false, "image");
@@ -82,7 +81,7 @@ class AsciidoctorPostProcessorTest {
 		info.setVersion("1.2.3-SNAPSHOT");
 
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.3");
+		openApi.setOpenapi("3.1.0");
 		openApi.setInfo(info);
 
 		processor = createAsciidoctorPostProcessor("/minimal");
@@ -121,7 +120,7 @@ class AsciidoctorPostProcessorTest {
 		components.putAllSchemas(Collections.singletonMap("String", stringSchema));
 
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.3");
+		openApi.setOpenapi("3.1.0");
 		openApi.setInfo(info);
 		openApi.setComponents(components);
 
@@ -319,7 +318,7 @@ class AsciidoctorPostProcessorTest {
 		articles.setPost(postArticle);
 
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.3");
+		openApi.setOpenapi("3.1.0");
 		openApi.setInfo(info);
 		openApi.setExternalDocs(externalDocs);
 		openApi.addTag(tag1);

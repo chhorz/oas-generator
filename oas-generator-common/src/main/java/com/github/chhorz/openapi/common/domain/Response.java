@@ -16,14 +16,15 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
+import com.github.chhorz.openapi.common.domain.meta.Required;
+
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.chhorz.openapi.common.domain.meta.Required;
-
 /**
- * https://spec.openapis.org/oas/v3.0.3#response-object
+ * https://spec.openapis.org/oas/v3.1.0#response-object
  *
  * @author chhorz
  *
@@ -31,16 +32,17 @@ import com.github.chhorz.openapi.common.domain.meta.Required;
 public class Response {
 
 	@Required
+	@Markdown
 	private String description;
 	@JsonProperty("headers")
 	private Map<String, Header> headerObjects;
-//	@JsonProperty("headers")
-//	private Map<String, Reference> headerReferences;
+	// @JsonProperty("headers")
+	// private Map<String, Reference> headerReferences;
 	private Map<String, MediaType> content;
 	@JsonProperty("links")
 	private Map<String, Link> linkObjects;
-//	@JsonProperty("links")
-//	private Map<String, Reference> linkReferences;
+	// @JsonProperty("links")
+	// private Map<String, Reference> linkReferences;
 
 	public String getDescription() {
 		return description;

@@ -17,11 +17,12 @@
 package com.github.chhorz.openapi.common.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 import com.github.chhorz.openapi.common.domain.meta.SpecificationExtension;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#info-object
+ * https://spec.openapis.org/oas/v3.1.0#info-object
  *
  * @author chhorz
  *
@@ -30,6 +31,8 @@ public class Info {
 
 	@Required
 	private String title;
+	private String summary;
+	@Markdown
 	private String description;
 	private String termsOfService;
 	private Contact contact;
@@ -50,6 +53,14 @@ public class Info {
 
 	public void setTitle(final String title) {
 		this.title = title;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
 	}
 
 	public String getDescription() {

@@ -54,7 +54,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -98,7 +98,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -141,7 +141,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions // TODO
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		Info info = documentContext.read("$.info", Info.class);
 
@@ -185,7 +185,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -238,7 +238,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -288,7 +288,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -330,7 +330,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -356,7 +356,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -433,7 +433,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -502,7 +502,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -540,7 +540,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -570,7 +570,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -646,7 +646,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -737,7 +737,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
@@ -772,7 +772,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -797,7 +797,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
@@ -869,7 +869,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
@@ -903,7 +903,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -954,7 +954,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -1011,7 +1011,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -1042,7 +1042,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -1081,7 +1081,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext);
 
@@ -1119,7 +1119,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
@@ -1181,7 +1181,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		// assertions
 		assertThat(documentContext.read("$.openapi", String.class))
 			.isNotNull()
-			.isEqualTo("3.0.3");
+			.isEqualTo("3.1.0");
 
 		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 

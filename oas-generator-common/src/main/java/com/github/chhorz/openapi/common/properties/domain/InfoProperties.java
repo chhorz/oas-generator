@@ -23,6 +23,7 @@ import java.net.URL;
 public class InfoProperties {
 
 	private String title;
+	private String summary;
 	private String description;
 	private URL termsOfService;
 	private ContactProperties contact;
@@ -31,6 +32,7 @@ public class InfoProperties {
 
 	public InfoProperties() {
 		title = GeneratorPropertiesDefaults.INFO_TITLE;
+		summary = GeneratorPropertiesDefaults.INFO_SUMMARY;
 		description = GeneratorPropertiesDefaults.INFO_DESCRIPTION;
 		termsOfService = GeneratorPropertiesDefaults.INFO_TERMS_OF_SERVICE;
 		contact = null;

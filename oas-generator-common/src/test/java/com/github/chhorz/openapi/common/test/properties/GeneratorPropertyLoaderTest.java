@@ -90,7 +90,7 @@ class GeneratorPropertyLoaderTest {
 				.isNotNull()
 				.hasFieldOrPropertyWithValue("title", "MyService")
 				.hasFieldOrPropertyWithValue("version", "1.2.3-SNAPSHOT")
-				.hasNoNullFieldsOrPropertiesExcept("description", "termsOfService", "xGeneratedBy", "xGeneratedTs");
+				.hasNoNullFieldsOrPropertiesExcept("summary", "description", "termsOfService", "xGeneratedBy", "xGeneratedTs");
 
 			assertThat(info.getContact())
 				.isNotNull()
@@ -260,7 +260,7 @@ class GeneratorPropertyLoaderTest {
 			// when - then
 			assertThatThrownBy(generatorPropertyLoader::createSecuritySchemesFromProperties)
 				.isInstanceOf(SpecificationViolationException.class)
-				.hasMessage("Security type must be one of apiKey,http,oauth2,openIdConnect");
+				.hasMessage("Security type must be one of apiKey,http,mutualTLS,oauth2,openIdConnect");
 		}
 
 		@Test

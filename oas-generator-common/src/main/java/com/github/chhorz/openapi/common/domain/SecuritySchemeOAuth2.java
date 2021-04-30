@@ -19,7 +19,7 @@ package com.github.chhorz.openapi.common.domain;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#implicit-oauth2-sample
+ * https://spec.openapis.org/oas/v3.1.0#implicit-oauth2-sample
  *
  * @author chhorz
  *
@@ -27,7 +27,7 @@ import com.github.chhorz.openapi.common.domain.meta.Required;
 public class SecuritySchemeOAuth2 extends SecurityScheme {
 
 	@Required
-	private OAuthFlows flows;
+	private final OAuthFlows flows;
 
 	public SecuritySchemeOAuth2(OAuthFlows flows) {
 		setType(Type.oauth2);

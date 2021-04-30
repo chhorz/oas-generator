@@ -16,14 +16,15 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
+import com.github.chhorz.openapi.common.domain.meta.Required;
+
 import java.util.List;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.chhorz.openapi.common.domain.meta.Required;
-
 /**
- * https://spec.openapis.org/oas/v3.0.3#server-variable-object
+ * https://spec.openapis.org/oas/v3.1.0#server-variable-object
  *
  * @author chhorz
  *
@@ -35,6 +36,7 @@ public class ServerVariableObject {
 	@Required
 	@JsonProperty("default")
 	private String defaultValue;
+	@Markdown
 	private String description;
 
 	public List<String> getEnumValue() {

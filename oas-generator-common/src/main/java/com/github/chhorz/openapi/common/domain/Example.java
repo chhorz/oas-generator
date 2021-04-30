@@ -16,8 +16,10 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
+
 /**
- * https://spec.openapis.org/oas/v3.0.3#example-object
+ * https://spec.openapis.org/oas/v3.1.0#example-object
  *
  * @author chhorz
  *
@@ -25,6 +27,7 @@ package com.github.chhorz.openapi.common.domain;
 public class Example {
 
 	private String summary;
+	@Markdown
 	private String description;
 	private Object value;
 	private String externalValue;

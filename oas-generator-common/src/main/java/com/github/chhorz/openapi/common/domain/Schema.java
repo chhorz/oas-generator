@@ -19,13 +19,14 @@ package com.github.chhorz.openapi.common.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 import com.github.chhorz.openapi.common.util.jackson.SchemaPropertyDeserializer;
 
 import java.util.*;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#schema-object
+ * https://spec.openapis.org/oas/v3.1.0#schema-object
  *
  * @author chhorz
  *
@@ -42,6 +43,7 @@ public class Schema {
 	@Required
 	private Type type;
 	private Format format;
+	@Markdown
 	private String description;
 	@JsonDeserialize(using = SchemaPropertyDeserializer.class)
 	private Map<String, Object> properties;

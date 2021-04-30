@@ -32,7 +32,7 @@ public @interface OpenAPIResponse {
 	/**
 	 * The status code of the response. Must be a valid status code of three numbers or a
 	 * range: 1XX, 2XX, 3XX, 4XX or 5XX which represents all status codes between 100 and 199
-	 * (https://spec.openapis.org/oas/v3.0.3#patterned-fields-0)
+	 * (https://spec.openapis.org/oas/v3.1.0#patterned-fields-0)
 	 */
 	String status();
 

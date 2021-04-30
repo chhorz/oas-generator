@@ -16,12 +16,13 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 import java.util.Objects;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#tag-object
+ * https://spec.openapis.org/oas/v3.1.0#tag-object
  *
  * @author chhorz
  *
@@ -30,6 +31,7 @@ public class Tag {
 
 	@Required
 	private String name;
+	@Markdown
 	private String description;
 	private ExternalDocumentation externalDocs;
 

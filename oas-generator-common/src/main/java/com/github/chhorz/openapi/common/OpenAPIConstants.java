@@ -27,7 +27,7 @@ public final class OpenAPIConstants {
 	 * Version of the generated OpenAPI file.
 	 */
 
-	public static final String OPEN_API_VERSION = "3.0.3";
+	public static final String OPEN_API_VERSION = "3.1.0";
 	public static final String X_GENERATED_FIELD = "oas-generator";
 
 	/*

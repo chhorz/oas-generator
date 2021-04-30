@@ -16,10 +16,11 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
+import com.github.chhorz.openapi.common.domain.meta.Markdown;
 import com.github.chhorz.openapi.common.domain.meta.Required;
 
 /**
- * https://spec.openapis.org/oas/v3.0.3#security-scheme-object
+ * https://spec.openapis.org/oas/v3.1.0#security-scheme-object
  *
  * @author chhorz
  *
@@ -28,11 +29,13 @@ public class SecurityScheme {
 
 	@Required
 	private Type type;
+	@Markdown
 	private String description;
 
 	public enum Type {
 		apiKey,
 		http,
+		mutualTLS,
 		oauth2,
 		openIdConnect
 	}

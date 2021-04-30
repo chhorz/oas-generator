@@ -16,12 +16,12 @@
  */
 package com.github.chhorz.openapi.common.domain;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
 /**
- * https://spec.openapis.org/oas/v3.0.3#encoding-object
+ * https://spec.openapis.org/oas/v3.1.0#encoding-object
  *
  * @author chhorz
  *
@@ -31,8 +31,8 @@ public class Encoding {
 	private String contentType;
 	@JsonProperty("headers")
 	private Map<String, Header> headerObjects;
-	@JsonProperty("headers")
-	private Map<String, Reference> headerReferences;
+	// @JsonProperty("headers")
+	// private Map<String, Reference> headerReferences;
 	private String style;
 	private Boolean explode;
 	private Boolean allowReserved;

@@ -65,7 +65,7 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 		DocumentContext ctx = JsonPath.parse(Paths.get("target/oas-test/openapi01.json").toFile(), Configuration.builder().mappingProvider(new JacksonMappingProvider()).build());
 
 		// openapi version
-		assertThat(ctx.read("$.openapi", String.class)).isEqualTo("3.0.3");
+		assertThat(ctx.read("$.openapi", String.class)).isEqualTo("3.1.0");
 
 		// info
 		Info info = ctx.read("$.info", Info.class);
@@ -74,7 +74,7 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("title", "MyService")
 			.hasFieldOrPropertyWithValue("version", "1.2.3-SNAPSHOT")
 			.hasFieldOrPropertyWithValue("xGeneratedBy", "oas-generator")
-			.hasNoNullFieldsOrPropertiesExcept("description", "termsOfService");
+			.hasNoNullFieldsOrPropertiesExcept("summary", "description", "termsOfService");
 
 		assertThat(info.getContact())
 			.isNotNull()
