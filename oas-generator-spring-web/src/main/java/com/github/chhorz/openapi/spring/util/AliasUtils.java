@@ -16,21 +16,14 @@
  */
 package com.github.chhorz.openapi.spring.util;
 
+import org.springframework.web.bind.annotation.*;
+
+import javax.lang.model.element.Element;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-
-import javax.lang.model.element.Element;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 public class AliasUtils {
 
@@ -165,7 +158,7 @@ public class AliasUtils {
 		}
 	}
 
-	private String prependSlash(String path) {
+	public String prependSlash(String path) {
 		if (path == null || path.trim().isEmpty()){
 			return path;
 		} else {
