@@ -54,13 +54,12 @@
           }
         },
         "version": {
-          "description": "The version of the API",
+          "description": "The version of the API (Version is required if not passed as annotation processor command line argument)",
           "type": "string"
         }
       },
       "required": [
-        "title",
-        "version"
+        "title"
       ]
     },
     "servers": {
