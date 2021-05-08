@@ -142,6 +142,10 @@ The following options can be used:
 `propertiesPath`::
 As default the configuration file is placed at `src/main/resources` and has the name `oas-generator.yml`.
 The name or path can be changed by using this compiler option.
+Property file resolution has the following priority:
+. Custom property *file name* within `src/main/resources` as compiler option (`propertiesPath=test.yml`)
+. Custom property *file path* passed as compiler option (`propertiesPath=${project.basedir}/oas-generator.yml`)
+. Default property file `oas-generator.yml` if no compiler option was set
 `schemaPath`::
 If the resources/schemas are placed in a separate project or maven module, the Javadoc comments can not be parsed.
 In this case the schemas can be parsed with the `oas-generator-schema` annotation processor.

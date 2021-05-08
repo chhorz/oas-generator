@@ -27,6 +27,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 import javax.annotation.processing.Messager;
+import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -76,9 +77,18 @@ public class GeneratorPropertyLoader {
 
 		try {
 			Yaml yaml = new Yaml(new Constructor(GeneratorProperties.class));
-			properties = yaml.load(resourceLocation.openStream());
 
-			logUtils.logInfo("Loaded properties (Path: %s)", resourceLocation.getPath());
+			if (resourceLocation != null) {
+				properties = yaml.load(resourceLocation.openStream());
+				logUtils.logInfo("Loaded properties (Path: %s)", resourceLocation.getPath());
+			} else if (processorOptions.get("propertiesPath") != null) {
+				properties = yaml.load(new FileInputStream(processorOptions.get("propertiesPath")));
+				logUtils.logInfo("Loaded properties (Path: %s)", processorOptions.get("propertiesPath"));
+			} else {
+				properties = new GeneratorProperties();
+				logUtils.logInfo("Using default properties!");
+			}
+
 		} catch (Exception e) {
 			properties = new GeneratorProperties();
 			logUtils.logError("An exception occurred. Using default properties!", e);
