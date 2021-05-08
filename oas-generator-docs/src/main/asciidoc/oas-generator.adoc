@@ -91,7 +91,7 @@ It needs to be available on `compile` time for the *OAS Generator*.
 
 All dependencies contain additional information within the `META-INF` folder that define the dependency as annotation processor.
 
-==== Maven compiler plugin
+==== Maven Compiler Plugin
 Another way to include an annotation processor is the link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html[maven-compiler-plugin]:
 
 [WARNING]
@@ -122,6 +122,42 @@ It is not possible to mix this way of annotation processor integration with the 
 ----
 <1> Plugin documentation: link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessorPaths[annotationProcessorPaths]
 <2> Plugin documentation: link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessors[annotationProcessors]
+
+==== Kotlin Maven Plugin
+The plugin documentation for Kotlin Maven projects and annotation processors using `kapt` can be found link:https://kotlinlang.org/docs/kapt.html#using-in-maven[here].
+For the following use case the `oas-generator-*` was added as dependency.
+
+[WARNING]
+====
+Resolution of the `oas-generator.yml` property file is broken for versions <= 0.2.2.
+====
+
+[source%nowrap,xml,subs="verbatim,attributes"]
+----
+<plugin>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>kapt</id>
+            <goals>
+                <goal>kapt</goal> <!--1-->
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <!-- ... -->
+        <annotationProcessorArgs>
+            <arg>propertiesPath=${project.basedir}/src/main/resources/oas-generator.yml</arg> <!--2-->
+            <arg>version=${project.version}</arg>
+        </annotationProcessorArgs>
+    </configuration>
+    <!-- ... -->
+</plugin>
+----
+<1> Annotation processing for Kotlin is provided by `kapt`
+<2> Definition of the default properties file `src/main/resources/oas-generator.yml` does not work for Kotlin projects.
+The full path to the properties file *must* be specified.
 
 === Gradle
 _Might be added soon._
