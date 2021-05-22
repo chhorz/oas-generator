@@ -46,6 +46,7 @@ jobs:
       - name: 'Perform deployment'
         run: |
           ./mvnw -B versions:set -DnewVersion=${{ github.event.inputs.release_version }}
+          ./mvnw -B clean deploy --no-transfer-progress -Pcentral-deploy -DskipTests=true
           git add -u
           git commit -m "Update version to ${{ github.event.inputs.release_version }}"
         env:
