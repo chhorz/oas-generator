@@ -1,4 +1,4 @@
-name: GitHub Pages
+name: 'GitHub Pages'
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-latest
     name: 'Build and deploy GitHub Page'
+    runs-on: ubuntu-latest
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v2

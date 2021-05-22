@@ -1,4 +1,4 @@
-name: 'Create Release Notes'
+name: 'Release to Maven Central'
 
 on:
   workflow_dispatch:
@@ -6,8 +6,77 @@ on:
       release_version:
         description: 'Release version'
         required: true
+      new_development_version:
+        description: 'Next development version'
+        required: true
 
 jobs:
+  release:
+    name: 'Release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v2
+
+      - name: 'Set up JDK'
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-package: jdk
+          java-version: 8
+          server-id: oss.sonatype.org
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: 'Cache local Maven repository'
+        uses: actions/cache@v2.1.5
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: 'Setup local git user'
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: 'Perform deployment'
+        run: |
+          ./mvnw -B versions:set -DnewVersion=${{ github.event.inputs.release_version }}
+          ./mvnw -B clean deploy --no-transfer-progress -Pcentral-deploy -DskipTests=true
+          git add -u
+          git commit -m "Update version to ${{ github.event.inputs.release_version }}"
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_JIRA_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_JIRA_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+
+      - name: 'Update documentation'
+        run: |
+          mkdir ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}
+          ln -nfs ${{ github.event.inputs.release_version }}/ docs/.vuepress/public/docs/latest
+          ./mvnw -B clean install --no-transfer-progress -DskipTests
+          cp ./release-test-docs/target/generated-docs/release-test.html ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
+          ./mvnw -B javadoc:aggregate
+          cp -r ./target/site/apidocs ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
+          git add docs/.vuepress/public/docs/
+          git commit --amend -m "Set version to ${{ github.event.inputs.release_version }}"
+          git tag v${{ github.event.inputs.release_version }}
+
+      - name: 'Prepare next development version'
+        run: |
+          ./mvnw -B versions:set -DnewVersion=${{ github.event.inputs.new_development_version }}
+          git add -u
+          git commit -m "Update version to next development version ${{ github.event.inputs.new_development_version }}"
+
+      - name: 'Commit and push changes'
+        run: |
+          git push
+          git push origin v${{ github.event.inputs.release_version }}
+
   load_milestone:
     name: 'Load Milestone Data'
     runs-on: ubuntu-latest
