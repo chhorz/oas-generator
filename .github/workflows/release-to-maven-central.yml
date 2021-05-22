@@ -58,7 +58,7 @@ jobs:
           mkdir ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}
           ln -nfs ${{ github.event.inputs.release_version }}/ docs/.vuepress/public/docs/latest
           ./mvnw -B clean install --no-transfer-progress -DskipTests
-          cp ./oas-generator-docs/target/generated-docs/release-test.html ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
+          cp ./oas-generator-docs/target/generated-docs/oas-generator.html ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
           ./mvnw -B javadoc:aggregate
           cp -r ./target/site/apidocs ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
           git add docs/.vuepress/public/docs/
