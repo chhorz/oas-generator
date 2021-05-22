@@ -63,5 +63,5 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'chhorz/oas-generator'
         run: ./mvnw -B clean deploy --no-transfer-progress -DskipTests=true
         env:
-          MAVEN_USERNAME: ${{ secrets.OSSRH_JIRA_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_JIRA_PASSWORD }}
+          MAVEN_USERNAME: ${{ secrets.OSS_SONATYPE_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}
