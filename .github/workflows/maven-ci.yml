@@ -2,10 +2,6 @@ name: 'Java CI'
 
 on: [push, pull_request]
 
-env:
-  OSSRH_JIRA_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-  OSSRH_JIRA_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-
 jobs:
   test:
     name: 'Build and test'
