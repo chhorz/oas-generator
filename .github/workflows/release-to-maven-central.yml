@@ -46,7 +46,7 @@ jobs:
       - name: 'Perform deployment'
         run: |
           ./mvnw -B versions:set -DnewVersion=${{ github.event.inputs.release_version }}
-          ./mvnw -B clean deploy --no-transfer-progress -Pcentral-deploy -DskipTests=true
+#          ./mvnw -B clean deploy --no-transfer-progress -Pcentral-deploy -DskipTests=true
           git add -u
           git commit -m "Update version to ${{ github.event.inputs.release_version }}"
         env:
@@ -59,7 +59,7 @@ jobs:
           mkdir ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}
           ln -nfs ${{ github.event.inputs.release_version }}/ docs/.vuepress/public/docs/latest
           ./mvnw -B clean install --no-transfer-progress -DskipTests
-          cp ./release-test-docs/target/generated-docs/release-test.html ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
+          cp ./oas-generator-docs/target/generated-docs/release-test.html ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
           ./mvnw -B javadoc:aggregate
           cp -r ./target/site/apidocs ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
           git add docs/.vuepress/public/docs/
