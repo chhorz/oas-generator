@@ -86,24 +86,24 @@
 		<asciidoctorj-diagram.version>2.1.2</asciidoctorj-diagram.version>
 		<jackson.version>2.12.3</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
-		<snakeyaml.version>1.28</snakeyaml.version>
-		<spring-security-core.version>5.4.6</spring-security-core.version>
+		<snakeyaml.version>1.29</snakeyaml.version>
+		<spring-security-core.version>5.5.0</spring-security-core.version>
 		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
 
-		<spring-data-commons.version>2.5.1</spring-data-commons.version>
-		<spring-web.version>5.3.7</spring-web.version>
+		<spring-data-commons.version>2.5.2</spring-data-commons.version>
+		<spring-web.version>5.3.8</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
 		<nohttp-checkstyle.version>0.0.8</nohttp-checkstyle.version>
 
 		<!-- test dependency versions -->
-		<assertj-core.version>3.19.0</assertj-core.version>
+		<assertj-core.version>3.20.2</assertj-core.version>
 		<junit-jupiter.verison>5.7.2</junit-jupiter.verison>
 		<jsonassert.version>1.5.0</jsonassert.version>
-		<json-path.version>2.5.0</json-path.version>
+		<json-path.version>2.6.0</json-path.version>
 
-		<spring-hateoas.version>1.3.1</spring-hateoas.version>
+		<spring-hateoas.version>1.3.2</spring-hateoas.version>
 
 		<!-- plugin versions -->
 		<asciidoctor-maven-plugin.version>2.1.0</asciidoctor-maven-plugin.version>
@@ -112,7 +112,7 @@
 		<maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
 		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
