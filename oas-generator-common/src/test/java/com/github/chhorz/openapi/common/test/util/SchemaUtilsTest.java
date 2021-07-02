@@ -101,7 +101,7 @@ class SchemaUtilsTest {
 		Map<String, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
-		assertThat(schemaMap).hasSize(9);
+		assertThat(schemaMap).hasSize(10);
 	}
 
 	@Test
@@ -401,15 +401,39 @@ class SchemaUtilsTest {
 
 		// then
 		assertThat(schemaMap)
-				.hasSize(1)
-				.containsKey(enumAType)
-				.extracting(map -> map.get(enumAType))
+			.hasSize(1)
+			.containsKeys(enumAType);
+
+		assertThat(schemaMap.get(enumAType))
 				.extracting("type", "format")
 				.contains(Type.STRING);
 
 		assertThat(schemaMap.get(enumAType).getEnumValues())
 				.hasSize(3)
 				.contains("A", "B", "XYZ");
+	}
+
+	@Test
+	@GitHubIssue("#167")
+	void advancedEnumTest() {
+		// given
+		TypeMirror enumBType = elements.getTypeElement(EnumB.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(enumBType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKeys(enumBType);
+
+		assertThat(schemaMap.get(enumBType))
+			.extracting("type", "format")
+			.contains(Type.STRING);
+
+		assertThat(schemaMap.get(enumBType).getEnumValues())
+			.hasSize(3)
+			.contains("A", "B", "Z");
 	}
 
 	@Test

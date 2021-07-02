@@ -333,7 +333,7 @@ public class SchemaUtils {
 
 				element.getEnclosedElements()
 					.stream()
-					.filter(VariableElement.class::isInstance)
+					.filter(e -> ElementKind.ENUM_CONSTANT.equals(e.getKind()))
 					.forEach(vElement -> schema.addEnumValue(vElement.toString()));
 
 			} else {
