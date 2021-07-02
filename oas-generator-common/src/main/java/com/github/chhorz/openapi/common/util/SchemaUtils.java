@@ -504,7 +504,7 @@ public class SchemaUtils {
 
 	private String getPropertyName(final Element element) {
 		JsonProperty jsonProperty = element.getAnnotation(JsonProperty.class);
-		if (jsonProperty != null) {
+		if (jsonProperty != null && !JsonProperty.USE_DEFAULT_NAME.equals(jsonProperty.value())) {
 			return jsonProperty.value();
 		} else if (element instanceof ExecutableElement) {
 			final String executableElementName = element.getSimpleName().toString();

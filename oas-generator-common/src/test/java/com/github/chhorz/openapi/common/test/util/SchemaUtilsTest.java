@@ -247,6 +247,7 @@ class SchemaUtilsTest {
 	}
 
 	@Test
+	@GitHubIssue("#166")
 	void customObjectTest() {
 		// given
 		TypeMirror classBType = elements.getTypeElement(ClassB.class.getCanonicalName()).asType();
@@ -265,8 +266,8 @@ class SchemaUtilsTest {
 			.containsExactly(Type.OBJECT, null, true);
 
 		assertThat(schemaMap.get(classBType).getProperties())
-			.hasSize(3)
-			.containsKeys("int", "date", "time");
+			.hasSize(4)
+			.containsKeys("int", "integer", "date", "time");
 
 		assertThat(schemaMap.get(classBType).getProperties().values())
 			.extracting("type", "format", "deprecated")

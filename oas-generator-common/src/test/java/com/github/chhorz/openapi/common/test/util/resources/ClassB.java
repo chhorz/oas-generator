@@ -28,6 +28,9 @@ public class ClassB {
 	@JsonProperty("int")
 	public int i;
 
+	@JsonProperty
+	public int integer;
+
 	public LocalDate date;
 	@Deprecated
 	public LocalDateTime time;
