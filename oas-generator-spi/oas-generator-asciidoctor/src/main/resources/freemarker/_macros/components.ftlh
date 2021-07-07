@@ -56,6 +56,14 @@ a|<#if property.description?? && property.description?has_content> pass:[<@clean
 |===
 
 </#if>
+<#if schema.enumValues??>
+.Possible values
+[source]
+----
+${schema.enumValues?join(", ")}
+----
+
+</#if>
 </#list>
 </#macro>
 <#--

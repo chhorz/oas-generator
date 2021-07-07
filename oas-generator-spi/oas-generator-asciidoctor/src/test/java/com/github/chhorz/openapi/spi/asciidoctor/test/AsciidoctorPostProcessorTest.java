@@ -20,7 +20,6 @@ import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.common.util.LogUtils;
-import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorAttributes;
 import com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorPostProcessor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -133,6 +132,93 @@ class AsciidoctorPostProcessorTest {
 		// then
 		Path outputPath = Paths.get("target", "generated-test-docs", "security", "openapi.adoc");
 		Path referencePath = new File("src/test/resources/referenceDocs/security.adoc").toPath();
+
+		assertThat(outputPath).exists();
+		assertThat(referencePath).exists();
+
+		compareFiles(referencePath, outputPath);
+	}
+
+	@Test
+	@GitHubIssue("#170")
+	void testEnumerationsAsciidoctorPostProcessor() {
+		// given
+		Info info = new Info();
+		info.setTitle("Test Service");
+		info.setVersion("1.2.3-SNAPSHOT");
+
+		Schema enumSchema = new Schema();
+		enumSchema.setType(Schema.Type.STRING);
+		enumSchema.setEnumValues(Arrays.asList("OPEN", "DELIVERED"));
+		enumSchema.setDescription("Filter orders by given types");
+
+		Schema arraySchema = new Schema();
+		arraySchema.setType(Schema.Type.ARRAY);
+		arraySchema.setItems(new Reference("#/components/schemas/OrderType"));
+
+		Schema orderTypeSchema = new Schema();
+		orderTypeSchema.setType(Schema.Type.ENUM);
+		orderTypeSchema.addEnumValue("STANDARD");
+		orderTypeSchema.addEnumValue("RETURN");
+
+		Schema orderSchema = new Schema();
+		orderSchema.setDescription("This is an order resource.");
+		orderSchema.putProperty("type", orderTypeSchema);
+
+		Map<String, Schema> schemas = new HashMap<>();
+		schemas.put("OrderResource", orderSchema);
+		schemas.put("OrderType", enumSchema);
+
+		Components components = new Components();
+		components.putAllParsedSchemas(schemas);
+
+		Parameter orderFilterParameter = new Parameter();
+		orderFilterParameter.setDeprecated(false);
+		orderFilterParameter.setDescription("The filter that should be applied");
+		orderFilterParameter.setIn(Parameter.In.QUERY);
+		orderFilterParameter.setName("filter");
+		orderFilterParameter.setRequired(false);
+		orderFilterParameter.setAllowEmptyValue(false);
+		orderFilterParameter.setSchema(enumSchema);
+
+		Parameter orderListFilterParameter = new Parameter();
+		orderListFilterParameter.setDeprecated(false);
+		orderListFilterParameter.setDescription("The filter that should be applied");
+		orderListFilterParameter.setIn(Parameter.In.QUERY);
+		orderListFilterParameter.setName("filter");
+		orderListFilterParameter.setRequired(false);
+		orderListFilterParameter.setAllowEmptyValue(false);
+		orderListFilterParameter.setSchema(arraySchema);
+
+		Operation getOrders = new Operation();
+		getOrders.setDeprecated(true);
+		getOrders.setOperationId("OrderController#getOrders");
+		getOrders.setSummary("Here we get some orders.");
+		getOrders.setDescription("Here we get some orders. Or something else.");
+		getOrders.addTag("TAG_1");
+		getOrders.addTag("TAG_2");
+		getOrders.addParameterObject(orderFilterParameter);
+		getOrders.addParameterObject(orderListFilterParameter);
+
+		PathItemObject orders = new PathItemObject();
+		orders.setSummary("Summary for /orders");
+		orders.setDescription("Some very long and boring description");
+		orders.setGet(getOrders);
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+		openApi.putPathItemObject("/orders", orders);
+		openApi.setComponents(components);
+
+		processor = createAsciidoctorPostProcessor("/enumeration", true, "font");
+
+		// when
+		processor.execute(openApi);
+
+		// then
+		Path outputPath = Paths.get("target", "generated-test-docs", "enumeration", "openapi.adoc");
+		Path referencePath = new File("src/test/resources/referenceDocs/enumeration.adoc").toPath();
 
 		assertThat(outputPath).exists();
 		assertThat(referencePath).exists();

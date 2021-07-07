@@ -41,6 +41,8 @@ ${schema.items.type.openApiValue}[]
 </#if>
 <#elseif schema.type.openApiValue = "enum">
 ${schema.type.openApiValue} (<#list schema.enumValues as enumValue>${enumValue}<#sep>, </#list>)
+<#elseif schema.type.openApiValue = "string" && schema.enumValues??>
+${schema.type.openApiValue} (<#list schema.enumValues as enumValue>${enumValue}<#sep>, </#list>)
 <#else>
 ${schema.type.openApiValue} <#if schema.format??>(${schema.format.openApiValue})</#if>
 </#if>
