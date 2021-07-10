@@ -21,7 +21,7 @@ public enum EnumB {
 	A(1),
 	B(2),
 	Z(26);
-	public String s;
+
 	private final int index;
 
 	EnumB(int index) {

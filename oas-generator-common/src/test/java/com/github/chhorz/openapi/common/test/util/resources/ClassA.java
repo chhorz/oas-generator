@@ -17,7 +17,7 @@
 package com.github.chhorz.openapi.common.test.util.resources;
 
 
-public class ClassA {
+public class ClassA extends AbstractClass {
 
 	public long baseProperty;
 

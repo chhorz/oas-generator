@@ -158,8 +158,7 @@ public class SchemaUtils {
 	}
 
 	public Map<TypeMirror, Schema> createTypeMirrorSchemaMap(final TypeMirror typeMirror) {
-		if (typeMirror == null || baseTypeMirrors.contains(typeMirror)
-			|| TypeKind.VOID.equals(typeMirror.getKind()) || processingUtils.isAssignableTo(typeMirror, Void.class)) {
+		if (typeMirror == null || baseTypeMirrors.contains(typeMirror) || isVoidType(typeMirror) || isAbstractClass(typeMirror)) {
 			return Collections.emptyMap();
 		}
 
@@ -470,6 +469,17 @@ public class SchemaUtils {
 		}
 
 		return schemaMap;
+	}
+
+	private boolean isVoidType(final TypeMirror typeMirror) {
+		return TypeKind.VOID.equals(typeMirror.getKind())
+			|| processingUtils.isAssignableTo(typeMirror, Void.class);
+	}
+
+	private boolean isAbstractClass(final TypeMirror typeMirror) {
+		return TypeKind.DECLARED.equals(typeMirror.getKind())
+			&& ElementKind.CLASS.equals(types.asElement(typeMirror).getKind())
+			&& types.asElement(typeMirror).getModifiers().contains(Modifier.ABSTRACT);
 	}
 
 	public Map<TypeMirror, Schema> createSchemasFromDocComment(final JavaDoc javaDoc) {

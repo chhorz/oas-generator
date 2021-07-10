@@ -10,11 +10,13 @@ import com.jayway.jsonpath.DocumentContext;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 public class GitHubIssuesTest extends AbstractProcessorTest {
 
 	@Test
 	@GitHubIssue("#166")
+	@GitHubIssue("#171")
 	void testJsonPropertyAnnotation() {
 		// run annotation processor
 		testCompilation(new SchemaOpenApiProcessor(), createConfigFileOption("oas-generator-github.yml"), JsonPropertyTest.class);
@@ -30,8 +32,8 @@ public class GitHubIssuesTest extends AbstractProcessorTest {
 
 		assertThat(components.getSchemas())
 			.isNotNull()
-			.hasSize(1)
-			.containsKey("JsonPropertyTest");
+			.hasSize(2)
+			.containsOnlyKeys("JsonPropertyTest", "ExtendedResource");
 		assertThat(components.getSchemas().get("JsonPropertyTest").getProperties())
 			.hasSize(1)
 			.containsKey("jsonProperty")
@@ -39,6 +41,14 @@ public class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
 			.hasFieldOrPropertyWithValue("description", "");
+
+		assertThat(components.getSchemas().get("ExtendedResource").getProperties())
+			.hasSize(2)
+			.containsKeys("abstractProperty", "content");
+		assertThat(components.getSchemas().get("ExtendedResource").getProperties().values())
+			.extracting("deprecated", "type", "description")
+			.contains(tuple(false, Schema.Type.STRING, ""),
+				tuple(false, Schema.Type.STRING, ""));
 	}
 
 }
