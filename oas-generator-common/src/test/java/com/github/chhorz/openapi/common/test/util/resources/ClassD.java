@@ -16,7 +16,7 @@
  */
 package com.github.chhorz.openapi.common.test.util.resources;
 
-public class ClassD extends AbstractClass {
+public class ClassD extends AbstractClassA<Boolean> {
 
 	public int i;
 	private long[] l;

@@ -1,7 +1,7 @@
 package com.github.chhorz.openapi.schema.test.github.resources;
 
-public class ExtendedResource extends AbstractResource {
+public class ExtendedResource extends AbstractResource<String, Long> {
 
-	public String content;
+	public String additionalContent;
 
 }

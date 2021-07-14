@@ -32,10 +32,7 @@ import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 
 import javax.lang.model.element.*;
-import javax.lang.model.type.ArrayType;
-import javax.lang.model.type.NoType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.*;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.validation.constraints.Max;
@@ -180,12 +177,6 @@ public class SchemaUtils {
 				schema.setFormat(typeAndFormat.getValue());
 				// schema.setDescription(propertyDoc.getDescription());
 			}
-			schemaMap.put(typeMirror, schema);
-		} else if (TypeKind.TYPEVAR.equals(typeMirror.getKind())) {
-			// TODO check ... at the moment all typevars are ignored
-
-			schema.setType(Type.OBJECT);
-
 			schemaMap.put(typeMirror, schema);
 		} else if (processingUtils.isSameType(typeMirror, Object.class)) {
 			schema.setType(Type.OBJECT);
@@ -340,62 +331,95 @@ public class SchemaUtils {
 
 				TypeMirror superType = element.asType();
 
+				Map<TypeMirror, List<? extends TypeMirror>> typeArgumentMap = new HashMap<>();
+
 				// follow class hierarchy until object or enum
-				while (!(superType instanceof NoType) && processingUtils.doesTypeDiffer(superType, object) && processingUtils.doesTypeDiffer(types.erasure(superType), enumeration)) {
+				while (!(superType instanceof NoType) && processingUtils.doesTypeDiffer(superType, object)
+					&& processingUtils.doesTypeDiffer(types.erasure(superType), enumeration)) {
+
 					TypeElement typeElement = elements.getTypeElement(types.erasure(superType).toString());
+
+					List<? extends TypeParameterElement> typeParameters = typeElement.getTypeParameters();
 
 					// handle class attributes
 					typeElement.getEnclosedElements()
-							.stream()
-							.filter(VariableElement.class::isInstance)
-							.filter(this::isValidAttribute)
-							.forEach(vElement -> {
+						.stream()
+						.filter(VariableElement.class::isInstance)
+						.filter(this::isValidAttribute)
+						.forEach(vElement -> {
 
-								logUtils.logDebug(String.format("Parsing attribute: %s", vElement.toString()));
+							logUtils.logDebug(String.format("Parsing attribute: %s", vElement));
 
-								JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
+							JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
 
-								// lets do some recursion
-								Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(vElement.asType());
-								// the schema is an object or enum -> we add it to the map
-								propertySchemaMap.entrySet()
-										.stream()
-										.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
-												|| Type.ENUM.equals(entry.getValue().getType()))
-										.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
+							TypeMirror variableElementTypeMirror;
 
-								propertySchemaMap.entrySet()
-										.stream()
-										.filter(entry -> entry.getKey().equals(vElement.asType()))
-										.forEach(entry -> {
-											final String propertyName = getPropertyName(vElement);
+							TypeMirror typeMirrorFromTypeArgument = null;
+							List<? extends TypeMirror> typeMirrors = typeArgumentMap.get(types.erasure(vElement.getEnclosingElement().asType()));
+							if (typeMirrors != null) {
+								typeMirrorFromTypeArgument = typeParameters
+									.stream()
+									.filter(typeParameter -> typeParameter.asType().equals(vElement.asType()))
+									.findFirst()
+									.map(typeParameters::indexOf)
+									.map(typeMirrors::get)
+									.orElse(null);
+							}
 
-											if (Type.OBJECT.equals(entry.getValue().getType())
-													|| Type.ENUM.equals(entry.getValue().getType())) {
-												schema.putProperty(propertyName,
-														Reference.forSchema(ProcessingUtils.getShortName(vElement.asType())));
-											} else {
-												Schema propertySchema = entry.getValue();
+							if (typeMirrorFromTypeArgument != null) {
+								variableElementTypeMirror = typeMirrorFromTypeArgument;
+							} else {
+								variableElementTypeMirror = vElement.asType();
+							}
 
-												if (OpenAPIProcessor.isClassAvailable("javax.validation.constraints.Min")) {
-													getValidationValue(vElement, NotNull.class, notNull -> true)
-														.ifPresent(notNull -> schema.addRequired(propertyName));
-													getValidationValue(vElement, Min.class, Min::value)
-														.ifPresent(propertySchema::setMinimum);
-													getValidationValue(vElement, Max.class, Max::value)
-														.ifPresent(propertySchema::setMaximum);
-													getValidationValue(vElement, Pattern.class, Pattern::regexp)
-														.ifPresent(propertySchema::setPattern);
-												}
+							// lets do some recursion
+							Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(variableElementTypeMirror);
+							// the schema is an object or enum -> we add it to the map
+							propertySchemaMap.entrySet()
+								.stream()
+								.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
+									|| Type.ENUM.equals(entry.getValue().getType()))
+								.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
 
-												propertySchema.setDescription(propertyDoc.getDescription());
-												if (vElement.getAnnotation(Deprecated.class) != null) {
-													propertySchema.setDeprecated(true);
-												}
-												schema.putProperty(propertyName, propertySchema);
-											}
-										});
-							});
+							propertySchemaMap.entrySet()
+								.stream()
+								.filter(entry -> entry.getKey().equals(variableElementTypeMirror))
+								.forEach(entry -> {
+									final String propertyName = getPropertyName(vElement);
+
+									if (Type.OBJECT.equals(entry.getValue().getType())
+										|| Type.ENUM.equals(entry.getValue().getType())) {
+										schema.putProperty(propertyName,
+											Reference.forSchema(ProcessingUtils.getShortName(variableElementTypeMirror)));
+									} else {
+										Schema propertySchema = entry.getValue();
+
+										if (OpenAPIProcessor.isClassAvailable("javax.validation.constraints.Min")) {
+											getValidationValue(vElement, NotNull.class, notNull -> true)
+												.ifPresent(notNull -> schema.addRequired(propertyName));
+											getValidationValue(vElement, Min.class, Min::value)
+												.ifPresent(propertySchema::setMinimum);
+											getValidationValue(vElement, Max.class, Max::value)
+												.ifPresent(propertySchema::setMaximum);
+											getValidationValue(vElement, Pattern.class, Pattern::regexp)
+												.ifPresent(propertySchema::setPattern);
+										}
+
+										propertySchema.setDescription(propertyDoc.getDescription());
+										if (vElement.getAnnotation(Deprecated.class) != null) {
+											propertySchema.setDeprecated(true);
+										}
+										schema.putProperty(propertyName, propertySchema);
+									}
+								});
+						});
+
+					if (typeElement.getSuperclass() instanceof DeclaredType) {
+						List<? extends TypeMirror> typeArguments = ((DeclaredType) typeElement.getSuperclass()).getTypeArguments();
+						if (typeArguments != null && !typeArguments.isEmpty()) {
+							typeArgumentMap.put(types.erasure(typeElement.getSuperclass()), typeArguments);
+						}
+					}
 
 					superType = typeElement.getSuperclass();
 				}

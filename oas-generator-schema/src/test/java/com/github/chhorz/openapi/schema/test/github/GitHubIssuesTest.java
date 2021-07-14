@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-public class GitHubIssuesTest extends AbstractProcessorTest {
+class GitHubIssuesTest extends AbstractProcessorTest {
 
 	@Test
 	@GitHubIssue("#166")
 	@GitHubIssue("#171")
-	void testJsonPropertyAnnotation() {
+	void githubResourcesTest() {
 		// run annotation processor
 		testCompilation(new SchemaOpenApiProcessor(), createConfigFileOption("oas-generator-github.yml"), JsonPropertyTest.class);
 
@@ -43,12 +43,12 @@ public class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("description", "");
 
 		assertThat(components.getSchemas().get("ExtendedResource").getProperties())
-			.hasSize(2)
-			.containsKeys("abstractProperty", "content");
+			.hasSize(3)
+			.containsKeys("id", "content", "additionalContent");
 		assertThat(components.getSchemas().get("ExtendedResource").getProperties().values())
-			.extracting("deprecated", "type", "description")
-			.contains(tuple(false, Schema.Type.STRING, ""),
-				tuple(false, Schema.Type.STRING, ""));
+			.extracting("deprecated", "type", "format", "description")
+			.contains(tuple(false, Schema.Type.STRING, null, ""),
+				tuple(false, Schema.Type.INTEGER, Schema.Format.INT64, ""));
 	}
 
 }

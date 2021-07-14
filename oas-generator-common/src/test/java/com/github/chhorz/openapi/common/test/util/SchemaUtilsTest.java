@@ -228,8 +228,8 @@ class SchemaUtilsTest {
 			.containsExactly(Type.OBJECT, null, false);
 
 		assertThat(schemaMap.get(classDType).getProperties())
-			.hasSize(3)
-			.containsKeys("i", "l", "abstractProperty");
+			.hasSize(4)
+			.containsKeys("i", "l", "abstractProperty", "string");
 
 		assertThat(schemaMap.get(classDType).getProperties().values())
 			.extracting("type", "format")
@@ -287,8 +287,8 @@ class SchemaUtilsTest {
 			.containsExactly(Type.OBJECT, null, false);
 
 		assertThat(schemaMap.get(classCType).getProperties())
-			.hasSize(8)
-			.containsKeys("l", "b", "f", "doubleArray", "list", "set", "baseProperty", "abstractProperty");
+			.hasSize(9)
+			.containsKeys("l", "b", "f", "doubleArray", "list", "set", "baseProperty", "abstractProperty", "string");
 
 		assertThat(schemaMap.get(classCType).getProperties().values())
 			.extracting("type", "format")
