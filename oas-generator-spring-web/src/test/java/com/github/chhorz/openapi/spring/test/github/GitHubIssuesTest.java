@@ -21,10 +21,7 @@ import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor;
 import com.github.chhorz.openapi.spring.test.github.controller.*;
-import com.github.chhorz.openapi.spring.test.github.resources.ErrorResource;
-import com.github.chhorz.openapi.spring.test.github.resources.HateoasResource;
-import com.github.chhorz.openapi.spring.test.github.resources.Resource;
-import com.github.chhorz.openapi.spring.test.github.resources.ValidResource;
+import com.github.chhorz.openapi.spring.test.github.resources.*;
 import com.jayway.jsonpath.DocumentContext;
 import org.junit.jupiter.api.Test;
 
@@ -1220,6 +1217,31 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue143#test");
 
 		validateSchemaForTestResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#172")
+	void getGithubIssue172() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue172.class, InheritedResource.class,
+			AbstractResource.class, AbstractBaseResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue172#test");
+
+		validateSchemaForInheritedResource(documentContext);
 	}
 
 }

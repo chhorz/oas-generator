@@ -386,6 +386,43 @@ class GitHubIssuesTestAssertions {
 
 	}
 
+	public static void validateSchemaForInheritedResource(final DocumentContext documentContext) {
+
+		Schema schema = documentContext.read("$.components.schemas.InheritedResource", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "a test resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		assertThat(schema.getProperties())
+			.isNotNull()
+			.hasSize(3)
+			.containsOnlyKeys("id", "content", "deprecated");
+
+		assertThat(schema.getProperties().get("id"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
+			.hasFieldOrPropertyWithValue("format", Schema.Format.INT64)
+			.hasFieldOrPropertyWithValue("description", "the internal id");
+
+		assertThat(schema.getProperties().get("content"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+			.hasFieldOrPropertyWithValue("format", null)
+			.hasFieldOrPropertyWithValue("description", "the resource content");
+
+		assertThat(schema.getProperties().get("deprecated"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.BOOLEAN)
+			.hasFieldOrPropertyWithValue("format", null)
+			.hasFieldOrPropertyWithValue("description", "");
+	}
+
 	/**
 	 * Validates the read_role security scheme
 	 *

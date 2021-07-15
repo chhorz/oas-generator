@@ -1,18 +1,18 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ * Copyright 2018-2020 the original author or authors.
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *         https://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.github.chhorz.openapi.common.util;
 
@@ -32,7 +32,10 @@ import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 
 import javax.lang.model.element.*;
-import javax.lang.model.type.*;
+import javax.lang.model.type.ArrayType;
+import javax.lang.model.type.NoType;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.validation.constraints.Max;
@@ -108,13 +111,13 @@ public class SchemaUtils {
 		}
 
 		packages.stream()
-				.filter(p -> p != null && !p.isEmpty())
-				.map(elements::getPackageElement)
-				.filter(Objects::nonNull)
-				.map(this::parsePackage)
-				.flatMap(map -> map.entrySet().stream())
-				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
-				.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
+			.filter(p -> p != null && !p.isEmpty())
+			.map(elements::getPackageElement)
+			.filter(Objects::nonNull)
+			.map(this::parsePackage)
+			.flatMap(map -> map.entrySet().stream())
+			.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
+			.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
 
 		return convertSchemaMap(typeMirrorMap);
 	}
@@ -123,12 +126,12 @@ public class SchemaUtils {
 		Map<TypeMirror, Schema> typeMirrorMap = new HashMap<>();
 
 		packageElement.getEnclosedElements()
-				.stream()
-				.map(Element::asType)
-				.map(this::createTypeMirrorSchemaMap)
-				.flatMap(map -> map.entrySet().stream())
-				.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
-				.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
+			.stream()
+			.map(Element::asType)
+			.map(this::createTypeMirrorSchemaMap)
+			.flatMap(map -> map.entrySet().stream())
+			.filter(entry -> !typeMirrorMap.containsKey(entry.getKey()))
+			.forEach(entry -> typeMirrorMap.put(entry.getKey(), entry.getValue()));
 
 		return typeMirrorMap;
 	}
@@ -146,7 +149,7 @@ public class SchemaUtils {
 		return mediaType;
 	}
 
-	public Schema getSchemaForTypeMirror(final TypeMirror typeMirror){
+	public Schema getSchemaForTypeMirror(final TypeMirror typeMirror) {
 		return createTypeMirrorSchemaMap(typeMirror).get(typeMirror);
 	}
 
@@ -331,7 +334,7 @@ public class SchemaUtils {
 
 				TypeMirror superType = element.asType();
 
-				Map<TypeMirror, List<? extends TypeMirror>> typeArgumentMap = new HashMap<>();
+				Map<TypeMirror, Map<TypeParameterElement, TypeMirror>> typeParameterMap = new HashMap<>();
 
 				// follow class hierarchy until object or enum
 				while (!(superType instanceof NoType) && processingUtils.doesTypeDiffer(superType, object)
@@ -355,14 +358,13 @@ public class SchemaUtils {
 							TypeMirror variableElementTypeMirror;
 
 							TypeMirror typeMirrorFromTypeArgument = null;
-							List<? extends TypeMirror> typeMirrors = typeArgumentMap.get(types.erasure(vElement.getEnclosingElement().asType()));
-							if (typeMirrors != null) {
+							Map<TypeParameterElement, TypeMirror> typeParametersMap = typeParameterMap.get(types.erasure(vElement.getEnclosingElement().asType()));
+							if (typeParametersMap != null) {
 								typeMirrorFromTypeArgument = typeParameters
 									.stream()
 									.filter(typeParameter -> typeParameter.asType().equals(vElement.asType()))
 									.findFirst()
-									.map(typeParameters::indexOf)
-									.map(typeMirrors::get)
+									.map(typeParametersMap::get)
 									.orElse(null);
 							}
 
@@ -414,12 +416,7 @@ public class SchemaUtils {
 								});
 						});
 
-					if (typeElement.getSuperclass() instanceof DeclaredType) {
-						List<? extends TypeMirror> typeArguments = ((DeclaredType) typeElement.getSuperclass()).getTypeArguments();
-						if (typeArguments != null && !typeArguments.isEmpty()) {
-							typeArgumentMap.put(types.erasure(typeElement.getSuperclass()), typeArguments);
-						}
-					}
+					typeParameterMap.putAll(processingUtils.populateTypeParameterMap(typeElement, typeParameterMap));
 
 					superType = typeElement.getSuperclass();
 				}
@@ -557,7 +554,7 @@ public class SchemaUtils {
 		}
 	}
 
-	private <A extends Annotation,V> Optional<V> getValidationValue(final Element element, final Class<A> clazz, final Function<A,V> valueProvider) {
+	private <A extends Annotation, V> Optional<V> getValidationValue(final Element element, final Class<A> clazz, final Function<A, V> valueProvider) {
 		A annotation = element.getAnnotation(clazz);
 		if (annotation != null) {
 			return Optional.ofNullable(valueProvider.apply(annotation));

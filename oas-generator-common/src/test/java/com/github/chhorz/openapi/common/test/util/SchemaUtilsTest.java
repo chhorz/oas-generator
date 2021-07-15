@@ -101,7 +101,13 @@ class SchemaUtilsTest {
 		Map<String, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
-		assertThat(schemaMap).hasSize(10);
+		assertThat(schemaMap)
+			.isNotNull()
+			.hasSize(12)
+			.containsOnlyKeys(
+				"ClassA", "ClassB", "ClassC", "ClassD", "ClassE", "ClassF", "ClassG",
+				"EnumA", "EnumB",
+				"InterfaceA", "InterfaceB", "InterfaceC");
 	}
 
 	@Test
@@ -342,6 +348,63 @@ class SchemaUtilsTest {
 				tuple(null, 0L, null), // minimum
 				tuple(null, null, "\\d+"), // pattern
 				tuple(null, null, null)); // required
+	}
+
+	@Test
+	@GitHubIssue("#172")
+	void typeParametersTest(){
+		// given
+		TypeMirror classFType = elements.getTypeElement(ClassF.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classFType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsOnlyKeys(classFType);
+
+		assertThat(schemaMap.get(classFType).getProperties())
+			.isNotNull()
+			.hasSize(4)
+			.containsOnlyKeys("abstractProperty", "extendedTypeParameter", "string", "typeParameter");
+
+		assertThat(schemaMap.get(classFType).getProperties().values())
+			.isNotNull()
+			.hasSize(4)
+			.extracting("type", "format")
+			.containsExactly(tuple(Type.BOOLEAN, null),
+				tuple(Type.INTEGER, Format.INT64),
+				tuple(Type.STRING, null),
+				tuple(Type.STRING, null));
+	}
+
+	@Test
+	@GitHubIssue("#172")
+	void typeParameterChainTest(){
+		// given
+		TypeMirror classGType = elements.getTypeElement(ClassG.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classGType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsOnlyKeys(classGType);
+
+		assertThat(schemaMap.get(classGType).getProperties())
+			.isNotNull()
+			.hasSize(3)
+			.containsOnlyKeys("abstractProperty", "extendedTypeParameter", "string");
+
+		assertThat(schemaMap.get(classGType).getProperties().values())
+			.isNotNull()
+			.hasSize(3)
+			.extracting("type", "format")
+			.containsExactly(tuple(Type.STRING, null),
+				tuple(Type.INTEGER, Format.INT64),
+				tuple(Type.STRING, null));
 	}
 
 	@Test
