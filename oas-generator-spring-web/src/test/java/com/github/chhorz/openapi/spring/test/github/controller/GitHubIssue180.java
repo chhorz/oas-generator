@@ -14,31 +14,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.common.test.util.resources;
+package com.github.chhorz.openapi.spring.test.github.controller;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.chhorz.openapi.common.test.github.GitHubIssue;
+import com.github.chhorz.openapi.spring.test.github.resources.TestResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+public class GitHubIssue180 {
 
-@Deprecated
-public class ClassB {
-
-	@JsonProperty("int")
-	public int i;
-
-	@JsonProperty
-	public int integer;
-
-	public LocalDate date;
-	@Deprecated
-	public LocalDateTime time;
-
-	@JsonIgnore
-	public EnumA enumeration;
-
-	public List<EnumB> enumerations;
+	@GitHubIssue("#180")
+	@GetMapping(path = "issues")
+	public ResponseEntity<TestResource> test() {
+		return ResponseEntity.ok().build();
+	}
 
 }

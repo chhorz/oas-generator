@@ -279,14 +279,19 @@ class SchemaUtilsTest {
 			.containsExactly(Type.OBJECT, null, true);
 
 		assertThat(schemaMap.get(classBType).getProperties())
-			.hasSize(4)
-			.containsKeys("int", "integer", "date", "time");
+			.hasSize(5)
+			.containsKeys("int", "integer", "date", "time", "enumerations");
 
 		assertThat(schemaMap.get(classBType).getProperties().values())
 			.extracting("type", "format", "deprecated")
 			.contains(tuple(Type.INTEGER, Format.INT32, false),
 				tuple(Type.STRING, Format.DATE, false),
-				tuple(Type.STRING, Format.DATE_TIME, true));
+				tuple(Type.STRING, Format.DATE_TIME, true),
+				tuple(Type.ARRAY, null, false));
+
+		assertThat(schemaMap.get(classBType).getProperties().get("enumerations"))
+			.isInstanceOfSatisfying(Schema.class,
+				schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
 
 		assertThat(schemaMap.get(classCType))
 			.extracting("type", "format", "deprecated")

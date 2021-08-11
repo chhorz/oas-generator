@@ -21,6 +21,7 @@ import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import com.jayway.jsonpath.DocumentContext;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -160,7 +161,7 @@ class GitHubIssuesTestAssertions {
 	 *
 	 * @see Resource
 	 */
-	public static void validateSchemaForTestResource(final DocumentContext documentContext) {
+	public static void validateSchemaForResource(final DocumentContext documentContext) {
 		Schema schema = documentContext.read("$.components.schemas.Resource", Schema.class);
 
 		assertThat(schema)
@@ -421,6 +422,44 @@ class GitHubIssuesTestAssertions {
 			.hasFieldOrPropertyWithValue("type", Schema.Type.BOOLEAN)
 			.hasFieldOrPropertyWithValue("format", null)
 			.hasFieldOrPropertyWithValue("description", "");
+	}
+
+	/**
+	 * Validates the given test resource.
+	 *
+	 * @param documentContext the json document context
+	 *
+	 * @see Resource
+	 */
+	public static void validateSchemaForTestResource(final DocumentContext documentContext) {
+		Schema schema = documentContext.read("$.components.schemas.TestResource", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "a test resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		assertThat(schema.getProperties())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("states");
+
+		assertThat(schema.getProperties().get("states"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.ARRAY)
+			.hasFieldOrPropertyWithValue("description", "");
+		assertThat(schema.getProperties().get("states"))
+			.isInstanceOfSatisfying(Schema.class, statesSchema -> assertThat(statesSchema.getItems())
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING));
+		List<String> items = documentContext.read("$.components.schemas.TestResource.properties.states.items.enum", List.class);
+		assertThat(items)
+			.isNotNull()
+			.hasSize(2)
+			.contains("GOOD", "BAD");
 	}
 
 	/**
