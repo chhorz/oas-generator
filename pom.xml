@@ -87,7 +87,7 @@
 		<jackson.version>2.12.4</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
 		<snakeyaml.version>1.29</snakeyaml.version>
-		<spring-security-core.version>5.5.1</spring-security-core.version>
+		<spring-security-core.version>5.5.2</spring-security-core.version>
 		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
 
 		<spring-data-commons.version>2.5.3</spring-data-commons.version>
