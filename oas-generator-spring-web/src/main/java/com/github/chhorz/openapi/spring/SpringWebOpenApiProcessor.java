@@ -167,11 +167,15 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 
         if (requestMapping != null) {
 
-            String[] urlPaths;
+            List<String> urlPaths;
             if (0 != requestMapping.path().length) {
-                urlPaths = requestMapping.path();
+				urlPaths = Stream.of(requestMapping.path())
+					.map(aliasUtils::prependSlash)
+					.collect(toList());
             } else {
-                urlPaths = requestMapping.value();
+				urlPaths = Stream.of(requestMapping.value())
+					.map(aliasUtils::prependSlash)
+					.collect(toList());
             }
 
             for (String path : urlPaths) {
@@ -202,8 +206,8 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
                     List<String> removals = operation.getParameterObjects()
                             .stream()
                             .map(Parameter::getSchema)
-                            .filter(schema -> schema.getPattern() != null)
                             .map(Schema::getPattern)
+                            .filter(Objects::nonNull)
                             .collect(toList());
 
                     for (String string : removals) {

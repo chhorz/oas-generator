@@ -1,15 +1,11 @@
-name: Java CI
+name: 'Java CI'
 
 on: [push, pull_request]
 
-env:
-  OSSRH_JIRA_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-  OSSRH_JIRA_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-
 jobs:
   test:
-    runs-on: ubuntu-latest
     name: 'Build and test'
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         # test against LTS version:
@@ -26,7 +22,7 @@ jobs:
         java-version: ${{ matrix.java }}
 
     - name: 'Cache local Maven repository'
-      uses: actions/cache@v2.1.5
+      uses: actions/cache@v2.1.6
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -37,9 +33,10 @@ jobs:
       run: ./mvnw -V -B --no-transfer-progress install
 
   publish-snapshot:
-    needs: test
-    runs-on: ubuntu-latest
     name: 'Publish snapshot'
+    runs-on: ubuntu-latest
+    needs:
+      - test
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v2
@@ -50,9 +47,12 @@ jobs:
           distribution: 'adopt'
           java-package: jdk
           java-version: 8
+          server-id: oss.sonatype.org
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
 
       - name: 'Cache local Maven repository'
-        uses: actions/cache@v2.1.5
+        uses: actions/cache@v2.1.6
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -61,4 +61,7 @@ jobs:
 
       - name: 'Publish snapshot'
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'chhorz/oas-generator'
-        run: ./mvnw -V -B -s build/settings.xml -P build-extras -DskipTests=true deploy
+        run: ./mvnw -B clean deploy --no-transfer-progress -DskipTests=true
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSS_SONATYPE_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSS_SONATYPE_PASSWORD }}

@@ -25,7 +25,7 @@ The simplest way to integrate the **OAS Generator** is to add the following depe
 </dependency>
 ```
 
-#### Using compiler-plugin
+#### Maven Compiler Plugin
 Another way to include an annotation processor is the [maven-compiler-plugin](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html):
 
 ``` xml{5,13}
@@ -54,6 +54,40 @@ Another way to include an annotation processor is the [maven-compiler-plugin](ht
 
 It is not possible to mix this way of annotation processor integration with the dependency based one shown above.
 
+#### Kotlin Maven Plugin
+The plugin documentation for Kotlin Maven projects and annotation processors using `kapt` can be found [here](https://kotlinlang.org/docs/kapt.html#using-in-maven).
+For the following use case the `oas-generator-*` was added as dependency.
+
+::: warning
+Resolution of the `oas-generator.yml` property file is broken for versions <= 0.2.2.
+:::
+
+```xml
+<plugin>
+    <groupId>org.jetbrains.kotlin</groupId>
+    <artifactId>kotlin-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>kapt</id>
+            <goals>
+                <goal>kapt</goal> <!--1-->
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <!-- ... -->
+        <annotationProcessorArgs>
+            <arg>propertiesPath=${project.basedir}/src/main/resources/oas-generator.yml</arg> <!--2-->
+            <arg>version=${project.version}</arg>
+        </annotationProcessorArgs>
+    </configuration>
+    <!-- ... -->
+</plugin>
+```
+
+1. Annotation processing for Kotlin is provided by `kapt`
+2. Definition of the default properties file `src/main/resources/oas-generator.yml` does not work for Kotlin projects.
+The full path to the properties file *must* be specified.
 
 ### Gradle
 _Gradle installation steps may be added soon._

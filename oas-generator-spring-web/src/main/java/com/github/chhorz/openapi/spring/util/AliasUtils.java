@@ -16,26 +16,20 @@
  */
 package com.github.chhorz.openapi.spring.util;
 
+import org.springframework.web.bind.annotation.*;
+
+import javax.lang.model.element.Element;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-
-import javax.lang.model.element.Element;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import java.util.stream.Stream;
 
 public class AliasUtils {
 
 	public <T> String getValue(final T t, final Function<T, String> primary, final Function<T, String> secondary,
-			final String defaultValue) {
+		final String defaultValue) {
 		if (primary.apply(t).isEmpty() && secondary.apply(t).isEmpty()) {
 			return defaultValue;
 		} else {
@@ -93,16 +87,28 @@ public class AliasUtils {
 
 				@Override
 				public String[] value() {
-					String[] classPath = getValue(classMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
-					String[] methodPath = getValue(methodMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
-					return new String[] { String.format("%s%s", prependSlash(classPath[0]), prependSlash(methodPath[0])) };
+					String[] classPath = getValue(classMapping, RequestMapping::path, RequestMapping::value, new String[]{""});
+					String[] methodPath = getValue(methodMapping, RequestMapping::path, RequestMapping::value, new String[]{""});
+					List<String> resolvedPaths = new ArrayList<>();
+					Stream.of(classPath).forEach(singleClassPath ->
+						Stream.of(methodPath).forEach(singleMethodPath ->
+							resolvedPaths.add(String.format("%s%s", prependSlash(singleClassPath), prependSlash(singleMethodPath)))
+						)
+					);
+					return resolvedPaths.toArray(new String[0]);
 				}
 
 				@Override
 				public String[] path() {
-					String[] classPath = getValue(classMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
-					String[] methodPath = getValue(methodMapping, RequestMapping::path, RequestMapping::value, new String[] { "" });
-					return new String[] { String.format("%s%s", prependSlash(classPath[0]), prependSlash(methodPath[0])) };
+					String[] classPath = getValue(classMapping, RequestMapping::path, RequestMapping::value, new String[]{""});
+					String[] methodPath = getValue(methodMapping, RequestMapping::path, RequestMapping::value, new String[]{""});
+					List<String> resolvedPaths = new ArrayList<>();
+					Stream.of(classPath).forEach(singleClassPath ->
+						Stream.of(methodPath).forEach(singleMethodPath ->
+							resolvedPaths.add(String.format("%s%s", prependSlash(singleClassPath), prependSlash(singleMethodPath)))
+						)
+					);
+					return resolvedPaths.toArray(new String[0]);
 				}
 
 				@Override
@@ -123,7 +129,7 @@ public class AliasUtils {
 							headers.add(methodHeaders);
 						}
 					}
-					return headers.toArray(new String[headers.size()]);
+					return headers.toArray(new String[0]);
 				}
 
 				@Override
@@ -134,7 +140,7 @@ public class AliasUtils {
 							consumes.add(methodConsumes);
 						}
 					}
-					return consumes.toArray(new String[consumes.size()]);
+					return consumes.toArray(new String[0]);
 				}
 
 				@Override
@@ -145,7 +151,7 @@ public class AliasUtils {
 							produces.add(methodProduces);
 						}
 					}
-					return produces.toArray(new String[produces.size()]);
+					return produces.toArray(new String[0]);
 				}
 
 			};
@@ -153,7 +159,7 @@ public class AliasUtils {
 	}
 
 	private String[] getValue(final RequestMapping mapping, final Function<RequestMapping, String[]> primary,
-			final Function<RequestMapping, String[]> secondary, final String[] defaultValue) {
+		final Function<RequestMapping, String[]> secondary, final String[] defaultValue) {
 		if (primary.apply(mapping).length == 0 && secondary.apply(mapping).length == 0) {
 			return defaultValue;
 		} else {
@@ -165,8 +171,8 @@ public class AliasUtils {
 		}
 	}
 
-	private String prependSlash(String path) {
-		if (path == null || path.trim().isEmpty()){
+	public String prependSlash(String path) {
+		if (path == null || path.trim().isEmpty()) {
 			return path;
 		} else {
 			return path.trim().startsWith("/") ? path : "/" + path;
@@ -208,7 +214,7 @@ public class AliasUtils {
 
 			@Override
 			public RequestMethod[] method() {
-				return new RequestMethod[] { RequestMethod.GET };
+				return new RequestMethod[]{RequestMethod.GET};
 			}
 
 			@Override
@@ -258,7 +264,7 @@ public class AliasUtils {
 
 			@Override
 			public RequestMethod[] method() {
-				return new RequestMethod[] { RequestMethod.POST };
+				return new RequestMethod[]{RequestMethod.POST};
 			}
 
 			@Override
@@ -308,7 +314,7 @@ public class AliasUtils {
 
 			@Override
 			public RequestMethod[] method() {
-				return new RequestMethod[] { RequestMethod.PUT };
+				return new RequestMethod[]{RequestMethod.PUT};
 			}
 
 			@Override
@@ -358,7 +364,7 @@ public class AliasUtils {
 
 			@Override
 			public RequestMethod[] method() {
-				return new RequestMethod[] { RequestMethod.DELETE };
+				return new RequestMethod[]{RequestMethod.DELETE};
 			}
 
 			@Override
@@ -408,7 +414,7 @@ public class AliasUtils {
 
 			@Override
 			public RequestMethod[] method() {
-				return new RequestMethod[] { RequestMethod.PATCH };
+				return new RequestMethod[]{RequestMethod.PATCH};
 			}
 
 			@Override

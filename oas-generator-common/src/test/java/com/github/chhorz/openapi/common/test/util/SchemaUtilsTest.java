@@ -101,7 +101,13 @@ class SchemaUtilsTest {
 		Map<String, Schema> schemaMap = schemaUtils.parsePackages(packages);
 
 		// then
-		assertThat(schemaMap).hasSize(9);
+		assertThat(schemaMap)
+			.isNotNull()
+			.hasSize(12)
+			.containsOnlyKeys(
+				"ClassA", "ClassB", "ClassC", "ClassD", "ClassE", "ClassF", "ClassG",
+				"EnumA", "EnumB",
+				"InterfaceA", "InterfaceB", "InterfaceC");
 	}
 
 	@Test
@@ -210,6 +216,7 @@ class SchemaUtilsTest {
 	}
 
 	@Test
+	@GitHubIssue("#171")
 	void customObjectWithPrimitiveTypesTest() {
 		// given
 		TypeMirror classDType = elements.getTypeElement(ClassD.class.getCanonicalName()).asType();
@@ -227,13 +234,14 @@ class SchemaUtilsTest {
 			.containsExactly(Type.OBJECT, null, false);
 
 		assertThat(schemaMap.get(classDType).getProperties())
-			.hasSize(2)
-			.containsKeys("i", "l");
+			.hasSize(4)
+			.containsKeys("i", "l", "abstractProperty", "string");
 
 		assertThat(schemaMap.get(classDType).getProperties().values())
 			.extracting("type", "format")
 			.contains(tuple(Type.INTEGER, Format.INT32),
-				tuple(Type.ARRAY, null));
+				tuple(Type.ARRAY, null),
+				tuple(Type.BOOLEAN, null));
 
 		assertThat(schemaMap.get(classDType).getProperties().get("i"))
 			.isInstanceOfSatisfying(Schema.class,
@@ -241,12 +249,18 @@ class SchemaUtilsTest {
 
 		assertThat(schemaMap.get(classDType).getProperties().get("l"))
 			.isInstanceOfSatisfying(Schema.class, schema -> assertThat(schema.getItems())
-					.isInstanceOf(Schema.class)
-					.hasFieldOrPropertyWithValue("type", Type.INTEGER)
-					.hasFieldOrPropertyWithValue("format", Format.INT64));
+				.isInstanceOf(Schema.class)
+				.hasFieldOrPropertyWithValue("type", Type.INTEGER)
+				.hasFieldOrPropertyWithValue("format", Format.INT64));
+
+		assertThat(schemaMap.get(classDType).getProperties().get("abstractProperty"))
+			.isInstanceOfSatisfying(Schema.class,
+				schema -> assertThat(schema.getItems()).isNull());
 	}
 
 	@Test
+	@GitHubIssue("#166")
+	@GitHubIssue("#171")
 	void customObjectTest() {
 		// given
 		TypeMirror classBType = elements.getTypeElement(ClassB.class.getCanonicalName()).asType();
@@ -257,49 +271,54 @@ class SchemaUtilsTest {
 
 		// then
 		assertThat(schemaMap)
-				.hasSize(2)
-				.containsKeys(classBType, classCType);
+			.hasSize(2)
+			.containsKeys(classBType, classCType);
 
 		assertThat(schemaMap.get(classBType))
 			.extracting("type", "format", "deprecated")
 			.containsExactly(Type.OBJECT, null, true);
 
 		assertThat(schemaMap.get(classBType).getProperties())
-			.hasSize(3)
-			.containsKeys("int", "date", "time");
+			.hasSize(5)
+			.containsKeys("int", "integer", "date", "time", "enumerations");
 
 		assertThat(schemaMap.get(classBType).getProperties().values())
 			.extracting("type", "format", "deprecated")
 			.contains(tuple(Type.INTEGER, Format.INT32, false),
 				tuple(Type.STRING, Format.DATE, false),
-				tuple(Type.STRING, Format.DATE_TIME, true));
+				tuple(Type.STRING, Format.DATE_TIME, true),
+				tuple(Type.ARRAY, null, false));
+
+		assertThat(schemaMap.get(classBType).getProperties().get("enumerations"))
+			.isInstanceOfSatisfying(Schema.class,
+				schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
 
 		assertThat(schemaMap.get(classCType))
 			.extracting("type", "format", "deprecated")
 			.containsExactly(Type.OBJECT, null, false);
 
 		assertThat(schemaMap.get(classCType).getProperties())
-				.hasSize(7)
-				.containsKeys("l", "b", "f", "doubleArray", "list", "set", "baseProperty");
+			.hasSize(9)
+			.containsKeys("l", "b", "f", "doubleArray", "list", "set", "baseProperty", "abstractProperty", "string");
 
 		assertThat(schemaMap.get(classCType).getProperties().values())
-				.extracting("type", "format")
-				.contains(tuple(Type.INTEGER, Format.INT64),
-						tuple(Type.BOOLEAN, null),
-						tuple(Type.NUMBER, Format.FLOAT),
-						tuple(Type.ARRAY, null));
+			.extracting("type", "format")
+			.contains(tuple(Type.INTEGER, Format.INT64),
+				tuple(Type.BOOLEAN, null),
+				tuple(Type.NUMBER, Format.FLOAT),
+				tuple(Type.ARRAY, null));
 
 		assertThat(schemaMap.get(classCType).getProperties().get("doubleArray"))
-				.isInstanceOfSatisfying(Schema.class,
-						schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
+			.isInstanceOfSatisfying(Schema.class,
+				schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
 
 		assertThat(schemaMap.get(classCType).getProperties().get("list"))
-				.isInstanceOfSatisfying(Schema.class,
-						schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
+			.isInstanceOfSatisfying(Schema.class,
+				schema -> assertThat(schema.getItems()).isInstanceOf(Schema.class));
 
 		assertThat(schemaMap.get(classCType).getProperties().get("set"))
-				.isInstanceOfSatisfying(Schema.class,
-						schema -> assertThat(schema.getItems()).isInstanceOf(Reference.class));
+			.isInstanceOfSatisfying(Schema.class,
+				schema -> assertThat(schema.getItems()).isInstanceOf(Reference.class));
 	}
 
 	@Test
@@ -334,6 +353,63 @@ class SchemaUtilsTest {
 				tuple(null, 0L, null), // minimum
 				tuple(null, null, "\\d+"), // pattern
 				tuple(null, null, null)); // required
+	}
+
+	@Test
+	@GitHubIssue("#172")
+	void typeParametersTest(){
+		// given
+		TypeMirror classFType = elements.getTypeElement(ClassF.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classFType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsOnlyKeys(classFType);
+
+		assertThat(schemaMap.get(classFType).getProperties())
+			.isNotNull()
+			.hasSize(4)
+			.containsOnlyKeys("abstractProperty", "extendedTypeParameter", "string", "typeParameter");
+
+		assertThat(schemaMap.get(classFType).getProperties().values())
+			.isNotNull()
+			.hasSize(4)
+			.extracting("type", "format")
+			.containsExactly(tuple(Type.BOOLEAN, null),
+				tuple(Type.INTEGER, Format.INT64),
+				tuple(Type.STRING, null),
+				tuple(Type.STRING, null));
+	}
+
+	@Test
+	@GitHubIssue("#172")
+	void typeParameterChainTest(){
+		// given
+		TypeMirror classGType = elements.getTypeElement(ClassG.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classGType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsOnlyKeys(classGType);
+
+		assertThat(schemaMap.get(classGType).getProperties())
+			.isNotNull()
+			.hasSize(3)
+			.containsOnlyKeys("abstractProperty", "extendedTypeParameter", "string");
+
+		assertThat(schemaMap.get(classGType).getProperties().values())
+			.isNotNull()
+			.hasSize(3)
+			.extracting("type", "format")
+			.containsExactly(tuple(Type.STRING, null),
+				tuple(Type.INTEGER, Format.INT64),
+				tuple(Type.STRING, null));
 	}
 
 	@Test
@@ -400,15 +476,39 @@ class SchemaUtilsTest {
 
 		// then
 		assertThat(schemaMap)
-				.hasSize(1)
-				.containsKey(enumAType)
-				.extracting(map -> map.get(enumAType))
-				.extracting("type", "format")
-				.contains(Type.STRING);
+			.hasSize(1)
+			.containsKeys(enumAType);
+
+		assertThat(schemaMap.get(enumAType))
+			.extracting("type", "format")
+			.contains(Type.STRING);
 
 		assertThat(schemaMap.get(enumAType).getEnumValues())
-				.hasSize(3)
-				.contains("A", "B", "XYZ");
+			.hasSize(3)
+			.contains("A", "B", "XYZ");
+	}
+
+	@Test
+	@GitHubIssue("#167")
+	void advancedEnumTest() {
+		// given
+		TypeMirror enumBType = elements.getTypeElement(EnumB.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(enumBType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(1)
+			.containsKeys(enumBType);
+
+		assertThat(schemaMap.get(enumBType))
+			.extracting("type", "format")
+			.contains(Type.STRING);
+
+		assertThat(schemaMap.get(enumBType).getEnumValues())
+			.hasSize(3)
+			.contains("A", "B", "Z");
 	}
 
 	@Test

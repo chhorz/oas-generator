@@ -21,10 +21,7 @@ import com.github.chhorz.openapi.common.test.AbstractProcessorTest;
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.SpringWebOpenApiProcessor;
 import com.github.chhorz.openapi.spring.test.github.controller.*;
-import com.github.chhorz.openapi.spring.test.github.resources.ErrorResource;
-import com.github.chhorz.openapi.spring.test.github.resources.HateoasResource;
-import com.github.chhorz.openapi.spring.test.github.resources.Resource;
-import com.github.chhorz.openapi.spring.test.github.resources.ValidResource;
+import com.github.chhorz.openapi.spring.test.github.resources.*;
 import com.jayway.jsonpath.DocumentContext;
 import org.junit.jupiter.api.Test;
 
@@ -126,7 +123,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
 				.isNotNull());
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -169,7 +166,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.containsKeys("read_role");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 		validateSecurityScheme(documentContext);
 	}
 
@@ -315,7 +312,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(components.getSchemas())
 			.containsOnlyKeys("Resource");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -341,7 +338,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(components.getSchemas())
 			.containsOnlyKeys("Resource");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -417,7 +414,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
 				.hasFieldOrPropertyWithValue("description", ""));
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -485,7 +482,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(components.getSchemas())
 			.containsOnlyKeys("Resource", "ErrorResource");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 		validateSchemaForErrorResource(documentContext);
 		validateRequestBodyForTestResource(documentContext, true);
 	}
@@ -555,7 +552,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(components.getSchemas())
 			.containsOnlyKeys("Resource");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -631,7 +628,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
 				.hasFieldOrPropertyWithValue("description", ""));
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -722,7 +719,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
 				.hasFieldOrPropertyWithValue("description", ""));
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -756,7 +753,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("read_role");
 
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 		validateSecurityScheme(documentContext);
 	}
 
@@ -781,7 +778,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue026#test");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 		validateRequestBodyForTestResource(documentContext, true);
 	}
 
@@ -984,7 +981,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("description", "");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -1027,7 +1024,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasSize(1)
 			.containsOnlyKeys("default");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 	}
 
 	@Test
@@ -1085,7 +1082,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateDefaultInfoObject(documentContext);
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 
 		Schema schema = documentContext.read("$.components.schemas.OtherResource", Schema.class);
 
@@ -1147,7 +1144,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasSize(2)
 			.containsOnlyKeys("default", "200");
 
-		validateSchemaForTestResource(documentContext);
+		validateSchemaForResource(documentContext);
 
 		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
 
@@ -1195,7 +1192,109 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasSize(1)
 			.contains("order");
 
+		validateSchemaForResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#143")
+	void getGithubIssue143() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue143.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue143#test");
+
+		validateSchemaForResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#172")
+	void getGithubIssue172() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue172.class, InheritedResource.class,
+			AbstractResource.class, AbstractBaseResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue172#test");
+
+		validateSchemaForInheritedResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#180")
+	void getGithubIssue180() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue180.class, TestResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue180#test");
+
 		validateSchemaForTestResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#182")
+	void getGithubIssue182() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue182.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./test1/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue182#test");
+
+		operation = documentContext.read("$.paths./test2/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue182#test");
+
+		validateSchemaForResource(documentContext);
 	}
 
 }

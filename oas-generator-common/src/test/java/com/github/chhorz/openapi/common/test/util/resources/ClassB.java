@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Deprecated
 public class ClassB {
@@ -28,11 +29,16 @@ public class ClassB {
 	@JsonProperty("int")
 	public int i;
 
+	@JsonProperty
+	public int integer;
+
 	public LocalDate date;
 	@Deprecated
 	public LocalDateTime time;
 
 	@JsonIgnore
 	public EnumA enumeration;
+
+	public List<EnumB> enumerations;
 
 }

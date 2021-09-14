@@ -66,11 +66,11 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>ossrh</id>
+			<id>oss.sonatype.org</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
-			<id>ossrh</id>
+			<id>oss.sonatype.org</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
@@ -83,36 +83,36 @@
 		<java.target.version>1.8</java.target.version>
 
 		<!-- dependency versions -->
-		<asciidoctorj-diagram.version>2.1.2</asciidoctorj-diagram.version>
-		<jackson.version>2.12.3</jackson.version>
+		<asciidoctorj-diagram.version>2.2.0</asciidoctorj-diagram.version>
+		<jackson.version>2.12.4</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
-		<snakeyaml.version>1.28</snakeyaml.version>
-		<spring-security-core.version>5.4.6</spring-security-core.version>
+		<snakeyaml.version>1.29</snakeyaml.version>
+		<spring-security-core.version>5.5.2</spring-security-core.version>
 		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
 
-		<spring-data-commons.version>2.5.0</spring-data-commons.version>
-		<spring-web.version>5.3.6</spring-web.version>
+		<spring-data-commons.version>2.5.4</spring-data-commons.version>
+		<spring-web.version>5.3.9</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
-		<nohttp-checkstyle.version>0.0.6.RELEASE</nohttp-checkstyle.version>
+		<nohttp-checkstyle.version>0.0.8</nohttp-checkstyle.version>
 
 		<!-- test dependency versions -->
-		<assertj-core.version>3.19.0</assertj-core.version>
-		<junit-jupiter.verison>5.7.1</junit-jupiter.verison>
+		<assertj-core.version>3.20.2</assertj-core.version>
+		<junit-jupiter.verison>5.7.2</junit-jupiter.verison>
 		<jsonassert.version>1.5.0</jsonassert.version>
-		<json-path.version>2.5.0</json-path.version>
+		<json-path.version>2.6.0</json-path.version>
 
-		<spring-hateoas.version>1.3.0</spring-hateoas.version>
+		<spring-hateoas.version>1.3.3</spring-hateoas.version>
 
 		<!-- plugin versions -->
-		<asciidoctor-maven-plugin.version>2.1.0</asciidoctor-maven-plugin.version>
+		<asciidoctor-maven-plugin.version>2.2.1</asciidoctor-maven-plugin.version>
 		<license.maven.plugin.version>3.0</license.maven.plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-		<maven.gpg.plugin.version>1.5</maven.gpg.plugin.version>
+		<maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
 		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
@@ -208,8 +208,8 @@
 					<version>${nexus-staging-maven-plugin.version}</version>
 					<extensions>true</extensions>
 					<configuration>
-						<serverId>ossrh</serverId>
-						<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+						<serverId>oss.sonatype.org</serverId>
+						<nexusUrl>https://oss.sonatype.org</nexusUrl>
 						<autoReleaseAfterClose>false</autoReleaseAfterClose>
 					</configuration>
 				</plugin>
@@ -380,13 +380,13 @@
 	<profiles>
 
 		<profile>
-			<id>sign</id>
+			<id>central-deploy</id>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.6</version>
+						<version>${maven.gpg.plugin.version}</version>
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
@@ -394,6 +394,13 @@
 								<goals>
 									<goal>sign</goal>
 								</goals>
+								<configuration>
+									<!-- This is necessary for gpg to not try to use the pinentry programs -->
+									<gpgArguments>
+										<arg>--pinentry-mode</arg>
+										<arg>loopback</arg>
+									</gpgArguments>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

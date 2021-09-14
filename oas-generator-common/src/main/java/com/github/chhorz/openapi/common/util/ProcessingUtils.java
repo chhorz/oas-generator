@@ -19,11 +19,15 @@ package com.github.chhorz.openapi.common.util;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProcessingUtils {
 
@@ -147,4 +151,34 @@ public class ProcessingUtils {
 		return typeString.substring(typeString.lastIndexOf('.') + 1).trim();
 	}
 
+	public Map<TypeMirror, Map<TypeParameterElement, TypeMirror>> populateTypeParameterMap(TypeElement typeElement, Map<TypeMirror, Map<TypeParameterElement, TypeMirror>> typeParameterMap) {
+		if (typeElement.getSuperclass() instanceof DeclaredType) {
+			List<? extends TypeParameterElement> typeParametersElements = ((TypeElement) types.asElement(typeElement.getSuperclass())).getTypeParameters();
+			List<? extends TypeMirror> typeArguments = ((DeclaredType) typeElement.getSuperclass()).getTypeArguments();
+			if (typeParametersElements != null && typeArguments != null && typeParametersElements.size() == typeArguments.size()) {
+				TypeMirror erasedTypeMirror = types.erasure(typeElement.getSuperclass());
+				typeParametersElements.forEach(typeParameterElement -> {
+					Map<TypeParameterElement, TypeMirror> typeParameterMirrorMap = typeParameterMap.getOrDefault(erasedTypeMirror, new HashMap<>());
+
+					if (TypeKind.TYPEVAR == typeArguments.get(typeParametersElements.indexOf(typeParameterElement)).getKind()) {
+						Map<TypeParameterElement, TypeMirror> testMap = typeParameterMap.get(types.erasure(typeElement.asType()));
+						if (testMap != null) {
+							testMap.entrySet()
+								.stream()
+								.filter(e -> e.getKey().toString().equals(typeParameterElement.toString()))
+								.findFirst()
+								.map(Map.Entry::getValue)
+								.ifPresent(mirror -> typeParameterMirrorMap.put(typeParameterElement, mirror));
+						}
+					} else {
+						typeParameterMirrorMap.put(typeParameterElement, typeArguments.get(typeParametersElements.indexOf(typeParameterElement)));
+					}
+
+					typeParameterMap.put(erasedTypeMirror, typeParameterMirrorMap);
+				});
+			}
+		}
+
+		return typeParameterMap;
+	}
 }
