@@ -262,6 +262,7 @@ class SchemaUtilsTest {
 	@Test
 	@GitHubIssue("#166")
 	@GitHubIssue("#171")
+	@GitHubIssue("#195")
 	void customObjectTest() {
 		// given
 		TypeMirror classBType = elements.getTypeElement(ClassB.class.getCanonicalName()).asType();
@@ -280,12 +281,13 @@ class SchemaUtilsTest {
 			.containsExactly(Type.OBJECT, null, true);
 
 		assertThat(schemaMap.get(classBType).getProperties())
-			.hasSize(5)
-			.containsKeys("int", "integer", "date", "time", "enumerations");
+			.hasSize(6)
+			.containsKeys("int", "integer", "time", "date", "dateTime", "enumerations");
 
 		assertThat(schemaMap.get(classBType).getProperties().values())
 			.extracting("type", "format", "deprecated")
 			.contains(tuple(Type.INTEGER, Format.INT32, false),
+				tuple(Type.STRING, Format.TIME, false),
 				tuple(Type.STRING, Format.DATE, false),
 				tuple(Type.STRING, Format.DATE_TIME, true),
 				tuple(Type.ARRAY, null, false));

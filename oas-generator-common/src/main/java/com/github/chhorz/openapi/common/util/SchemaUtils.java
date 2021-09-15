@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2018-2020 the original author or authors.
+ * Copyright 2018-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,10 +43,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.lang.annotation.Annotation;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 import java.util.function.Function;
@@ -629,7 +626,9 @@ public class SchemaUtils {
 	private SimpleEntry<Type, Format> getJavaTimeTypeAndFormat(final TypeMirror typeMirror) {
 		SimpleEntry<Type, Format> typeAndFormat = null;
 
-		if (processingUtils.isSameType(typeMirror, LocalDate.class)) {
+		if(processingUtils.isSameType(typeMirror, LocalTime.class)) {
+			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.TIME);
+		} else if (processingUtils.isSameType(typeMirror, LocalDate.class)) {
 			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE);
 		} else if (processingUtils.isSameType(typeMirror, LocalDateTime.class)
 			|| processingUtils.isSameType(typeMirror, ZonedDateTime.class)
