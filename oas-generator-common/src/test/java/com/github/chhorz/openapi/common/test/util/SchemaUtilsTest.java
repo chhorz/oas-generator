@@ -41,6 +41,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -103,9 +104,9 @@ class SchemaUtilsTest {
 		// then
 		assertThat(schemaMap)
 			.isNotNull()
-			.hasSize(12)
+			.hasSize(14)
 			.containsOnlyKeys(
-				"ClassA", "ClassB", "ClassC", "ClassD", "ClassE", "ClassF", "ClassG",
+				"ClassA", "ClassB", "ClassC", "ClassD", "ClassE", "ClassF", "ClassG", "ClassH", "ClassI",
 				"EnumA", "EnumB",
 				"InterfaceA", "InterfaceB", "InterfaceC");
 	}
@@ -410,6 +411,24 @@ class SchemaUtilsTest {
 			.containsExactly(tuple(Type.STRING, null),
 				tuple(Type.INTEGER, Format.INT64),
 				tuple(Type.STRING, null));
+	}
+
+	@Test
+	@GitHubIssue("#194")
+	void circularDependenciesTest() {
+		// given
+		TypeMirror classHType = elements.getTypeElement(ClassH.class.getCanonicalName()).asType();
+		TypeMirror classIType = elements.getTypeElement(ClassI.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classHType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(2);
+
+		assertThat(schemaMap.keySet().stream().map(TypeMirror::toString).collect(Collectors.toList()))
+			.containsExactly(ClassH.class.getCanonicalName(), ClassI.class.getCanonicalName());
 	}
 
 	@Test

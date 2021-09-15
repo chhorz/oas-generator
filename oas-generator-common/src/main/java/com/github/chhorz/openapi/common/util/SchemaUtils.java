@@ -158,11 +158,22 @@ public class SchemaUtils {
 	}
 
 	public Map<TypeMirror, Schema> createTypeMirrorSchemaMap(final TypeMirror typeMirror) {
+		return createTypeMirrorSchemaMap(typeMirror, new LinkedHashMap<>());
+	}
+
+	private Map<TypeMirror, Schema> createTypeMirrorSchemaMap(final TypeMirror typeMirror, Map<TypeMirror, Schema> parsedSchemaMap) {
 		if (typeMirror == null || baseTypeMirrors.contains(typeMirror) || isVoidType(typeMirror) || isAbstractClass(typeMirror)) {
 			return Collections.emptyMap();
 		}
 
 		Map<TypeMirror, Schema> schemaMap = new LinkedHashMap<>();
+		if (parsedSchemaMap.entrySet().stream().anyMatch(entry -> entry.getKey().toString().equals(typeMirror.toString()))) {
+			return parsedSchemaMap;
+		} else {
+			parsedSchemaMap.entrySet().stream()
+				.filter(e -> e.getValue().getType().equals(Type.OBJECT) || e.getValue().getType().equals(Type.ENUM))
+				.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
+		}
 
 		logUtils.logDebug("Parsing type: %s", typeMirror.toString());
 
@@ -194,7 +205,7 @@ public class SchemaUtils {
 			} else {
 				componentType = elements.getTypeElement(typeMirror.toString().replaceAll("\\[]", "")).asType();
 			}
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(componentType);
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(componentType, schemaMap);
 
 			if (componentType.getKind().isPrimitive()) {
 				SimpleEntry<Type, Format> typeAndFormat = getPrimitiveTypeAndFormat(componentType);
@@ -258,7 +269,7 @@ public class SchemaUtils {
 			schemaMap.put(typeMirror, schema);
 		} else if (processingUtils.isAssignableTo(typeMirror, Optional.class)) {
 			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, Optional.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type);
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type, schemaMap);
 
 			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
@@ -277,7 +288,7 @@ public class SchemaUtils {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, List.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type);
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type, schemaMap);
 
 			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
@@ -308,7 +319,7 @@ public class SchemaUtils {
 			schema.setType(Type.ARRAY);
 
 			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, Set.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type);
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type, schemaMap);
 
 			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
 				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
@@ -330,6 +341,8 @@ public class SchemaUtils {
 		} else {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
 			schema.setDescription(javaDoc.getDescription());
+
+			schemaMap.put(typeMirror, schema);
 
 			if (element.getKind().equals(ElementKind.ENUM)) {
 				schema.setType(Type.STRING);
@@ -385,7 +398,7 @@ public class SchemaUtils {
 							}
 
 							// lets do some recursion
-							Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(variableElementTypeMirror);
+							Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(variableElementTypeMirror, schemaMap);
 							// the schema is an object or enum -> we add it to the map
 							propertySchemaMap.entrySet()
 								.stream()
@@ -395,7 +408,7 @@ public class SchemaUtils {
 
 							propertySchemaMap.entrySet()
 								.stream()
-								.filter(entry -> entry.getKey().equals(variableElementTypeMirror))
+								.filter(entry -> entry.getKey().toString().equals(variableElementTypeMirror.toString()))
 								.forEach(entry -> {
 									final String propertyName = getPropertyName(vElement);
 
@@ -435,7 +448,7 @@ public class SchemaUtils {
 				if (processingUtils.isInterface(typeMirror) && parserProperties.getIncludeGetters()) {
 					types.directSupertypes(typeMirror).stream()
 						.filter(directSupertype -> processingUtils.doesTypeDiffer(directSupertype, object))
-						.map(this::createTypeMirrorSchemaMap)
+						.map(t -> createTypeMirrorSchemaMap(t, schemaMap))
 						.flatMap(typeMirrorSchemaMap -> typeMirrorSchemaMap.values().stream())
 						.map(Schema::getProperties)
 						.filter(Objects::nonNull)
@@ -465,10 +478,11 @@ public class SchemaUtils {
 							JavaDoc getterDoc = parser.parse(elements.getDocComment(executableElement));
 
 							// lets do some recursion
-							Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(executableElement.getReturnType());
+							Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(executableElement.getReturnType(), schemaMap);
 							// the schema is an object or enum -> we add it to the map
 							propertySchemaMap.entrySet()
 								.stream()
+								.filter(entry -> !entry.getKey().toString().equals(executableElement.getReturnType().toString()))
 								.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
 									|| Type.ENUM.equals(entry.getValue().getType()))
 								.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
