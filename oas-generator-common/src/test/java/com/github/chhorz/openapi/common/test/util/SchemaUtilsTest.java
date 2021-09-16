@@ -41,6 +41,7 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -103,9 +104,9 @@ class SchemaUtilsTest {
 		// then
 		assertThat(schemaMap)
 			.isNotNull()
-			.hasSize(12)
+			.hasSize(14)
 			.containsOnlyKeys(
-				"ClassA", "ClassB", "ClassC", "ClassD", "ClassE", "ClassF", "ClassG",
+				"ClassA", "ClassB", "ClassC", "ClassD", "ClassE", "ClassF", "ClassG", "ClassH", "ClassI",
 				"EnumA", "EnumB",
 				"InterfaceA", "InterfaceB", "InterfaceC");
 	}
@@ -261,6 +262,7 @@ class SchemaUtilsTest {
 	@Test
 	@GitHubIssue("#166")
 	@GitHubIssue("#171")
+	@GitHubIssue("#195")
 	void customObjectTest() {
 		// given
 		TypeMirror classBType = elements.getTypeElement(ClassB.class.getCanonicalName()).asType();
@@ -279,12 +281,13 @@ class SchemaUtilsTest {
 			.containsExactly(Type.OBJECT, null, true);
 
 		assertThat(schemaMap.get(classBType).getProperties())
-			.hasSize(5)
-			.containsKeys("int", "integer", "date", "time", "enumerations");
+			.hasSize(6)
+			.containsKeys("int", "integer", "time", "date", "dateTime", "enumerations");
 
 		assertThat(schemaMap.get(classBType).getProperties().values())
 			.extracting("type", "format", "deprecated")
 			.contains(tuple(Type.INTEGER, Format.INT32, false),
+				tuple(Type.STRING, Format.TIME, false),
 				tuple(Type.STRING, Format.DATE, false),
 				tuple(Type.STRING, Format.DATE_TIME, true),
 				tuple(Type.ARRAY, null, false));
@@ -410,6 +413,24 @@ class SchemaUtilsTest {
 			.containsExactly(tuple(Type.STRING, null),
 				tuple(Type.INTEGER, Format.INT64),
 				tuple(Type.STRING, null));
+	}
+
+	@Test
+	@GitHubIssue("#194")
+	void circularDependenciesTest() {
+		// given
+		TypeMirror classHType = elements.getTypeElement(ClassH.class.getCanonicalName()).asType();
+		TypeMirror classIType = elements.getTypeElement(ClassI.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classHType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(2);
+
+		assertThat(schemaMap.keySet().stream().map(TypeMirror::toString).collect(Collectors.toList()))
+			.containsExactly(ClassH.class.getCanonicalName(), ClassI.class.getCanonicalName());
 	}
 
 	@Test

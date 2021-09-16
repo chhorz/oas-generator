@@ -463,6 +463,47 @@ class GitHubIssuesTestAssertions {
 	}
 
 	/**
+	 * Validates the given order resource.
+	 *
+	 * @param documentContext the json document context
+	 *
+	 * @see Resource
+	 */
+	public static void validateSchemaForOrderResources(final DocumentContext documentContext) {
+		Schema orderSchema = documentContext.read("$.components.schemas.OrderResource", Schema.class);
+		Schema orderItemSchema = documentContext.read("$.components.schemas.OrderItemResource", Schema.class);
+
+		assertThat(orderSchema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "a test order resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+		assertThat(orderSchema.getProperties())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("orderItems")
+			.extractingByKey("orderItems")
+			.isInstanceOfSatisfying(Schema.class, propertySchema -> assertThat(propertySchema)
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("description", "a list of order items")
+				.extracting(Schema::getItems)
+				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/OrderItemResource")));
+
+		assertThat(orderItemSchema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "a test order item resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+		assertThat(orderItemSchema.getProperties())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("order");
+		assertThat(documentContext.read("$.components.schemas.OrderItemResource.properties.order.$ref", String.class))
+			.isNotNull()
+			.isEqualTo("#/components/schemas/OrderResource");
+	}
+
+	/**
 	 * Validates the read_role security scheme
 	 *
 	 * @param documentContext the json document context

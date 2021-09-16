@@ -42,6 +42,9 @@ public class Schema {
 
 	@Required
 	private Type type;
+	/**
+	 * The specification documents some example values, but the {@code format} attribute allows any values.
+	 */
 	private Format format;
 	@Markdown
 	private String description;
@@ -213,13 +216,17 @@ public class Schema {
 	}
 
 	public enum Format {
-		BYTE("bype"),
+		BINARY("binary"),
+		BYTE("byte"),
+		TIME("time"), // value that is not documented within the specification
 		DATE("date"),
 		DATE_TIME("date-time"),
 		DOUBLE("double"),
 		FLOAT("float"),
 		INT32("int32"),
-		INT64("int64");
+		INT64("int64"),
+		PASSWORD("password");
+
 
 		private final String openApiValue;
 

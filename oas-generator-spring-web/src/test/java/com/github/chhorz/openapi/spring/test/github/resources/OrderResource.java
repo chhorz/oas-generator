@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2021 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,33 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.github.chhorz.openapi.common.test.util.resources;
+package com.github.chhorz.openapi.spring.test.github.resources;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
-@Deprecated
-public class ClassB {
+/**
+ * a test order resource for GitHub issue tests
+ */
+public class OrderResource {
 
-	@JsonProperty("int")
-	public int i;
-
-	@JsonProperty
-	public int integer;
-
-	public LocalTime time;
-	public LocalDate date;
-	@Deprecated
-	public LocalDateTime dateTime;
-
-	@JsonIgnore
-	public EnumA enumeration;
-
-	public List<EnumB> enumerations;
+	/**
+	 * a list of order items
+	 */
+	public List<OrderItemResource> orderItems;
 
 }
