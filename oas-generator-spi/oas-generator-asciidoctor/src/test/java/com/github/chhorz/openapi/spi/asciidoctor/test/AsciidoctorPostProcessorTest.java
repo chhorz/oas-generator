@@ -206,7 +206,7 @@ class AsciidoctorPostProcessorTest {
 		orders.setGet(getOrders);
 
 		OpenAPI openApi = new OpenAPI();
-		openApi.setOpenapi("3.0.3");
+		openApi.setOpenapi("3.1.0");
 		openApi.setInfo(info);
 		openApi.putPathItemObject("/orders", orders);
 		openApi.setComponents(components);
