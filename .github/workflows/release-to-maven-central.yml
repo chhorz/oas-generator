@@ -88,7 +88,7 @@ jobs:
     steps:
       - name: 'Select Milestone'
         id: select_milestone_data
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         with:
           script: |
             const milestones = await github.issues.listMilestones({
@@ -122,7 +122,7 @@ jobs:
     steps:
       - name: 'Load Bug List'
         id: bug_list
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -157,7 +157,7 @@ jobs:
     steps:
       - name: 'Load Feature List'
         id: feature_list
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -192,7 +192,7 @@ jobs:
     steps:
       - name: Load Improvement List
         id: improvement_list
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -228,7 +228,7 @@ jobs:
     steps:
       - name: Create GitHub Release
         id: create_github_release
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -275,7 +275,7 @@ jobs:
     steps:
       - name: 'Close Milestone'
         id: close_milestone
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
