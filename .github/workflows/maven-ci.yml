@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         # test against LTS version:
-        java: [ 8, 11 ]
+        java: [ 8, 11, 17 ]
     steps:
     - name: 'Checkout repository'
       uses: actions/checkout@v2
@@ -17,17 +17,10 @@ jobs:
     - name: 'Set up JDK'
       uses: actions/setup-java@v2
       with:
-        distribution: 'adopt'
+        distribution: 'temurin'
         java-package: jdk
         java-version: ${{ matrix.java }}
-
-    - name: 'Cache local Maven repository'
-      uses: actions/cache@v2.1.6
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+        cache: 'maven'
 
     - name: 'Build with Maven'
       run: ./mvnw -V -B --no-transfer-progress install
@@ -44,20 +37,13 @@ jobs:
       - name: 'Set up JDK 8'
         uses: actions/setup-java@v2
         with:
-          distribution: 'adopt'
+          distribution: 'temurin'
           java-package: jdk
           java-version: 8
+          cache: 'maven'
           server-id: oss.sonatype.org
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-
-      - name: 'Cache local Maven repository'
-        uses: actions/cache@v2.1.6
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
 
       - name: 'Publish snapshot'
         if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.repository == 'chhorz/oas-generator'
