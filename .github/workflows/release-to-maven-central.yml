@@ -81,10 +81,10 @@ jobs:
     steps:
       - name: 'Select Milestone'
         id: select_milestone_data
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         with:
           script: |
-            const milestones = await github.issues.listMilestones({
+            const milestones = await github.rest.issues.listMilestones({
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open'
@@ -115,12 +115,12 @@ jobs:
     steps:
       - name: 'Load Bug List'
         id: bug_list
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
             // get bug labelled issues for selected milestone
-            const bugs = await github.issues.listForRepo({
+            const bugs = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: ['type: bug'],
@@ -150,12 +150,12 @@ jobs:
     steps:
       - name: 'Load Feature List'
         id: feature_list
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
             // get feature labelled issues for selected milestone
-            const features = await github.issues.listForRepo({
+            const features = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: ['type: feature'],
@@ -185,12 +185,12 @@ jobs:
     steps:
       - name: Load Improvement List
         id: improvement_list
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
             // get improvement labelled issues for selected milestone
-            const improvements = await github.issues.listForRepo({
+            const improvements = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: ['type: improvement'],
@@ -221,7 +221,7 @@ jobs:
     steps:
       - name: Create GitHub Release
         id: create_github_release
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
@@ -249,7 +249,7 @@ jobs:
             const release_candidate = '${{ needs.load_milestone.outputs.milestone_title }}'.toLowerCase().includes('rc')
             console.log(release_candidate)
 
-            const release = await github.repos.createRelease({
+            const release = await github.rest.repos.createRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: 'v${{ needs.load_milestone.outputs.milestone_title }}',
@@ -268,11 +268,11 @@ jobs:
     steps:
       - name: 'Close Milestone'
         id: close_milestone
-        uses: actions/github-script@v4.1
+        uses: actions/github-script@v5
         if: ${{ needs.load_milestone.outputs.milestone_number }} > 0
         with:
           script: |
-            const milestone_update =  await github.issues.updateMilestone({
+            const milestone_update =  await github.rest.issues.updateMilestone({
               owner: context.repo.owner,
               repo: context.repo.repo,
               milestone_number: ${{ needs.load_milestone.outputs.milestone_number }},
