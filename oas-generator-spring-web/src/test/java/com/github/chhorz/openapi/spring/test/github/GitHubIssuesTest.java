@@ -1246,6 +1246,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 	@Test
 	@GitHubIssue("#180")
+	@GitHubIssue("#213")
 	void getGithubIssue180() {
 		// run annotation processor
 		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue180.class, TestResource.class);
