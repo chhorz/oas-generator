@@ -132,7 +132,7 @@ jobs:
             var bug_list
             if(bugs.data.length > 0) {
               bug_list = '#### Bugs\n'
-              bugs.data.forEach(issue => bug_list = bug_list.concat('* ', issue.title, ' (#', issue.number, ')\n'))
+              bugs.data.forEach(issue => bug_list = bug_list.concat('* ', issue.title.replaceAll('`', '\`'), ' (#', issue.number, ')\n'))
             } else {
               bug_list = ''
             }
@@ -167,7 +167,7 @@ jobs:
             var feature_list
             if(features.data.length > 0) {
               feature_list = '#### Features\n'
-              features.data.forEach(issue => feature_list = feature_list.concat('* ', issue.title, ' (#', issue.number, ')\n'))
+              features.data.forEach(issue => feature_list = feature_list.concat('* ', issue.title.replaceAll('`', '\`'), ' (#', issue.number, ')\n'))
             } else {
               feature_list = ''
             }
@@ -202,7 +202,7 @@ jobs:
             var improvement_list
             if(improvements.data.length > 0) {
               improvement_list = '#### Improvements\n'
-              improvements.data.forEach(issue => improvement_list = improvement_list.concat('* ', issue.title, ' (#', issue.number, ')\n'))
+              improvements.data.forEach(issue => improvement_list = improvement_list.concat('* ', issue.title.replaceAll('`', '\`'), ' (#', issue.number, ')\n'))
             } else {
               improvement_list = ''
             }
