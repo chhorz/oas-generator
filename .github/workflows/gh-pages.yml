@@ -19,14 +19,7 @@ jobs:
         uses: actions/setup-node@v2.4.1
         with:
           node-version: '12.x'
-
-      - name: 'Cache dependencies'
-        uses: actions/cache@v2.1.6
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: 'npm'
 
       - run: npm ci
       - run: npm run docs:build
