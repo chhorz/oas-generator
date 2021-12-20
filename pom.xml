@@ -84,7 +84,7 @@
 
 		<!-- dependency versions -->
 		<asciidoctorj-diagram.version>2.2.1</asciidoctorj-diagram.version>
-		<jackson.version>2.13.0</jackson.version>
+		<jackson.version>2.13.1</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
 		<snakeyaml.version>1.29</snakeyaml.version>
 		<spring-security-core.version>5.6.0</spring-security-core.version>
