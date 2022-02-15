@@ -10,7 +10,7 @@
 * Reference Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.5/oas-generator.html)_)
 * API Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.5/apidocs/)_)
 
-### 0.2.4 <Badge text="Latest Release" vertical="top"/>
+### 0.2.4
 * [GitHub Release](https://github.com/chhorz/oas-generator/releases/tag/v0.2.4) _(2021-07-21)_
 * Reference Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.4/oas-generator.html)_)
 * API Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.4/apidocs/)_)
