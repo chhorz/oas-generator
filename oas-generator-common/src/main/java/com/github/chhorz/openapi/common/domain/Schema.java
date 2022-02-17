@@ -59,6 +59,8 @@ public class Schema {
 
 	private Object items;
 
+	private Object additionalProperties;
+
 	public List<String> getRequired() {
 		return required;
 	}
@@ -175,6 +177,14 @@ public class Schema {
 		this.items = items;
 	}
 
+	public Object getAdditionalProperties() {
+		return additionalProperties;
+	}
+
+	public void setAdditionalProperties(Object additionalProperties) {
+		this.additionalProperties = additionalProperties;
+	}
+
 	@Override
 	public String toString() {
 		return new StringJoiner(", ", Schema.class.getSimpleName() + "[", "]")
@@ -190,6 +200,7 @@ public class Schema {
 			.add("defaultValue=" + defaultValue)
 			.add("enumValues=" + enumValues)
 			.add("items=" + items)
+			.add("additionalProperties=" + additionalProperties)
 			.toString();
 	}
 

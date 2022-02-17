@@ -104,9 +104,9 @@ class SchemaUtilsTest {
 		// then
 		assertThat(schemaMap)
 			.isNotNull()
-			.hasSize(14)
+			.hasSize(15)
 			.containsOnlyKeys(
-				"ClassA", "ClassB", "ClassC", "ClassD", "ClassE", "ClassF", "ClassG", "ClassH", "ClassI",
+				"ClassA", "ClassB", "ClassC", "ClassD", "ClassE", "ClassF", "ClassG", "ClassH", "ClassI", "ClassJ",
 				"EnumA", "EnumB",
 				"InterfaceA", "InterfaceB", "InterfaceC");
 	}
@@ -431,6 +431,60 @@ class SchemaUtilsTest {
 
 		assertThat(schemaMap.keySet().stream().map(TypeMirror::toString).collect(Collectors.toList()))
 			.containsExactly(ClassH.class.getCanonicalName(), ClassI.class.getCanonicalName());
+	}
+
+	@Test
+	@GitHubIssue("#213")
+	void mapTest() {
+		// given
+		TypeMirror classJType = elements.getTypeElement(ClassJ.class.getCanonicalName()).asType();
+
+		// when
+		Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(classJType);
+
+		// then
+		assertThat(schemaMap)
+			.hasSize(2);
+
+		assertThat(schemaMap.keySet().stream().map(TypeMirror::toString).collect(Collectors.toList()))
+			.containsExactly(ClassJ.class.getCanonicalName(), ClassE.class.getCanonicalName());
+
+		assertThat(schemaMap.get(classJType).getProperties())
+			.hasSize(3);
+
+		assertThat(schemaMap.get(classJType).getProperties().get("stringMap"))
+			.isInstanceOfSatisfying(Schema.class, schema -> {
+				assertThat(schema)
+					.hasFieldOrPropertyWithValue("type", Type.OBJECT);
+
+				assertThat(schema.getAdditionalProperties())
+					.isInstanceOfSatisfying(Schema.class, additionalProperty -> {
+						assertThat(additionalProperty)
+							.hasFieldOrPropertyWithValue("type", Type.STRING);
+					});
+			});
+
+		assertThat(schemaMap.get(classJType).getProperties().get("integerMap"))
+			.isInstanceOfSatisfying(Schema.class, schema -> {
+				assertThat(schema)
+					.hasFieldOrPropertyWithValue("type", Type.OBJECT);
+
+				assertThat(schema.getAdditionalProperties())
+					.isInstanceOfSatisfying(Schema.class, additionalProperty -> {
+						assertThat(additionalProperty)
+							.hasFieldOrPropertyWithValue("type", Type.INTEGER)
+							.hasFieldOrPropertyWithValue("format", Format.INT32);
+					});
+			});
+
+		assertThat(schemaMap.get(classJType).getProperties().get("objectMap"))
+			.isInstanceOfSatisfying(Schema.class, schema -> {
+				assertThat(schema)
+					.hasFieldOrPropertyWithValue("type", Type.OBJECT);
+
+				assertThat(schema.getAdditionalProperties())
+					.isInstanceOfSatisfying(Reference.class, reference -> assertThat(reference.get$ref()).isEqualTo("#/components/schemas/ClassE"));
+			});
 	}
 
 	@Test

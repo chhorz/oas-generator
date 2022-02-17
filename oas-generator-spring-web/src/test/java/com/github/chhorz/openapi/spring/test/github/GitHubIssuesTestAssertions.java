@@ -442,8 +442,8 @@ class GitHubIssuesTestAssertions {
 
 		assertThat(schema.getProperties())
 			.isNotNull()
-			.hasSize(1)
-			.containsOnlyKeys("states");
+			.hasSize(2)
+			.containsOnlyKeys("states", "stringMap");
 
 		assertThat(schema.getProperties().get("states"))
 			.isNotNull()
@@ -460,6 +460,17 @@ class GitHubIssuesTestAssertions {
 			.isNotNull()
 			.hasSize(2)
 			.contains("GOOD", "BAD");
+
+		assertThat(schema.getProperties().get("stringMap"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT)
+			.hasFieldOrPropertyWithValue("description", "");
+		Schema additionalPropertiesSchema = documentContext.read("$.components.schemas.TestResource.properties.stringMap.additionalProperties", Schema.class);
+		assertThat(additionalPropertiesSchema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING);
 	}
 
 	/**

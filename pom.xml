@@ -84,39 +84,40 @@
 
 		<!-- dependency versions -->
 		<asciidoctorj-diagram.version>2.2.1</asciidoctorj-diagram.version>
-		<jackson.version>2.12.5</jackson.version>
+		<jackson.version>2.13.1</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
-		<snakeyaml.version>1.29</snakeyaml.version>
-		<spring-security-core.version>5.5.2</spring-security-core.version>
+		<snakeyaml.version>1.30</snakeyaml.version>
+		<spring-security-core.version>5.6.1</spring-security-core.version>
 		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
 
-		<spring-data-commons.version>2.5.4</spring-data-commons.version>
-		<spring-web.version>5.3.9</spring-web.version>
+		<spring-data-commons.version>2.6.1</spring-data-commons.version>
+		<spring-web.version>5.3.15</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
-		<nohttp-checkstyle.version>0.0.9</nohttp-checkstyle.version>
+		<nohttp-checkstyle.version>0.0.10</nohttp-checkstyle.version>
 
 		<!-- test dependency versions -->
-		<assertj-core.version>3.20.2</assertj-core.version>
-		<junit-jupiter.verison>5.8.0</junit-jupiter.verison>
+		<assertj-core.version>3.22.0</assertj-core.version>
+		<junit-jupiter.verison>5.8.2</junit-jupiter.verison>
 		<jsonassert.version>1.5.0</jsonassert.version>
-		<json-path.version>2.6.0</json-path.version>
+		<json-path.version>2.7.0</json-path.version>
 
-		<spring-hateoas.version>1.3.3</spring-hateoas.version>
+		<spring-hateoas.version>1.4.1</spring-hateoas.version>
 
 		<!-- plugin versions -->
-		<asciidoctor-maven-plugin.version>2.2.1</asciidoctor-maven-plugin.version>
+		<asciidoctor-maven-plugin.version>2.2.2</asciidoctor-maven-plugin.version>
 		<license.maven.plugin.version>3.0</license.maven.plugin.version>
-		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
 		<maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
-		<maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
-		<maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
+		<maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
+		<maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
 		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-		<nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+		<maven-wrapper-plugin.version>3.1.0</maven-wrapper-plugin.version>
+		<nexus-staging-maven-plugin.version>1.6.10</nexus-staging-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -317,6 +318,11 @@
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${maven-surefire-plugin.version}</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-wrapper-plugin</artifactId>
+					<version>${maven-wrapper-plugin.version}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -348,6 +354,11 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-wrapper-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>

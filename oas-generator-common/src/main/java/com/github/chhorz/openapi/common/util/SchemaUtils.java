@@ -334,7 +334,26 @@ public class SchemaUtils {
 
 			schemaMap.put(typeMirror, schema);
 		} else if (processingUtils.isAssignableTo(typeMirror, Map.class)) {
-			// TODO implement
+			schema.setType(Type.OBJECT);
+
+			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, Map.class)[1];
+			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type, schemaMap);
+
+			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
+				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
+				Schema typeSchema = new Schema();
+				if (typeAndFormat != null) {
+					typeSchema.setType(typeAndFormat.getKey());
+					typeSchema.setFormat(typeAndFormat.getValue());
+				}
+				schema.setAdditionalProperties(typeSchema);
+			} else {
+				schema.setAdditionalProperties(Reference.forSchema(ProcessingUtils.getShortName(type)));
+			}
+
+			schemaMap.putAll(propertySchemaMap);
+			
+			schemaMap.put(typeMirror, schema);
 		} else {
 			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
 			schema.setDescription(javaDoc.getDescription());
@@ -399,8 +418,8 @@ public class SchemaUtils {
 							// the schema is an object or enum -> we add it to the map
 							propertySchemaMap.entrySet()
 								.stream()
-								.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
-									|| Type.ENUM.equals(entry.getValue().getType()))
+								.filter(entry -> (Type.OBJECT.equals(entry.getValue().getType()) && entry.getValue().getAdditionalProperties() == null)
+									|| (Type.ENUM.equals(entry.getValue().getType())))
 								.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
 
 							propertySchemaMap.entrySet()
@@ -409,8 +428,8 @@ public class SchemaUtils {
 								.forEach(entry -> {
 									final String propertyName = getPropertyName(vElement);
 
-									if (Type.OBJECT.equals(entry.getValue().getType())
-										|| Type.ENUM.equals(entry.getValue().getType())) {
+									if ((Type.OBJECT.equals(entry.getValue().getType()) && entry.getValue().getAdditionalProperties() == null)
+										|| (Type.ENUM.equals(entry.getValue().getType()))) {
 										schema.putProperty(propertyName,
 											Reference.forSchema(ProcessingUtils.getShortName(variableElementTypeMirror)));
 									} else {
