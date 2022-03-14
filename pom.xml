@@ -84,14 +84,14 @@
 
 		<!-- dependency versions -->
 		<asciidoctorj-diagram.version>2.2.1</asciidoctorj-diagram.version>
-		<jackson.version>2.13.1</jackson.version>
+		<jackson.version>2.13.2</jackson.version>
 		<javadoc-parser.version>0.1.0</javadoc-parser.version>
 		<snakeyaml.version>1.30</snakeyaml.version>
-		<spring-security-core.version>5.6.1</spring-security-core.version>
+		<spring-security-core.version>5.6.2</spring-security-core.version>
 		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
 
-		<spring-data-commons.version>2.6.1</spring-data-commons.version>
-		<spring-web.version>5.3.15</spring-web.version>
+		<spring-data-commons.version>2.6.2</spring-data-commons.version>
+		<spring-web.version>5.3.16</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
@@ -117,7 +117,7 @@
 		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
 		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 		<maven-wrapper-plugin.version>3.1.0</maven-wrapper-plugin.version>
-		<nexus-staging-maven-plugin.version>1.6.10</nexus-staging-maven-plugin.version>
+		<nexus-staging-maven-plugin.version>1.6.12</nexus-staging-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
