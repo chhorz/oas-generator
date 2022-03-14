@@ -196,7 +196,7 @@ public class JaxRSOpenApiProcessor extends OpenAPIProcessor {
 		String returnTag = "";
 		List<ReturnTag> returnTags = javaDoc.getTags(ReturnTag.class);
 		if (returnTags.size() == 1) {
-			returnTag = returnTags.get(0).getDesrcription();
+			returnTag = returnTags.get(0).getDescription();
 		}
 
 		TypeMirror returnType = executableElement.getReturnType();

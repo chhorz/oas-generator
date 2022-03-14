@@ -316,7 +316,7 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
                     String returnTag = "";
                     List<ReturnTag> returnTags = javaDoc.getTags(ReturnTag.class);
                     if (returnTags.size() == 1) {
-                        returnTag = returnTags.get(0).getDesrcription();
+                        returnTag = returnTags.get(0).getDescription();
                     }
 
                     // use return type of method as default response
