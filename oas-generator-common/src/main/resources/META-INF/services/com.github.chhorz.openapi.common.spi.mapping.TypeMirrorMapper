@@ -1,0 +1,8 @@
+com.github.chhorz.openapi.common.spi.mapping.PrimitiveTypeMirrorMapper
+com.github.chhorz.openapi.common.spi.mapping.JavaObjectTypeMirrorMapper
+com.github.chhorz.openapi.common.spi.mapping.ArrayTypeMirrorMapper
+com.github.chhorz.openapi.common.spi.mapping.JavaPackageTypeMirrorMapper
+com.github.chhorz.openapi.common.spi.mapping.ClassTypeMirrorMapper
+com.github.chhorz.openapi.common.spi.mapping.JavaUtilTypeMirrorMapper
+com.github.chhorz.openapi.common.spi.mapping.EnumerationTypeMirrorMapper
+com.github.chhorz.openapi.common.spi.mapping.ObjectTypeMirrorMapper
