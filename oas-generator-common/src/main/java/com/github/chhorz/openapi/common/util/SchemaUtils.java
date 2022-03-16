@@ -1,6 +1,6 @@
 /**
  *
- * Copyright 2018-2021 the original author or authors.
+ * Copyright 2018-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,63 +16,42 @@
  */
 package com.github.chhorz.openapi.common.util;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.javadoc.JavaDoc;
-import com.github.chhorz.javadoc.JavaDocParser;
-import com.github.chhorz.javadoc.JavaDocParserBuilder;
-import com.github.chhorz.javadoc.OutputType;
-import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.domain.MediaType;
 import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
-import com.github.chhorz.openapi.common.domain.Schema.Format;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
+import com.github.chhorz.openapi.common.spi.mapping.TypeMirrorMapper;
 
-import javax.lang.model.element.*;
-import javax.lang.model.type.ArrayType;
-import javax.lang.model.type.NoType;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.lang.annotation.Annotation;
-import java.time.*;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.github.chhorz.openapi.common.util.ComponentUtils.convertSchemaMap;
+import static java.util.ServiceLoader.load;
 
 public class SchemaUtils {
-
-	private static final String GET_PREFIX = "get";
-	private static final String IS_PREFIX = "is";
 
 	private final Elements elements;
 	private final Types types;
 
-	private final ParserProperties parserProperties;
 	private final LogUtils logUtils;
 	private final ProcessingUtils processingUtils;
 
-	private final JavaDocParser parser;
-
-	private final TypeMirror object;
-	private final TypeMirror enumeration;
-
-	private final PackageElement javaLangPackage;
-	private final PackageElement javaMathPackage;
-	private final PackageElement javaTimePackage;
-
 	private final List<TypeMirror> baseTypeMirrors;
+
+	private final List<TypeMirrorMapper> typeMirrorMappers;
 
 	public SchemaUtils(final Elements elements, final Types types, final ParserProperties parserProperties, final LogUtils logUtils) {
 		this(elements, types, parserProperties, logUtils, Collections.emptyList());
@@ -81,23 +60,21 @@ public class SchemaUtils {
 	public SchemaUtils(final Elements elements, final Types types, final ParserProperties parserProperties, final LogUtils logUtils, final List<Class<?>> baseClasses) {
 		this.elements = elements;
 		this.types = types;
-		this.parserProperties = parserProperties;
 		this.logUtils = logUtils;
 
 		processingUtils = new ProcessingUtils(elements, types, logUtils);
-		parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.HTML).build();
-
-		object = elements.getTypeElement(Object.class.getCanonicalName()).asType();
-		enumeration = elements.getTypeElement(Enum.class.getCanonicalName()).asType();
-
-		javaLangPackage = elements.getPackageElement("java.lang");
-		javaMathPackage = elements.getPackageElement("java.math");
-		javaTimePackage = elements.getPackageElement("java.time");
 
 		this.baseTypeMirrors = baseClasses.stream()
 			.map(clazz -> elements.getTypeElement(clazz.getCanonicalName()).asType())
 			.map(types::erasure)
 			.collect(Collectors.toList());
+
+		ServiceLoader<TypeMirrorMapper> serviceLoader = load(TypeMirrorMapper.class, getClass().getClassLoader());
+
+		typeMirrorMappers = StreamSupport.stream(serviceLoader.spliterator(), false)
+			.collect(Collectors.toList());
+
+		typeMirrorMappers.forEach(mapper -> mapper.setup(elements, types, logUtils, parserProperties, typeMirrorMappers));
 	}
 
 	public Map<String, Schema> parsePackages(final List<String> packages) {
@@ -174,360 +151,11 @@ public class SchemaUtils {
 
 		logUtils.logDebug("Parsing type: %s", typeMirror.toString());
 
-		Schema schema = new Schema();
-
-		Element element = types.asElement(typeMirror);
-		if (element != null && element.getAnnotation(Deprecated.class) != null) {
-			schema.setDeprecated(true);
-		}
-
-		if (typeMirror.getKind().isPrimitive()) {
-			SimpleEntry<Type, Format> typeAndFormat = getPrimitiveTypeAndFormat(typeMirror);
-			if (typeAndFormat != null) {
-				schema.setType(typeAndFormat.getKey());
-				schema.setFormat(typeAndFormat.getValue());
-				// schema.setDescription(propertyDoc.getDescription());
-			}
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isSameType(typeMirror, Object.class)) {
-			schema.setType(Type.OBJECT);
-
-			schemaMap.put(typeMirror, schema);
-		} else if (TypeKind.ARRAY.equals(typeMirror.getKind())) {
-			schema.setType(Type.ARRAY);
-
-			TypeMirror componentType;
-			if (typeMirror instanceof ArrayType) {
-				componentType = ((ArrayType) typeMirror).getComponentType();
-			} else {
-				componentType = elements.getTypeElement(typeMirror.toString().replaceAll("\\[]", "")).asType();
-			}
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(componentType, schemaMap);
-
-			if (componentType.getKind().isPrimitive()) {
-				SimpleEntry<Type, Format> typeAndFormat = getPrimitiveTypeAndFormat(componentType);
-				Schema typeSchema = new Schema();
-				if (typeAndFormat != null) {
-					typeSchema.setType(typeAndFormat.getKey());
-					typeSchema.setFormat(typeAndFormat.getValue());
-				}
-				schema.setItems(typeSchema);
-			} else if (processingUtils.isTypeInPackage(componentType, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(componentType);
-				Schema typeSchema = new Schema();
-				if (typeAndFormat != null) {
-					typeSchema.setType(typeAndFormat.getKey());
-					typeSchema.setFormat(typeAndFormat.getValue());
-				}
-				schema.setItems(typeSchema);
-			} else {
-				schema.setItems(Reference.forSchema(ProcessingUtils.getShortName(componentType)));
-			}
-
-			schemaMap.putAll(propertySchemaMap);
-
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isTypeInPackage(typeMirror, javaLangPackage)) {
-			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
-			schema.setDescription(javaDoc.getDescription());
-
-			SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(typeMirror);
-			if (typeAndFormat != null) {
-				schema.setType(typeAndFormat.getKey());
-				schema.setFormat(typeAndFormat.getValue());
-			}
-
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isTypeInPackage(typeMirror, javaMathPackage)) {
-			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
-			schema.setDescription(javaDoc.getDescription());
-
-			schema.setType(Type.NUMBER);
-			schema.setFormat(Format.DOUBLE);
-
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isTypeInPackage(typeMirror, javaTimePackage)) {
-			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
-			schema.setDescription(javaDoc.getDescription());
-
-			SimpleEntry<Type, Format> typeAndFormat = getJavaTimeTypeAndFormat(typeMirror);
-			if (typeAndFormat != null) {
-				schema.setType(typeAndFormat.getKey());
-				schema.setFormat(typeAndFormat.getValue());
-			}
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isAssignableTo(typeMirror, Date.class)) {
-			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
-			schema.setDescription(javaDoc.getDescription());
-
-			schema.setType(Type.STRING);
-			schema.setFormat(Format.DATE_TIME);
-
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isAssignableTo(typeMirror, Optional.class)) {
-			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, Optional.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type, schemaMap);
-
-			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
-				if (typeAndFormat != null) {
-					schema.setType(typeAndFormat.getKey());
-					schema.setFormat(typeAndFormat.getValue());
-				}
-			} else {
-				schema.setItems(Reference.forSchema(ProcessingUtils.getShortName(type)));
-			}
-
-			schemaMap.putAll(propertySchemaMap);
-
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isAssignableTo(typeMirror, List.class)) {
-			schema.setType(Type.ARRAY);
-
-			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, List.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type, schemaMap);
-
-			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
-				Schema typeSchema = new Schema();
-				if (typeAndFormat != null) {
-					typeSchema.setType(typeAndFormat.getKey());
-					typeSchema.setFormat(typeAndFormat.getValue());
-				}
-				schema.setItems(typeSchema);
-			} else if (types.asElement(type).getKind().equals(ElementKind.ENUM)) {
-				Schema typeSchema = new Schema();
-				typeSchema.setType(Type.STRING);
-
-				types.asElement(type).getEnclosedElements()
-					.stream()
-					.filter(e -> ElementKind.ENUM_CONSTANT.equals(e.getKind()))
-					.forEach(vElement -> typeSchema.addEnumValue(vElement.toString()));
-
-				schema.setItems(typeSchema);
-			} else {
-				schema.setItems(Reference.forSchema(ProcessingUtils.getShortName(type)));
-			}
-
-			schemaMap.putAll(propertySchemaMap);
-
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isAssignableTo(typeMirror, Set.class)) {
-			schema.setType(Type.ARRAY);
-
-			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, Set.class)[0];
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type, schemaMap);
-
-			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
-				Schema typeSchema = new Schema();
-				if (typeAndFormat != null) {
-					typeSchema.setType(typeAndFormat.getKey());
-					typeSchema.setFormat(typeAndFormat.getValue());
-				}
-				schema.setItems(typeSchema);
-			} else {
-				schema.setItems(Reference.forSchema(ProcessingUtils.getShortName(type)));
-			}
-
-			schemaMap.putAll(propertySchemaMap);
-
-			schemaMap.put(typeMirror, schema);
-		} else if (processingUtils.isAssignableTo(typeMirror, Map.class)) {
-			schema.setType(Type.OBJECT);
-
-			TypeMirror type = processingUtils.removeEnclosingType(typeMirror, Map.class)[1];
-			Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(type, schemaMap);
-
-			if (processingUtils.isTypeInPackage(type, javaLangPackage)) {
-				SimpleEntry<Type, Format> typeAndFormat = getJavaLangTypeAndFormat(type);
-				Schema typeSchema = new Schema();
-				if (typeAndFormat != null) {
-					typeSchema.setType(typeAndFormat.getKey());
-					typeSchema.setFormat(typeAndFormat.getValue());
-				}
-				schema.setAdditionalProperties(typeSchema);
-			} else {
-				schema.setAdditionalProperties(Reference.forSchema(ProcessingUtils.getShortName(type)));
-			}
-
-			schemaMap.putAll(propertySchemaMap);
-			
-			schemaMap.put(typeMirror, schema);
-		} else {
-			JavaDoc javaDoc = parser.parse(elements.getDocComment(element));
-			schema.setDescription(javaDoc.getDescription());
-
-			schemaMap.put(typeMirror, schema);
-
-			if (element.getKind().equals(ElementKind.ENUM)) {
-				schema.setType(Type.STRING);
-
-				element.getEnclosedElements()
-					.stream()
-					.filter(e -> ElementKind.ENUM_CONSTANT.equals(e.getKind()))
-					.forEach(vElement -> schema.addEnumValue(vElement.toString()));
-
-			} else {
-				schema.setType(Type.OBJECT);
-
-				TypeMirror superType = element.asType();
-
-				Map<TypeMirror, Map<TypeParameterElement, TypeMirror>> typeParameterMap = new HashMap<>();
-
-				// follow class hierarchy until object or enum
-				while (!(superType instanceof NoType) && processingUtils.doesTypeDiffer(superType, object)
-					&& processingUtils.doesTypeDiffer(types.erasure(superType), enumeration)) {
-
-					TypeElement typeElement = elements.getTypeElement(types.erasure(superType).toString());
-
-					List<? extends TypeParameterElement> typeParameters = typeElement.getTypeParameters();
-
-					// handle class attributes
-					typeElement.getEnclosedElements()
-						.stream()
-						.filter(VariableElement.class::isInstance)
-						.filter(this::isValidAttribute)
-						.forEach(vElement -> {
-
-							logUtils.logDebug(String.format("Parsing attribute: %s", vElement));
-
-							JavaDoc propertyDoc = parser.parse(elements.getDocComment(vElement));
-
-							TypeMirror variableElementTypeMirror;
-
-							TypeMirror typeMirrorFromTypeArgument = null;
-							Map<TypeParameterElement, TypeMirror> typeParametersMap = typeParameterMap.get(types.erasure(vElement.getEnclosingElement().asType()));
-							if (typeParametersMap != null) {
-								typeMirrorFromTypeArgument = typeParameters
-									.stream()
-									.filter(typeParameter -> typeParameter.asType().equals(vElement.asType()))
-									.findFirst()
-									.map(typeParametersMap::get)
-									.orElse(null);
-							}
-
-							if (typeMirrorFromTypeArgument != null) {
-								variableElementTypeMirror = typeMirrorFromTypeArgument;
-							} else {
-								variableElementTypeMirror = vElement.asType();
-							}
-
-							// lets do some recursion
-							Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(variableElementTypeMirror, schemaMap);
-							// the schema is an object or enum -> we add it to the map
-							propertySchemaMap.entrySet()
-								.stream()
-								.filter(entry -> (Type.OBJECT.equals(entry.getValue().getType()) && entry.getValue().getAdditionalProperties() == null)
-									|| (Type.ENUM.equals(entry.getValue().getType())))
-								.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
-
-							propertySchemaMap.entrySet()
-								.stream()
-								.filter(entry -> entry.getKey().toString().equals(variableElementTypeMirror.toString()))
-								.forEach(entry -> {
-									final String propertyName = getPropertyName(vElement);
-
-									if ((Type.OBJECT.equals(entry.getValue().getType()) && entry.getValue().getAdditionalProperties() == null)
-										|| (Type.ENUM.equals(entry.getValue().getType()))) {
-										schema.putProperty(propertyName,
-											Reference.forSchema(ProcessingUtils.getShortName(variableElementTypeMirror)));
-									} else {
-										Schema propertySchema = entry.getValue();
-
-										if (OpenAPIProcessor.isClassAvailable("javax.validation.constraints.Min")) {
-											getValidationValue(vElement, NotNull.class, notNull -> true)
-												.ifPresent(notNull -> schema.addRequired(propertyName));
-											getValidationValue(vElement, Min.class, Min::value)
-												.ifPresent(propertySchema::setMinimum);
-											getValidationValue(vElement, Max.class, Max::value)
-												.ifPresent(propertySchema::setMaximum);
-											getValidationValue(vElement, Pattern.class, Pattern::regexp)
-												.ifPresent(propertySchema::setPattern);
-										}
-
-										propertySchema.setDescription(propertyDoc.getDescription());
-										if (vElement.getAnnotation(Deprecated.class) != null) {
-											propertySchema.setDeprecated(true);
-										}
-										schema.putProperty(propertyName, propertySchema);
-									}
-								});
-						});
-
-					typeParameterMap.putAll(processingUtils.populateTypeParameterMap(typeElement, typeParameterMap));
-
-					superType = typeElement.getSuperclass();
-				}
-
-				// handle getters
-				if (processingUtils.isInterface(typeMirror) && parserProperties.getIncludeGetters()) {
-					types.directSupertypes(typeMirror).stream()
-						.filter(directSupertype -> processingUtils.doesTypeDiffer(directSupertype, object))
-						.map(t -> createTypeMirrorSchemaMap(t, schemaMap))
-						.flatMap(typeMirrorSchemaMap -> typeMirrorSchemaMap.values().stream())
-						.map(Schema::getProperties)
-						.filter(Objects::nonNull)
-						.flatMap(propertyMap -> propertyMap.entrySet().stream())
-						.forEach(entry -> {
-							if (entry.getValue() instanceof Schema) {
-								schema.putProperty(entry.getKey(), (Schema) entry.getValue());
-							} else if (entry.getValue() instanceof Reference) {
-								schema.putProperty(entry.getKey(), (Reference) entry.getValue());
-							}
-						});
-
-					element.getEnclosedElements()
-						.stream()
-						.filter(ExecutableElement.class::isInstance)
-						.map(ExecutableElement.class::cast)
-						.filter(executableElement -> {
-							final String executableElementName = executableElement.getSimpleName().toString();
-							return (executableElementName.startsWith(GET_PREFIX) && executableElementName.length() > GET_PREFIX.length())
-								|| (executableElementName.startsWith(IS_PREFIX) && executableElementName.length() > IS_PREFIX.length());
-						})
-						.filter(this::isValidAttribute)
-						.forEach(executableElement -> {
-
-							logUtils.logDebug(String.format("Parsing getter: %s", executableElement.toString()));
-
-							JavaDoc getterDoc = parser.parse(elements.getDocComment(executableElement));
-
-							// lets do some recursion
-							Map<TypeMirror, Schema> propertySchemaMap = createTypeMirrorSchemaMap(executableElement.getReturnType(), schemaMap);
-							// the schema is an object or enum -> we add it to the map
-							propertySchemaMap.entrySet()
-								.stream()
-								.filter(entry -> !entry.getKey().toString().equals(executableElement.getReturnType().toString()))
-								.filter(entry -> Type.OBJECT.equals(entry.getValue().getType())
-									|| Type.ENUM.equals(entry.getValue().getType()))
-								.forEach(entry -> schemaMap.put(entry.getKey(), entry.getValue()));
-
-							propertySchemaMap.entrySet()
-								.stream()
-								.filter(entry -> entry.getKey().equals(executableElement.getReturnType()))
-								.forEach(entry -> {
-									final String propertyName = getPropertyName(executableElement);
-
-									if (Type.OBJECT.equals(entry.getValue().getType())
-										|| Type.ENUM.equals(entry.getValue().getType())) {
-										schema.putProperty(propertyName,
-											Reference.forSchema(ProcessingUtils.getShortName(executableElement.getReturnType())));
-									} else {
-										Schema propertySchema = entry.getValue();
-										propertySchema.setDescription(getterDoc.getDescription());
-										if (executableElement.getAnnotation(Deprecated.class) != null) {
-											propertySchema.setDeprecated(true);
-										}
-										schema.putProperty(propertyName, propertySchema);
-									}
-								});
-						});
-				}
-
-			}
-			schemaMap.put(typeMirror, schema);
-		}
+		typeMirrorMappers.stream()
+			.filter(mapper -> mapper.test(typeMirror))
+			.findFirst()
+			.map(mapper -> mapper.map(typeMirror, parsedSchemaMap))
+			.ifPresent(schemaMap::putAll);
 
 		return schemaMap;
 	}
@@ -557,105 +185,6 @@ public class SchemaUtils {
 		}
 
 		return schemaMap;
-	}
-
-	private boolean isValidAttribute(final Element element) {
-		boolean valid = true;
-
-		if (element.getAnnotation(JsonIgnore.class) != null) {
-			valid = false;
-		} else if (element.getModifiers().contains(Modifier.STATIC)) {
-			valid = false;
-		}
-
-		// TODO check for getter visibility
-
-		return valid;
-	}
-
-	private String getPropertyName(final Element element) {
-		JsonProperty jsonProperty = element.getAnnotation(JsonProperty.class);
-		if (jsonProperty != null && !JsonProperty.USE_DEFAULT_NAME.equals(jsonProperty.value())) {
-			return jsonProperty.value();
-		} else if (element instanceof ExecutableElement) {
-			final String executableElementName = element.getSimpleName().toString();
-			if (executableElementName.startsWith(GET_PREFIX) && executableElementName.length() > GET_PREFIX.length()) {
-				String shortName = executableElementName.substring(GET_PREFIX.length());
-				return shortName.substring(0, 1).toLowerCase() + shortName.substring(1);
-			} else if (executableElementName.startsWith(IS_PREFIX) && executableElementName.length() > IS_PREFIX.length()) {
-				String shortName = executableElementName.substring(IS_PREFIX.length());
-				return shortName.substring(0, 1).toLowerCase() + shortName.substring(1);
-			} else {
-				// TODO
-				throw new RuntimeException("Invalid method");
-			}
-		} else {
-			return element.toString();
-		}
-	}
-
-	private <A extends Annotation, V> Optional<V> getValidationValue(final Element element, final Class<A> clazz, final Function<A, V> valueProvider) {
-		A annotation = element.getAnnotation(clazz);
-		if (annotation != null) {
-			return Optional.ofNullable(valueProvider.apply(annotation));
-		} else {
-			return Optional.empty();
-		}
-	}
-
-	private SimpleEntry<Type, Format> getPrimitiveTypeAndFormat(final TypeMirror typeMirror) {
-		switch (typeMirror.getKind()) {
-			case BOOLEAN:
-				return new SimpleEntry<>(Type.BOOLEAN, null);
-			case BYTE:
-				return new SimpleEntry<>(Type.STRING, Format.BYTE);
-			case CHAR:
-				return new SimpleEntry<>(Type.STRING, null);
-			case INT:
-				return new SimpleEntry<>(Type.INTEGER, Format.INT32);
-			case LONG:
-				return new SimpleEntry<>(Type.INTEGER, Format.INT64);
-			case FLOAT:
-				return new SimpleEntry<>(Type.NUMBER, Format.FLOAT);
-			case DOUBLE:
-				return new SimpleEntry<>(Type.NUMBER, Format.DOUBLE);
-			case SHORT:
-				return new SimpleEntry<>(Type.INTEGER, Format.INT32);
-			default:
-				return null;
-		}
-	}
-
-	private SimpleEntry<Type, Format> getJavaLangTypeAndFormat(final TypeMirror typeMirror) {
-		SimpleEntry<Type, Format> typeAndFormat = null;
-
-		if (processingUtils.isSameType(typeMirror, String.class)) {
-			typeAndFormat = new SimpleEntry<>(Type.STRING, null);
-		}
-
-		try {
-			typeAndFormat = getPrimitiveTypeAndFormat(types.unboxedType(typeMirror));
-		} catch (IllegalArgumentException e) {
-			// TODO: handle finally clause
-		}
-
-		return typeAndFormat;
-	}
-
-	private SimpleEntry<Type, Format> getJavaTimeTypeAndFormat(final TypeMirror typeMirror) {
-		SimpleEntry<Type, Format> typeAndFormat = null;
-
-		if(processingUtils.isSameType(typeMirror, LocalTime.class)) {
-			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.TIME);
-		} else if (processingUtils.isSameType(typeMirror, LocalDate.class)) {
-			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE);
-		} else if (processingUtils.isSameType(typeMirror, LocalDateTime.class)
-			|| processingUtils.isSameType(typeMirror, ZonedDateTime.class)
-			|| processingUtils.isSameType(typeMirror, OffsetDateTime.class)) {
-			typeAndFormat = new SimpleEntry<>(Type.STRING, Format.DATE_TIME);
-		}
-
-		return typeAndFormat;
 	}
 
 	public static Schema mergeSchemas(final Schema one, final Schema two) {
