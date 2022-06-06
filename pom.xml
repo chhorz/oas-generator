@@ -89,7 +89,7 @@
 		<javadoc-parser.version>0.2.0</javadoc-parser.version>
 		<snakeyaml.version>1.30</snakeyaml.version>
 		<spring-security-core.version>5.7.1</spring-security-core.version>
-		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
+		<jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
 
 		<spring-data-commons.version>2.7.0</spring-data-commons.version>
 		<spring-web.version>5.3.20</spring-web.version>
