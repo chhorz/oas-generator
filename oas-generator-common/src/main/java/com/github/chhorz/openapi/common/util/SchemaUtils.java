@@ -38,10 +38,10 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.lang.annotation.Annotation;
 import java.time.*;
 import java.util.AbstractMap.SimpleEntry;
@@ -435,7 +435,7 @@ public class SchemaUtils {
 									} else {
 										Schema propertySchema = entry.getValue();
 
-										if (OpenAPIProcessor.isClassAvailable("javax.validation.constraints.Min")) {
+										if (OpenAPIProcessor.isClassAvailable("jakarta.validation.constraints.Min")) {
 											getValidationValue(vElement, NotNull.class, notNull -> true)
 												.ifPresent(notNull -> schema.addRequired(propertyName));
 											getValidationValue(vElement, Min.class, Min::value)
