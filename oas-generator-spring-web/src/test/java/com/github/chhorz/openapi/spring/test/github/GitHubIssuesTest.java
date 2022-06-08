@@ -331,7 +331,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateDefaultInfoObject(documentContext);
 
-		validateRequestBodyForTestResource(documentContext, false);
+		validateRequestBodyForResource(documentContext, false);
 
 		Components components = documentContext.read("$.components", Components.class);
 
@@ -484,7 +484,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateSchemaForResource(documentContext);
 		validateSchemaForErrorResource(documentContext);
-		validateRequestBodyForTestResource(documentContext, true);
+		validateRequestBodyForResource(documentContext, true);
 	}
 
 	@Test
@@ -779,7 +779,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue026#test");
 
 		validateSchemaForResource(documentContext);
-		validateRequestBodyForTestResource(documentContext, true);
+		validateRequestBodyForResource(documentContext, true);
 	}
 
 	@Test
@@ -1320,6 +1320,31 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue194#test");
 
 		validateSchemaForOrderResources(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#285")
+	void getGithubIssue285() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue285.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./.post", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue285#test");
+
+		validateSchemaForResource(documentContext);
+		validateRequestBodyForResource(documentContext, true);
 	}
 
 }

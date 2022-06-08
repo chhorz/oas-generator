@@ -178,6 +178,10 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 					.collect(toList());
             }
 
+			if (urlPaths.isEmpty()) {
+				urlPaths.add("/");
+			}
+
             for (String path : urlPaths) {
                 logUtils.logInfo("Parsing path: %s", path);
                 String cleanedPath = path;

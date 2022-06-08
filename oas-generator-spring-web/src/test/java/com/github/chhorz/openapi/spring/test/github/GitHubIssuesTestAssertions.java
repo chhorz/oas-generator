@@ -536,7 +536,7 @@ class GitHubIssuesTestAssertions {
 	 *
 	 * @see Resource
 	 */
-	public static void validateRequestBodyForTestResource(final DocumentContext documentContext, final boolean required) {
+	public static void validateRequestBodyForResource(final DocumentContext documentContext, final boolean required) {
 		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
 
 		assertThat(requestBody)
