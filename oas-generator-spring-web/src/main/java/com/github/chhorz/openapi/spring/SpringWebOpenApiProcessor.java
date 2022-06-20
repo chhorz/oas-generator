@@ -186,17 +186,19 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
                 logUtils.logInfo("Parsing path: %s", path);
                 String cleanedPath = path;
 
+				String operationId = getOperationId(executableElement, openApi);
+
                 RequestMethod[] requestMethods = requestMapping.method();
 
                 if (requestMethods.length == 0) {
-                    logUtils.logError("No request method defined. operationId=%s", getOperationId(executableElement));
+                    logUtils.logError("No request method defined. operationId=%s", operationId);
                 }
 
                 for (RequestMethod requestMethod : requestMethods) {
                     Operation operation = new Operation();
                     operation.setSummary(javaDoc.getSummary());
                     operation.setDescription(javaDoc.getDescription());
-                    operation.setOperationId(getOperationId(executableElement));
+                    operation.setOperationId(operationId);
                     operation.setDeprecated(executableElement.getAnnotation(Deprecated.class) != null);
 
                     List<ParamTag> paramTags = javaDoc.getTags(ParamTag.class);
