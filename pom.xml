@@ -88,23 +88,23 @@
 		<jackson-dataformat-yaml.version>2.13.3</jackson-dataformat-yaml.version>
 		<javadoc-parser.version>0.2.0</javadoc-parser.version>
 		<snakeyaml.version>1.30</snakeyaml.version>
-		<spring-security-core.version>5.7.1</spring-security-core.version>
 		<jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+		<spring-security-core.version>5.7.2</spring-security-core.version>
 
-		<spring-data-commons.version>2.7.0</spring-data-commons.version>
-		<spring-web.version>5.3.20</spring-web.version>
+		<spring-data-commons.version>2.7.1</spring-data-commons.version>
+		<spring-web.version>5.3.21</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
 		<nohttp-checkstyle.version>0.0.10</nohttp-checkstyle.version>
 
 		<!-- test dependency versions -->
-		<assertj-core.version>3.22.0</assertj-core.version>
+		<assertj-core.version>3.23.1</assertj-core.version>
 		<junit-jupiter.verison>5.8.2</junit-jupiter.verison>
-		<jsonassert.version>1.5.0</jsonassert.version>
+		<jsonassert.version>1.5.1</jsonassert.version>
 		<json-path.version>2.7.0</json-path.version>
 
-		<spring-hateoas.version>1.5.0</spring-hateoas.version>
+		<spring-hateoas.version>1.5.1</spring-hateoas.version>
 
 		<!-- plugin versions -->
 		<asciidoctor-maven-plugin.version>2.2.2</asciidoctor-maven-plugin.version>

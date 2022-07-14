@@ -135,7 +135,7 @@ public class JaxRSOpenApiProcessor extends OpenAPIProcessor {
 		Operation operation = new Operation();
 		operation.setSummary(javaDoc.getSummary());
 		operation.setDescription(javaDoc.getDescription());
-		operation.setOperationId(getOperationId(executableElement));
+		operation.setOperationId(getOperationId(executableElement, openApi));
 		operation.setDeprecated(executableElement.getAnnotation(Deprecated.class) != null);
 
 		List<ParamTag> tags = javaDoc.getTags(ParamTag.class);
