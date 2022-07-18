@@ -91,7 +91,7 @@
 		<spring-security-core.version>5.7.2</spring-security-core.version>
 		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
 
-		<spring-data-commons.version>2.7.1</spring-data-commons.version>
+		<spring-data-commons.version>2.7.2</spring-data-commons.version>
 		<spring-web.version>5.3.22</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
