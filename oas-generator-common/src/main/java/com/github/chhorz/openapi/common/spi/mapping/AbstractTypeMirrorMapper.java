@@ -96,6 +96,7 @@ public abstract class AbstractTypeMirrorMapper implements TypeMirrorMapper {
 			case CHAR:
 				return new SimpleEntry<>(Type.STRING, null);
 			case INT:
+			case SHORT:
 				return new SimpleEntry<>(Type.INTEGER, Format.INT32);
 			case LONG:
 				return new SimpleEntry<>(Type.INTEGER, Format.INT64);
@@ -103,8 +104,6 @@ public abstract class AbstractTypeMirrorMapper implements TypeMirrorMapper {
 				return new SimpleEntry<>(Type.NUMBER, Format.FLOAT);
 			case DOUBLE:
 				return new SimpleEntry<>(Type.NUMBER, Format.DOUBLE);
-			case SHORT:
-				return new SimpleEntry<>(Type.INTEGER, Format.INT32);
 			default:
 				return null;
 		}
