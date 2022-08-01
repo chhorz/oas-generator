@@ -59,7 +59,7 @@ public class LogUtils {
 	 *
 	 * @param messager the messager from the {@link javax.annotation.processing.ProcessingEnvironment}
 	 * @param properties the given parser properties that are required for the log level
-	 * @param componentLogGroup an mandatory sub-group for the log statements
+	 * @param componentLogGroup a mandatory subgroup for the log statements
 	 */
 	public LogUtils(final Messager messager, final ParserProperties properties, final String componentLogGroup) {
 		Objects.requireNonNull(properties, "The properties must not be null.");
@@ -73,7 +73,7 @@ public class LogUtils {
 	/**
 	 * Creates a cloned {@code LogUtils} class with the given component log group.
 	 *
-	 * @param componentLogGroup the sub-group for the log statements
+	 * @param componentLogGroup the subgroup for the log statements
 	 * @return a new {@link LogUtils} class
 	 */
 	public LogUtils configureWithComponent(final String componentLogGroup){
@@ -83,7 +83,7 @@ public class LogUtils {
 	/**
 	 * Prints the given log message if the log level is {@value DEBUG}.
 	 * <p>
-	 * The parameter are related to {@link String#format(String, Object...)}.
+	 * The parameters are related to {@link String#format(String, Object...)}.
 	 *
 	 * @param format the format string
 	 * @param arguments arguments for the format string
@@ -97,7 +97,7 @@ public class LogUtils {
 	/**
 	 * Prints the given log message if the log level is not {@value ERROR}.
 	 * <p>
-	 * The parameter are related to {@link String#format(String, Object...)}.
+	 * The parameters are related to {@link String#format(String, Object...)}.
 	 *
 	 * @param format the format string
 	 * @param arguments arguments for the format string
@@ -111,7 +111,7 @@ public class LogUtils {
 	/**
 	 * Prints the given log message.
 	 * <p>
-	 * The parameter are related to {@link String#format(String, Object...)}.
+	 * The parameters are related to {@link String#format(String, Object...)}.
 	 *
 	 * @param format the format string
 	 * @param arguments arguments for the format string
@@ -123,7 +123,7 @@ public class LogUtils {
 	/**
 	 * Prints the given log message.
 	 * <p>
-	 * The parameter are related to {@link String#format(String, Object...)}.
+	 * The parameters are related to {@link String#format(String, Object...)}.
 	 *
 	 * @param format the format string
 	 * @param exception the current exception (will be logged via {@link Exception#printStackTrace()})
