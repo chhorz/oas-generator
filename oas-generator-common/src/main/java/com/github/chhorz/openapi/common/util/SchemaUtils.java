@@ -196,6 +196,10 @@ public class SchemaUtils {
 		result.setMinimum(merge(one, two, Schema::getMinimum));
 		result.setMaximum(merge(one, two, Schema::getMaximum));
 		result.setPattern(mergeString(one, two, Schema::getPattern));
+		result.setMinLength(merge(one, two, Schema::getMinLength));
+		result.setMaxLength(merge(one, two, Schema::getMaxLength));
+		result.setMinItems(merge(one, two, Schema::getMinItems));
+		result.setMaxItems(merge(one, two, Schema::getMaxItems));
 
 		result.setDeprecated(one.getDeprecated() || two.getDeprecated());
 		result.setFormat(merge(one, two, Schema::getFormat));

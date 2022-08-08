@@ -19,6 +19,9 @@ package com.github.chhorz.openapi.spring.test.github.resources;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 /**
  * a test resource for GitHub issue tests
@@ -35,4 +38,10 @@ public class ValidJakartaResource {
 	 */
 	@Min(0)
 	public Long minimum;
+
+	@Size(min = 10)
+	public String sizedString;
+
+	@Size(min = 1, max = 5)
+	public List<String> sizedList;
 }
