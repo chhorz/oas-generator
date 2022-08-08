@@ -16,10 +16,7 @@
  */
 package com.github.chhorz.openapi.spring.test.github.resources;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.util.List;
 
@@ -44,4 +41,8 @@ public class ValidJakartaResource {
 
 	@Size(min = 1, max = 5)
 	public List<String> sizedList;
+
+	@NotEmpty
+	public String nonEmptyString;
+
 }

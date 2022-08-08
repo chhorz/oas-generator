@@ -179,6 +179,15 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 												propertySchema.setMaxItems(maxSize);
 											}
 										});
+									getValidationValue(vElement, javax.validation.constraints.NotEmpty.class, notEmpty -> true)
+										.ifPresent(notEmpty -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMinLength(1);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMinItems(1);
+											}
+										});
 								}
 								if (OpenAPIProcessor.isClassAvailable("jakarta.validation.constraints.Min")) {
 									getValidationValue(vElement, NotNull.class, notNull -> true)
@@ -206,6 +215,15 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
 													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
 												propertySchema.setMaxItems(maxSize);
+											}
+										});
+									getValidationValue(vElement, NotEmpty.class, notEmpty -> true)
+										.ifPresent(notEmpty -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMinLength(1);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMinItems(1);
 											}
 										});
 								}

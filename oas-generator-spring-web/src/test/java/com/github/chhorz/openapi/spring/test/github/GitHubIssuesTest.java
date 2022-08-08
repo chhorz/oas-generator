@@ -1416,6 +1416,15 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("sizedString"))
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("minLength", 10);
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("sizedList"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("minItems", 1)
+			.hasFieldOrPropertyWithValue("maxItems", 5);
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("nonEmptyString"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("minLength", 1);
 	}
 
 }
