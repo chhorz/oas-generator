@@ -64,6 +64,10 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 				schema.setPattern(childNode.has("pattern") ? childNode.get("pattern").asText() : null);
 				schema.setMinimum(childNode.has("minimum") ? childNode.get("minimum").asLong() : null);
 				schema.setMaximum(childNode.has("maximum") ? childNode.get("maximum").asLong() : null);
+				schema.setMaxItems(childNode.has("maxItems") ? childNode.get("maxItems").asInt() : null);
+				schema.setMinItems(childNode.has("minItems") ? childNode.get("minItems").asInt() : null);
+				schema.setMaxLength(childNode.has("maxLength") ? childNode.get("maxLength").asInt() : null);
+				schema.setMinLength(childNode.has("minLength") ? childNode.get("minLength").asInt() : null);
 				if (childNode.has("items")) {
 					JsonNode itemsNode = childNode.get("items");
 					if (itemsNode.has("$ref")) {

@@ -1412,6 +1412,10 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isInstanceOfSatisfying(Schema.class, schema ->
 				assertThat(schema)
 					.hasFieldOrPropertyWithValue("minimum", 0L));
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("sizedString"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("minLength", 10);
 	}
 
 }

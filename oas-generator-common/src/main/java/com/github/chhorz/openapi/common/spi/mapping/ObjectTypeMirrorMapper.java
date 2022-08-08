@@ -32,10 +32,9 @@ import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+
+import jakarta.validation.constraints.*;
+
 import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.function.Function;
@@ -161,6 +160,25 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 										.ifPresent(propertySchema::setMaximum);
 									getValidationValue(vElement, javax.validation.constraints.Pattern.class, javax.validation.constraints.Pattern::regexp)
 										.ifPresent(propertySchema::setPattern);
+									getValidationValue(vElement, javax.validation.constraints.Size.class, javax.validation.constraints.Size::min)
+										.ifPresent(minSize -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMinLength(minSize);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMinItems(minSize);
+											}
+										});
+									getValidationValue(vElement, javax.validation.constraints.Size.class, javax.validation.constraints.Size::max)
+										.filter(maxSize -> Integer.MAX_VALUE != maxSize)
+										.ifPresent(maxSize -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMaxLength(maxSize);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMaxItems(maxSize);
+											}
+										});
 								}
 								if (OpenAPIProcessor.isClassAvailable("jakarta.validation.constraints.Min")) {
 									getValidationValue(vElement, NotNull.class, notNull -> true)
@@ -171,6 +189,25 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 										.ifPresent(propertySchema::setMaximum);
 									getValidationValue(vElement, Pattern.class, Pattern::regexp)
 										.ifPresent(propertySchema::setPattern);
+									getValidationValue(vElement, Size.class, Size::min)
+										.ifPresent(minSize -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMinLength(minSize);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMinItems(minSize);
+											}
+										});
+									getValidationValue(vElement, Size.class, Size::max)
+										.filter(maxSize -> Integer.MAX_VALUE != maxSize)
+										.ifPresent(maxSize -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMaxLength(maxSize);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMaxItems(maxSize);
+											}
+										});
 								}
 
 								propertySchema.setDescription(propertyDoc.getDescription());
