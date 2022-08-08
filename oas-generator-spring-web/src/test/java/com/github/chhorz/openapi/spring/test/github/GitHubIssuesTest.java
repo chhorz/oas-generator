@@ -1376,4 +1376,42 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		validateSchemaForResource(documentContext);
 	}
 
+	@Test
+	@GitHubIssue("#295")
+	void getGithubIssue295() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue295.class, ValidJakartaResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Components components = documentContext.read("$.components", Components.class);
+
+		assertThat(components.getSchemas())
+			.containsOnlyKeys("ValidJakartaResource");
+
+		assertThat(components.getSchemas().get("ValidJakartaResource"))
+			.hasFieldOrPropertyWithValue("required", singletonList("value"));
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties())
+			.containsKeys("value", "minimum");
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("value"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("pattern", "\\s+");
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("minimum"))
+			.isNotNull()
+			.isInstanceOfSatisfying(Schema.class, schema ->
+				assertThat(schema)
+					.hasFieldOrPropertyWithValue("minimum", 0L));
+	}
+
 }
