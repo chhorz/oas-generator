@@ -706,6 +706,45 @@ Resource:
       pattern: "\\s+"
       # ...
 ----
+
+|[source%nowrap,java]
+----
+@Size(min = 123, max = 500)
+private String plainString;
+private List<String> collectionOrMap;
+----
+|[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    plainString:
+      minLength: 123
+      maxLength: 500
+      # ...
+    collectionOrMap:
+      minItems: 123
+      maxItems: 500
+      # ...
+----
+|[source%nowrap,java]
+----
+@NotEmpty
+private String plainString;
+private List<String> collectionOrMap;
+----
+|[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    plainString:
+      minLength: 1
+      # ...
+    collectionOrMap:
+      minItems: 1
+      # ...
+----
 |===
 
 == Extensibility
