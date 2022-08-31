@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -428,6 +429,27 @@ class AsciidoctorPostProcessorTest {
 		assertThat(referencePath).exists();
 
 		compareFiles(referencePath, outputPath);
+	}
+
+	@Test
+	void shouldUseTitleOfOpenApiObjectInEmbeddedDocument() throws IOException {
+		Info info = new Info();
+		info.setTitle("Some Title");
+		info.setVersion("1.2.3-SNAPSHOT");
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/minimal", false, "images");
+
+		processor.execute(openApi);
+
+		Path result = Paths.get("target/generated-test-docs/minimal/openapi.adoc");
+		List<String> lines = Files.readAllLines(result, StandardCharsets.UTF_8);
+		assertThat(lines)
+			.element(0)
+			.isEqualTo("== Some Title");
 	}
 
 	private void compareFiles(Path reference, Path output) {
