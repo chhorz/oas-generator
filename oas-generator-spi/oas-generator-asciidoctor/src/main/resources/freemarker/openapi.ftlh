@@ -21,9 +21,9 @@ ${openapi.info.contact.name} <${openapi.info.contact.email}>
 :toc: left
 :toclevels: 3
 
+</#if>
 <#if openapi.info.description??>
 ${openapi.info.description}
-</#if>
 </#if>
 <#--
     Servers
