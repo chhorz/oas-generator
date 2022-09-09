@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.atIndex;
 import static org.assertj.core.api.Assertions.fail;
 
 class AsciidoctorPostProcessorTest {
@@ -450,6 +451,86 @@ class AsciidoctorPostProcessorTest {
 		assertThat(lines)
 			.element(0)
 			.isEqualTo("== Some Title");
+	}
+
+	@Test
+	void shouldWriteDescriptionIntoEmbeddedDocument() throws IOException {
+		Info info = new Info();
+		info.setTitle("Some Title");
+		info.setVersion("1.2.3-SNAPSHOT");
+		info.setDescription("This is a description of an API.\nIt has multiple lines.");
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/minimal", false, "images");
+
+		processor.execute(openApi);
+
+		Path result = Paths.get("target/generated-test-docs/minimal/openapi.adoc");
+		List<String> lines = Files.readAllLines(result, StandardCharsets.UTF_8);
+
+		assertThat(lines)
+			.contains("This is a description of an API.", atIndex(1))
+			.contains("It has multiple lines.", atIndex(2));
+	}
+
+	@Test
+	void shouldWriteContactInfoIntoEmbeddedDocument() throws IOException {
+		Contact contact = new Contact();
+		contact.setName("Herr Deckname");
+		contact.setEmail("herr@deckname.de");
+
+		Info info = new Info();
+		info.setTitle("Some Title");
+		info.setVersion("1.2.3-SNAPSHOT");
+		info.setContact(contact);
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/minimal", false, "images");
+
+		processor.execute(openApi);
+
+		Path result = Paths.get("target/generated-test-docs/minimal/openapi.adoc");
+		List<String> lines = Files.readAllLines(result, StandardCharsets.UTF_8);
+
+		assertThat(lines).element(1)
+			.isEqualTo("Herr Deckname <herr@deckname.de>");
+	}
+
+	@Test
+	void shouldWriteContactInfoBeforeDescriptionIntoEmbeddedDocument() throws IOException{
+		Contact contact = new Contact();
+		contact.setName("E Ripley");
+		contact.setEmail("p5000_hero@weyland-yutani.com");
+
+		Info info = new Info();
+		info.setTitle("Alien Queen Defense");
+		info.setVersion("1.2.3-SNAPSHOT");
+		info.setContact(contact);
+		info.setDescription("API to control a P-5000 powered work loader.\nUsed to handle xenomorph queens.\nAnd sometimes, crates.");
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/minimal", false, "images");
+
+		processor.execute(openApi);
+
+		Path result = Paths.get("target/generated-test-docs/minimal/openapi.adoc");
+		List<String> lines = Files.readAllLines(result, StandardCharsets.UTF_8);
+
+		assertThat(lines)
+			.contains("== Alien Queen Defense", atIndex(0))
+			.contains("E Ripley <p5000_hero@weyland-yutani.com>", atIndex(1))
+			.contains("API to control a P-5000 powered work loader.", atIndex(2))
+			.contains("Used to handle xenomorph queens.", atIndex(3))
+			.contains("And sometimes, crates.", atIndex(4));
 	}
 
 	private void compareFiles(Path reference, Path output) {
