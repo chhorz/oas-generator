@@ -49,7 +49,7 @@ class TagTagTest {
 
 	@BeforeEach
 	void setUp() {
-		parser = JavaDocParserBuilder.withBasicTags().withCustomTag(new TagTag()).build();
+		parser = JavaDocParserBuilder.withAllKnownTags().withTag(new TagTag()).build();
 	}
 
 	@Test

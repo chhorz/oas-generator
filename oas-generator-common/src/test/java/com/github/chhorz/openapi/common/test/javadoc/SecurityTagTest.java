@@ -49,7 +49,7 @@ class SecurityTagTest {
 
 	@BeforeEach
 	void setUp() {
-		parser = JavaDocParserBuilder.withBasicTags().withCustomTag(new ResponseTag()).withCustomTag(new SecurityTag()).build();
+		parser = JavaDocParserBuilder.withAllKnownTags().withTag(new ResponseTag()).withTag(new SecurityTag()).build();
 	}
 
 	@Test
