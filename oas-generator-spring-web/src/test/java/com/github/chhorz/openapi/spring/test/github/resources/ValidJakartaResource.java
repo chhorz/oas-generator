@@ -44,4 +44,5 @@ public class ValidJakartaResource {
 
 	@NotEmpty
 	public String nonEmptyString;
+
 }
