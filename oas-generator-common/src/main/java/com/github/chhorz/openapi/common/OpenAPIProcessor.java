@@ -176,10 +176,10 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 	 * @return a new instance of the JavaDocParser
 	 */
 	protected JavaDocParser createJavadocParser() {
-		return JavaDocParserBuilder.withBasicTags()
-			.withCustomTag(new ResponseTag())
-			.withCustomTag(new SecurityTag())
-			.withCustomTag(new TagTag())
+		return JavaDocParserBuilder.withAllKnownTags()
+			.withTag(new ResponseTag())
+			.withTag(new SecurityTag())
+			.withTag(new TagTag())
 			.withOutputType(OutputType.MARKDOWN)
 			.build();
 	}

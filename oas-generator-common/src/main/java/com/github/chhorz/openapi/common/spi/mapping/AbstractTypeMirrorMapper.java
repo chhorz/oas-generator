@@ -60,7 +60,7 @@ public abstract class AbstractTypeMirrorMapper implements TypeMirrorMapper {
 		this.processingUtils = new ProcessingUtils(elements, types, logUtils);
 		this.typeMirrorMappers = typeMirrorMappers;
 
-		parser = JavaDocParserBuilder.withBasicTags().withOutputType(OutputType.HTML).build();
+		parser = JavaDocParserBuilder.withAllKnownTags().withOutputType(OutputType.HTML).build();
 
 		javaLangPackage = elements.getPackageElement("java.lang");
 		javaMathPackage = elements.getPackageElement("java.math");
