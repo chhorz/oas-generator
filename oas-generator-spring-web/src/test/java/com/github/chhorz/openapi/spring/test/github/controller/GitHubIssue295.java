@@ -17,41 +17,29 @@
 package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
+import com.github.chhorz.openapi.spring.test.github.resources.ValidJakartaResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("github")
-public class GitHubIssue043 {
+public class GitHubIssue295 {
 
 	/**
-	 * @category Test
+	 * Lorem ipsum
 	 *
-	 * @security read_role
+	 * @param resource the request body
+	 * @return nothing but a http status
 	 *
-	 * @response 200 java.lang.String the response
-	 *
-	 * @param test
-	 * @return
+	 * @response 201 ValidJakartaResource The created resource
 	 */
-	@GitHubIssue("#43")
-	@GetMapping(path = "/issues", produces = "application/vnd.test.v1+json")
-	@Deprecated
-	public ResponseEntity<String> test1(@PathVariable String test) {
-		return ResponseEntity.ok().build();
-	}
-
-	/**
-	 * @category Test
-	 *
-	 * @security read_role
-	 *
-	 * @param test
-	 * @return
-	 */
-	@GitHubIssue("#43")
-	@GetMapping(path = "/issues", produces = "application/vnd.test.v2+json")
-	public ResponseEntity<String> test2(@PathVariable String test) {
-		return ResponseEntity.ok().build();
+	@GitHubIssue("#21")
+	@PostMapping(path = "/issues", consumes = MediaType.APPLICATION_JSON_VALUE )
+	public ResponseEntity<ValidJakartaResource> test(@RequestBody ValidJakartaResource resource) {
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 }

@@ -623,7 +623,7 @@ public class TestController {
 === Validation annotations
 
 For a subset of the javax validation api annotations the *OAS Generator* provides a mapping to the OpenAPI specification.
-The dependency `javax.validation:validation-api` is provided as an optional dependency.
+The dependencies `javax.validation:validation-api` and `jakarta.validation:validation-api` are provided as optional dependencies.
 An implementation, such as `hibernate-validator` (link:https://search.maven.org/search?q=g:org.hibernate.validator%20AND%20a:hibernate-validator*[Maven Central]), is required for runtime but not for the generation of the OpenAPI specification file.
 Die *OAS Generator* makes no difference which of the following validation api dependencies is used:
 
@@ -639,8 +639,7 @@ Die *OAS Generator* makes no difference which of the following validation api de
 </dependency>
 ----
 
-Both contain annotations within a `javax.validation` package.
-So there is no difference on the contained classes itself.
+Annotations within the `javax.validation` and `jakarta.validation` package will be detected.
 
 The list below shows the supported validation annotations and how they are represented in the specification file:
 [cols="2*a"]
@@ -705,6 +704,45 @@ Resource:
   properties:
     someProperty:
       pattern: "\\s+"
+      # ...
+----
+
+|[source%nowrap,java]
+----
+@Size(min = 123, max = 500)
+private String plainString;
+private List<String> collectionOrMap;
+----
+|[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    plainString:
+      minLength: 123
+      maxLength: 500
+      # ...
+    collectionOrMap:
+      minItems: 123
+      maxItems: 500
+      # ...
+----
+|[source%nowrap,java]
+----
+@NotEmpty
+private String plainString;
+private List<String> collectionOrMap;
+----
+|[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    plainString:
+      minLength: 1
+      # ...
+    collectionOrMap:
+      minItems: 1
       # ...
 ----
 |===

@@ -32,10 +32,9 @@ import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+
+import jakarta.validation.constraints.*;
+
 import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.function.Function;
@@ -153,6 +152,44 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 								Schema propertySchema = entry.getValue();
 
 								if (OpenAPIProcessor.isClassAvailable("javax.validation.constraints.Min")) {
+									getValidationValue(vElement, javax.validation.constraints.NotNull.class, notNull -> true)
+										.ifPresent(notNull -> schema.addRequired(propertyName));
+									getValidationValue(vElement, javax.validation.constraints.Min.class, javax.validation.constraints.Min::value)
+										.ifPresent(propertySchema::setMinimum);
+									getValidationValue(vElement, javax.validation.constraints.Max.class, javax.validation.constraints.Max::value)
+										.ifPresent(propertySchema::setMaximum);
+									getValidationValue(vElement, javax.validation.constraints.Pattern.class, javax.validation.constraints.Pattern::regexp)
+										.ifPresent(propertySchema::setPattern);
+									getValidationValue(vElement, javax.validation.constraints.Size.class, javax.validation.constraints.Size::min)
+										.ifPresent(minSize -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMinLength(minSize);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMinItems(minSize);
+											}
+										});
+									getValidationValue(vElement, javax.validation.constraints.Size.class, javax.validation.constraints.Size::max)
+										.filter(maxSize -> Integer.MAX_VALUE != maxSize)
+										.ifPresent(maxSize -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMaxLength(maxSize);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMaxItems(maxSize);
+											}
+										});
+									getValidationValue(vElement, javax.validation.constraints.NotEmpty.class, notEmpty -> true)
+										.ifPresent(notEmpty -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMinLength(1);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMinItems(1);
+											}
+										});
+								}
+								if (OpenAPIProcessor.isClassAvailable("jakarta.validation.constraints.Min")) {
 									getValidationValue(vElement, NotNull.class, notNull -> true)
 										.ifPresent(notNull -> schema.addRequired(propertyName));
 									getValidationValue(vElement, Min.class, Min::value)
@@ -161,6 +198,34 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 										.ifPresent(propertySchema::setMaximum);
 									getValidationValue(vElement, Pattern.class, Pattern::regexp)
 										.ifPresent(propertySchema::setPattern);
+									getValidationValue(vElement, Size.class, Size::min)
+										.ifPresent(minSize -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMinLength(minSize);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMinItems(minSize);
+											}
+										});
+									getValidationValue(vElement, Size.class, Size::max)
+										.filter(maxSize -> Integer.MAX_VALUE != maxSize)
+										.ifPresent(maxSize -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMaxLength(maxSize);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMaxItems(maxSize);
+											}
+										});
+									getValidationValue(vElement, NotEmpty.class, notEmpty -> true)
+										.ifPresent(notEmpty -> {
+											if (processingUtils.isSameType(vElement.asType(), String.class)) {
+												propertySchema.setMinLength(1);
+											} else if (processingUtils.isAssignableTo(vElement.asType(), Collection.class)
+													   || processingUtils.isAssignableTo(vElement.asType(), Map.class)) {
+												propertySchema.setMinItems(1);
+											}
+										});
 								}
 
 								propertySchema.setDescription(propertyDoc.getDescription());
