@@ -121,7 +121,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")));
 
 		validateSchemaForResource(documentContext);
 	}
@@ -378,9 +380,13 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
-//				.extracting(MediaType::getSchema)
-//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, map -> assertThat(map)
+					.isNotNull()
+					.containsOnlyKeys("deprecated", "items", "type")
+					.extractingByKey("items")
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource"))));
 		assertThat(operation.getParameterObjects())
 			.isNotNull()
 			.hasSize(2);
@@ -452,7 +458,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ErrorResource")));
 		assertThat(operationOne.getResponses().get("204").getContent())
 			.isNull();
 		Operation operationTwo = documentContext.read("$.paths./github/issues/{id}.delete", Operation.class);
@@ -473,7 +481,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ErrorResource")));;
 		assertThat(operationOne.getResponses().get("204").getContent())
 			.isNull();
 
@@ -592,9 +602,13 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
-//				.extracting(MediaType::getSchema)
-//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, map -> assertThat(map)
+					.isNotNull()
+					.containsOnlyKeys("deprecated", "items", "type")
+					.extractingByKey("items")
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource"))));
 		assertThat(operation.getParameterObjects())
 			.isNotNull()
 			.hasSize(2);
@@ -668,9 +682,13 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
-//				.extracting(MediaType::getSchema)
-//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, map -> assertThat(map)
+					.isNotNull()
+					.containsOnlyKeys("deprecated", "items", "type")
+					.extractingByKey("items")
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource"))));
 		assertThat(operation.getParameterObjects())
 			.isNotNull()
 			.hasSize(3);
@@ -1425,6 +1443,79 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("nonEmptyString"))
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("minLength", 1);
+	}
+
+	@Test
+	@GitHubIssue("#307")
+	void getGithubIssue307() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue307.class, Resource.class, ErrorResource.class, ProblemResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues/{id}.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue307#get");
+
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.containsOnlyKeys("200", "4XX", "5XX")
+			.extractingByKey("200")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the resource by id");
+
+		assertThat(operation.getResponses().get("200").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")));
+
+		assertThat(operation.getResponses().get("4XX"))
+			.isNotNull()
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the problem resource");
+
+		assertThat(operation.getResponses().get("4XX").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ProblemResource")));
+
+		assertThat(operation.getResponses().get("5XX"))
+			.isNotNull()
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the error resource");
+
+		assertThat(operation.getResponses().get("5XX").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ErrorResource")));
+
+		validateSchemaForResource(documentContext);
+		validateSchemaForErrorResource(documentContext);
+		validateSchemaForProblemResource(documentContext);
 	}
 
 }

@@ -211,6 +211,40 @@ class GitHubIssuesTestAssertions {
 	}
 
 	/**
+	 * Validates the given problem resource.
+	 *
+	 * @param documentContext the json document context
+	 *
+	 * @see com.github.chhorz.openapi.spring.test.github.resources.ProblemResource
+	 */
+	public static void validateSchemaForProblemResource(final DocumentContext documentContext) {
+		Schema schema = documentContext.read("$.components.schemas.ProblemResource", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "an problem resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		assertThat(schema.getProperties())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("value", "code");
+
+		assertThat(schema.getProperties().get("value"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+			.hasFieldOrPropertyWithValue("description", "error details");
+
+		assertThat(schema.getProperties().get("code"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
+			.hasFieldOrPropertyWithValue("description", "some error code");
+	}
+
+	/**
 	 * Validates the given test resource.
 	 *
 	 * @param documentContext the json document context

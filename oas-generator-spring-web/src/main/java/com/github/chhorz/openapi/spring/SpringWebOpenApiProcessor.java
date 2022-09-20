@@ -55,7 +55,7 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
     private AliasUtils aliasUtils;
     private ParameterUtils parameterUtils;
 
-    private TypeMirror exceptionHanderReturntype = null;
+    private List<TypeMirror> exceptionHandlerReturntypes = new ArrayList<>();
 
     @Override
     public synchronized void init(final ProcessingEnvironment processingEnv) {
@@ -93,13 +93,12 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 					.map(schemaUtils::createStringSchemaMap)
 					.forEach(openApi.getComponents()::putAllSchemas);
 
-				exceptionHanderReturntype = exceptionHandler.stream()
+				exceptionHandlerReturntypes = exceptionHandler.stream()
 					.filter(element -> element instanceof ExecutableElement)
 					.map(ExecutableElement.class::cast)
 					.map(ExecutableElement::getReturnType)
 					.map(type -> processingUtils.removeEnclosingType(type, ResponseEntity.class)[0])
-					.findFirst()
-					.orElse(null);
+					.collect(toList());
 			}
 
 			Set<? extends Element> openApiSchemaClasses = roundEnv.getElementsAnnotatedWith(OpenAPISchema.class);
@@ -328,7 +327,11 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
                     // use return type of method as default response
                     TypeMirror returnType = processingUtils.removeEnclosingType(executableElement.getReturnType(), ResponseEntity.class)[0];
                     Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(returnType);
-                    Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.createTypeMirrorSchemaMap(exceptionHanderReturntype);
+                    Map<TypeMirror, Schema> exceptionSchemaMap = new HashMap<>();
+					exceptionHandlerReturntypes.stream()
+						.map(schemaUtils::createTypeMirrorSchemaMap)
+						.forEach(exceptionSchemaMap::putAll);
+
 
                     Map<TypeMirror, Schema> combinedMap = new HashMap<>(schemaMap);
                     combinedMap.putAll(exceptionSchemaMap);
@@ -336,14 +339,18 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
                     Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openApiAnnotation,
 						requestMapping.produces(), returnTag, combinedMap);
 
-                    if (exceptionHanderReturntype != null && !responses.isEmpty()) {
+                    if (exceptionHandlerReturntypes.stream()
+							.map(TypeMirror::toString)
+							.distinct()
+							.count() == 1
+						&& !responses.isEmpty()) {
                         // use return type of ExceptionHandler as default response
-                        Schema exceptionSchema = exceptionSchemaMap.get(exceptionHanderReturntype);
+                        Schema exceptionSchema = exceptionSchemaMap.get(exceptionHandlerReturntypes.get(0));
                         if (Schema.Type.OBJECT.equals(exceptionSchema.getType()) || Schema.Type.ENUM.equals(exceptionSchema.getType())) {
-                            operation.putDefaultResponse(responseUtils.fromTypeMirror(exceptionHanderReturntype, requestMapping.produces(), returnTag));
+                            operation.putDefaultResponse(responseUtils.fromTypeMirror(exceptionHandlerReturntypes.get(0), requestMapping.produces(), returnTag));
                         } else {
                             operation.putDefaultResponse(responseUtils.fromSchema(exceptionSchema, requestMapping.produces(), returnTag));
-                            schemaMap.remove(exceptionHanderReturntype);
+                            schemaMap.remove(exceptionHandlerReturntypes.get(0));
                         }
                     } else {
                         Schema schema = schemaMap.get(returnType);
