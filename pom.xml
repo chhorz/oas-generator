@@ -87,7 +87,7 @@
 		<jackson-databind.version>2.13.4</jackson-databind.version>
 		<jackson-dataformat-yaml.version>2.13.4</jackson-dataformat-yaml.version>
 		<javadoc-parser.version>0.3.1</javadoc-parser.version>
-		<snakeyaml.version>1.32</snakeyaml.version>
+		<snakeyaml.version>1.33</snakeyaml.version>
 		<spring-security-core.version>5.7.3</spring-security-core.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
 		<jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
