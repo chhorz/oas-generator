@@ -1518,4 +1518,53 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		validateSchemaForProblemResource(documentContext);
 	}
 
+	@Test
+	@GitHubIssue("#350")
+	void getGithubIssue350() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue350.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.0.3");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues/{id}.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue350#get");
+
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.containsOnlyKeys("200", "4XX")
+			.extractingByKey("200")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the resource by id");
+
+		assertThat(operation.getResponses().get("200").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")));
+
+		assertThat(operation.getResponses().get("4XX"))
+			.isNotNull()
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the 400 status code");
+
+		assertThat(operation.getResponses().get("4XX").getContent())
+			.isNull();
+
+		validateSchemaForResource(documentContext);
+	}
+
 }

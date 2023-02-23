@@ -340,6 +340,7 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 						requestMapping.produces(), returnTag, combinedMap);
 
                     if (exceptionHandlerReturntypes.stream()
+							.filter(returnTypeMirror -> !schemaUtils.isVoidType(returnTypeMirror))
 							.map(TypeMirror::toString)
 							.distinct()
 							.count() == 1

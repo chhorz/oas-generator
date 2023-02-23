@@ -160,7 +160,7 @@ public class SchemaUtils {
 		return schemaMap;
 	}
 
-	private boolean isVoidType(final TypeMirror typeMirror) {
+	public boolean isVoidType(final TypeMirror typeMirror) {
 		return TypeKind.VOID.equals(typeMirror.getKind())
 			|| processingUtils.isAssignableTo(typeMirror, Void.class);
 	}
