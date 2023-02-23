@@ -67,6 +67,8 @@ m| integer (int64)
 e| Status
 4+e| Response
 
+^| 4xx
+4+a| pass:[A HTTP status code]
 ^| default
 4+a| pass:[The response description]
 

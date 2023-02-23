@@ -367,6 +367,9 @@ class AsciidoctorPostProcessorTest {
 		response.setDescription("The response description");
 		response.putContent("*/*", mediaType);
 
+		Response errorResponse = new Response();
+		errorResponse.setDescription("A HTTP status code");
+
 		Operation getArticles = new Operation();
 		getArticles.setOperationId("ArticleController#getArticles");
 		getArticles.setSummary("Here we get some articles.");
@@ -374,6 +377,7 @@ class AsciidoctorPostProcessorTest {
 		getArticles.addTag("TAG_1");
 		getArticles.setSecurity(Collections.singletonList(Collections.singletonMap("key", new ArrayList<>())));
 		getArticles.addParameterObject(filter);
+		getArticles.putResponse("4xx", errorResponse);
 		getArticles.putDefaultResponse(response);
 
 		Response articleResponse = new Response();
