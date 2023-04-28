@@ -22,7 +22,7 @@
 
 	<groupId>com.github.chhorz</groupId>
 	<artifactId>oas-generator</artifactId>
-	<version>0.2.8-SNAPSHOT</version>
+	<version>0.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>OAS Generator</name>
@@ -79,33 +79,33 @@
 		<!-- common -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.source.version>1.8</java.source.version>
-		<java.target.version>1.8</java.target.version>
+		<java.source.version>17</java.source.version>
+		<java.target.version>17</java.target.version>
 
 		<!-- dependency versions -->
-		<asciidoctorj-diagram.version>2.2.4</asciidoctorj-diagram.version>
-		<jackson-databind.version>2.14.1</jackson-databind.version>
-		<jackson-dataformat-yaml.version>2.14.1</jackson-dataformat-yaml.version>
+		<asciidoctorj-diagram.version>2.2.8</asciidoctorj-diagram.version>
+		<jackson-databind.version>2.15.0</jackson-databind.version>
+		<jackson-dataformat-yaml.version>2.15.0</jackson-dataformat-yaml.version>
 		<javadoc-parser.version>0.3.1</javadoc-parser.version>
 		<snakeyaml.version>1.33</snakeyaml.version>
-		<spring-security-core.version>5.7.5</spring-security-core.version>
+		<spring-security-core.version>6.1.0</spring-security-core.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
 		<jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
 
-		<spring-data-commons.version>2.7.5</spring-data-commons.version>
-		<spring-web.version>5.3.23</spring-web.version>
+		<spring-data-commons.version>3.1.0</spring-data-commons.version>
+		<spring-web.version>6.0.9</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
-		<nohttp-checkstyle.version>0.0.10</nohttp-checkstyle.version>
+		<nohttp-checkstyle.version>0.0.11</nohttp-checkstyle.version>
 
 		<!-- test dependency versions -->
-		<assertj-core.version>3.23.1</assertj-core.version>
+		<assertj-core.version>3.24.2</assertj-core.version>
 		<junit-jupiter.verison>5.9.1</junit-jupiter.verison>
 		<jsonassert.version>1.5.1</jsonassert.version>
-		<json-path.version>2.7.0</json-path.version>
+		<json-path.version>2.8.0</json-path.version>
 
-		<spring-hateoas.version>1.5.2</spring-hateoas.version>
+		<spring-hateoas.version>2.1.0</spring-hateoas.version>
 
 		<!-- plugin versions -->
 		<asciidoctor-maven-plugin.version>2.2.2</asciidoctor-maven-plugin.version>

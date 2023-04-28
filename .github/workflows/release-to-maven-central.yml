@@ -23,7 +23,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-package: jdk
-          java-version: 8
+          java-version: 17
           cache: 'maven'
           server-id: oss.sonatype.org
           server-username: MAVEN_USERNAME

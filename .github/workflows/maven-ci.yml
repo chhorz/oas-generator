@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         # test against LTS version:
-        java: [ 8, 11, 17 ]
+        java: [ 17 ]
     steps:
     - name: 'Checkout repository'
       uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-package: jdk
-          java-version: 8
+          java-version: 17
           cache: 'maven'
           server-id: oss.sonatype.org
           server-username: MAVEN_USERNAME
