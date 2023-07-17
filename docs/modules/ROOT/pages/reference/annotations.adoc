@@ -1,0 +1,200 @@
+= Annotations
+
+== Document API methods
+
+These annotations exist because the xref:reference/javadoc.adoc[Javadoc] like documentation is not typesafe.
+Specially regarding the response type and structure of the complex `@response` tag.
+Another advantage ist that this annotation based documentation works while refactoring of schema class names.
+
+The following examples show the exact same documentation:
+
+[source,java]
+----
+public class TestController {
+
+    /**
+     * @security read_role
+     *
+     * @response 200 Resource the response resource
+     * @response 404 java.lang.Void an empty body if nothing was found
+     *
+     * @tag test
+     * @category another_test <1>
+     */
+    public ResponseEntity<Resource> testJavadoc(@PathVariable Long id) {}
+
+    @OpenAPI(
+        tags = {"test", "another_test"},
+        securitySchemes = "read_role",
+        responses = {
+            @OpenAPIResponse(status = "200", schema = Resource.class, description = "the response resource"),
+            @OpenAPIResponse(status = "404", schema = Void.class, description = "an empty body if nothing was found")
+        })
+    public ResponseEntity<Resource> testAnnotation(@PathVariable Long id) {}
+
+}
+----
+
+<1> The usage of `@tag` is equivalent to `@category`
+
+[WARNING]
+====
+The priority of the annotation style is higher than the Javadoc style.
+Both styles can be mixed, but the content from the annotations will override the values from the Javadoc comment.
+====
+
+== Exclude API operations
+
+To hide internal operations from the generated OpenAPI file, these methods can be annotated with `OpenAPIExclusion`.
+This annotation works on class and method level.
+
+[source,java]
+----
+public class TestController {
+
+    @OpenAPIExclusion
+    @PostMapping
+    public ResponseEntity<Resource> update(@RequestBody Resource resource) {}
+
+}
+----
+
+== Validation annotations
+
+For a subset of the javax validation api annotations the *OAS Generator* provides a mapping to the OpenAPI specification.
+The dependencies `javax.validation:validation-api` and `jakarta.validation:validation-api` are provided as optional dependencies.
+An implementation, such as `hibernate-validator` (link:https://search.maven.org/search?q=g:org.hibernate.validator%20AND%20a:hibernate-validator*[Maven Central]), is required for runtime but not for the generation of the OpenAPI specification file.
+The *OAS Generator* makes no difference which of the following validation api dependencies is used:
+
+[source,xml]
+----
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+</dependency>
+<dependency>
+    <groupId>jakarta.validation</groupId>
+    <artifactId>jakarta.validation-api</artifactId>
+</dependency>
+----
+
+Annotations within the `javax.validation` and `jakarta.validation` package will be detected.
+
+The list below shows the supported validation annotations and how they are represented in the specification file:
+
+[options="header",frame="none",grid="rows",cols="2*a"]
+|===
+| Validation annotation | OpenAPI specification
+
+|
+[source%nowrap,java]
+----
+@NotNull
+private String someProperty;
+----
+|
+[source%nowrap,yaml]
+----
+Resource:
+  required:
+  - "someProperty"
+  # ...
+  properties:
+    someProperty:
+      # ...
+----
+
+|
+[source%nowrap,java]
+----
+@Min(0)
+private long someProperty;
+----
+|
+[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    someProperty:
+      minimum: 0
+      # ...
+----
+
+|
+[source%nowrap,java]
+----
+@Max(100)
+private long someProperty;
+----
+|
+[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    someProperty:
+      maximum: 100
+      # ...
+----
+
+|
+[source%nowrap,java]
+----
+@Pattern(regexp = "\\s+")
+private String someProperty;
+----
+|
+[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    someProperty:
+      pattern: "\\s+"
+      # ...
+----
+
+|
+[source%nowrap,java]
+----
+@Size(min = 123, max = 500)
+private String plainString;
+private List<String> collectionOrMap;
+----
+|
+[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    plainString:
+      minLength: 123
+      maxLength: 500
+      # ...
+    collectionOrMap:
+      minItems: 123
+      maxItems: 500
+      # ...
+----
+|
+[source%nowrap,java]
+----
+@NotEmpty
+private String plainString;
+private List<String> collectionOrMap;
+----
+|
+[source%nowrap,yaml]
+----
+Resource:
+  # ...
+  properties:
+    plainString:
+      minLength: 1
+      # ...
+    collectionOrMap:
+      minItems: 1
+      # ...
+----
+|===

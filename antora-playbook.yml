@@ -1,0 +1,39 @@
+site:
+  title: OAS Generator
+  start_page: docs::about.adoc
+
+content:
+  sources:
+    - url: .
+      branches:
+        - master
+        - v*
+        # Old version tags before antora
+        - '!v0.3.0'
+        - '!v0.2.*'
+        - '!v0.1.*'
+      start_path: docs
+
+antora:
+  extensions:
+    - require: '@antora/lunr-extension'
+      languages: [en, de]
+
+ui:
+  bundle:
+    url: _antora/ui-bundle.zip
+    snapshot: true
+  supplemental_files: _antora/supplemental_ui
+  output_dir: antora
+
+asciidoc:
+  attributes:
+    common-java: oas-generator-common/src/main/java
+
+output:
+  clean: true
+
+runtime:
+  log:
+    level: warn
+    failure_level: error

@@ -1,0 +1,267 @@
+= Extensibility
+
+== Project Structure
+
+The project itself consists of multiple maven modules.
+An _oas-generator-common_ module that contains the internal OpenAPI domain model and core functionality that is used in multiple modules.
+The _oas-generator-spring-web_ and _oas-generator-jaxrs_ are dedicated modules for a REST API implementation.
+If the resources are provided in an external API package a specific module is provided: _oas-generator-schema_.
+
+An additional _SPI_ module covers the extensibility of the OAS Generator.
+There is currently the <<asciidoctor_postprocessor,Asciidoctor Post-Processor>> that generates an Asciidoctor file from the generated OpenAPI file.
+
+== Extensibility
+
+The *OAS Generator* provides a service provider interface (SPI) to include custom post processors.
+Currently, the following post processors (see module link:https://github.com/chhorz/oas-generator/tree/master/oas-generator-spi[_oas-generator-spi_]) are provided:
+
+- `FileWriterPostProcessor` (see _oas-generator-common_)
+- `AsciidoctorPostProcessor`
+
+If other post processors should be listed and added in the *OAS Generator* repo please open a GitHub issue.
+
+[[postprocessor_documentation]]
+== Post-Processor Documentation
+
+In the following section documents all provide post processors from the `oas-generator-spi` module.
+
+[[filewriter_postprocessor]]
+=== FileWriterPostProcessor
+
+The `FileWriterPostProcessor` is used internally to write the OpenAPI domain model to the resulting output file.
+This Post-Processor is included within all *OAS Generator* modules and must not be included with an additional dependency.
+
+[[asciidoctor_postprocessor]]
+=== AsciidoctorPostProcessor
+
+This post processor converts the generated internal OpenAPI domain model into the Asciidoctor format.
+The generation is done with the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
+
+[source,xml,subs="verbatim,attributes"]
+----
+<dependency>
+    <groupId>com.github.chhorz</groupId>
+    <artifactId>oas-generator-asciidoctor</artifactId>
+    <version>${oas-generator.version}</version>
+    <scope>provided</scope>
+</dependency>
+----
+
+After the creation during compilation phase, the `asciidoctor-maven-plugin` (link:https://asciidoctor.org/docs/asciidoctor-maven-plugin/[Link]) can be used to render the `.adoc` file to HTML, PDF or other formats.
+
+[[asciidoctor.properties]]
+==== Configuration properties
+
+All the following properties will be defined as key-value list in the xref:reference/configuration.adoc#configuration-file[configuration file].
+
+.Configuration with default values
+[source,yaml]
+----
+parser:
+  postProcessor:
+    asciidoctor:
+      logTemplateExceptions: true
+      templateLocalizedLookup: false
+      templatePath: /freemarker # <1>
+      templateFile: openapi.ftlh
+      outputPath: ./target/openapi # <2>
+      outputFile: /openapi.adoc
+      standaloneFile: true # <3>
+      attributes:
+        icons: font # <4>
+----
+
+<1> The path of the templates based on `/src/main/resources`
+<2> Output base directory is the `/target/openapi` folder
+<3> A standalone file will be generated with an asciidoctor document header and section title on level 0.
+Files generated with `false` can easier integrated in other asciidoctor files and start with a section title on level one.
+<4> Icons can be set to `image` or `font` as described in the Asciidoctor documentation.
+
+.Description of asciidoctor post processor properties
+[options="header",frame="none",grid="rows",cols="1a,3a"]
+|===
+| Property | Description
+
+| `logTemplateExceptions`
+| Apache FreeMarker link:https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html[configuration option] that will be passed to the template engine.
+
+_Default: ``true``_
+
+| `templateLocalizedLookup`
+| Apache FreeMarker link:https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html[configuration option] that will be passed to the template engine.
+
+_Default: ``false``_
+
+| `templatePath`
+| Template path within the classpath.
+For Maven within `/src/main/resources`.
+
+_Default: ``/freemarker``_
+
+| `templateFile`
+| File name of the initial template file.
+Other included templates or macros must be referenced within this file.
+
+_Default: ``openapi.ftlh``_
+
+| `outputPath`
+| File path of the generated output files.
+
+_Default: ``./target/openapi``_
+
+| `outputFile`
+| The file name of the generated file.
+
+_Default: ``openapi.adoc``_
+
+| `standaloneFile`
+| Flag if the resulting file is a standalone file (`true`) or should be included within another `.adoc` file (`false`).
+
+_Default: ``true``_
+
+| `attributes`
+| Custom map for Asciidoctor attributes.
+
+[options="header",frame="none",grid="rows",cols="1a,3a"]
+[cols="1a,3a"]
+!===
+! Attribute ! Description
+
+! `icons`
+! Use icons as `image` _(default)_ or `font`.
+
+!===
+
+|===
+
+The conversion of the internal OpenAPI domain object into an asciidoctor file is done via the link:https://freemarker.apache.org/[Apache FreeMarker] template engine.
+Some configuration properties shown above are related to this engine.
+
+=== Custom Post-Processors
+
+Providing your own post processor is very simple.
+You just have to follow these steps:
+
+. Implement the `PostProcessorProvider` interface to create a custom post processor
++
+[source,java]
+----
+/**
+ * Instances of this interface will be used to create post processor instances.
+ *
+ * @author chhorz
+ */
+public interface PostProcessorProvider {
+
+    /**
+    * Creates a post processor instance with the given properties.
+    *
+    * @param logUtils the oas-generator internal logging utils class
+    * @param parserProperties the properties from the configuration file
+    * @return an instance of the post processor
+    */
+    OpenAPIPostProcessor create(LogUtils logUtils, ParserProperties parserProperties);
+
+}
+----
+. Implement the `OpenAPIPostProcessor` interface with the execution method you want to override.
+The methods for post processor type and order also needs to be implemented.
+These methods can be used to define the order in which all post processors are executed and define the type of objects the post processor should handle.
++
+[source,java]
+----
+/**
+ * This interface declares the actual post-processing method. All post-processing
+ * methods that should be supported must override the default implementation within
+ * this interface.
+ *
+ * @author chhorz
+ */
+public interface OpenAPIPostProcessor {
+
+    /**
+     * This method must be overridden for the actual post-processing call. Otherwise,
+     * the default implementation will throw an {@link UnsupportedOperationException}.
+     *
+     * @param openApi the parsed {@link OpenAPI} for which the post-processing
+     *                should be done
+     */
+    default void execute(OpenAPI openApi) {
+        throw new UnsupportedOperationException(
+            "PostProcessor of type "+ PostProcessorType.DOMAIN_OBJECT +" is defined but method not overridden");
+    }
+
+    /**
+     * This method must be overridden for the actual post-processing call. Otherwise,
+     * the default implementation will throw an {@link UnsupportedOperationException}.
+     *
+     * @param content           the written file content as JSON or YAML format
+     * @param postProcessorType the post processor type that can be used
+     *                          to distinguish calls for JSON and YAML
+     */
+    default void execute(String content, PostProcessorType postProcessorType) {
+        throw new UnsupportedOperationException(
+            "PostProcessor of type '" + postProcessorType + "' is defined but method not overridden");
+    }
+
+    /**
+     * This method must be overridden for the actual post-processing call. Otherwise,
+     * the default implementation will throw an {@link UnsupportedOperationException}.
+     *
+     * @param file              the generated json or yaml file
+     * @param postProcessorType the post processor type that can be used
+     *                          to distinguish calls for JSON and YAML
+     */
+    default void execute(Path file, PostProcessorType postProcessorType) {
+        throw new UnsupportedOperationException(
+            "PostProcessor of type '" + postProcessorType + "' is defined but method not overridden");
+    }
+
+    /**
+     * Returns the value for the order in which the post processor should be
+     * executed. Possible values are between {@code Integer.MIN_VALUE} and
+     * {@code Integer.MAX_VALUE}. The processors will be executed <b>starting with
+     * the highest</b> value.
+     *
+     * @return the order in which the post processor should be executed
+     */
+    int getPostProcessorOrder();
+
+    /**
+     * Defines the input types of the current post processor. The post processor is
+     * executed at a different step of the generation process depending on the input
+     * type.
+     *
+     * @return a list of input types for the post processor
+     */
+    List<PostProcessorType> getPostProcessorType();
+
+}
+----
+. Create a file named `com.github.chhorz.openapi.common.spi.PostProcessorProvider` at `src/main/resources/META-INF/services` containing the fully qualified name of the class from step 1
++
+.Directory structure
+[source]
+----
+/src
+  /main
+    /resources
+      /META-INF
+        /services
+          com.github.chhorz.openapi.common.spi.PostProcessorProvider
+----
++
+.File content is the full name of the custom post processor. (Example for `AsciidoctorProvider.java`)
+[source]
+----
+com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider
+----
++
+[NOTE]
+====
+Otherwise, the library link:https://github.com/google/auto[Google Auto] could be used to create this file during the build process.
+====
+
+. If the post processor uses custom properties these should be placed below the parser properties as shown for the <<asciidoctor.properties, Asciidoctor Post Processor>>.
+All custom property classes should extend the provided `AbstractPostProcessorProperties` class.
+

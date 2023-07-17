@@ -1,0 +1,17 @@
+* xref:about.adoc[]
+
+* xref:releases.adoc[]
+
+* xref:installation/installation.adoc[Installation]
+** xref:installation/installation.adoc[]
+** xref:installation/schema.adoc[]
+
+* xref:reference/configuration.adoc[Reference]
+** xref:reference/configuration.adoc[]
+** xref:reference/javadoc.adoc[]
+** xref:reference/annotations.adoc[]
+** xref:reference/specification_extension.adoc[]
+
+* xref:notes.adoc[]
+
+* xref:extensibility.adoc[]

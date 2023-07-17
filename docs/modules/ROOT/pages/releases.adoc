@@ -1,0 +1,74 @@
+= Releases
+
+[options="header",frame="none",grid="rows",cols="1,^,^,^"]
+|===
+| Version | Release date | Release | API Doc.
+
+4+| *0.3.x*
+
+| 0.3.1 [.snapshot_badge]#Current Snapshot#
+|
+|
+|
+
+| 0.3.0 [.release_badge]#Latest Release#
+| _2023-11-29_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.3.0[GitHub Release]
+| link:/release/0.3.0/apidocs/index.html[Javadoc^]
+
+4+| *0.2.x*
+
+| 0.2.7
+| _2023-03-15_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.2.7[GitHub Release]
+| link:/release/0.2.7/apidocs/index.html[Javadoc^]
+
+| 0.2.6
+| _2022-09-21_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.2.6[GitHub Release]
+| link:/release/0.2.6/apidocs/index.html[Javadoc^]
+
+| 0.2.5
+| _2021-09-22_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.2.5[GitHub Release]
+| link:/release/0.2.5/apidocs/index.html[Javadoc^]
+
+| 0.2.4
+| _2021-07-21_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.2.4[GitHub Release]
+| link:/release/0.2.4/apidocs/index.html[Javadoc^]
+
+| 0.2.3
+| _2021-05-22_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.2.3[GitHub Release]
+| link:/release/0.2.3/apidocs/index.html[Javadoc^]
+
+| 0.2.2
+| _2021-04-20_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.2.2[GitHub Release]
+| link:/release/0.2.2/apidocs/index.html[Javadoc^]
+
+| 0.2.1
+| _2021-01-30_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.2.1[GitHub Release]
+| link:/release/0.2.1/apidocs/index.html[Javadoc^]
+
+| 0.2.0
+| _2020-12-12_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.2.0[GitHub Release]
+| link:/release/0.2.0/apidocs/index.html[Javadoc^]
+
+4+| *0.1.x*
+
+| 0.1.1
+| _2020-06-06_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.1.1[GitHub Release]
+| link:/release/0.1.1/apidocs/index.html[Javadoc^]
+
+| 0.1.0
+| _2020-05-12_
+| link:https://github.com/chhorz/oas-generator/releases/tag/v0.1.0[GitHub Release]
+| link:/release/0.1.0/apidocs/index.html[Javadoc^]
+
+|===
+

@@ -1,0 +1,22 @@
+= Specification Extensions
+
+The OpenAPI specification allows using additional properties within a specification file.
+These link:https://spec.openapis.org/oas/v3.0.3#specification-extensions[specification extensions] have to follow a specific naming convention.
+They must begin with the following prefix: `x-`.
+
+The *OAS Generator* adds the following properties to the `info` object:
+
+[source,json]
+----
+{
+  "info" : {
+    "x-generated-by" : "oas-generator:0.3.0",
+    "x-generated-ts" : "2020-04-21T08:16:42.509+02:00"
+  }
+}
+----
+
+These properties should act as hint, that the current file was generated automatically and ideally should not be changed manually.
+
+The number of specification extensions was kept low intentionally.
+The OpenAPI specification offers wide tooling support, and those extensions will not be supported by those tools.

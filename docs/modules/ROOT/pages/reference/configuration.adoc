@@ -1,0 +1,263 @@
+= Configuration
+
+The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
+Compiler options described below could be used to customize the name or path of the configuration file.
+
+[[compiler_options]]
+== Compiler options
+
+A basic set of configuration options can be done by compiler options.
+Compiler options with the prefix `-A` will be recognized by an annotation processor.
+The following options can be used:
+
+`propertiesPath`::
+As default the configuration file is placed at `src/main/resources` and has the name `oas-generator.yml`.
+The name or path can be changed by using this compiler option.
+Property file resolution has the following priority:
+. Custom property *file name* within `src/main/resources` as compiler option (`propertiesPath=test.yml`)
+. Custom property *file path* passed as compiler option (`propertiesPath=${project.basedir}/oas-generator.yml`)
+. Default property file `oas-generator.yml` if no compiler option was set.
+`schemaPath`::
+If the resources/schemas are placed in a separate project or maven module, the Javadoc comments can not be parsed.
+In this case the schemas can be parsed with the `oas-generator-schema` annotation processor.
+To merge the schemas with the ones parsed with one of the other processors the path to the first generated file can be configured with this path.
+`version`::
+This option passes for example the current project version to the generated specification.
+
+Not all compiler options are available in all annotation processors.
+The following table explains the availability:
+
+.Recognized compiler options per module
+[options="header",frame="none",grid="rows",cols="2,1,1,1"]
+|===
+| Module
+| `propertiesPath`
+| `schemaPath`
+| `version`
+
+| _oas-generator-spring-web_
+| icon:check[]
+| icon:check[]
+| icon:check[]
+
+| _oas-generator-jaxrs_
+| icon:check[]
+| icon:check[]
+| icon:check[]
+
+| _oas-generator-schema_
+| icon:check[]
+|
+|
+|===
+
+=== Maven Compiler Plugin
+
+To configure the options above with the `maven-compile-plugin` the following configuration has to be added to the plugin:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>${maven-compiler-plugin.version}</version>
+    <configuration>
+        <compilerArgs>
+            <arg>-Aversion=${project.version}</arg>
+        </compilerArgs>
+    </configuration>
+</plugin>
+----
+
+[[configuration-file]]
+== Configuration file
+
+The configuration file consists of two parts.
+Both parts are content of the same file (Default: _oas-generator.yml_ within the classpath).
+
+.Minimal `oas-generator.yml` configuration file
+[source,yaml]
+----
+info:
+  title: MyService
+  version: 1.2.3-SNAPSHOT #<1>
+----
+
+<1> If the <<compiler_options,compiler option>> was used to pass the version, the annotated line can be omitted.
+
+Full description of the possible values is shown below:
+
+.Content included in `openapi.json`
+[source,yml]
+----
+# Documentation information that will be included in openapi.json
+info:
+  title: MyService # REQUIRED
+  version: 1.2.3-SNAPSHOT # REQUIRED <1>
+  contact:
+    name: John Doe
+    url: https://www.google.com
+    email: john@doe.com
+  license:
+    name: Apache License, Version 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: dev01.server.lan
+    description: Internal DEV-Stage 1
+    variables: &server_variables #<2>
+      port:
+        enumValues:
+          - 8080
+          - 443
+        defaultValue: "443"
+        description: The port of the application
+  - url: dev02.server.lan
+    description: Internal DEV-Stage 2
+    variables: *server_variables #<2>
+
+externalDocs:
+  url: https://www.openapis.org/
+  description: Lorem ipsum ...
+
+securitySchemes:
+  read_role:
+    description: Basic LDAP read role.
+    type: http
+    scheme: basic
+
+tags:
+  tag_name:
+    description: The category collects all methods for orders.
+    externalDocs:
+      url: https://www.google.com
+----
+
+<1> The Version can be set to a constant value within the configuration file.
+Otherwise, the configuration file can be filtered by Maven for example.
+The version has to be replaced with a variable for the maven project version: `@project.version@`.
++
+.Maven example for filtering
+[source,xml]
+----
+<build>
+  <resources>
+    <resource>
+      <directory>src/main/resources</directory>
+      <filtering>true</filtering>
+    </resource>
+    ...
+  </resources>
+  ...
+</build>
+----
+<2> YAML references can be used to remove redundant parts of the configuration.
+
+The content of the part above will be included in the resulting OpenAPI document as it is defined.
+It is static content not changing frequently, so it should be defined as static data.
+Only data that could not be retrieved from the source code and is required by the OpenAPI specification must be present in the shown file.
+
+Parser properties shown below customize the behavior of the *OAS Generator*:
+
+.Configuration to adjust the generator behavior
+[source,yaml]
+----
+# Parser specific configuration
+parser:
+  enabled: true
+  logLevel: DEBUG # DEBUG, INFO, ERROR
+  includeGetters: true
+  outputDir: ./target/openapi # <1>
+  outputFile: openapi # <1>
+  outputFormat: json,yaml
+  schemaDir: ./api-module/target/openapi
+  schemaFile: openapi-schema # <2>
+  schemaPackages:
+    - com.github.chhorz.openapi.spring.test.controller.external # <2>
+  postProcessor: # <3>
+    postProcessor1:
+      key1: value1
+      key2: value2
+    postProcessor2:
+      key1: value1
+----
+
+<1> Output path and filename of the generated OpenAPI specification file.
+<2> File name of previously generate schema files (`.json` suffix will be added automatically) - _(Optional)_.
+<3> Key-Value maps for custom post processors, e.g. <<asciidoctor.properties,asciidoctor postprocessor>> -  _(Optional)_.
++
+The `postProcessor` properties define a generic list of properties.
+In this map contributors can define their own properties for their post processors using the provided spi.
+
+.Description of parser related properties
+[options="header",frame="none",grid="rows",cols="1a,3a"]
+|===
+| Property | Description
+
+| `enabled`
+| Property to enable and disable the *OAS Generator* execution and generation of OpenAPI files.
+
+Possible values: `true`, `false`
+
+_Default: ``true``_
+
+| `logLevel`
+| Defines the logging level for all *OAS Generator* log statements.
+
+Possible values: `DEBUG`, `INFO`, `ERROR`
+
+_Default: ``INFO``_
+
+| `includeGetters`
+| Flag to include attributes according to their getter methods.
+
+Possible values: `true`, `false`
+
+_Default: ``true``_
+
+| `outputDir`
+| File path of the generated output files.
+
+_Default: ``./target/openapi``_
+
+| `outputFile`
+| The file name of the generated files.
+The name will be used for each of the following ``outputFormat``s.
+
+_Default: ``openapi``_
+
+| `outputFormat`
+| Definition of the output formats (file types).
+
+Possible values are a comma-separated list of the following values: `json`, `yaml`, `yml`
+
+_Default: ``json,yaml``_
+
+| `schemaDir`
+| Path to the generated `openapi-schema` file that was generated from _oas-generator-schema_.
+
+_Default: ``./target/openapi``_
+
+| `schemaFile`
+| File name of the `openapi-schema` file that was generated from _oas-generator-schema_.
+The file suffix `.json` is optional and can be omitted.
+
+_Default: ``openapi-schema``_
+
+| `schemaPackages`
+| Additional packages of resources that should be parsed.
+Only relevant for _oas-generator-schema_.
+
+_Default: empty list_
+
+| `postProcessor`
+| Map of custom <<postprocessor_documentation,post-processor properties>>.
+Values are documented in the corresponding section of each post-processor.
+
+_Default: empty map_
+
+|===
+
+== JSON Schema
+
+To use auto-completion for the `oas-generator.yaml` file the JSON schema must be configured as described xref:installation/schema.adoc[here].

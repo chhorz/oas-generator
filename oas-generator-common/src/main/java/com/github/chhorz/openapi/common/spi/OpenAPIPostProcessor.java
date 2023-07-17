@@ -21,7 +21,6 @@ import com.github.chhorz.openapi.common.domain.OpenAPI;
 import java.nio.file.Path;
 import java.util.List;
 
-// tag::documentation[]
 /**
  * This interface declares the actual post-processing method. All post-processing
  * methods that should be supported must override the default implementation within
@@ -89,4 +88,3 @@ public interface OpenAPIPostProcessor {
 	List<PostProcessorType> getPostProcessorType();
 
 }
-// end::documentation[]

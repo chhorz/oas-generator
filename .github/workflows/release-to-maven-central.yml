@@ -49,13 +49,11 @@ jobs:
 
       - name: 'Update documentation'
         run: |
-          mkdir ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}
-          ln -nfs ${{ github.event.inputs.release_version }}/ docs/.vuepress/public/docs/latest
+          mkdir ./_antora/static/release/${{ github.event.inputs.release_version }}
           ./mvnw -B clean install --no-transfer-progress -DskipTests
-          cp ./oas-generator-docs/target/generated-docs/oas-generator.html ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
           ./mvnw -B javadoc:aggregate
-          cp -r ./target/site/apidocs ./docs/.vuepress/public/docs/${{ github.event.inputs.release_version }}/
-          git add docs/.vuepress/public/docs/
+          cp -r ./target/site/apidocs ./_antora/static/release/${{ github.event.inputs.release_version }}
+          git add _antora/static/release/
           git commit --amend -m "Set version to ${{ github.event.inputs.release_version }}"
           git tag v${{ github.event.inputs.release_version }}
 

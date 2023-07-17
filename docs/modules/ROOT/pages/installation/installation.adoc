@@ -1,34 +1,38 @@
-# Installation Guide
-[[toc]]
+= Installation Guide
 
 Java annotation processing is a concept from the Java language.
 There are multiple ways to integrate the **OAS Generator** into your project.
-The complete installation guide can be found in the [reference documentation](https://chhorz.github.io/oas-generator/docs/latest/oas-generator.html#_installation).
 
-## Dependency 
+== Dependency 
 
-::: tip Hint
+[TIP]
+====
 The following examples use the `oas-generator-spring-web`.
 The installation of the `oas-generator-jaxrs` or `oas-generator-schema` module follows the same steps.
-:::
+====
 
-### Apache Maven
+=== Apache Maven
 
-#### Include via dependency
+==== Include via dependency
+
 The simplest way to integrate the **OAS Generator** is to add the following dependency:
-``` xml
+
+[source,xml]
+----
 <dependency>
     <groupId>com.github.chhorz</groupId>
     <artifactId>oas-generator-spring-web</artifactId>
     <version>${oas-generator.version}</version>
     <scope>provided</scope>
 </dependency>
-```
+----
 
-#### Maven Compiler Plugin
-Another way to include an annotation processor is the [maven-compiler-plugin](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html):
+==== Maven Compiler Plugin
 
-``` xml{5,13}
+Another way to include an annotation processor is the link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html[maven-compiler-plugin]:
+
+[source,xml,highlight=5,13]
+----
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-compiler-plugin</artifactId>
@@ -47,22 +51,25 @@ Another way to include an annotation processor is the [maven-compiler-plugin](ht
         </annotationProcessors>
     </configuration>
 </plugin>
-```
+----
 
-1. Plugin documentation: [annotationProcessorPaths](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessorPaths)
-2. Plugin documentation: [annotationProcessors](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessors)
+1. Plugin documentation: link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessorPaths[annotationProcessorPaths]
+2. Plugin documentation: link:https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html#annotationProcessors[annotationProcessors]
 
 It is not possible to mix this way of annotation processor integration with the dependency based one shown above.
 
-#### Kotlin Maven Plugin
-The plugin documentation for Kotlin Maven projects and annotation processors using `kapt` can be found [here](https://kotlinlang.org/docs/kapt.html#using-in-maven).
+==== Kotlin Maven Plugin
+
+The plugin documentation for Kotlin Maven projects and annotation processors using `kapt` can be found link:https://kotlinlang.org/docs/kapt.html#using-in-maven[here].
 For the following use case the `oas-generator-*` was added as dependency.
 
-::: warning
-Resolution of the `oas-generator.yml` property file is broken for versions <= 0.2.2.
-:::
+[WARNING]
+====
+Resolution of the `oas-generator.yml` property file is broken for versions previous than 0.2.2.
+====
 
-```xml
+[source,xml]
+----
 <plugin>
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-maven-plugin</artifactId>
@@ -83,19 +90,37 @@ Resolution of the `oas-generator.yml` property file is broken for versions <= 0.
     </configuration>
     <!-- ... -->
 </plugin>
-```
+----
 
 1. Annotation processing for Kotlin is provided by `kapt`
 2. Definition of the default properties file `src/main/resources/oas-generator.yml` does not work for Kotlin projects.
 The full path to the properties file *must* be specified.
 
-### Gradle
+=== Gradle
+
 _Gradle installation steps may be added soon._
 
-### Others
+=== Others
+
 _Others options may be added soon._
 
-## Configuration
+== Configuration
+
 Beside the configuration of the dependencies mentioned above, some additional configuration need to be done.
-The complete list of possible properties can be found at the corresponding section of the [reference documentation](https://chhorz.github.io/oas-generator/docs/latest/oas-generator.html#_configuration).
-The project serves a [custom _JSON Schema_](https://chhorz.github.io/oas-generator/schema/oas-generator.schema.json) for the configuration file, that can be included in an IDE to gain auto-completion.
+The complete list of possible properties can be found at the corresponding section of the link:https://chhorz.github.io/oas-generator/docs/latest/oas-generator.html#_configuration[reference documentation].
+The project serves a custom __link:https://chhorz.github.io/oas-generator/schema/oas-generator.schema.json[JSON Schema]__ for the configuration file, that can be included in an IDE to gain auto-completion.
+
+== Snapshots
+
+Snapshots are available from the Sonatype OSS Snapshots repository.
+To configure the repository for your project to use the latest snapshot versions you have to add the following repository to your maven pom:
+
+[source,xml]
+----
+<repositories>
+    <repository>
+        <id>ossrh</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </repository>
+</repositories>
+----

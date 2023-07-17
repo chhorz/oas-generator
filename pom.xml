@@ -51,7 +51,6 @@
 
 	<modules>
 		<module>oas-generator-common</module>
-		<module>oas-generator-docs</module>
 		<module>oas-generator-spring-web</module>
 		<module>oas-generator-jaxrs</module>
 		<module>oas-generator-schema</module>
@@ -235,7 +234,7 @@
 					<configuration>
 						<configLocation>checkstyle.xml</configLocation>
 						<includes>**/*</includes>
-						<excludes>.git/**/*,/**/target/**/*,docs/.vuepress/**/*,node_modules/**/*</excludes>
+						<excludes>.git/**/*,/**/target/**/*,docs/.vuepress/**/*,node_modules/**/*,_antora/supplemental_ui/**/*</excludes>
 						<sourceDirectories>./</sourceDirectories>
 					</configuration>
 					<executions>

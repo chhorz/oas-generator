@@ -1,0 +1,116 @@
+= Javadoc
+
+In this section we describe the default structure of the Javadoc comments.
+A common structure is *required to get all data parsed correctly*.
+This is necessary because Javadoc comments in general are unstructured comments and can be formatted in different ways.
+
+This project uses the link:https://github.com/chhorz/javadoc-parser[Javadoc Parser] project to load all information from the Javadoc comments as structured data.
+
+.Maven dependency for the Javadoc Parser:
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.chhorz</groupId>
+    <artifactId>javadoc-parser</artifactId>
+    <version>${javadoc-parser.version}</version>
+</dependency>
+----
+
+== Supported tags
+
+In general the method description and summary are extracted for all API methods.
+The description is the complete text from the beginning of the Javadoc comment to the first Javadoc tag.
+Additionally, the summary is, unless not marked with the `@summary` tag, the first sentence of the description.
+Other included tags are:
+
+* `@param` tags for a description of the method parameters and so the API parameters
+* `@return` for the semantic meaning of the response
+* [[category_tag]] `@category` to represent OpenAPI tags _(Eclipse recognizes the `@category` tag per default)_.
+
+=== Custom javadoc tags
+
+To render the custom javadoc tags properly within the HTML javadoc api documentation, the following configuration of the `maven-javadoc-plugin` has to be added:
+
+.Configuration of `maven-javadoc-plugin`
+[source,xml]
+----
+<configuration>
+    <tags>
+        <tag>
+            <name>response</name>
+            <placement>a</placement>
+            <head>OpenAPI response:</head>
+        </tag>
+        <tag>
+            <name>security</name>
+            <placement>a</placement>
+            <head>OpenAPI security scheme:</head>
+        </tag>
+        <tag>
+            <name>tag</name>
+            <placement>a</placement>
+            <head>OpenAPI tag:</head>
+        </tag>
+    </tags>
+</configuration>
+----
+
+==== Define responses
+
+Because the different response codes and contents are defined within the method body, the *OAS Generator* is not capable of reading this information.
+To specify the possible response status the `@response` javadoc tag could be used:
+
+.Example Javadoc comment
+[source,java]
+----
+/**
+ * @response 200 SomeResource
+ *                      the resource that will be returned
+ * @response 404 ProblemResource
+ *                      the generic problem resource for error case
+ */
+----
+
+The `@response` tag has the following structure:
+
+[source,java]
+----
+/**
+ *@response <http-status> <schema> <description> <1>
+ */
+----
+
+<1> Each part is described in detail:
+`<http-status>`:: HTTP status code.
+Only the number of the status code must be used.
+`<schema>`:: Simple name of the resource if the resource itself is available as schema.
+Otherwise, a FQDN could be used (for example `java.lang.Void`).
+`<description>`:: Description of the status code and schema
+
+==== Security schemes
+
+The *OAS Generator* reads information about the required security schemes form some _spring-security_ annotations (e.g. `@PreAuthorize`).
+If none of these annotations is present on the API method, the security scheme can also be defined in the javadoc comment:
+
+The content of the tag must match the name of a security requirement from the `oas-generator.yml` file.
+
+.Example Javadoc comment
+[source,java]
+----
+/**
+ * @security read_role
+ */
+----
+
+==== Tag API methods
+
+This tag was introduced because the javadoc tag <<category_tag,`@category`>> is only used as standard tag within (at least older) Eclipse IDEs.
+The custom javadoc tag `@tag` was introduced to provide a familiar way to tag operations within doc comments.
+
+.Example Javadoc comment
+[source,java]
+----
+/**
+ * @tag tag_name
+ */
+----

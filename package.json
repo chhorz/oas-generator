@@ -1,9 +1,17 @@
 {
-  "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
-  },
+  "name": "oas-generator",
+  "version": "0.3.0",
+  "license": "Apache-2.0",
   "devDependencies": {
-    "vuepress": "^1.9.10"
+    "@antora/cli": "3.1.7",
+    "@antora/site-generator": "3.1.7",
+    "browser-sync": "3.0.2",
+    "@antora/lunr-extension": "1.0.0-alpha.8"
+  },
+  "scripts": {
+    "antora": "node_modules/.bin/antora antora-playbook.yml --fetch --stacktrace",
+    "postantora": "cp -r _antora/static/* build/site",
+    "preview": "node_modules/.bin/browser-sync start --server build/site/ --watch=true --files=\"build/site/**/*.*\"",
+    "updateUiBundle": "curl -fsSL https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable -o _antora/ui-bundle.zip"
   }
 }

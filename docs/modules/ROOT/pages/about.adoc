@@ -1,0 +1,46 @@
+= About
+
+Goal of the project is the generation of an link:https://www.openapis.org/[OpenAPI] specification with a minimal amount of manual tasks.
+It is configured within a few minutes and produces a first output file.
+The configuration and documentation of a complete REST API lasts some time.
+
+Key Aspects of an annotation processor generator at compile time:
+
+Simple:: Use the available annotations in your project that already are present to configure your API
+Up-To-Date:: The API specification is always up-to-date because the file is generated during the build phase
+Performant:: No additional overhead while runtime. Generation occurs while build phase.
+
+The **OAS Generator** is a java annotation processor working on annotations used to define a REST API in a Java application (Spring-Web or JaxRS).
+It is based on static code analysis, especially annotations that are used to create a REST API.
+Additionally, the JavaDoc comments from the given methods or resource objects will be included if they follow a defined format.
+
+[source%nowrap,java]
+----
+@RequestMapping(path = "/orders")
+public class OrderController {
+
+    /**
+     * Get an order with an {@code id}.
+     *
+     * @tag order
+     *
+     * @param id
+     *            the identifier
+     * @param filter
+     *            the filter that can be applied
+     * @return a list of orders that match the optional filters
+     */
+    @GetMapping(value = "/{id:\\d+}", produces = { "application/json" })
+    public List<Order> getOrder(
+                @PathVariable Long id,
+                @RequestParam(defaultValue = "valid=true",
+                              required = false) String filter) {
+        // implementation
+    }
+
+}
+----
+
+== License
+
+OAS Generator is Open Source software released under the link:https://www.apache.org/licenses/LICENSE-2.0.txt[Apache 2.0 license].

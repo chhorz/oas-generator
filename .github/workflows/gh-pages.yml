@@ -2,32 +2,44 @@ name: 'GitHub Pages'
 
 on:
   push:
-    paths: 
+    paths:
       - 'docs/**'
       - '.github/workflows/gh-pages.yml'
     branches:
       - master
+  workflow_dispatch:
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build-deploy:
-    name: 'Build and deploy GitHub Page'
+  build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
     steps:
-      - name: 'Checkout repository'
+      - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: 'Setup Node'
+      - name: Configure Pages
+        uses: actions/configure-pages@v4
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-
-      - run: npm ci
-      - run: npm run docs:build
-
-      - name: 'Deploy'
-        uses: peaceiris/actions-gh-pages@v3.9.3
+      - name: Install Antora
+        run: npm i antora @antora/lunr-extension
+      - name: Generate Site
+        run: npm run antora
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/.vuepress/dist
-          publish_branch: gh-pages
+          path: build/site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

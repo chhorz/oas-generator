@@ -1,0 +1,35 @@
+= Additional notes
+
+== Limitations
+
+There are some limitations based on the underlying concept of java annotation processors.
+These annotation processors are processing the abstract syntax tree of the java classes.
+
+* Annotation processors have no information about the method body.
+Only the method signature and the documentation comment (javadoc comment) are available.
++
+If you choose a different return object or status code during runtime you have to document this information on a place that is available at compile time.
+Either the documentation comments or other annotations should be used in this place.
++
+This limitation also affects enums.
+More precisely if the API does not use the enum name, but a custom value passed as parameter, and the attribute contains a hint for the serialization plugin (e.g., `@JsonProperty` for Jackson).
+In this case the value for the API cannot be read.
+
+== Known Issues
+
+=== Log Output
+
+Depending on the configuration of the `maven-compiler-plugin` no log messages may be shown.
+They can be easily enabled by setting the following property:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.8.1</version>
+    <configuration>
+        <showWarnings>true</showWarnings>
+    </configuration>
+</plugin>
+----
