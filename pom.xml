@@ -105,7 +105,7 @@
 		<jsonassert.version>1.5.1</jsonassert.version>
 		<json-path.version>2.8.0</json-path.version>
 
-		<spring-hateoas.version>2.1.0</spring-hateoas.version>
+		<spring-hateoas.version>2.1.1</spring-hateoas.version>
 
 		<!-- plugin versions -->
 		<asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
