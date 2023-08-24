@@ -4,6 +4,12 @@
 #/components/schemas/ArticleResource -> components_schemas_ArticleResource
 
 -->
+<#macro clean_tag tag>${tag?replace(" ", "_")}</#macro>
+<#--
+
+#/components/schemas/ArticleResource -> components_schemas_ArticleResource
+
+-->
 <#macro clean_ref ref>${ref?replace("/", "_")[2..]}</#macro>
 <#--
 

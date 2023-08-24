@@ -153,7 +153,7 @@ This operation is deprecated.
 4+h| /orders
 
 h| Tags
-4+| icon:tag[] <<TAG_1,TAG_1>>, icon:tag[] <<TAG_2,TAG_2>>
+4+| icon:tag[] <<TAG_1,TAG_1>>, icon:tag[] <<TAG_2,TAG 2>>
 
 h| Summary
 4+| pass:[Here we get some orders.]
@@ -280,13 +280,13 @@ m| <<components_schemas_ArticleResource>>
 
 == Tags
 
+_TAG 2_::
+[[TAG_2]]
+
 _TAG_1_::
 [[TAG_1]] pass:[This is a <b>description</b>]
 +
 Lorem ipsum dolor sit amet. (icon:external-link[] link:https://en.wikipedia.org[_Link_])
-
-_TAG_2_::
-[[TAG_2]]
 
 
 == External documentation

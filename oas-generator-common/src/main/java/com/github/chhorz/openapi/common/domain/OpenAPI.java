@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
 package com.github.chhorz.openapi.common.domain;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.github.chhorz.openapi.common.domain.meta.Required;
+
+import static java.util.Comparator.comparing;
 
 /**
  * https://spec.openapis.org/oas/v3.0.3#openapi-object
@@ -95,7 +95,7 @@ public class OpenAPI {
 
 	public List<Tag> getTags() {
 		if (tags != null) {
-			Collections.sort(tags, Comparator.comparing(Tag::getName));
+			tags.sort(comparing(Tag::getName));
 		}
 		return tags;
 	}

@@ -19,7 +19,7 @@ This operation is deprecated.
 
 <#if operation.tags??>
 h| Tags
-4+| <#list operation.tags as tag><#if attributeIcons?? && attributeIcons?matches("font")>icon:tag[] </#if><<${tag},${tag}>><#sep>, </#list>
+4+| <#list operation.tags as tag><#if attributeIcons?? && attributeIcons?matches("font")>icon:tag[] </#if><<<@clean_tag tag/>,${tag}>><#sep>, </#list>
 
 </#if>
 <#if operation.summary??>

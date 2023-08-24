@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -258,7 +258,7 @@ class AsciidoctorPostProcessorTest {
 		tag1.setExternalDocs(externalDocs);
 
 		Tag tag2 = new Tag();
-		tag2.setName("TAG_2");
+		tag2.setName("TAG 2");
 
 		ServerVariableObject v1 = new ServerVariableObject();
 		v1.setDescription("Lorem ipsum");
@@ -399,7 +399,7 @@ class AsciidoctorPostProcessorTest {
 		getOrders.setSummary("Here we get some orders.");
 		getOrders.setDescription("Here we get some orders. Or something else.");
 		getOrders.addTag("TAG_1");
-		getOrders.addTag("TAG_2");
+		getOrders.addTag("TAG 2");
 
 		PathItemObject orders = new PathItemObject();
 		orders.setSummary("Summary for /orders");
