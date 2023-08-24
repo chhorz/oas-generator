@@ -2,17 +2,20 @@
 
 ## Version 0.2.x
 
-### 0.2.7 <Badge text="Latest Snapshot" type="warn" vertical="top"/>
+### 0.3.0 <Badge text="Latest Snapshot" type="warn" vertical="top"/>
+* Reference Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/latest/oas-generator.html)_)
+
+### 0.2.7 <Badge text="Latest Release" vertical="top"/>
 * [GitHub Release](https://github.com/chhorz/oas-generator/releases/tag/v0.2.7) _(2023-03-15)_
 * Reference Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.7/oas-generator.html)_)
 * API Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.7/apidocs/)_)
 
-### 0.2.6 <Badge text="Latest Release" vertical="top"/>
+### 0.2.6
 * [GitHub Release](https://github.com/chhorz/oas-generator/releases/tag/v0.2.6) _(2022-09-21)_
 * Reference Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.6/oas-generator.html)_)
 * API Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.6/apidocs/)_)
 
-### 0.2.5 <Badge text="Latest Release" vertical="top"/>
+### 0.2.5
 * [GitHub Release](https://github.com/chhorz/oas-generator/releases/tag/v0.2.5) _(2021-09-22)_
 * Reference Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.5/oas-generator.html)_)
 * API Documentation (_[HTML](https://chhorz.github.io/oas-generator/docs/0.2.5/apidocs/)_)

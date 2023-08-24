@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.17">
+<meta name="generator" content="Asciidoctor 2.0.18">
 <meta name="author" content="Christian Horz">
 <title>OAS Generator</title>
 <style>
@@ -2109,7 +2109,7 @@ p {
 <h1>OAS Generator</h1>
 <div class="details">
 <span id="author" class="author">Christian Horz</span><br>
-<span id="revnumber">version 0.2.7</span>
+<span id="revnumber">version 0.3.0-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -2275,7 +2275,7 @@ Each kind of installation also works with the <code>oas-generator-jaxrs</code> o
     &lt;dependency&gt;
         &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
         &lt;artifactId&gt;oas-generator-spring-web&lt;/artifactId&gt;
-        &lt;version&gt;0.2.7&lt;/version&gt;
+        &lt;version&gt;0.3.0-SNAPSHOT&lt;/version&gt;
         &lt;scope&gt;provided&lt;/scope&gt; <i class="conum" data-value="1"></i><b>(1)</b>
     &lt;/dependency&gt;
 
@@ -2334,7 +2334,7 @@ It needs to be available on <code>compile</code> time for the <strong>OAS Genera
             &lt;path&gt;
                 &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
                 &lt;artifactId&gt;oas-generator-spring-web&lt;/artifactId&gt;
-                &lt;version&gt;0.2.7&lt;/version&gt;
+                &lt;version&gt;0.3.0-SNAPSHOT&lt;/version&gt;
             &lt;/path&gt;
             &lt;!-- ... more ... --&gt;
         &lt;/annotationProcessorPaths&gt;
@@ -3343,7 +3343,7 @@ The generation is done with the <a href="https://freemarker.apache.org/">Apache 
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;com.github.chhorz&lt;/groupId&gt;
     &lt;artifactId&gt;oas-generator-asciidoctor&lt;/artifactId&gt;
-    &lt;version&gt;0.2.7&lt;/version&gt;
+    &lt;version&gt;0.3.0-SNAPSHOT&lt;/version&gt;
     &lt;scope&gt;provided&lt;/scope&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -3786,15 +3786,15 @@ To configure the repository for your project to use the latest snapshot versions
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.2.7<br>
-Last updated 2023-03-15 10:22:46 UTC
+Version 0.3.0-SNAPSHOT<br>
+Last updated 2023-04-28 11:01:10 +0200
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
 <script>
 if (!hljs.initHighlighting.called) {
   hljs.initHighlighting.called = true
-  ;[].slice.call(document.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightBlock(el) })
+  ;[].slice.call(document.querySelectorAll('pre.highlight > code[data-lang]')).forEach(function (el) { hljs.highlightBlock(el) })
 }
 </script>
 </body>
