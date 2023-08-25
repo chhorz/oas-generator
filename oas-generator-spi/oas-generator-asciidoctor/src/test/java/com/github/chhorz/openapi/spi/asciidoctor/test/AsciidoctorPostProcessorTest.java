@@ -349,7 +349,6 @@ class AsciidoctorPostProcessorTest {
 		Components components = new Components();
 		components.putAllParsedSchemas(schemas);
 		components.setSecuritySchemes(securitySchemes);
-		components.putRequestBody("ArticleResource", articleResourceRequestBody);
 
 		Parameter filter = new Parameter();
 		filter.setDeprecated(false);
@@ -390,7 +389,7 @@ class AsciidoctorPostProcessorTest {
 		postArticle.setDescription("Here we create a new article. Or something else.");
 		postArticle.addTag("TAG_1");
 		postArticle.setSecurity(Collections.singletonList(Collections.singletonMap("key", new ArrayList<>())));
-		postArticle.setRequestBodyReference(new Reference("#/components/requestBodies/ArticleResource"));
+		postArticle.setRequestBodyObject(articleResourceRequestBody);
 		postArticle.putDefaultResponse(articleResponse);
 
 		Operation getOrders = new Operation();

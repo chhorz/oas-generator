@@ -15,7 +15,6 @@
  */
 package com.github.chhorz.openapi.spring.test.github.controller;
 
-//import com.github.chhorz.openapi.common.annotation.OpenAPIContent;
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
 import com.github.chhorz.openapi.spring.test.github.resources.Resource;
 import org.springframework.http.HttpStatus;

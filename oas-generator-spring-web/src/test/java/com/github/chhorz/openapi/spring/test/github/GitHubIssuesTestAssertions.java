@@ -570,8 +570,8 @@ class GitHubIssuesTestAssertions {
 	 *
 	 * @see Resource
 	 */
-	public static void validateRequestBodyForResource(final DocumentContext documentContext, final boolean required) {
-		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
+	public static void validateRequestBodyForResource(String jsonPath, DocumentContext documentContext, boolean required) {
+		RequestBody requestBody = documentContext.read(jsonPath + ".requestBody", RequestBody.class);
 
 		assertThat(requestBody)
 			.isNotNull()
@@ -586,7 +586,7 @@ class GitHubIssuesTestAssertions {
 		assertThat(requestBody.getContent().get("application/json"))
 			.isNotNull();
 
-		String resourceReference = documentContext.read("$.components.requestBodies.Resource.content.application/json.schema.$ref", String.class);
+		String resourceReference = documentContext.read(jsonPath + ".requestBody.content.application/json.schema.$ref", String.class);
 
 		assertThat(resourceReference)
 			.isNotNull()

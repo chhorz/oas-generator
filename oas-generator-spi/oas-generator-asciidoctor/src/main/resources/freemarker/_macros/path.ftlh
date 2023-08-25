@@ -50,6 +50,25 @@ m| <@asciidoc_schema parameter.schema/>
 
 </#list>
 </#if>
+<#if operation.requestBodyObject??>
+5+h| Request Body
+5+e| <#if operation.requestBodyObject.required>*REQUIRED*</#if> <#if operation.requestBodyObject.description?? && operation.requestBodyObject.description?has_content>pass:[${operation.requestBodyObject.description}]</#if>
+
+<#if operation.requestBodyObject.content??>
+[cols="2,1", options="header"]
+!===
+e! Type
+e! Schema
+
+<#list operation.requestBodyObject.content as type, mediatype>
+! ${type}
+m! <@asciidoc_mediatype mediatype/>
+
+</#list>
+!===
+
+</#if>
+</#if>
 <#if operation.requestBodyReference??>
 5+h| Request Body
 

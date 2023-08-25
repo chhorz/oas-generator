@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,10 @@ import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
-import com.github.chhorz.openapi.common.util.ComponentUtils;
-import com.github.chhorz.openapi.common.util.ProcessingUtils;
 import com.github.chhorz.openapi.common.util.TagUtils;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
 import com.github.chhorz.openapi.spring.util.ParameterUtils;
 import com.github.chhorz.openapi.spring.util.PathItemUtils;
-import com.github.chhorz.openapi.spring.util.RequestBodyUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -262,17 +259,7 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 
 								openApi.getComponents().putAllSchemas(schemaUtils.createStringSchemaMap(requestBody.asType()));
 
-								String requestBodyKey = ComponentUtils.getKey(requestBody.asType());
-								if (openApi.getComponents().getRequestBodies() != null &&
-									openApi.getComponents().getRequestBodies().containsKey(requestBodyKey)) {
-									RequestBodyUtils requestBodyUtils = new RequestBodyUtils(logUtils);
-									openApi.getComponents().putRequestBody(requestBodyKey,
-										requestBodyUtils.mergeRequestBodies(openApi.getComponents().getRequestBodies().get(requestBodyKey), r));
-								} else {
-									openApi.getComponents().putRequestBody(requestBodyKey, r);
-								}
-
-								operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
+								operation.setRequestBodyObject(r);
 							});
 
                     if (isClassAvailable("org.springframework.data.domain.Pageable")) {

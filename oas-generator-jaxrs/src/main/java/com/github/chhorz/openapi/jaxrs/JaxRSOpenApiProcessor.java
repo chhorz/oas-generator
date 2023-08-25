@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.domain.Parameter.In;
 import com.github.chhorz.openapi.common.domain.Schema.Type;
-import com.github.chhorz.openapi.common.util.ComponentUtils;
-import com.github.chhorz.openapi.common.util.ProcessingUtils;
 import com.github.chhorz.openapi.common.util.TagUtils;
 
 import javax.annotation.processing.ProcessingEnvironment;
@@ -188,9 +186,8 @@ public class JaxRSOpenApiProcessor extends OpenAPIProcessor {
 			}
 
 			openApi.getComponents().putAllSchemas(schemaUtils.createStringSchemaMap(requestBody.asType()));
-			openApi.getComponents().putRequestBody(ComponentUtils.getKey(requestBody.asType()), r);
 
-			operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
+			operation.setRequestBodyObject(r);
 		}
 
 		String returnTag = "";

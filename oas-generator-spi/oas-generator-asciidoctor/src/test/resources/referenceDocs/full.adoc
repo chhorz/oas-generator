@@ -106,9 +106,17 @@ h| Description
 4+| pass:[Here we create a new article. Or something else.]
 
 5+h| Request Body
+5+e| *REQUIRED* pass:[Lorem ipsum]
 
-e|Type
-4+a| <<components_requestBodies_ArticleResource,ArticleResource>>
+[cols="2,1", options="header"]
+!===
+e! Type
+e! Schema
+
+! application/json
+m! <<components_schemas_ArticleResource>>
+
+!===
 
 5+h| Responses
 
@@ -245,23 +253,6 @@ a| pass:[Lorem ipsum]
 
 * **Pattern:** \d{2}-\d{3}
 
-
-|===
-
-
-=== Request Bodies
-
-[[components_requestBodies_ArticleResource]]
-==== ArticleResource
-
-*REQUIRED* pass:[Lorem ipsum]
-
-[cols="2,1", options="header"]
-|===
-| Type | Schema
-
-| application/json
-m| <<components_schemas_ArticleResource>>
 
 |===
 
