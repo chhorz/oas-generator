@@ -77,10 +77,8 @@
 
 	<properties>
 		<!-- common -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.source.version>17</java.source.version>
-		<java.target.version>17</java.target.version>
+		<project.release>17</project.release>
+		<project.encoding>UTF-8</project.encoding>
 
 		<!-- dependency versions -->
 		<asciidoctorj-diagram.version>2.2.11</asciidoctorj-diagram.version>
@@ -253,8 +251,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven-compiler-plugin.version}</version>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<release>${project.release}</release>
+						<encoding>${project.encoding}</encoding>
 						<compilerArgument>-proc:none</compilerArgument>
 					</configuration>
 				</plugin>
