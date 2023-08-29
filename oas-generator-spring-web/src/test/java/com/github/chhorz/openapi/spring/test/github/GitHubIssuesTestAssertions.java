@@ -508,6 +508,40 @@ class GitHubIssuesTestAssertions {
 	}
 
 	/**
+	 * Validates the given test record.
+	 *
+	 * @param documentContext the json document context
+	 * @see com.github.chhorz.openapi.spring.test.github.resources.TestRecord
+	 */
+	public static void validateSchemaForTestRecord(final DocumentContext documentContext) {
+		Schema schema = documentContext.read("$.components.schemas.TestRecord", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "Resource for content data")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		assertThat(schema.getProperties())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("id", "value");
+
+		assertThat(schema.getProperties().get("id"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
+			.hasFieldOrPropertyWithValue("format", Schema.Format.INT64)
+			.hasFieldOrPropertyWithValue("description", "the internal database id");
+
+		assertThat(schema.getProperties().get("value"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+			.hasFieldOrPropertyWithValue("description", "the content value");
+	}
+
+	/**
 	 * Validates the given order resource.
 	 *
 	 * @param documentContext the json document context

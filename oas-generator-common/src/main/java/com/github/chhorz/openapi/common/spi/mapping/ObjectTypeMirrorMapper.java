@@ -19,6 +19,7 @@ package com.github.chhorz.openapi.common.spi.mapping;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.chhorz.javadoc.JavaDoc;
+import com.github.chhorz.javadoc.tags.ParamTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.domain.Reference;
 import com.github.chhorz.openapi.common.domain.Schema;
@@ -26,15 +27,13 @@ import com.github.chhorz.openapi.common.domain.Schema.Type;
 import com.github.chhorz.openapi.common.properties.domain.ParserProperties;
 import com.github.chhorz.openapi.common.util.LogUtils;
 import com.github.chhorz.openapi.common.util.ProcessingUtils;
+import jakarta.validation.constraints.*;
 
 import javax.lang.model.element.*;
 import javax.lang.model.type.NoType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-
-import jakarta.validation.constraints.*;
-
 import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.function.Function;
@@ -45,6 +44,7 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 	private static final String IS_PREFIX = "is";
 
 	private TypeMirror object;
+	private TypeMirror record;
 	private TypeMirror enumeration;
 
 	@Override
@@ -52,6 +52,7 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 		super.setup(elements, types, logUtils, parserProperties, typeMirrorMappers);
 
 		object = elements.getTypeElement(Object.class.getCanonicalName()).asType();
+		record = elements.getTypeElement(Record.class.getCanonicalName()).asType();
 		enumeration = elements.getTypeElement(Enum.class.getCanonicalName()).asType();
 	}
 
@@ -92,8 +93,10 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 		Map<TypeMirror, Map<TypeParameterElement, TypeMirror>> typeParameterMap = new HashMap<>();
 
 		// follow class hierarchy until object or enum
-		while (!(superType instanceof NoType) && processingUtils.doesTypeDiffer(superType, object)
-			&& processingUtils.doesTypeDiffer(types.erasure(superType), enumeration)) {
+		while (!(superType instanceof NoType)
+			   && processingUtils.doesTypeDiffer(superType, object)
+			   && processingUtils.doesTypeDiffer(types.erasure(superType), enumeration)
+			   && processingUtils.doesTypeDiffer(types.erasure(superType), record)) {
 
 			TypeElement typeElement = elements.getTypeElement(types.erasure(superType).toString());
 
@@ -228,10 +231,20 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 										});
 								}
 
-								propertySchema.setDescription(propertyDoc.getDescription());
+								if (propertyDoc.getDescription() == null || propertyDoc.getDescription().isEmpty()) {
+									javaDoc.getTags(ParamTag.class).stream()
+										.filter(tag -> tag.getParamName().equals(propertyName))
+										.findFirst()
+										.ifPresentOrElse(paramTag -> propertySchema.setDescription(paramTag.getParamDescription()),
+											() -> propertySchema.setDescription(""));
+								} else {
+									propertySchema.setDescription(propertyDoc.getDescription());
+								}
+
 								if (vElement.getAnnotation(Deprecated.class) != null) {
 									propertySchema.setDeprecated(true);
 								}
+
 								schema.putProperty(propertyName, propertySchema);
 							}
 						});
