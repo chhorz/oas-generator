@@ -16,10 +16,7 @@
  */
 package com.github.chhorz.openapi.common.util;
 
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -142,6 +139,10 @@ public class ProcessingUtils {
 		// type mirrors with annotation types like: (@javax.validation.Valid :: com.github.chhorz.openapi.spring.test.github.resources.Resource)
 		if (typeString.contains("::")) {
 			typeString = typeString.substring(typeString.indexOf("::") + 2, typeString.indexOf(')'));
+		}
+		// com.github.chhorz.openapi.spring.test.github.resources.@jakarta.validation.Valid Resource
+		if (typeString.contains(" ")) {
+			typeString = typeString.substring(typeString.indexOf(" ") + 1);
 		}
 		// remove generic types
 		while (typeString.contains("<")) {

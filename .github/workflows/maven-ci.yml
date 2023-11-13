@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         # test against LTS version:
-        java: [ 17 ]
+        java: [ 17, 21 ]
     steps:
     - name: 'Checkout repository'
       uses: actions/checkout@v3
