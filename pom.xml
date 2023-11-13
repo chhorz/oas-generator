@@ -81,17 +81,17 @@
 		<project.encoding>UTF-8</project.encoding>
 
 		<!-- dependency versions -->
-		<asciidoctorj-diagram.version>2.2.11</asciidoctorj-diagram.version>
-		<jackson-databind.version>2.15.2</jackson-databind.version>
-		<jackson-dataformat-yaml.version>2.15.2</jackson-dataformat-yaml.version>
+		<asciidoctorj-diagram.version>2.2.13</asciidoctorj-diagram.version>
+		<jackson-databind.version>2.15.3</jackson-databind.version>
+		<jackson-dataformat-yaml.version>2.15.3</jackson-dataformat-yaml.version>
 		<javadoc-parser.version>0.3.1</javadoc-parser.version>
 		<snakeyaml.version>1.33</snakeyaml.version>
-		<spring-security-core.version>6.1.3</spring-security-core.version>
+		<spring-security-core.version>6.1.5</spring-security-core.version>
 		<validation-api.version>2.0.1.Final</validation-api.version>
 		<jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
 
-		<spring-data-commons.version>3.1.3</spring-data-commons.version>
-		<spring-web.version>6.0.11</spring-web.version>
+		<spring-data-commons.version>3.1.5</spring-data-commons.version>
+		<spring-web.version>6.0.13</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
@@ -99,7 +99,7 @@
 
 		<!-- test dependency versions -->
 		<assertj-core.version>3.24.2</assertj-core.version>
-		<junit-jupiter.verison>5.10.0</junit-jupiter.verison>
+		<junit-jupiter.verison>5.10.1</junit-jupiter.verison>
 		<jsonassert.version>1.5.1</jsonassert.version>
 		<json-path.version>2.8.0</json-path.version>
 
@@ -112,10 +112,10 @@
 		<maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version>
 		<maven-install-plugin.version>3.1.1</maven-install-plugin.version>
 		<maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-		<maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-		<maven-checkstyle-plugin.version>3.3.0</maven-checkstyle-plugin.version>
+		<maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
+		<maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
 		<maven-source-plugin.version>3.3.0</maven-source-plugin.version>
-		<maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>3.2.1</maven-surefire-plugin.version>
 		<maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
 		<nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
 	</properties>
