@@ -211,6 +211,40 @@ class GitHubIssuesTestAssertions {
 	}
 
 	/**
+	 * Validates the given problem resource.
+	 *
+	 * @param documentContext the json document context
+	 *
+	 * @see com.github.chhorz.openapi.spring.test.github.resources.ProblemResource
+	 */
+	public static void validateSchemaForProblemResource(final DocumentContext documentContext) {
+		Schema schema = documentContext.read("$.components.schemas.ProblemResource", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "an problem resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		assertThat(schema.getProperties())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("value", "code");
+
+		assertThat(schema.getProperties().get("value"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+			.hasFieldOrPropertyWithValue("description", "error details");
+
+		assertThat(schema.getProperties().get("code"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
+			.hasFieldOrPropertyWithValue("description", "some error code");
+	}
+
+	/**
 	 * Validates the given test resource.
 	 *
 	 * @param documentContext the json document context
@@ -474,6 +508,40 @@ class GitHubIssuesTestAssertions {
 	}
 
 	/**
+	 * Validates the given test record.
+	 *
+	 * @param documentContext the json document context
+	 * @see com.github.chhorz.openapi.spring.test.github.resources.TestRecord
+	 */
+	public static void validateSchemaForTestRecord(final DocumentContext documentContext) {
+		Schema schema = documentContext.read("$.components.schemas.TestRecord", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "Resource for content data")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		assertThat(schema.getProperties())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("id", "value");
+
+		assertThat(schema.getProperties().get("id"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.INTEGER)
+			.hasFieldOrPropertyWithValue("format", Schema.Format.INT64)
+			.hasFieldOrPropertyWithValue("description", "the internal database id");
+
+		assertThat(schema.getProperties().get("value"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+			.hasFieldOrPropertyWithValue("description", "the content value");
+	}
+
+	/**
 	 * Validates the given order resource.
 	 *
 	 * @param documentContext the json document context
@@ -536,8 +604,8 @@ class GitHubIssuesTestAssertions {
 	 *
 	 * @see Resource
 	 */
-	public static void validateRequestBodyForTestResource(final DocumentContext documentContext, final boolean required) {
-		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
+	public static void validateRequestBodyForResource(String jsonPath, DocumentContext documentContext, boolean required) {
+		RequestBody requestBody = documentContext.read(jsonPath + ".requestBody", RequestBody.class);
 
 		assertThat(requestBody)
 			.isNotNull()
@@ -552,7 +620,7 @@ class GitHubIssuesTestAssertions {
 		assertThat(requestBody.getContent().get("application/json"))
 			.isNotNull();
 
-		String resourceReference = documentContext.read("$.components.requestBodies.Resource.content.application/json.schema.$ref", String.class);
+		String resourceReference = documentContext.read(jsonPath + ".requestBody.content.application/json.schema.$ref", String.class);
 
 		assertThat(resourceReference)
 			.isNotNull()

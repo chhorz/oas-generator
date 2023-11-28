@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.github.chhorz.openapi.spring.util;
 
 import com.github.chhorz.openapi.common.domain.Operation;
 import com.github.chhorz.openapi.common.domain.PathItemObject;
+import com.github.chhorz.openapi.common.domain.RequestBody;
 import com.github.chhorz.openapi.common.domain.Response;
 import com.github.chhorz.openapi.common.util.LogUtils;
 
@@ -99,14 +100,10 @@ public class PathItemUtils extends AbstractMergeUtils {
 
 			mergedOperation.addParameterObjects(operationOne.getParameterObjects());
 			operationTwo.getParameterObjects().stream()
-					.filter(parameter -> !mergedOperation.getParameterObjects().contains(parameter))
-					.forEach(mergedOperation::addParameterObject);
+				.filter(parameter -> !mergedOperation.getParameterObjects().contains(parameter))
+				.forEach(mergedOperation::addParameterObject);
 
-			if (operationOne.getRequestBodyReference() != null) {
-				mergedOperation.setRequestBodyReference(operationOne.getRequestBodyReference());
-			} else {
-				mergedOperation.setRequestBodyReference(operationTwo.getRequestBodyReference());
-			}
+			mergedOperation.setRequestBodyObject(mergeRequestBodies(operationOne.getRequestBodyObject(), operationTwo.getRequestBodyObject()));
 
 			mergedOperation.setResponses(operationOne.getResponses());
 			operationTwo.getResponses().forEach((statuscode, response) -> {
@@ -131,6 +128,26 @@ public class PathItemUtils extends AbstractMergeUtils {
 			mergedOperation.setSecurity(mergedSecurity);
 
 			return mergedOperation;
+		}
+	}
+
+	private RequestBody mergeRequestBodies(RequestBody requestBodyOne, RequestBody requestBodyTwo) {
+		logUtils.logDebug("Merging request bodies");
+		if (requestBodyOne == null) {
+			return requestBodyTwo;
+		} else if (requestBodyTwo == null) {
+			return requestBodyOne;
+		} else {
+			RequestBody mergedRequestBody = new RequestBody();
+			mergedRequestBody.setDescription(mergeDescription(requestBodyOne.getDescription(), requestBodyTwo.getDescription()));
+			mergedRequestBody.setRequired(requestBodyOne.getRequired() || requestBodyTwo.getRequired());
+			if (requestBodyOne.getContent() != null) {
+				requestBodyOne.getContent().forEach(mergedRequestBody::putContent);
+			}
+			if (requestBodyTwo.getContent() != null) {
+				requestBodyTwo.getContent().forEach(mergedRequestBody::putContent);
+			}
+			return mergedRequestBody;
 		}
 	}
 

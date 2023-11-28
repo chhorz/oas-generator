@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.github.chhorz.openapi.common.domain.SecuritySchemeApiKey.In;
 import com.github.chhorz.openapi.common.exception.SpecificationViolationException;
 import com.github.chhorz.openapi.common.properties.domain.*;
 import com.github.chhorz.openapi.common.util.LogUtils;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -30,6 +31,8 @@ import javax.annotation.processing.Messager;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -76,13 +79,13 @@ public class GeneratorPropertyLoader {
 		}
 
 		try {
-			Yaml yaml = new Yaml(new Constructor(GeneratorProperties.class));
+			Yaml yaml = new Yaml(new Constructor(GeneratorProperties.class, new LoaderOptions()));
 
 			if (resourceLocation != null) {
 				properties = yaml.load(resourceLocation.openStream());
 				logUtils.logInfo("Loaded properties (Path: %s)", resourceLocation.getPath());
 			} else if (processorOptions.get("propertiesPath") != null) {
-				properties = yaml.load(new FileInputStream(processorOptions.get("propertiesPath")));
+				properties = yaml.load(Files.newInputStream(Paths.get(processorOptions.get("propertiesPath"))));
 				logUtils.logInfo("Loaded properties (Path: %s)", processorOptions.get("propertiesPath"));
 			} else {
 				properties = new GeneratorProperties();

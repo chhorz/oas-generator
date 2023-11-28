@@ -77,47 +77,47 @@
 
 	<properties>
 		<!-- common -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.source.version>1.8</java.source.version>
-		<java.target.version>1.8</java.target.version>
+		<project.release>17</project.release>
+		<project.encoding>UTF-8</project.encoding>
 
 		<!-- dependency versions -->
-		<asciidoctorj-diagram.version>2.2.1</asciidoctorj-diagram.version>
-		<jackson.version>2.13.2</jackson.version>
-		<javadoc-parser.version>0.1.0</javadoc-parser.version>
-		<snakeyaml.version>1.30</snakeyaml.version>
-		<spring-security-core.version>5.6.2</spring-security-core.version>
-		<jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
+		<asciidoctorj-diagram.version>2.2.13</asciidoctorj-diagram.version>
+		<jackson-databind.version>2.16.0</jackson-databind.version>
+		<jackson-dataformat-yaml.version>2.16.0</jackson-dataformat-yaml.version>
+		<javadoc-parser.version>0.3.1</javadoc-parser.version>
+		<snakeyaml.version>1.33</snakeyaml.version>
+		<spring-security-core.version>6.2.0</spring-security-core.version>
+		<validation-api.version>2.0.1.Final</validation-api.version>
+		<jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
 
-		<spring-data-commons.version>2.6.2</spring-data-commons.version>
-		<spring-web.version>5.3.16</spring-web.version>
+		<spring-data-commons.version>3.2.0</spring-data-commons.version>
+		<spring-web.version>6.1.1</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
-		<nohttp-checkstyle.version>0.0.10</nohttp-checkstyle.version>
+		<nohttp-checkstyle.version>0.0.11</nohttp-checkstyle.version>
 
 		<!-- test dependency versions -->
-		<assertj-core.version>3.22.0</assertj-core.version>
-		<junit-jupiter.verison>5.8.2</junit-jupiter.verison>
-		<jsonassert.version>1.5.0</jsonassert.version>
-		<json-path.version>2.7.0</json-path.version>
+		<assertj-core.version>3.24.2</assertj-core.version>
+		<junit-jupiter.verison>5.10.1</junit-jupiter.verison>
+		<jsonassert.version>1.5.1</jsonassert.version>
+		<json-path.version>2.8.0</json-path.version>
 
-		<spring-hateoas.version>1.4.1</spring-hateoas.version>
+		<spring-hateoas.version>2.2.0</spring-hateoas.version>
 
 		<!-- plugin versions -->
-		<asciidoctor-maven-plugin.version>2.2.2</asciidoctor-maven-plugin.version>
+		<asciidoctor-maven-plugin.version>2.2.4</asciidoctor-maven-plugin.version>
 		<license.maven.plugin.version>3.0</license.maven.plugin.version>
-		<maven-compiler-plugin.version>3.10.0</maven-compiler-plugin.version>
-		<maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
-		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
-		<maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
-		<maven-javadoc-plugin.version>3.3.2</maven-javadoc-plugin.version>
-		<maven-checkstyle-plugin.version>3.1.2</maven-checkstyle-plugin.version>
-		<maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-		<maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-		<maven-wrapper-plugin.version>3.1.0</maven-wrapper-plugin.version>
-		<nexus-staging-maven-plugin.version>1.6.12</nexus-staging-maven-plugin.version>
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+		<maven.gpg.plugin.version>3.1.0</maven.gpg.plugin.version>
+		<maven-install-plugin.version>3.1.1</maven-install-plugin.version>
+		<maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+		<maven-javadoc-plugin.version>3.6.2</maven-javadoc-plugin.version>
+		<maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
+		<maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+		<maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+		<maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
+		<nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -126,12 +126,12 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
 				<artifactId>jackson-databind</artifactId>
-				<version>${jackson.version}</version>
+				<version>${jackson-databind.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.dataformat</groupId>
 				<artifactId>jackson-dataformat-yaml</artifactId>
-				<version>${jackson.version}</version>
+				<version>${jackson-dataformat-yaml.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.github.chhorz</groupId>
@@ -150,6 +150,13 @@
 				<version>${spring-security-core.version}</version>
 				<scope>provided</scope>
 			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>${validation-api.version}</version>
+				<optional>true</optional>
+			</dependency>
+
 			<dependency>
 				<groupId>jakarta.validation</groupId>
 				<artifactId>jakarta.validation-api</artifactId>
@@ -244,8 +251,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven-compiler-plugin.version}</version>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<release>${project.release}</release>
+						<encoding>${project.encoding}</encoding>
 						<compilerArgument>-proc:none</compilerArgument>
 					</configuration>
 				</plugin>

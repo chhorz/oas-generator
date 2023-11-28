@@ -121,7 +121,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")));
 
 		validateSchemaForResource(documentContext);
 	}
@@ -239,6 +241,25 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateDefaultInfoObject(documentContext);
 
+		RequestBody requestBody = documentContext.read("$.paths./github/issues.get.requestBody", RequestBody.class);
+
+		assertThat(requestBody)
+			.hasFieldOrPropertyWithValue("description", null)
+			.hasFieldOrPropertyWithValue("required", true);
+
+		Schema requestBodySchema = documentContext.read("$.paths./github/issues.get.requestBody.content.application/json.schema", Schema.class);
+
+		assertThat(requestBodySchema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.ARRAY);
+
+		String testObjectReference = documentContext.read("$.paths./github/issues.get.requestBody.content.application/json.schema.items.$ref", String.class);
+
+		assertThat(testObjectReference)
+			.isNotNull()
+			.isEqualTo("#/components/schemas/Resource");
+
 		Components components = documentContext.read("$.components", Components.class);
 
 		assertThat(components.getSchemas())
@@ -251,26 +272,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
 
 		assertThat(components.getRequestBodies())
-			.containsOnlyKeys("Resource");
-
-		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
-
-		assertThat(requestBody)
-			.hasFieldOrPropertyWithValue("description", null)
-			.hasFieldOrPropertyWithValue("required", true);
-
-		Schema requestBodySchema = documentContext.read("$.components.requestBodies.Resource.content.application/json.schema", Schema.class);
-
-		assertThat(requestBodySchema)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("deprecated", false)
-			.hasFieldOrPropertyWithValue("type", Schema.Type.ARRAY);
-
-		String testObjectReference = documentContext.read("$.components.requestBodies.Resource.content.application/json.schema.items.$ref", String.class);
-
-		assertThat(testObjectReference)
-			.isNotNull()
-			.isEqualTo("#/components/schemas/Resource");
+			.isNull();
 	}
 
 	@Test
@@ -331,7 +333,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateDefaultInfoObject(documentContext);
 
-		validateRequestBodyForTestResource(documentContext, false);
+		validateRequestBodyForResource("$.paths./github/issues.post", documentContext, false);
 
 		Components components = documentContext.read("$.components", Components.class);
 
@@ -378,9 +380,13 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
-//				.extracting(MediaType::getSchema)
-//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, map -> assertThat(map)
+					.isNotNull()
+					.containsOnlyKeys("deprecated", "items", "type")
+					.extractingByKey("items")
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource"))));
 		assertThat(operation.getParameterObjects())
 			.isNotNull()
 			.hasSize(2);
@@ -442,6 +448,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue020#test")
 			.hasFieldOrPropertyWithValue("deprecated", false)
 			.hasFieldOrPropertyWithValue("security", emptyList());
+		validateRequestBodyForResource("$.paths./github/issues.post", documentContext, true);
 		assertThat(operationOne.getResponses())
 			.isNotNull()
 			.hasSize(2)
@@ -452,7 +459,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ErrorResource")));
 		assertThat(operationOne.getResponses().get("204").getContent())
 			.isNull();
 		Operation operationTwo = documentContext.read("$.paths./github/issues/{id}.delete", Operation.class);
@@ -473,7 +482,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ErrorResource")));;
 		assertThat(operationOne.getResponses().get("204").getContent())
 			.isNull();
 
@@ -484,7 +495,6 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateSchemaForResource(documentContext);
 		validateSchemaForErrorResource(documentContext);
-		validateRequestBodyForTestResource(documentContext, true);
 	}
 
 	@Test
@@ -592,9 +602,13 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
-//				.extracting(MediaType::getSchema)
-//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, map -> assertThat(map)
+					.isNotNull()
+					.containsOnlyKeys("deprecated", "items", "type")
+					.extractingByKey("items")
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource"))));
 		assertThat(operation.getParameterObjects())
 			.isNotNull()
 			.hasSize(2);
@@ -668,9 +682,13 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("*/*")
 			.extractingByKey("*/*")
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
-				.isNotNull());
-//				.extracting(MediaType::getSchema)
-//				.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/ResponseEntity")));
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, map -> assertThat(map)
+					.isNotNull()
+					.containsOnlyKeys("deprecated", "items", "type")
+					.extractingByKey("items")
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource"))));
 		assertThat(operation.getParameterObjects())
 			.isNotNull()
 			.hasSize(3);
@@ -777,9 +795,9 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		assertThat(operation)
 			.isNotNull()
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue026#test");
+		validateRequestBodyForResource("$.paths./github/issues.post", documentContext, true);
 
 		validateSchemaForResource(documentContext);
-		validateRequestBodyForTestResource(documentContext, true);
 	}
 
 	@Test
@@ -1134,10 +1152,20 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.hasSize(0);
 
-		assertThat(operation.getRequestBodyReference())
+		assertThat(operation.getRequestBodyObject())
 			.isNotNull()
-			.extracting(Reference::get$ref)
-			.isEqualTo("#/components/requestBodies/Resource");
+			.hasFieldOrPropertyWithValue("description", null)
+			.hasFieldOrPropertyWithValue("required", true);
+
+		assertThat(operation.getRequestBodyObject().getContent())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("application/vnd.test.v1+json", "application/vnd.test.v2+json");
+
+//		assertThat(operation.getRequestBodyObject().getContent())
+//			.extractingByKey("application/vnd.test.v1+json")
+//			.extracting(MediaType::getSchema)
+//			.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/Resource"));
 
 		assertThat(operation.getResponses())
 			.isNotNull()
@@ -1145,23 +1173,6 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.containsOnlyKeys("default", "200");
 
 		validateSchemaForResource(documentContext);
-
-		RequestBody requestBody = documentContext.read("$.components.requestBodies.Resource", RequestBody.class);
-
-		assertThat(requestBody)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("description", null)
-			.hasFieldOrPropertyWithValue("required", true);
-
-		assertThat(requestBody.getContent())
-			.isNotNull()
-			.hasSize(2)
-			.containsOnlyKeys("application/vnd.test.v1+json", "application/vnd.test.v2+json");
-
-//		assertThat(requestBody.getContent())
-//			.extractingByKey("application/vnd.test.v1+json")
-//			.extracting(MediaType::getSchema)
-//			.isInstanceOfSatisfying(Reference.class, refCheck("#/components/schemas/Resource"));
 
 		validateSecurityScheme(documentContext);
 	}
@@ -1293,7 +1304,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 		operation = documentContext.read("$.paths./test2/issues.get", Operation.class);
 		assertThat(operation)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue182#test");
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue182#test_0001");
 
 		validateSchemaForResource(documentContext);
 	}
@@ -1320,6 +1331,305 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue194#test");
 
 		validateSchemaForOrderResources(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#244")
+	void getGithubIssue244() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue244.class, TestRecord.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.1.0");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("summary", "")
+			.hasFieldOrPropertyWithValue("description", "")
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue244#test");
+
+		validateSchemaForTestRecord(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#285")
+	void getGithubIssue285() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue285.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.1.0");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./.post", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue285#test");
+		validateRequestBodyForResource("$.paths./.post", documentContext, true);
+
+		validateSchemaForResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#289")
+	void getGithubIssue289() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), createConfigFileOption("oas-generator04.yml"), GitHubIssue289.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.1.0");
+
+		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+
+		Operation operation = documentContext.read("$.paths./test-1.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue289#test");
+
+		Operation operationTwo = documentContext.read("$.paths./test-2.get", Operation.class);
+		assertThat(operationTwo)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue289#test_0001");
+
+		validateSchemaForResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#295")
+	void getGithubIssue295() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue295.class, ValidJakartaResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.1.0");
+
+		validateDefaultInfoObject(documentContext);
+
+		Components components = documentContext.read("$.components", Components.class);
+
+		assertThat(components.getSchemas())
+			.containsOnlyKeys("ValidJakartaResource");
+
+		assertThat(components.getSchemas().get("ValidJakartaResource"))
+			.hasFieldOrPropertyWithValue("required", singletonList("value"));
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties())
+			.containsKeys("value", "minimum");
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("value"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("pattern", "\\s+");
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("minimum"))
+			.isNotNull()
+			.isInstanceOfSatisfying(Schema.class, schema ->
+				assertThat(schema)
+					.hasFieldOrPropertyWithValue("minimum", 0L));
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("sizedString"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("minLength", 10);
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("sizedList"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("minItems", 1)
+			.hasFieldOrPropertyWithValue("maxItems", 5);
+
+		assertThat(components.getSchemas().get("ValidJakartaResource").getProperties().get("nonEmptyString"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("minLength", 1);
+	}
+
+	@Test
+	@GitHubIssue("#307")
+	void getGithubIssue307() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue307.class, Resource.class, ErrorResource.class, ProblemResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.1.0");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues/{id}.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue307#get");
+
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.containsOnlyKeys("200", "4XX", "5XX")
+			.extractingByKey("200")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the resource by id");
+
+		assertThat(operation.getResponses().get("200").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")));
+
+		assertThat(operation.getResponses().get("4XX"))
+			.isNotNull()
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the problem resource");
+
+		assertThat(operation.getResponses().get("4XX").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ProblemResource")));
+
+		assertThat(operation.getResponses().get("5XX"))
+			.isNotNull()
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the error resource");
+
+		assertThat(operation.getResponses().get("5XX").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ErrorResource")));
+
+		validateSchemaForResource(documentContext);
+		validateSchemaForErrorResource(documentContext);
+		validateSchemaForProblemResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#350")
+	void getGithubIssue350() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue350.class, Resource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.1.0");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues/{id}.get", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue350#get");
+
+		assertThat(operation.getResponses())
+			.isNotNull()
+			.containsOnlyKeys("200", "4XX")
+			.extractingByKey("200")
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the resource by id");
+
+		assertThat(operation.getResponses().get("200").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("*/*")
+			.extractingByKey("*/*")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")));
+
+		assertThat(operation.getResponses().get("4XX"))
+			.isNotNull()
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("description", "the 400 status code");
+
+		assertThat(operation.getResponses().get("4XX").getContent())
+			.isNull();
+
+		validateSchemaForResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#397")
+	void getGithubIssue397() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue397.class, Resource.class, TestResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.1.0");
+
+		validateDefaultInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.post", Operation.class);
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue397#test1");
+
+		assertThat(operation.getRequestBodyObject())
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("required", true)
+			.hasFieldOrPropertyWithValue("description", "some test variable");
+
+		assertThat(operation.getRequestBodyObject().getContent())
+			.isNotNull()
+			.hasSize(3)
+			.hasEntrySatisfying("application/json",
+				mediaType -> assertThat(mediaType)
+					.extracting(MediaType::getSchema)
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")))
+			.hasEntrySatisfying("application/vnd.test.v1+json",
+				mediaType -> assertThat(mediaType)
+					.extracting(MediaType::getSchema)
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/Resource")))
+			.hasEntrySatisfying("application/vnd.test.v2+json",
+				mediaType -> assertThat(mediaType)
+					.extracting(MediaType::getSchema)
+					.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/TestResource")));
+
+		validateSchemaForResource(documentContext);
+		validateSchemaForTestResource(documentContext);
 	}
 
 }

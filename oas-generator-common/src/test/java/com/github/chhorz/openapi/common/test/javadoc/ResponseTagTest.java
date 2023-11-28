@@ -48,7 +48,7 @@ class ResponseTagTest {
 
 	@BeforeEach
 	void setUp() {
-		parser = JavaDocParserBuilder.withBasicTags().withCustomTag(new ResponseTag()).build();
+		parser = JavaDocParserBuilder.withAllKnownTags().withTag(new ResponseTag()).build();
 	}
 
 	@Test

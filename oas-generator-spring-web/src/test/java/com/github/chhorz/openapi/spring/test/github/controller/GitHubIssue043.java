@@ -17,12 +17,8 @@
 package com.github.chhorz.openapi.spring.test.github.controller;
 
 import com.github.chhorz.openapi.common.test.github.GitHubIssue;
-import com.github.chhorz.openapi.spring.test.github.resources.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RequestMapping("github")
 public class GitHubIssue043 {

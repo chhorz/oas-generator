@@ -1,18 +1,17 @@
 /**
- *
- *    Copyright 2018-2020 the original author or authors.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *         https://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright 2018-2020 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * https://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.github.chhorz.openapi.common;
 
@@ -22,10 +21,7 @@ import com.github.chhorz.javadoc.JavaDocParserBuilder;
 import com.github.chhorz.javadoc.OutputType;
 import com.github.chhorz.javadoc.tags.CategoryTag;
 import com.github.chhorz.openapi.common.annotation.OpenAPIExclusion;
-import com.github.chhorz.openapi.common.domain.Components;
-import com.github.chhorz.openapi.common.domain.Info;
-import com.github.chhorz.openapi.common.domain.OpenAPI;
-import com.github.chhorz.openapi.common.domain.SecurityScheme;
+import com.github.chhorz.openapi.common.domain.*;
 import com.github.chhorz.openapi.common.javadoc.ResponseTag;
 import com.github.chhorz.openapi.common.javadoc.SecurityTag;
 import com.github.chhorz.openapi.common.javadoc.TagTag;
@@ -49,6 +45,7 @@ import java.lang.annotation.Annotation;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -67,6 +64,8 @@ import static java.util.stream.Collectors.toSet;
  * @author chhorz
  */
 public abstract class OpenAPIProcessor extends AbstractProcessor {
+
+	private final AtomicInteger operationIdCounter = new AtomicInteger(0);
 
 	protected Elements elements;
 
@@ -177,12 +176,12 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 	 * @return a new instance of the JavaDocParser
 	 */
 	protected JavaDocParser createJavadocParser() {
-		return JavaDocParserBuilder.withBasicTags()
-				.withCustomTag(new ResponseTag())
-				.withCustomTag(new SecurityTag())
-				.withCustomTag(new TagTag())
-				.withOutputType(OutputType.MARKDOWN)
-				.build();
+		return JavaDocParserBuilder.withAllKnownTags()
+			.withTag(new ResponseTag())
+			.withTag(new SecurityTag())
+			.withTag(new TagTag())
+			.withOutputType(OutputType.MARKDOWN)
+			.build();
 	}
 
 	/**
@@ -191,8 +190,29 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 	 * @param executableElement the executable executableElement that defines a specific method
 	 * @return the OpenAPI operation id (should be unique)
 	 */
-	protected String getOperationId(final ExecutableElement executableElement){
-		return String.format("%s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement.getSimpleName());
+	protected String getOperationId(final ExecutableElement executableElement) {
+		return getOperationId(executableElement, null);
+	}
+
+	protected String getOperationId(final ExecutableElement executableElement, final OpenAPI openAPI) {
+		String operationId = String.format("%s#%s", executableElement.getEnclosingElement().getSimpleName(), executableElement.getSimpleName());
+		if (openAPI == null || openAPI.getPaths().values().stream()
+			.noneMatch(pathItem -> operationIdPresent(pathItem.getGet(), operationId)
+								   || operationIdPresent(pathItem.getPut(), operationId)
+								   || operationIdPresent(pathItem.getPost(), operationId)
+								   || operationIdPresent(pathItem.getDelete(), operationId)
+								   || operationIdPresent(pathItem.getOptions(), operationId)
+								   || operationIdPresent(pathItem.getHead(), operationId)
+								   || operationIdPresent(pathItem.getPatch(), operationId)
+								   || operationIdPresent(pathItem.getTrace(), operationId))) {
+			return operationId;
+		} else {
+			return String.format("%s_%04d", operationId, operationIdCounter.incrementAndGet());
+		}
+	}
+
+	private boolean operationIdPresent(Operation operation, String operationId) {
+		return operation != null && operationId.equals(operation.getOperationId());
 	}
 
 	/**
@@ -203,7 +223,7 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 	 */
 	protected boolean exclude(final ExecutableElement executableElement) {
 		return executableElement.getEnclosingElement().getAnnotation(OpenAPIExclusion.class) != null ||
-			executableElement.getAnnotation(OpenAPIExclusion.class) != null;
+			   executableElement.getAnnotation(OpenAPIExclusion.class) != null;
 	}
 
 	/**
@@ -213,7 +233,7 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 	 * @param openApiAnnotation the {@link com.github.chhorz.openapi.common.annotation.OpenAPI} annotation from the executable element
 	 * @return a list of tags
 	 */
-	protected List<String> getTags(final JavaDoc javaDoc, final com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation){
+	protected List<String> getTags(final JavaDoc javaDoc, final com.github.chhorz.openapi.common.annotation.OpenAPI openApiAnnotation) {
 		List<String> tags = new ArrayList<>();
 		javaDoc.getTags(CategoryTag.class).stream()
 			.map(CategoryTag::getCategoryName)
@@ -267,9 +287,9 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 					.map(SecurityTag::getSecurityRequirement)
 					.filter(securitySchemes::containsKey)
 					.filter(securityRequirement -> securityInformation.stream()
-							.map(Map::keySet)
-							.flatMap(Set::stream)
-							.noneMatch(set -> set.contains(securityRequirement)))
+						.map(Map::keySet)
+						.flatMap(Set::stream)
+						.noneMatch(set -> set.contains(securityRequirement)))
 					.forEach(securityRequirement -> securityInformation.add(singletonMap(securityRequirement, emptyList())));
 			}
 
@@ -298,10 +318,10 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 		ServiceLoader<PostProcessorProvider> serviceLoader = load(PostProcessorProvider.class, getClass().getClassLoader());
 
 		StreamSupport.stream(serviceLoader.spliterator(), false)
-				.map(provider -> provider.create(logUtils, parserProperties))
-				.filter(postProcessor -> postProcessor.getPostProcessorType().contains(PostProcessorType.DOMAIN_OBJECT))
-				.sorted(comparing(OpenAPIPostProcessor::getPostProcessorOrder).reversed())
-				.forEach(openAPIPostProcessor -> openAPIPostProcessor.execute(openApi));
+			.map(provider -> provider.create(logUtils, parserProperties))
+			.filter(postProcessor -> postProcessor.getPostProcessorType().contains(PostProcessorType.DOMAIN_OBJECT))
+			.sorted(comparing(OpenAPIPostProcessor::getPostProcessorOrder).reversed())
+			.forEach(openAPIPostProcessor -> openAPIPostProcessor.execute(openApi));
 	}
 
 	/**
@@ -324,10 +344,10 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 	 * @return {@code true} if the class is available on the classpath
 	 */
 	public static boolean isClassAvailable(final String className) {
-		try  {
+		try {
 			Class.forName(className);
 			return true;
-		}  catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			return false;
 		}
 	}

@@ -19,7 +19,7 @@ This operation is deprecated.
 
 <#if operation.tags??>
 h| Tags
-4+| <#list operation.tags as tag><#if attributeIcons?? && attributeIcons?matches("font")>icon:tag[] </#if><<${tag},${tag}>><#sep>, </#list>
+4+| <#list operation.tags as tag><#if attributeIcons?? && attributeIcons?matches("font")>icon:tag[] </#if><<<@clean_tag tag/>,${tag}>><#sep>, </#list>
 
 </#if>
 <#if operation.summary??>
@@ -49,6 +49,25 @@ m| <@asciidoc_schema parameter.schema/>
 |<#if parameter.description??> pass:[<@clean parameter.description/>]</#if>
 
 </#list>
+</#if>
+<#if operation.requestBodyObject??>
+5+h| Request Body
+5+e| <#if operation.requestBodyObject.required>*REQUIRED*</#if> <#if operation.requestBodyObject.description?? && operation.requestBodyObject.description?has_content>pass:[${operation.requestBodyObject.description}]</#if>
+
+<#if operation.requestBodyObject.content??>
+[cols="2,1", options="header"]
+!===
+e! Type
+e! Schema
+
+<#list operation.requestBodyObject.content as type, mediatype>
+! ${type}
+m! <@asciidoc_mediatype mediatype/>
+
+</#list>
+!===
+
+</#if>
 </#if>
 <#if operation.requestBodyReference??>
 5+h| Request Body

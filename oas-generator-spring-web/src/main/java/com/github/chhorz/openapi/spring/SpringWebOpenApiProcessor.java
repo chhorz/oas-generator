@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,13 +22,10 @@ import com.github.chhorz.javadoc.tags.ReturnTag;
 import com.github.chhorz.openapi.common.OpenAPIProcessor;
 import com.github.chhorz.openapi.common.annotation.OpenAPISchema;
 import com.github.chhorz.openapi.common.domain.*;
-import com.github.chhorz.openapi.common.util.ComponentUtils;
-import com.github.chhorz.openapi.common.util.ProcessingUtils;
 import com.github.chhorz.openapi.common.util.TagUtils;
 import com.github.chhorz.openapi.spring.util.AliasUtils;
 import com.github.chhorz.openapi.spring.util.ParameterUtils;
 import com.github.chhorz.openapi.spring.util.PathItemUtils;
-import com.github.chhorz.openapi.spring.util.RequestBodyUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,7 +52,7 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
     private AliasUtils aliasUtils;
     private ParameterUtils parameterUtils;
 
-    private TypeMirror exceptionHanderReturntype = null;
+    private List<TypeMirror> exceptionHandlerReturntypes = new ArrayList<>();
 
     @Override
     public synchronized void init(final ProcessingEnvironment processingEnv) {
@@ -93,13 +90,12 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 					.map(schemaUtils::createStringSchemaMap)
 					.forEach(openApi.getComponents()::putAllSchemas);
 
-				exceptionHanderReturntype = exceptionHandler.stream()
+				exceptionHandlerReturntypes = exceptionHandler.stream()
 					.filter(element -> element instanceof ExecutableElement)
 					.map(ExecutableElement.class::cast)
 					.map(ExecutableElement::getReturnType)
 					.map(type -> processingUtils.removeEnclosingType(type, ResponseEntity.class)[0])
-					.findFirst()
-					.orElse(null);
+					.collect(toList());
 			}
 
 			Set<? extends Element> openApiSchemaClasses = roundEnv.getElementsAnnotatedWith(OpenAPISchema.class);
@@ -178,21 +174,27 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 					.collect(toList());
             }
 
+			if (urlPaths.isEmpty()) {
+				urlPaths.add("/");
+			}
+
             for (String path : urlPaths) {
                 logUtils.logInfo("Parsing path: %s", path);
                 String cleanedPath = path;
 
+				String operationId = getOperationId(executableElement, openApi);
+
                 RequestMethod[] requestMethods = requestMapping.method();
 
                 if (requestMethods.length == 0) {
-                    logUtils.logError("No request method defined. operationId=%s", getOperationId(executableElement));
+                    logUtils.logError("No request method defined. operationId=%s", operationId);
                 }
 
                 for (RequestMethod requestMethod : requestMethods) {
                     Operation operation = new Operation();
                     operation.setSummary(javaDoc.getSummary());
                     operation.setDescription(javaDoc.getDescription());
-                    operation.setOperationId(getOperationId(executableElement));
+                    operation.setOperationId(operationId);
                     operation.setDeprecated(executableElement.getAnnotation(Deprecated.class) != null);
 
                     List<ParamTag> paramTags = javaDoc.getTags(ParamTag.class);
@@ -257,17 +259,7 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
 
 								openApi.getComponents().putAllSchemas(schemaUtils.createStringSchemaMap(requestBody.asType()));
 
-								String requestBodyKey = ComponentUtils.getKey(requestBody.asType());
-								if (openApi.getComponents().getRequestBodies() != null &&
-									openApi.getComponents().getRequestBodies().containsKey(requestBodyKey)) {
-									RequestBodyUtils requestBodyUtils = new RequestBodyUtils(logUtils);
-									openApi.getComponents().putRequestBody(requestBodyKey,
-										requestBodyUtils.mergeRequestBodies(openApi.getComponents().getRequestBodies().get(requestBodyKey), r));
-								} else {
-									openApi.getComponents().putRequestBody(requestBodyKey, r);
-								}
-
-								operation.setRequestBodyReference(Reference.forRequestBody(ProcessingUtils.getShortName(requestBody.asType())));
+								operation.setRequestBodyObject(r);
 							});
 
                     if (isClassAvailable("org.springframework.data.domain.Pageable")) {
@@ -316,13 +308,17 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
                     String returnTag = "";
                     List<ReturnTag> returnTags = javaDoc.getTags(ReturnTag.class);
                     if (returnTags.size() == 1) {
-                        returnTag = returnTags.get(0).getDesrcription();
+                        returnTag = returnTags.get(0).getDescription();
                     }
 
                     // use return type of method as default response
                     TypeMirror returnType = processingUtils.removeEnclosingType(executableElement.getReturnType(), ResponseEntity.class)[0];
                     Map<TypeMirror, Schema> schemaMap = schemaUtils.createTypeMirrorSchemaMap(returnType);
-                    Map<TypeMirror, Schema> exceptionSchemaMap = schemaUtils.createTypeMirrorSchemaMap(exceptionHanderReturntype);
+                    Map<TypeMirror, Schema> exceptionSchemaMap = new HashMap<>();
+					exceptionHandlerReturntypes.stream()
+						.map(schemaUtils::createTypeMirrorSchemaMap)
+						.forEach(exceptionSchemaMap::putAll);
+
 
                     Map<TypeMirror, Schema> combinedMap = new HashMap<>(schemaMap);
                     combinedMap.putAll(exceptionSchemaMap);
@@ -330,14 +326,19 @@ public class SpringWebOpenApiProcessor extends OpenAPIProcessor {
                     Map<String, Response> responses = responseUtils.initializeFromJavadoc(javaDoc, openApiAnnotation,
 						requestMapping.produces(), returnTag, combinedMap);
 
-                    if (exceptionHanderReturntype != null && !responses.isEmpty()) {
+                    if (exceptionHandlerReturntypes.stream()
+							.filter(returnTypeMirror -> !schemaUtils.isVoidType(returnTypeMirror))
+							.map(TypeMirror::toString)
+							.distinct()
+							.count() == 1
+						&& !responses.isEmpty()) {
                         // use return type of ExceptionHandler as default response
-                        Schema exceptionSchema = exceptionSchemaMap.get(exceptionHanderReturntype);
+                        Schema exceptionSchema = exceptionSchemaMap.get(exceptionHandlerReturntypes.get(0));
                         if (Schema.Type.OBJECT.equals(exceptionSchema.getType()) || Schema.Type.ENUM.equals(exceptionSchema.getType())) {
-                            operation.putDefaultResponse(responseUtils.fromTypeMirror(exceptionHanderReturntype, requestMapping.produces(), returnTag));
+                            operation.putDefaultResponse(responseUtils.fromTypeMirror(exceptionHandlerReturntypes.get(0), requestMapping.produces(), returnTag));
                         } else {
                             operation.putDefaultResponse(responseUtils.fromSchema(exceptionSchema, requestMapping.produces(), returnTag));
-                            schemaMap.remove(exceptionHanderReturntype);
+                            schemaMap.remove(exceptionHandlerReturntypes.get(0));
                         }
                     } else {
                         Schema schema = schemaMap.get(returnType);

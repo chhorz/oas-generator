@@ -1,14 +1,15 @@
 <#ftl auto_esc=false>
 <#include "externalDocs.ftlh"/>
+<#include "utils.ftlh"/>
 <#--
     Macro for a single OpenAPI tag in Asciidoctor format
 -->
 <#macro tag tag>
 _${tag.name}_::
 <#if tag.description?? && tag.description?has_content>
-[[${tag.name}]] pass:[${tag.description}]
+[[<@clean_tag tag.name/>]] pass:[${tag.description}]
 <#else>
-[[${tag.name}]]
+[[<@clean_tag tag.name/>]]
 </#if>
 <#if tag.externalDocs??>
 +

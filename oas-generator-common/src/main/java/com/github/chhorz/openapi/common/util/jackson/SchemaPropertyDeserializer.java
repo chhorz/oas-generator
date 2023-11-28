@@ -60,10 +60,14 @@ public class SchemaPropertyDeserializer extends StdDeserializer<Map<String, Obje
 				schema.setDeprecated(childNode.has("deprecated") && childNode.get("deprecated").asBoolean());
 				schema.setType(deserializeType(Type.values(), childNode.get("type")));
 				schema.setFormat(deserializeFormat(Format.values(), childNode.get("format")));
-				schema.setDescription(childNode.get("description").asText());
+				schema.setDescription(childNode.has("description") ? childNode.get("description").asText() : null);
 				schema.setPattern(childNode.has("pattern") ? childNode.get("pattern").asText() : null);
 				schema.setMinimum(childNode.has("minimum") ? childNode.get("minimum").asLong() : null);
 				schema.setMaximum(childNode.has("maximum") ? childNode.get("maximum").asLong() : null);
+				schema.setMaxItems(childNode.has("maxItems") ? childNode.get("maxItems").asInt() : null);
+				schema.setMinItems(childNode.has("minItems") ? childNode.get("minItems").asInt() : null);
+				schema.setMaxLength(childNode.has("maxLength") ? childNode.get("maxLength").asInt() : null);
+				schema.setMinLength(childNode.has("minLength") ? childNode.get("minLength").asInt() : null);
 				if (childNode.has("items")) {
 					JsonNode itemsNode = childNode.get("items");
 					if (itemsNode.has("$ref")) {

@@ -23,7 +23,7 @@ import java.util.List;
 
 // tag::documentation[]
 /**
- * This interface declares the actual post processing method. All post processing
+ * This interface declares the actual post-processing method. All post-processing
  * methods that should be supported must override the default implementation within
  * this interface.
  *
@@ -32,10 +32,10 @@ import java.util.List;
 public interface OpenAPIPostProcessor {
 
 	/**
-	 * This method must be overridden for the actual post processing call. Otherwise
+	 * This method must be overridden for the actual post-processing call. Otherwise,
 	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
-	 * @param openApi the parsed {@link OpenAPI} for which the post processing
+	 * @param openApi the parsed {@link OpenAPI} for which the post-processing
 	 *                should be done
 	 */
 	default void execute(OpenAPI openApi) {
@@ -44,7 +44,7 @@ public interface OpenAPIPostProcessor {
 	}
 
 	/**
-	 * This method must be overridden for the actual post processing call. Otherwise
+	 * This method must be overridden for the actual post-processing call. Otherwise,
 	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @param content 			the written file content as JSON or YAML format
@@ -57,7 +57,7 @@ public interface OpenAPIPostProcessor {
 	}
 
 	/**
-	 * This method must be overridden for the actual post processing call. Otherwise
+	 * This method must be overridden for the actual post-processing call. Otherwise,
 	 * the default implementation will throw an {@link UnsupportedOperationException}.
 	 *
 	 * @param file 				the generated json or yaml file

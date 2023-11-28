@@ -30,7 +30,6 @@ public interface PostProcessorProvider {
 	/**
 	 * Creates a post processor instance with the given properties.
 	 *
-	 *
 	 * @param logUtils the oas-generator internal logging utils class
 	 * @param parserProperties the properties from the configuration file
 	 * @return an instance of the post processor

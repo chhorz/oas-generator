@@ -1,7 +1,7 @@
 <!--
 
 
-       Copyright 2018-2020 the original author or authors.
+       Copyright 2018-2023 the original author or authors.
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -88,6 +88,11 @@
 			<groupId>org.springframework.hateoas</groupId>
 			<artifactId>spring-hateoas</artifactId>
 			<version>${spring-hateoas.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

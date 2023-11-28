@@ -7,11 +7,12 @@
       "email" : "john@doe.com",
       "url" : "https://www.google.com"
     },
-    "version" : "1.2.3-SNAPSHOT",
     "license" : {
       "name" : "Apache License, Version 2.0",
       "url" : "https://www.apache.org/licenses/LICENSE-2.0"
-    }
+    },
+    "version" : "1.2.3-SNAPSHOT",
+    "x-generated-by" : "oas-generator"
   },
   "servers" : [ {
     "url" : "dev.server.lan",
@@ -56,7 +57,15 @@
         "security" : [ ],
         "parameters" : [ ],
         "requestBody" : {
-          "$ref" : "#/components/requestBodies/Article"
+          "description" : "the new article",
+          "content" : {
+            "*/*" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/Article"
+              }
+            }
+          },
+          "required" : true
         }
       }
     },
@@ -140,19 +149,6 @@
             "enum" : [ "SIMPLE", "PREMIUM" ]
           }
         }
-      }
-    },
-    "requestBodies" : {
-      "Article" : {
-        "description": "the new article",
-        "content": {
-          "*/*": {
-            "schema": {
-              "$ref": "#/components/schemas/Article"
-            }
-          }
-        },
-        "required": true
       }
     },
     "securitySchemes" : {

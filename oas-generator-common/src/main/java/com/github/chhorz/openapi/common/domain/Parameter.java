@@ -50,7 +50,7 @@ public class Parameter {
 		PATH("path"),
 		COOKIE("cookie");
 
-		private String openApiValue;
+		private final String openApiValue;
 
 		In(final String openApiValue) {
 			this.openApiValue = openApiValue;

@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,10 +42,10 @@ public class Operation {
 	private List<Parameter> parameterObjects;
 	// @JsonProperty("parameters")
 	// private List<Reference> parameterReferences;
-	// @JsonProperty("requestBody")
-	// private RequestBody requestBodyObject;
 	@JsonProperty("requestBody")
-	private Reference requestBodyReference;
+	private RequestBody requestBodyObject;
+	// @JsonProperty("requestBody")
+	// private Reference requestBodyReference;
 	/*
 	 * https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.1.0.md#responses-object
 	 */
@@ -114,12 +114,12 @@ public class Operation {
 		this.parameterObjects.addAll(parameterObjects);
 	}
 
-	public Reference getRequestBodyReference() {
-		return requestBodyReference;
+	public RequestBody getRequestBodyObject() {
+		return requestBodyObject;
 	}
 
-	public void setRequestBodyReference(final Reference requestBodyReference) {
-		this.requestBodyReference = requestBodyReference;
+	public void setRequestBodyObject(RequestBody requestBodyObject) {
+		this.requestBodyObject = requestBodyObject;
 	}
 
 	public Map<String, Response> getResponses(){

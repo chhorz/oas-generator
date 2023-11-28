@@ -1,6 +1,6 @@
 /**
  *
- *    Copyright 2018-2020 the original author or authors.
+ *    Copyright 2018-2023 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,12 +26,14 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.atIndex;
 import static org.assertj.core.api.Assertions.fail;
 
 class AsciidoctorPostProcessorTest {
@@ -256,7 +258,7 @@ class AsciidoctorPostProcessorTest {
 		tag1.setExternalDocs(externalDocs);
 
 		Tag tag2 = new Tag();
-		tag2.setName("TAG_2");
+		tag2.setName("TAG 2");
 
 		ServerVariableObject v1 = new ServerVariableObject();
 		v1.setDescription("Lorem ipsum");
@@ -347,7 +349,6 @@ class AsciidoctorPostProcessorTest {
 		Components components = new Components();
 		components.putAllParsedSchemas(schemas);
 		components.setSecuritySchemes(securitySchemes);
-		components.putRequestBody("ArticleResource", articleResourceRequestBody);
 
 		Parameter filter = new Parameter();
 		filter.setDeprecated(false);
@@ -365,6 +366,9 @@ class AsciidoctorPostProcessorTest {
 		response.setDescription("The response description");
 		response.putContent("*/*", mediaType);
 
+		Response errorResponse = new Response();
+		errorResponse.setDescription("A HTTP status code");
+
 		Operation getArticles = new Operation();
 		getArticles.setOperationId("ArticleController#getArticles");
 		getArticles.setSummary("Here we get some articles.");
@@ -372,6 +376,7 @@ class AsciidoctorPostProcessorTest {
 		getArticles.addTag("TAG_1");
 		getArticles.setSecurity(Collections.singletonList(Collections.singletonMap("key", new ArrayList<>())));
 		getArticles.addParameterObject(filter);
+		getArticles.putResponse("4xx", errorResponse);
 		getArticles.putDefaultResponse(response);
 
 		Response articleResponse = new Response();
@@ -384,7 +389,7 @@ class AsciidoctorPostProcessorTest {
 		postArticle.setDescription("Here we create a new article. Or something else.");
 		postArticle.addTag("TAG_1");
 		postArticle.setSecurity(Collections.singletonList(Collections.singletonMap("key", new ArrayList<>())));
-		postArticle.setRequestBodyReference(new Reference("#/components/requestBodies/ArticleResource"));
+		postArticle.setRequestBodyObject(articleResourceRequestBody);
 		postArticle.putDefaultResponse(articleResponse);
 
 		Operation getOrders = new Operation();
@@ -393,7 +398,7 @@ class AsciidoctorPostProcessorTest {
 		getOrders.setSummary("Here we get some orders.");
 		getOrders.setDescription("Here we get some orders. Or something else.");
 		getOrders.addTag("TAG_1");
-		getOrders.addTag("TAG_2");
+		getOrders.addTag("TAG 2");
 
 		PathItemObject orders = new PathItemObject();
 		orders.setSummary("Summary for /orders");
@@ -428,6 +433,107 @@ class AsciidoctorPostProcessorTest {
 		assertThat(referencePath).exists();
 
 		compareFiles(referencePath, outputPath);
+	}
+
+	@Test
+	void shouldUseTitleOfOpenApiObjectInEmbeddedDocument() throws IOException {
+		Info info = new Info();
+		info.setTitle("Some Title");
+		info.setVersion("1.2.3-SNAPSHOT");
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/minimal", false, "images");
+
+		processor.execute(openApi);
+
+		Path result = Paths.get("target/generated-test-docs/minimal/openapi.adoc");
+		List<String> lines = Files.readAllLines(result, StandardCharsets.UTF_8);
+		assertThat(lines)
+			.element(0)
+			.isEqualTo("== Some Title");
+	}
+
+	@Test
+	void shouldWriteDescriptionIntoEmbeddedDocument() throws IOException {
+		Info info = new Info();
+		info.setTitle("Some Title");
+		info.setVersion("1.2.3-SNAPSHOT");
+		info.setDescription("This is a description of an API.\nIt has multiple lines.");
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/minimal", false, "images");
+
+		processor.execute(openApi);
+
+		Path result = Paths.get("target/generated-test-docs/minimal/openapi.adoc");
+		List<String> lines = Files.readAllLines(result, StandardCharsets.UTF_8);
+
+		assertThat(lines)
+			.contains("This is a description of an API.", atIndex(1))
+			.contains("It has multiple lines.", atIndex(2));
+	}
+
+	@Test
+	void shouldWriteContactInfoIntoEmbeddedDocument() throws IOException {
+		Contact contact = new Contact();
+		contact.setName("Herr Deckname");
+		contact.setEmail("herr@deckname.de");
+
+		Info info = new Info();
+		info.setTitle("Some Title");
+		info.setVersion("1.2.3-SNAPSHOT");
+		info.setContact(contact);
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/minimal", false, "images");
+
+		processor.execute(openApi);
+
+		Path result = Paths.get("target/generated-test-docs/minimal/openapi.adoc");
+		List<String> lines = Files.readAllLines(result, StandardCharsets.UTF_8);
+
+		assertThat(lines).element(1)
+			.isEqualTo("Herr Deckname <herr@deckname.de>");
+	}
+
+	@Test
+	void shouldWriteContactInfoBeforeDescriptionIntoEmbeddedDocument() throws IOException{
+		Contact contact = new Contact();
+		contact.setName("E Ripley");
+		contact.setEmail("p5000_hero@weyland-yutani.com");
+
+		Info info = new Info();
+		info.setTitle("Alien Queen Defense");
+		info.setVersion("1.2.3-SNAPSHOT");
+		info.setContact(contact);
+		info.setDescription("API to control a P-5000 powered work loader.\nUsed to handle xenomorph queens.\nAnd sometimes, crates.");
+
+		OpenAPI openApi = new OpenAPI();
+		openApi.setOpenapi("3.0.3");
+		openApi.setInfo(info);
+
+		processor = createAsciidoctorPostProcessor("/minimal", false, "images");
+
+		processor.execute(openApi);
+
+		Path result = Paths.get("target/generated-test-docs/minimal/openapi.adoc");
+		List<String> lines = Files.readAllLines(result, StandardCharsets.UTF_8);
+
+		assertThat(lines)
+			.contains("== Alien Queen Defense", atIndex(0))
+			.contains("E Ripley <p5000_hero@weyland-yutani.com>", atIndex(1))
+			.contains("API to control a P-5000 powered work loader.", atIndex(2))
+			.contains("Used to handle xenomorph queens.", atIndex(3))
+			.contains("And sometimes, crates.", atIndex(4));
 	}
 
 	private void compareFiles(Path reference, Path output) {

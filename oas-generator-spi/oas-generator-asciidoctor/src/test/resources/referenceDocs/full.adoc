@@ -67,6 +67,8 @@ m| integer (int64)
 e| Status
 4+e| Response
 
+^| 4xx
+4+a| pass:[A HTTP status code]
 ^| default
 4+a| pass:[The response description]
 
@@ -104,9 +106,17 @@ h| Description
 4+| pass:[Here we create a new article. Or something else.]
 
 5+h| Request Body
+5+e| *REQUIRED* pass:[Lorem ipsum]
 
-e|Type
-4+a| <<components_requestBodies_ArticleResource,ArticleResource>>
+[cols="2,1", options="header"]
+!===
+e! Type
+e! Schema
+
+! application/json
+m! <<components_schemas_ArticleResource>>
+
+!===
 
 5+h| Responses
 
@@ -151,7 +161,7 @@ This operation is deprecated.
 4+h| /orders
 
 h| Tags
-4+| icon:tag[] <<TAG_1,TAG_1>>, icon:tag[] <<TAG_2,TAG_2>>
+4+| icon:tag[] <<TAG_1,TAG_1>>, icon:tag[] <<TAG_2,TAG 2>>
 
 h| Summary
 4+| pass:[Here we get some orders.]
@@ -247,23 +257,6 @@ a| pass:[Lorem ipsum]
 |===
 
 
-=== Request Bodies
-
-[[components_requestBodies_ArticleResource]]
-==== ArticleResource
-
-*REQUIRED* pass:[Lorem ipsum]
-
-[cols="2,1", options="header"]
-|===
-| Type | Schema
-
-| application/json
-m| <<components_schemas_ArticleResource>>
-
-|===
-
-
 === Security Schemes
 
 [cols="1,1,2", options="header"]
@@ -278,13 +271,13 @@ m| <<components_schemas_ArticleResource>>
 
 == Tags
 
+_TAG 2_::
+[[TAG_2]]
+
 _TAG_1_::
 [[TAG_1]] pass:[This is a <b>description</b>]
 +
 Lorem ipsum dolor sit amet. (icon:external-link[] link:https://en.wikipedia.org[_Link_])
-
-_TAG_2_::
-[[TAG_2]]
 
 
 == External documentation

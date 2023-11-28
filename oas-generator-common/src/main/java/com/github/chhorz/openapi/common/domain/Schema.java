@@ -37,6 +37,10 @@ public class Schema {
 	private Long maximum;
 	private Long minimum;
 	private String pattern;
+	private Integer maxItems;
+	private Integer minItems;
+	private Integer maxLength;
+	private Integer minLength;
 
 	private Boolean deprecated = false;
 
@@ -86,6 +90,46 @@ public class Schema {
 
 	public void setMinimum(Long minimum) {
 		this.minimum = minimum;
+	}
+
+	public String getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(final String pattern) {
+		this.pattern = pattern;
+	}
+
+	public Integer getMaxItems() {
+		return maxItems;
+	}
+
+	public void setMaxItems(Integer maxItems) {
+		this.maxItems = maxItems;
+	}
+
+	public Integer getMinItems() {
+		return minItems;
+	}
+
+	public void setMinItems(Integer minItems) {
+		this.minItems = minItems;
+	}
+
+	public Integer getMaxLength() {
+		return maxLength;
+	}
+
+	public void setMaxLength(Integer maxLength) {
+		this.maxLength = maxLength;
+	}
+
+	public Integer getMinLength() {
+		return minLength;
+	}
+
+	public void setMinLength(Integer minLength) {
+		this.minLength = minLength;
 	}
 
 	public void setEnumValues(List<String> enumValues) {
@@ -148,14 +192,6 @@ public class Schema {
 
 	public void setDefaultValue(final Object defaultValue) {
 		this.defaultValue = defaultValue;
-	}
-
-	public String getPattern() {
-		return pattern;
-	}
-
-	public void setPattern(final String pattern) {
-		this.pattern = pattern;
 	}
 
 	public void addEnumValue(final String enumValue) {
