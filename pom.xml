@@ -81,7 +81,7 @@
 		<project.encoding>UTF-8</project.encoding>
 
 		<!-- dependency versions -->
-		<asciidoctorj-diagram.version>2.2.13</asciidoctorj-diagram.version>
+		<asciidoctorj-diagram.version>2.2.14</asciidoctorj-diagram.version>
 		<jackson-databind.version>2.16.1</jackson-databind.version>
 		<jackson-dataformat-yaml.version>2.16.1</jackson-dataformat-yaml.version>
 		<javadoc-parser.version>0.3.1</javadoc-parser.version>
