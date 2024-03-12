@@ -28,16 +28,12 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 import javax.annotation.processing.Messager;
-import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
@@ -55,6 +51,7 @@ public class GeneratorPropertyLoader {
 	private final Map<String, String> processorOptions;
 
 	private GeneratorProperties properties;
+	private Properties versionProperties;
 
 	public GeneratorPropertyLoader(final Messager messager, final Map<String, String> processorOptions) {
 		this.processorOptions = processorOptions;
@@ -96,6 +93,18 @@ public class GeneratorPropertyLoader {
 			properties = new GeneratorProperties();
 			logUtils.logError("An exception occurred. Using default properties!", e);
 		}
+
+		versionProperties = new Properties();
+		try {
+			versionProperties.load(getClass().getClassLoader().getResourceAsStream("version.properties"));
+		} catch (Exception e) {
+			versionProperties.put("oas-generator.version", "unknown");
+			logUtils.logError("An exception occurred. Using default version properties!", e);
+		}
+	}
+
+	public String getOasGeneratorVersion() {
+		return versionProperties.getProperty("oas-generator.version");
 	}
 
 	public Info createInfoFromProperties() {

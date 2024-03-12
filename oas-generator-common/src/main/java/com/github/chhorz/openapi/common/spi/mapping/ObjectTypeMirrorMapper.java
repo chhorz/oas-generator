@@ -284,7 +284,7 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 				.filter(this::isValidAttribute)
 				.forEach(executableElement -> {
 
-					logUtils.logDebug(String.format("Parsing getter: %s", executableElement.toString()));
+					logUtils.logDebug(String.format("Parsing getter: %s", executableElement));
 
 					JavaDoc getterDoc = parser.parse(elements.getDocComment(executableElement));
 

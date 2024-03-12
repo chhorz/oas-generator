@@ -155,7 +155,7 @@ public abstract class OpenAPIProcessor extends AbstractProcessor {
 		openApi.setOpenapi(OPEN_API_VERSION);
 
 		Info info = propertyLoader.createInfoFromProperties();
-		info.setxGeneratedBy(X_GENERATED_FIELD);
+		info.setxGeneratedBy("%s:%s".formatted(X_GENERATED_FIELD, propertyLoader.getOasGeneratorVersion()));
 		info.setxGeneratedTs(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
 		openApi.setInfo(info);
 

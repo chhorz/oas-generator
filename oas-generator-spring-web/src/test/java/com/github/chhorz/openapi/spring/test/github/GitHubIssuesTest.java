@@ -53,7 +53,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -97,7 +97,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -142,17 +142,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		Info info = documentContext.read("$.info", Info.class);
-
-		assertThat(info)
-			.isNotNull()
-			.hasFieldOrPropertyWithValue("title", "MyService")
-			.hasFieldOrPropertyWithValue("version", "1.2.3-SNAPSHOT")
-			.hasFieldOrPropertyWithValue("xGeneratedBy", "oas-generator");
-
-		assertThat(info.getxGeneratedTs())
-			.isNotNull()
-			.isNotEmpty();
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 
@@ -186,7 +176,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -239,7 +229,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		RequestBody requestBody = documentContext.read("$.paths./github/issues.get.requestBody", RequestBody.class);
 
@@ -289,7 +279,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Parameter[] parameters = documentContext.read("$.paths./github/issues.get.parameters", Parameter[].class);
 
@@ -331,7 +321,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		validateRequestBodyForResource("$.paths./github/issues.post", documentContext, false);
 
@@ -357,7 +347,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -438,7 +428,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operationOne = documentContext.read("$.paths./github/issues.post", Operation.class);
 		assertThat(operationOne)
@@ -511,7 +501,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Components components = documentContext.read("$.components", Components.class);
 
@@ -549,7 +539,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		PathItemObject pathItemObject = documentContext.read("$.paths./github/issues/{id}", PathItemObject.class);
 
@@ -579,7 +569,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -659,7 +649,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -754,7 +744,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -789,7 +779,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.post", Operation.class);
 		assertThat(operation)
@@ -814,7 +804,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -886,7 +876,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operationOne = documentContext.read("$.paths./github/issues/javadoc.get", Operation.class);
 		assertThat(operationOne)
@@ -920,7 +910,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -971,7 +961,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues/one.get", Operation.class);
 		assertThat(operation)
@@ -1028,7 +1018,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -1059,7 +1049,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -1098,7 +1088,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		validateSchemaForResource(documentContext);
 
@@ -1136,7 +1126,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -1191,7 +1181,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -1220,7 +1210,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./issues.get", Operation.class);
 		assertThat(operation)
@@ -1245,7 +1235,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./issues.get", Operation.class);
 		assertThat(operation)
@@ -1270,7 +1260,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./issues.get", Operation.class);
 		assertThat(operation)
@@ -1294,7 +1284,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./test1/issues.get", Operation.class);
 		assertThat(operation)
@@ -1323,7 +1313,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./test/issues.get", Operation.class);
 		assertThat(operation)
@@ -1347,7 +1337,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
 		assertThat(operation)
@@ -1373,7 +1363,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./.post", Operation.class);
 		assertThat(operation)
@@ -1398,7 +1388,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
+		validateInfoObject(documentContext, "MyService", "1.2.3-SNAPSHOT");
 
 		Operation operation = documentContext.read("$.paths./test-1.get", Operation.class);
 		assertThat(operation)
@@ -1427,7 +1417,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Components components = documentContext.read("$.components", Components.class);
 
@@ -1478,7 +1468,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues/{id}.get", Operation.class);
 		assertThat(operation)
@@ -1551,7 +1541,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues/{id}.get", Operation.class);
 		assertThat(operation)
@@ -1600,7 +1590,7 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isNotNull()
 			.isEqualTo("3.1.0");
 
-		validateDefaultInfoObject(documentContext);
+		validateInfoObject(documentContext);
 
 		Operation operation = documentContext.read("$.paths./github/issues.post", Operation.class);
 		assertThat(operation)

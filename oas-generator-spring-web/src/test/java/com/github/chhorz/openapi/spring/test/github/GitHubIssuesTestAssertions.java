@@ -69,8 +69,8 @@ class GitHubIssuesTestAssertions {
 	 *
 	 * @param documentContext the json document context
 	 */
-	public static void validateDefaultInfoObject(final DocumentContext documentContext) {
-		validateDefaultInfoObject(documentContext, "Title", "Version");
+	public static void validateInfoObject(final DocumentContext documentContext) {
+		validateInfoObject(documentContext, "Title", "Version");
 	}
 
 	/**
@@ -80,18 +80,18 @@ class GitHubIssuesTestAssertions {
 	 * @param title           the requested title
 	 * @param version         the requested version
 	 */
-	public static void validateDefaultInfoObject(final DocumentContext documentContext, final String title, final String version) {
+	public static void validateInfoObject(final DocumentContext documentContext, final String title, final String version) {
 		Info info = documentContext.read("$.info", Info.class);
 
 		assertThat(info)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("title", title)
-			.hasFieldOrPropertyWithValue("version", version)
-			.hasFieldOrPropertyWithValue("xGeneratedBy", "oas-generator");
-
-		assertThat(info.getxGeneratedTs())
-			.isNotNull()
-			.isNotEmpty();
+			.satisfies(i -> {
+				assertThat(i.getTitle()).isEqualTo(title);
+				assertThat(i.getVersion()).isEqualTo(version);
+				assertThat(i.getxGeneratedBy()).startsWith("oas-generator");
+				assertThat(i.getxGeneratedTs()).isNotNull()
+					.isNotEmpty();
+			});
 	}
 
 	/**

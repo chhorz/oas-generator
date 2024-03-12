@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.RegularExpressionValueMatcher;
 import org.skyscreamer.jsonassert.comparator.CustomComparator;
 
 import java.io.IOException;
@@ -71,9 +72,13 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 		Info info = ctx.read("$.info", Info.class);
 		assertThat(info)
 			.isNotNull()
-			.hasFieldOrPropertyWithValue("title", "MyService")
-			.hasFieldOrPropertyWithValue("version", "1.2.3-SNAPSHOT")
-			.hasFieldOrPropertyWithValue("xGeneratedBy", "oas-generator")
+			.satisfies(i -> {
+				assertThat(i.getTitle()).isEqualTo("MyService");
+				assertThat(i.getVersion()).isEqualTo("1.2.3-SNAPSHOT");
+				assertThat(i.getxGeneratedBy()).startsWith("oas-generator");
+				assertThat(i.getxGeneratedTs()).isNotNull()
+					.isNotEmpty();
+			})
 			.hasNoNullFieldsOrPropertiesExcept("summary", "description", "termsOfService");
 
 		assertThat(info.getContact())
@@ -193,7 +198,8 @@ class SpringWebOpenApiProcessorTest extends AbstractProcessorTest {
 			String expected = String.join("", Files.readAllLines(Paths.get("src/test/resources/" + expectedFile)));
 			String actual = String.join("", Files.readAllLines(Paths.get("target/" + actualFile)));
 			JSONAssert.assertEquals(expected, actual, new CustomComparator(JSONCompareMode.LENIENT,
-				new Customization("x-generated-ts", (o1, o2) -> true)
+				new Customization("info.x-generated-by", new RegularExpressionValueMatcher<>("oas-generator\\:\\d\\.\\d\\.\\d(-SNAPSHOT)?")),
+				new Customization("info.x-generated-ts", (o1, o2) -> true)
 			));
 		} catch (JSONException | IOException e) {
 			fail("Could not check openapi.json against expected file.", e);
