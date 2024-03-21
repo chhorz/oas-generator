@@ -465,7 +465,7 @@ class GitHubIssuesTestAssertions {
 	 *
 	 * @see Resource
 	 */
-	public static void validateSchemaForTestResource(final DocumentContext documentContext) {
+	public static void validateSchemaForTestResource(DocumentContext documentContext) {
 		Schema schema = documentContext.read("$.components.schemas.TestResource", Schema.class);
 
 		assertThat(schema)
@@ -513,7 +513,7 @@ class GitHubIssuesTestAssertions {
 	 * @param documentContext the json document context
 	 * @see com.github.chhorz.openapi.spring.test.github.resources.TestRecord
 	 */
-	public static void validateSchemaForTestRecord(final DocumentContext documentContext) {
+	public static void validateSchemaForTestRecord(DocumentContext documentContext) {
 		Schema schema = documentContext.read("$.components.schemas.TestRecord", Schema.class);
 
 		assertThat(schema)
@@ -548,7 +548,7 @@ class GitHubIssuesTestAssertions {
 	 *
 	 * @see Resource
 	 */
-	public static void validateSchemaForOrderResources(final DocumentContext documentContext) {
+	public static void validateSchemaForOrderResources(DocumentContext documentContext) {
 		Schema orderSchema = documentContext.read("$.components.schemas.OrderResource", Schema.class);
 		Schema orderItemSchema = documentContext.read("$.components.schemas.OrderItemResource", Schema.class);
 
@@ -582,12 +582,16 @@ class GitHubIssuesTestAssertions {
 			.isEqualTo("#/components/schemas/OrderResource");
 	}
 
+	public static void validateSchemaForTypedResource() {
+
+	}
+
 	/**
 	 * Validates the read_role security scheme
 	 *
 	 * @param documentContext the json document context
 	 */
-	public static void validateSecurityScheme(final DocumentContext documentContext) {
+	public static void validateSecurityScheme(DocumentContext documentContext) {
 		SecuritySchemeHttp securityScheme = documentContext.read("$.components.securitySchemes.read_role", SecuritySchemeHttp.class);
 
 		assertThat(securityScheme)

@@ -129,7 +129,17 @@ public class ObjectTypeMirrorMapper extends AbstractTypeMirrorMapper {
 					if (typeMirrorFromTypeArgument != null) {
 						variableElementTypeMirror = typeMirrorFromTypeArgument;
 					} else {
-						variableElementTypeMirror = vElement.asType();
+						Optional<? extends TypeMirror> optionalTypeParameterTypeMirror = typeParameters.stream()
+							.filter(t -> t.asType().equals(vElement.asType()))
+							.findFirst()
+							.map(t -> t.getBounds().get(0));
+
+						if (optionalTypeParameterTypeMirror.isPresent()) {
+							variableElementTypeMirror = optionalTypeParameterTypeMirror.get();
+						} else {
+							variableElementTypeMirror = vElement.asType();
+						}
+
 					}
 
 					// lets do some recursion
