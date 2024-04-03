@@ -234,7 +234,7 @@
 					<configuration>
 						<configLocation>checkstyle.xml</configLocation>
 						<includes>**/*</includes>
-						<excludes>.git/**/*,/**/target/**/*,docs/.vuepress/**/*,node_modules/**/*,_antora/supplemental_ui/**/*</excludes>
+						<excludes>.git/**/*,/**/target/**/*,_antora/static/**/*,node_modules/**/*,_antora/supplemental_ui/**/*</excludes>
 						<sourceDirectories>./</sourceDirectories>
 					</configuration>
 					<executions>
