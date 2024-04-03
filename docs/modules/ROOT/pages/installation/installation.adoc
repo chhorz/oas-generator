@@ -107,7 +107,7 @@ _Others options may be added soon._
 == Configuration
 
 Beside the configuration of the dependencies mentioned above, some additional configuration need to be done.
-The complete list of possible properties can be found at the corresponding section of the link:https://chhorz.github.io/oas-generator/docs/latest/oas-generator.html#_configuration[reference documentation].
+The complete list of possible properties can be found at the corresponding section of the xref:reference/configuration.adoc#_compiler_options[reference documentation].
 The project serves a custom __link:https://chhorz.github.io/oas-generator/schema/oas-generator.schema.json[JSON Schema]__ for the configuration file, that can be included in an IDE to gain auto-completion.
 
 == Snapshots

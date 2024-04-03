@@ -1,9 +1,10 @@
 = Configuration
+:icons: font
 
-The configuration of the _OAS Generator_ is primarily done with the <<configuration-file,configuration file>>.
+The configuration of the _OAS Generator_ is primarily done with the xref:_configuration_file[configuration file].
 Compiler options described below could be used to customize the name or path of the configuration file.
 
-[[compiler_options]]
+[#_compiler_options]
 == Compiler options
 
 A basic set of configuration options can be done by compiler options.
@@ -69,7 +70,7 @@ To configure the options above with the `maven-compile-plugin` the following con
 </plugin>
 ----
 
-[[configuration-file]]
+[#_configuration_file]
 == Configuration file
 
 The configuration file consists of two parts.
@@ -83,7 +84,7 @@ info:
   version: 1.2.3-SNAPSHOT #<1>
 ----
 
-<1> If the <<compiler_options,compiler option>> was used to pass the version, the annotated line can be omitted.
+<1> If the xref:_compiler_options[compiler option] was used to pass the version, the annotated line can be omitted.
 
 Full description of the possible values is shown below:
 
@@ -184,7 +185,7 @@ parser:
 
 <1> Output path and filename of the generated OpenAPI specification file.
 <2> File name of previously generate schema files (`.json` suffix will be added automatically) - _(Optional)_.
-<3> Key-Value maps for custom post processors, e.g. <<asciidoctor.properties,asciidoctor postprocessor>> -  _(Optional)_.
+<3> Key-Value maps for custom post processors, e.g. xref:extensibility.adoc#_asciidoctor_post_processor[asciidoctor postprocessor] -  _(Optional)_.
 +
 The `postProcessor` properties define a generic list of properties.
 In this map contributors can define their own properties for their post processors using the provided spi.
@@ -251,7 +252,7 @@ Only relevant for _oas-generator-schema_.
 _Default: empty list_
 
 | `postProcessor`
-| Map of custom <<postprocessor_documentation,post-processor properties>>.
+| Map of custom xref:extensibility.adoc#_configuration_properties[post-processor properties].
 Values are documented in the corresponding section of each post-processor.
 
 _Default: empty map_

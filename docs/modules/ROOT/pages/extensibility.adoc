@@ -8,7 +8,7 @@ The _oas-generator-spring-web_ and _oas-generator-jaxrs_ are dedicated modules f
 If the resources are provided in an external API package a specific module is provided: _oas-generator-schema_.
 
 An additional _SPI_ module covers the extensibility of the OAS Generator.
-There is currently the <<asciidoctor_postprocessor,Asciidoctor Post-Processor>> that generates an Asciidoctor file from the generated OpenAPI file.
+There is currently the xref:_asciidoctor_post_processor[Asciidoctor Post-Processor] that generates an Asciidoctor file from the generated OpenAPI file.
 
 == Extensibility
 
@@ -20,18 +20,16 @@ Currently, the following post processors (see module link:https://github.com/chh
 
 If other post processors should be listed and added in the *OAS Generator* repo please open a GitHub issue.
 
-[[postprocessor_documentation]]
 == Post-Processor Documentation
 
 In the following section documents all provide post processors from the `oas-generator-spi` module.
 
-[[filewriter_postprocessor]]
 === FileWriterPostProcessor
 
 The `FileWriterPostProcessor` is used internally to write the OpenAPI domain model to the resulting output file.
 This Post-Processor is included within all *OAS Generator* modules and must not be included with an additional dependency.
 
-[[asciidoctor_postprocessor]]
+[#_asciidoctor_post_processor]
 === AsciidoctorPostProcessor
 
 This post processor converts the generated internal OpenAPI domain model into the Asciidoctor format.
@@ -49,10 +47,10 @@ The generation is done with the link:https://freemarker.apache.org/[Apache FreeM
 
 After the creation during compilation phase, the `asciidoctor-maven-plugin` (link:https://asciidoctor.org/docs/asciidoctor-maven-plugin/[Link]) can be used to render the `.adoc` file to HTML, PDF or other formats.
 
-[[asciidoctor.properties]]
+[#_configuration_properties]
 ==== Configuration properties
 
-All the following properties will be defined as key-value list in the xref:reference/configuration.adoc#configuration-file[configuration file].
+All the following properties will be defined as key-value list in the xref:reference/configuration.adoc#_configuration_file[configuration file].
 
 .Configuration with default values
 [source,yaml]
@@ -262,6 +260,6 @@ com.github.chhorz.openapi.spi.asciidoctor.AsciidoctorProvider
 Otherwise, the library link:https://github.com/google/auto[Google Auto] could be used to create this file during the build process.
 ====
 
-. If the post processor uses custom properties these should be placed below the parser properties as shown for the <<asciidoctor.properties, Asciidoctor Post Processor>>.
+. If the post processor uses custom properties these should be placed below the parser properties as shown for the xref:extensibility.adoc#_configuration_properties[Asciidoctor Post Processor].
 All custom property classes should extend the provided `AbstractPostProcessorProperties` class.
 
