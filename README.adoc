@@ -7,7 +7,7 @@ image:https://img.shields.io/maven-central/v/com.github.chhorz/oas-generator.svg
 
 == About
 The *OAS Generator* is a java annotation processor that generates an OpenAPI specification file from the java annotations within the source code.
-Because the file is generated during compilation, the documentation is always up to date and references the current state of the implementation.
+Because the file is generated during compilation, the documentation is always up-to-date and references the current state of the implementation.
 
 * OpenAPI Specification 3.1.0 (link:https://spec.openapis.org/oas/v3.1.0[Link])
 
@@ -23,13 +23,13 @@ Because the file is generated during compilation, the documentation is always up
 </dependency>
 ----
 . Create a configuration file `oas-generator.yml` (per default in _/src/main/resources_).
-An example can be found in the https://chhorz.github.io/oas-generator/documentation/reference.html[reference documentation].
+An example can be found in the link:https://chhorz.github.io/oas-generator/docs/current/reference/configuration.html#configuration-file[reference documentation].
 . Update the Javadoc comments to match the requirements
 
 == Documentation
 
-The https://chhorz.github.io/oas-generator/[documentation] can be found on the separate GitHub Page.
-The page also includes the https://chhorz.github.io/oas-generator/documentation/reference.html[reference documentation] for all versions.
+The link:https://chhorz.github.io/oas-generator/[documentation] can be found on the separate GitHub Page.
+The page also includes the link:https://chhorz.github.io/oas-generator/docs/current/releases.html[reference documentation] for all versions.
 
 
 == Snapshots
