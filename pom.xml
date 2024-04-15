@@ -80,7 +80,6 @@
 		<project.encoding>UTF-8</project.encoding>
 
 		<!-- dependency versions -->
-		<asciidoctorj-diagram.version>2.3.0</asciidoctorj-diagram.version>
 		<jackson-databind.version>2.17.0</jackson-databind.version>
 		<jackson-dataformat-yaml.version>2.17.0</jackson-dataformat-yaml.version>
 		<javadoc-parser.version>0.3.1</javadoc-parser.version>
@@ -105,7 +104,6 @@
 		<spring-hateoas.version>2.2.1</spring-hateoas.version>
 
 		<!-- plugin versions -->
-		<asciidoctor-maven-plugin.version>2.2.6</asciidoctor-maven-plugin.version>
 		<license.maven.plugin.version>3.0</license.maven.plugin.version>
 		<maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
 		<maven.gpg.plugin.version>3.2.1</maven.gpg.plugin.version>
@@ -234,7 +232,7 @@
 					<configuration>
 						<configLocation>checkstyle.xml</configLocation>
 						<includes>**/*</includes>
-						<excludes>.git/**/*,/**/target/**/*,_antora/static/**/*,node_modules/**/*,_antora/supplemental_ui/**/*</excludes>
+						<excludes>.git/**/*,/**/target/**/*,_antora/static/**/*,node_modules/**/*,_antora/supplemental_ui/**/*,/**/build/site/**/*</excludes>
 						<sourceDirectories>./</sourceDirectories>
 					</configuration>
 					<executions>
