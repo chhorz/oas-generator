@@ -89,7 +89,7 @@
 		<jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
 
 		<spring-data-commons.version>3.2.5</spring-data-commons.version>
-		<spring-web.version>6.1.5</spring-web.version>
+		<spring-web.version>6.1.6</spring-web.version>
 
 		<javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
 
