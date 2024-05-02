@@ -106,7 +106,7 @@
 		<!-- plugin versions -->
 		<license.maven.plugin.version>3.0</license.maven.plugin.version>
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-		<maven.gpg.plugin.version>3.2.1</maven.gpg.plugin.version>
+		<maven.gpg.plugin.version>3.2.4</maven.gpg.plugin.version>
 		<maven-install-plugin.version>3.1.1</maven-install-plugin.version>
 		<maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
 		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
