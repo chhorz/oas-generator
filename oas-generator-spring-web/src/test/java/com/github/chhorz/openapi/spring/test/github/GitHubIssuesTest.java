@@ -474,7 +474,8 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
 				.isNotNull()
 				.extracting(MediaType::getSchema)
-				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ErrorResource")));;
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/ErrorResource")));
+		;
 		assertThat(operationOne.getResponses().get("204").getContent())
 			.isNull();
 
@@ -1620,6 +1621,41 @@ class GitHubIssuesTest extends AbstractProcessorTest {
 
 		validateSchemaForResource(documentContext);
 		validateSchemaForTestResource(documentContext);
+	}
+
+	@Test
+	@GitHubIssue("#495")
+	void getGithubIssue495() {
+		// run annotation processor
+		testCompilation(new SpringWebOpenApiProcessor(), GitHubIssue495.class, EnumResource.class);
+
+		// create json-path context
+		DocumentContext documentContext = createJsonPathDocumentContext();
+
+		// assertions
+		assertThat(documentContext.read("$.openapi", String.class))
+			.isNotNull()
+			.isEqualTo("3.1.0");
+
+		validateInfoObject(documentContext);
+
+		Operation operation = documentContext.read("$.paths./github/issues.get", Operation.class);
+
+		assertThat(operation.getResponses().get("default").getContent())
+			.isNotNull()
+			.hasSize(1)
+			.containsOnlyKeys("application/json")
+			.extractingByKey("application/json")
+			.isInstanceOfSatisfying(MediaType.class, mediaType -> assertThat(mediaType)
+				.isNotNull()
+				.extracting(MediaType::getSchema)
+				.isInstanceOfSatisfying(LinkedHashMap.class, refCheckForMap("#/components/schemas/EnumResource")));
+
+		assertThat(operation)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("operationId", "GitHubIssue495#test");
+
+		validateSchemaForEnumResource(documentContext);
 	}
 
 }

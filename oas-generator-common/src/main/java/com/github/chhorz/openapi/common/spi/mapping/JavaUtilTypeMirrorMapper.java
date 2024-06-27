@@ -120,6 +120,16 @@ public class JavaUtilTypeMirrorMapper extends AbstractTypeMirrorMapper {
 					typeSchema.setFormat(typeAndFormat.getValue());
 				}
 				schema.setItems(typeSchema);
+			} else if (types.asElement(type).getKind().equals(ElementKind.ENUM)) {
+				Schema typeSchema = new Schema();
+				typeSchema.setType(Type.STRING);
+
+				types.asElement(type).getEnclosedElements()
+					.stream()
+					.filter(e -> ElementKind.ENUM_CONSTANT.equals(e.getKind()))
+					.forEach(vElement -> typeSchema.addEnumValue(vElement.toString()));
+
+				schema.setItems(typeSchema);
 			} else {
 				schema.setItems(Reference.forSchema(ProcessingUtils.getShortName(type)));
 			}

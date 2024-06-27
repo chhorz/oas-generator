@@ -507,6 +507,48 @@ class GitHubIssuesTestAssertions {
 			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING);
 	}
 
+	public static void validateSchemaForEnumResource(final DocumentContext documentContext) {
+		Schema schema = documentContext.read("$.components.schemas.EnumResource", Schema.class);
+
+		assertThat(schema)
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("description", "a enum test resource for GitHub issue tests")
+			.hasFieldOrPropertyWithValue("type", Schema.Type.OBJECT);
+
+		assertThat(schema.getProperties())
+			.isNotNull()
+			.hasSize(2)
+			.containsOnlyKeys("enumValue", "enumValues");
+
+		assertThat(schema.getProperties().get("enumValue"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.STRING)
+			.hasFieldOrPropertyWithValue("description", "");
+		List<String> enumItems = documentContext.read("$.components.schemas.EnumResource.properties.enumValue.enum", List.class);
+		assertThat(enumItems)
+			.isNotNull()
+			.hasSize(2)
+			.contains("A", "B");
+
+		assertThat(schema.getProperties().get("enumValues"))
+			.isNotNull()
+			.hasFieldOrPropertyWithValue("deprecated", false)
+			.hasFieldOrPropertyWithValue("type", Schema.Type.ARRAY)
+			.hasFieldOrPropertyWithValue("description", "");
+		assertThat(schema.getProperties().get("enumValues"))
+			.isInstanceOfSatisfying(Schema.class, statesSchema -> assertThat(statesSchema.getItems())
+				.isNotNull()
+				.hasFieldOrPropertyWithValue("deprecated", false)
+				.hasFieldOrPropertyWithValue("type", Schema.Type.STRING));
+		List<String> setEnumItems = documentContext.read("$.components.schemas.EnumResource.properties.enumValues.items.enum", List.class);
+		assertThat(setEnumItems)
+			.isNotNull()
+			.hasSize(2)
+			.contains("A", "B");
+	}
+
 	/**
 	 * Validates the given test record.
 	 *
