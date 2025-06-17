@@ -5,6 +5,12 @@
 image:https://github.com/chhorz/oas-generator/workflows/Java%20CI/badge.svg?branch=master["Java CI",link=https://github.com/chhorz/oas-generator/actions?query=workflow%3A%22Java+CI%22]
 image:https://img.shields.io/maven-central/v/com.github.chhorz/oas-generator.svg?logo=apachemaven&label=Maven%20Central["Maven Central", link="https://search.maven.org/artifact/com.github.chhorz/oas-generator"]
 
+
+[WARNING]
+====
+This project is archived and not maintained any more.
+====
+
 == About
 The *OAS Generator* is a java annotation processor that generates an OpenAPI specification file from the java annotations within the source code.
 Because the file is generated during compilation, the documentation is always up-to-date and references the current state of the implementation.
